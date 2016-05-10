@@ -52,7 +52,9 @@ enum drum {
 	//
 	//};
 
-uint8_t spi_data[16] = {0};	
+uint8_t spi_data[9] = {0};	
+	
+uint8_t step_number = 0;	
 
 	
 //struct spi_data spi_data;	
@@ -114,7 +116,7 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		if (drum_hit[note].switch_bit != 255) {//need to set instrument switch
 			
 			
-			spi_data[1] ^= (-(drum_hit[note].switch_value) ^ spi_data[1]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 			
 		}
 		
@@ -127,6 +129,8 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		spi_shift_byte(spi_data[4]);
 		spi_shift_byte(spi_data[5]);
 		spi_shift_byte(spi_data[6]);
+		spi_shift_byte(spi_data[7]);
+		spi_shift_byte(spi_data[8]);
 		
 		PORTC &= ~(1<<SPI_LED_LATCH);
 		PORTC |= (1<<SPI_LED_LATCH);
@@ -145,6 +149,8 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		spi_shift_byte(spi_data[4]);
 		spi_shift_byte(spi_data[5]);
 		spi_shift_byte(spi_data[6]);
+		spi_shift_byte(spi_data[7]);
+		spi_shift_byte(spi_data[8]);		
 		
 		PORTC &= ~(1<<SPI_LED_LATCH);
 		PORTC |= (1<<SPI_LED_LATCH);
@@ -280,6 +286,8 @@ int main(void)
 	
 
 	
+	spi_shift_byte(0x00);
+	spi_shift_byte(0x00);
 	spi_shift_byte(1<<ACCENT_LED);
 	spi_shift_byte(0x00);
 	spi_shift_byte(0x00);
