@@ -53,7 +53,7 @@
 #define MT_MC_SW		1
 #define HT_HC_SW		2
 #define RS_CL_SW		3
-#define CP_MA_SW		5 //this will eventually be MA trigger as MA can be triggered completely independently of CP, unlike toms/congas and rs/cl
+//#define CP_MA_SW		5 //this will eventually be MA trigger as MA can be triggered completely independently of CP, unlike toms/congas and rs/cl
 
 
 #endif	
