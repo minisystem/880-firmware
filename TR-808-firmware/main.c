@@ -41,7 +41,32 @@ void update_step_board() {
 	
 	//if ((button[STEP_1_SW].current_state) &1) toggle(STEP_1_LED);
 	//if ((button[STEP_2_SW].current_state) &1) turn_on(STEP_2_LED);
-	if ((switch_states[4] >> STEP_8_SW) &1) {toggle(STEP_8_LED); switch_states[4] ^= (1<<STEP_8_SW);} //need to flip switch bit here to properly debounce
+	//if ((switch_states[4] >> STEP_8_SW) &1) {toggle(STEP_8_LED); switch_states[4] ^= (1<<STEP_8_SW);} //need to flip switch bit here to properly debounce
+	
+	for (int i = 0; i < 16; i++) {
+		
+		if (button[i].state) {
+			
+			toggle(i);
+			button[i].state ^= button[i].state;
+			
+		}
+		
+	}
+	//if (button[STEP_8_SW].state) {
+		//
+		//toggle(STEP_8_LED);
+		//button[STEP_8_SW].state ^= button[STEP_8_SW].state;
+		//
+	//}	
+	
+	//if (button[INST_BD_2_SW].state) {
+		//
+		//toggle(BD_2_LED);
+		//button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
+		//
+	//}
+	
 	update_spi();
 	
 	

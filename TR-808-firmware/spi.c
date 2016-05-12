@@ -74,11 +74,11 @@ void read_switches(void) { //reads switch data
 	spi_previous_switch_data[4] ^= spi_current_switch_data[4];
 	spi_current_switch_data[4] &= spi_previous_switch_data[4];
 	
-	switch_states[0] ^= spi_current_switch_data[0];
-	switch_states[1] ^= spi_current_switch_data[1];
-	switch_states[2] ^= spi_current_switch_data[2];
-	switch_states[3] ^= spi_current_switch_data[3];
-	switch_states[4] ^= spi_current_switch_data[4];
+	//switch_states[0] ^= spi_current_switch_data[0];
+	//switch_states[1] ^= spi_current_switch_data[1];
+	//switch_states[2] ^= spi_current_switch_data[2];
+	//switch_states[3] ^= spi_current_switch_data[3];
+	//switch_states[4] ^= spi_current_switch_data[4];
 	
 	//spi_shift_byte(spi_data[5]);
 	//spi_shift_byte(spi_data[6]);
