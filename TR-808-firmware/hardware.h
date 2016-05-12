@@ -28,23 +28,23 @@
 #define OH_TRIG			2
 #define CH_TRIG			3
 //define instrument LEDs 
-#define ACCENT_LED		4	
-#define BD_LED			5
-#define SD_LED			6
-#define LT_LED			7
-#define LC_LED			4
-#define MT_LED			0
-#define MC_LED			5
-#define HT_LED			1
-#define HC_LED			6
-#define RS_LED			2
-#define CL_LED			7
-#define CP_LED			3
-#define MA_LED			4
-#define CB_LED			6
-#define CY_LED			7
-#define OH_LED			4
-#define CH_LED			5
+#define ACCENT_LED	4	
+#define BD_LED_BIT			5
+#define SD_LED_BIT			6
+#define LT_LED_BIT			7
+#define LC_LED_BIT			4
+#define MT_LED_BIT			0
+#define MC_LED_BIT			5
+#define HT_LED_BIT			1
+#define HC_LED_BIT			6
+#define RS_LED_BIT			2
+#define CL_LED_BIT			7
+#define CP_LED_BIT			3
+#define MA_LED_BIT			4
+#define CB_LED_BIT			6
+#define CY_LED_BIT			7
+#define OH_LED_BIT			4
+#define CH_LED_BIT			5
 
 
 

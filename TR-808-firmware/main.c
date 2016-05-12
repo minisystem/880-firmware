@@ -11,6 +11,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "hardware.h"
+#include "leds.h"
+#include "switches.h"
 #include "midi.h"
 #include "drums.h"
 #include "xnormidi-develop/midi.h"
@@ -19,26 +21,7 @@
 
 MidiDevice midi_device;
 
-enum drum {
-	
-	BD,
-	SD,
-	LT,
-	LC,
-	MT,
-	MC,
-	HT,
-	HC,
-	RS,
-	CL,
-	CP,
-	MA,
-	CB,
-	CY,
-	OH,
-	CH
-	
-	};
+
 	
 
 
@@ -65,7 +48,7 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
 		spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
 		
-		if (drum_hit[note].switch_bit != 255) {//need to set instrument switch
+		if (drum_hit[note].switch_bit != -1) {//need to set instrument switch
 			
 			
 			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
@@ -93,7 +76,7 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		
 		PORTD &= ~(1<<TRIG);
 		
-		_delay_us(900);
+		_delay_us(900); //deal with this bullshit
 		
 		spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
 		spi_data[drum_hit[note].spi_led_byte_num] &= ~(drum_hit[note].led_bit);
@@ -170,17 +153,19 @@ int main(void)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER	
 	
-
+	spi_data[led[STEP_1_LED].spi_byte] |= led[STEP_1_LED].bit;
+	spi_data[led[MODE_1_PATTERN_CLEAR].spi_byte] |= led[MODE_1_PATTERN_CLEAR].bit;
+	spi_data[led[FILL_MANUAL].spi_byte] |= led[FILL_MANUAL].bit;
 	
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
-	spi_shift_byte(0x00);
+	spi_shift_byte(spi_data[0]);
+	spi_shift_byte(spi_data[1]);
+	spi_shift_byte(spi_data[2]);
+	spi_shift_byte(spi_data[3]);
+	spi_shift_byte(spi_data[4]);
+	spi_shift_byte(spi_data[5]);
+	spi_shift_byte(spi_data[6]);
+	spi_shift_byte(spi_data[7]);
+	spi_shift_byte(spi_data[8]);
 	
 	
 	
