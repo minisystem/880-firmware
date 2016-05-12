@@ -40,8 +40,11 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../leds.c \
 ../main.c \
 ../midi.c \
+../spi.c \
+../switches.c \
 ../xnormidi-develop/bytequeue/bytequeue.c \
 ../xnormidi-develop/bytequeue/interrupt_setting.c \
 ../xnormidi-develop/midi.c \
@@ -56,8 +59,11 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+leds.o \
 main.o \
 midi.o \
+spi.o \
+switches.o \
 xnormidi-develop/bytequeue/bytequeue.o \
 xnormidi-develop/bytequeue/interrupt_setting.o \
 xnormidi-develop/midi.o \
@@ -65,8 +71,11 @@ xnormidi-develop/midi_device.o \
 xnormidi-develop/sysex_tools.o
 
 OBJS_AS_ARGS +=  \
+leds.o \
 main.o \
 midi.o \
+spi.o \
+switches.o \
 xnormidi-develop/bytequeue/bytequeue.o \
 xnormidi-develop/bytequeue/interrupt_setting.o \
 xnormidi-develop/midi.o \
@@ -74,8 +83,11 @@ xnormidi-develop/midi_device.o \
 xnormidi-develop/sysex_tools.o
 
 C_DEPS +=  \
+leds.d \
 main.d \
 midi.d \
+spi.d \
+switches.d \
 xnormidi-develop/bytequeue/bytequeue.d \
 xnormidi-develop/bytequeue/interrupt_setting.d \
 xnormidi-develop/midi.d \
@@ -83,8 +95,11 @@ xnormidi-develop/midi_device.d \
 xnormidi-develop/sysex_tools.d
 
 C_DEPS_AS_ARGS +=  \
+leds.d \
 main.d \
 midi.d \
+spi.d \
+switches.d \
 xnormidi-develop/bytequeue/bytequeue.d \
 xnormidi-develop/bytequeue/interrupt_setting.d \
 xnormidi-develop/midi.d \
@@ -105,6 +120,12 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 

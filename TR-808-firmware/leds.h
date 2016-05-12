@@ -59,10 +59,12 @@
 #define	CB_9_LED	53
 #define	CY_10_LED	54
 
+#define NUM_LEDS 55
+
 
 struct led{
 	
-	uint8_t bit;
+	uint8_t spi_bit;
 	uint8_t spi_byte:4;
 	uint8_t state:1;
 	enum {NO_BLINK, SLOW_BLINK, FAST_BLINK} mode;
@@ -70,66 +72,15 @@ struct led{
 	
 	};
 
-struct led led[55] = {
+extern struct led led[NUM_LEDS];
 	
-{	1<<0	,	1	,	0	,	NO_BLINK},
-{	1<<1	,	1	,	0	,	NO_BLINK},
-{	1<<2	,	1	,	0	,	NO_BLINK},
-{	1<<3	,	1	,	0	,	NO_BLINK},
-{	1<<4	,	1	,	0	,	NO_BLINK},
-{	1<<5	,	1	,	0	,	NO_BLINK},
-{	1<<6	,	1	,	0	,	NO_BLINK},
-{	1<<7	,	1	,	0	,	NO_BLINK},
-{	1<<0	,	0	,	0	,	NO_BLINK},
-{	1<<1	,	0	,	0	,	NO_BLINK},
-{	1<<2	,	0	,	0	,	NO_BLINK},
-{	1<<3	,	0	,	0	,	NO_BLINK},
-{	1<<4	,	0	,	0	,	NO_BLINK},
-{	1<<5	,	0	,	0	,	NO_BLINK},
-{	1<<6	,	0	,	0	,	NO_BLINK},
-{	1<<7	,	0	,	0	,	NO_BLINK},
-{	1<<0	,	2	,	0	,	NO_BLINK},
-{	1<<1	,	2	,	0	,	NO_BLINK},
-{	1<<2	,	2	,	0	,	NO_BLINK},
-{	1<<3	,	2	,	0	,	NO_BLINK},
-{	1<<4	,	2	,	0	,	NO_BLINK},
-{	1<<5	,	2	,	0	,	NO_BLINK},
-{	1<<6	,	2	,	0	,	NO_BLINK},
-{	1<<7	,	2	,	0	,	NO_BLINK},
-{	1<<4	,	3	,	0	,	NO_BLINK},
-{	1<<5	,	3	,	0	,	NO_BLINK},
-{	1<<6	,	3	,	0	,	NO_BLINK},
-{	1<<7	,	3	,	0	,	NO_BLINK},
-{	1<<0	,	4	,	0	,	NO_BLINK},
-{	1<<1	,	4	,	0	,	NO_BLINK},
-{	1<<2	,	4	,	0	,	NO_BLINK},
-{	1<<3	,	4	,	0	,	NO_BLINK},
-{	1<<4	,	4	,	0	,	NO_BLINK},
-{	1<<5	,	4	,	0	,	NO_BLINK},
-{	1<<6	,	4	,	0	,	NO_BLINK},
-{	1<<7	,	4	,	0	,	NO_BLINK},
-{	1<<0	,	5	,	0	,	NO_BLINK},
-{	1<<1	,	5	,	0	,	NO_BLINK},
-{	1<<2	,	5	,	0	,	NO_BLINK},
-{	1<<3	,	5	,	0	,	NO_BLINK},
-{	1<<4	,	5	,	0	,	NO_BLINK},
-{	1<<5	,	5	,	0	,	NO_BLINK},
-{	1<<6	,	5	,	0	,	NO_BLINK},
-{	1<<7	,	5	,	0	,	NO_BLINK},
-{	1<<4	,	6	,	0	,	NO_BLINK},
-{	1<<5	,	6	,	0	,	NO_BLINK},
-{	1<<6	,	6	,	0	,	NO_BLINK},
-{	1<<7	,	6	,	0	,	NO_BLINK},
-{	1<<0	,	7	,	0	,	NO_BLINK},
-{	1<<1	,	7	,	0	,	NO_BLINK},
-{	1<<2	,	7	,	0	,	NO_BLINK},
-{	1<<3	,	7	,	0	,	NO_BLINK},
-{	1<<4	,	7	,	0	,	NO_BLINK},
-{	1<<6	,	7	,	0	,	NO_BLINK},
-{	1<<7	,	7	,	0	,	NO_BLINK}	
+void turn_on(uint8_t led_index);
+void turn_off(uint8_t led_index);
+
+void flash_once(uint8_t led_index);
+
+void toggle(uint8_t led_index);
+
+
 	
-	
-	
-	
-	};
 #endif

@@ -14,7 +14,7 @@ main.d main.o: .././main.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
- .././hardware.h .././leds.h .././switches.h .././midi.h \
+ .././hardware.h .././leds.h .././switches.h .././spi.h .././midi.h \
  .././xnormidi-develop/midi_device.h \
  .././xnormidi-develop/midi_function_types.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\4.9.2\include\stdbool.h \
@@ -56,6 +56,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././leds.h:
 
 .././switches.h:
+
+.././spi.h:
 
 .././midi.h:
 

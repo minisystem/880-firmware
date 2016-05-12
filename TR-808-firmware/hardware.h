@@ -28,7 +28,7 @@
 #define OH_TRIG			2
 #define CH_TRIG			3
 //define instrument LEDs 
-#define ACCENT_LED	4	
+#define ACCENT_LED			4	
 #define BD_LED_BIT			5
 #define SD_LED_BIT			6
 #define LT_LED_BIT			7

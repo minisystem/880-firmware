@@ -121,6 +121,9 @@
     <Compile Include="hardware.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="leds.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
@@ -128,6 +131,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="midi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="switches.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="xnormidi-develop\bytequeue\bytequeue.c">

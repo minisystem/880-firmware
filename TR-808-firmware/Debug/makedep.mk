@@ -2,9 +2,15 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+leds.c
+
 main.c
 
 midi.c
+
+spi.c
+
+switches.c
 
 xnormidi-develop\bytequeue\bytequeue.c
 

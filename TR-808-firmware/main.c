@@ -1,9 +1,9 @@
 /*
- * TR-808-firmware.c
- *
- * Created: 2016-05-08 3:25:05 PM
- * Author : minisystem
- */ 
+ *main.c
+ *JR-808 firmware ATMEGA328PB
+ *minisystem
+ *system79.com
+*/
 
 #include <avr/io.h>
 #define F_CPU 16000000UL
@@ -13,6 +13,7 @@
 #include "hardware.h"
 #include "leds.h"
 #include "switches.h"
+#include "spi.h"
 #include "midi.h"
 #include "drums.h"
 #include "xnormidi-develop/midi.h"
@@ -22,27 +23,45 @@
 MidiDevice midi_device;
 
 
-	
+//struct step {
+	//
+	//struct button *button;
+	//struct led *led;
+	//
+	//};	
+	//
+//struct step step[16];	
+//
+//step[0].button = &button[STEP_1_SW];
 
-
-uint8_t spi_data[9] = {0};	//array to hold SPI data (trigger + LEDs) for sending
 	
 uint8_t step_number = 0;	
 
-
-
-uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simultaneously reads switch data
+void update_step_board() {
 	
-	SPDR1 = byte;
-	while (!(SPSR1 & (1<<SPIF1)));
-	return SPDR1;
+	//if ((button[STEP_1_SW].current_state) &1) toggle(STEP_1_LED);
+	//if ((button[STEP_2_SW].current_state) &1) turn_on(STEP_2_LED);
+	if ((switch_states[4] >> STEP_8_SW) &1) {toggle(STEP_8_LED); switch_states[4] ^= (1<<STEP_8_SW);} //need to flip switch bit here to properly debounce
+	update_spi();
+	
 	
 }
+
+void refresh(void) {
+	
+	read_switches();
+	parse_switch_data();
+	update_step_board();
+
+	
+}
+
+
 void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
 	
-	spi_data[1] = 1<<step_number;
-	spi_data[0] = (1<<step_number)>>8;
-	if (step_number++ == 15) step_number = 0;
+	//spi_data[1] = 1<<step_number;
+	//spi_data[0] = (1<<step_number)>>8;
+	//if (step_number++ == 15) step_number = 0;
 	if (note < 16) {
 		
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
@@ -57,22 +76,13 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 	
 	if (velocity > 64) {
 		spi_data[8] |= (1<<ACCENT);
-		spi_data[2] |= (1<<ACCENT_LED);
+		turn_on(ACCENT_1_LED);
 	}
-		PORTD |= 1<<TRIG;
+		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
 		
-		spi_shift_byte(spi_data[0]);
-		spi_shift_byte(spi_data[1]);
-		spi_shift_byte(spi_data[2]);
-		spi_shift_byte(spi_data[3]);
-		spi_shift_byte(spi_data[4]);
-		spi_shift_byte(spi_data[5]);
-		spi_shift_byte(spi_data[6]);
-		spi_shift_byte(spi_data[7]);
-		spi_shift_byte(spi_data[8]);
+		update_spi();
 		
-		PORTC &= ~(1<<SPI_LED_LATCH);
-		PORTC |= (1<<SPI_LED_LATCH);
+
 		
 		PORTD &= ~(1<<TRIG);
 		
@@ -81,20 +91,11 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
 		spi_data[drum_hit[note].spi_led_byte_num] &= ~(drum_hit[note].led_bit);
 		spi_data[8] &= ~(1<<ACCENT);
-		spi_data[2] &= ~(1<<ACCENT_LED);
+		turn_off(ACCENT_1_LED);
 		
-		spi_shift_byte(spi_data[0]);
-		spi_shift_byte(spi_data[1]);
-		spi_shift_byte(spi_data[2]);
-		spi_shift_byte(spi_data[3]);
-		spi_shift_byte(spi_data[4]);
-		spi_shift_byte(spi_data[5]);
-		spi_shift_byte(spi_data[6]);
-		spi_shift_byte(spi_data[7]);
-		spi_shift_byte(spi_data[8]);		
+		update_spi();
 		
-		PORTC &= ~(1<<SPI_LED_LATCH);
-		PORTC |= (1<<SPI_LED_LATCH);
+
 		
 		
 	}
@@ -102,10 +103,7 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 		
 }
 
-void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
-	
-
-}
+void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
 
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {}
 
@@ -153,24 +151,18 @@ int main(void)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER	
 	
-	spi_data[led[STEP_1_LED].spi_byte] |= led[STEP_1_LED].bit;
-	spi_data[led[MODE_1_PATTERN_CLEAR].spi_byte] |= led[MODE_1_PATTERN_CLEAR].bit;
-	spi_data[led[FILL_MANUAL].spi_byte] |= led[FILL_MANUAL].bit;
+	//spi_data[led[STEP_1_LED].spi_byte] |= led[STEP_1_LED].bit; //move this to generic function something like: turn_on(STEP_1_LED) and turn_off(STEP_1_LED) and maybe even blink(STEP_1_LED) and blink_fast((STEP_1_LED)
+	//spi_data[led[MODE_1_PATTERN_CLEAR].spi_byte] |= led[MODE_1_PATTERN_CLEAR].bit;
+	//spi_data[led[FILL_MANUAL].spi_byte] |= led[FILL_MANUAL].bit;
 	
-	spi_shift_byte(spi_data[0]);
-	spi_shift_byte(spi_data[1]);
-	spi_shift_byte(spi_data[2]);
-	spi_shift_byte(spi_data[3]);
-	spi_shift_byte(spi_data[4]);
-	spi_shift_byte(spi_data[5]);
-	spi_shift_byte(spi_data[6]);
-	spi_shift_byte(spi_data[7]);
-	spi_shift_byte(spi_data[8]);
+	turn_on(STEP_1_LED);
+	turn_on(MODE_2_PATTERN_FIRST_PART);
+	turn_on(FILL_MANUAL);
+	
+	update_spi();
 	
 	
-	
-	PORTC &= ~(1<<SPI_LED_LATCH);
-	PORTC |= (1<<SPI_LED_LATCH);
+
 	
 	
 	
@@ -189,8 +181,10 @@ int main(void)
 	
     while (1) 
     {
-	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work		
+	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
+	refresh();		
 
+	
 	}
 }
 
