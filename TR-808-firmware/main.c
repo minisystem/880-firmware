@@ -43,7 +43,7 @@ void update_step_board() {
 	//if ((button[STEP_2_SW].current_state) &1) turn_on(STEP_2_LED);
 	//if ((switch_states[4] >> STEP_8_SW) &1) {toggle(STEP_8_LED); switch_states[4] ^= (1<<STEP_8_SW);} //need to flip switch bit here to properly debounce
 	
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
 		
 		if (button[i].state) {
 			
@@ -60,12 +60,14 @@ void update_step_board() {
 		//
 	//}	
 	
-	//if (button[INST_BD_2_SW].state) {
-		//
-		//toggle(BD_2_LED);
-		//button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
-		//
-	//}
+	if (button[INST_BD_2_SW].state) {
+		
+		toggle(BD_2_LED);
+		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
+		
+	}
+	
+	//if (spi_current_switch_data[2] > 0) toggle(BD_2_LED);
 	
 	update_spi();
 	
