@@ -28,13 +28,12 @@ enum drum { //index for drum hits
 
 struct drum_hit { //can save a few bytes here y getting ride of spi led byte and led bit and associating them elsewhere
 
-	uint8_t note_num; //assigned MIDI note number
+	uint8_t note_num:7; //assigned MIDI note number
 	uint8_t spi_byte_num:4; //SPI byte number
 	uint8_t trig_bit; //trigger bit for drum hit
 	uint8_t switch_bit; //bit for switching toms/congas and rs/cl - will be -1 for all other instruments
 	uint8_t switch_value :1; //is the switch one or 0?
-	uint8_t spi_led_byte_num:4; //SPI byte number for instrument LED
-	uint8_t led_bit; //bit for instrument LED
+	uint8_t led_index; //index for intrument LED
 	
 };
 
