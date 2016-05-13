@@ -10,6 +10,7 @@
 
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include "mode.h"
 #include "hardware.h"
 #include "leds.h"
 #include "switches.h"
@@ -39,10 +40,6 @@ uint8_t step_number = 0;
 
 void update_step_board() {
 	
-	//if ((button[STEP_1_SW].current_state) &1) toggle(STEP_1_LED);
-	//if ((button[STEP_2_SW].current_state) &1) turn_on(STEP_2_LED);
-	//if ((switch_states[4] >> STEP_8_SW) &1) {toggle(STEP_8_LED); switch_states[4] ^= (1<<STEP_8_SW);} //need to flip switch bit here to properly debounce
-	
 	for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
 		
 		if (button[i].state) {
@@ -53,31 +50,44 @@ void update_step_board() {
 		}
 		
 	}
-	//if (button[STEP_8_SW].state) {
-		//
-		//toggle(STEP_8_LED);
-		//button[STEP_8_SW].state ^= button[STEP_8_SW].state;
-		//
-	//}	
-	
-	if (button[INST_BD_2_SW].state) {
-		
-		toggle(BD_2_LED);
-		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
-		
-	}
-	
-	//if (spi_current_switch_data[2] > 0) toggle(BD_2_LED);
+
 	
 	update_spi();
 	
 	
 }
 
+void live_hits(void) {
+	
+	if (button[INST_BD_2_SW].state) {
+		
+		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
+		spi_data[drum_hit[BD].spi_byte_num] |= drum_hit[BD].trig_bit;
+		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
+				
+		update_spi();
+				
+
+				
+		PORTD &= ~(1<<TRIG);
+				
+		_delay_us(900); //deal with this bullshit
+				
+		spi_data[drum_hit[BD].spi_byte_num] &= ~(drum_hit[BD].trig_bit);
+		update_spi();
+	}
+	
+	
+}
+
+
+
+
 void refresh(void) {
 	
 	read_switches();
 	parse_switch_data();
+	live_hits();
 	update_step_board();
 
 	

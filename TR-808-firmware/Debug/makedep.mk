@@ -8,6 +8,8 @@ main.c
 
 midi.c
 
+mode.c
+
 spi.c
 
 switches.c

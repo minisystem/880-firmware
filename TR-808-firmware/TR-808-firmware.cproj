@@ -133,6 +133,9 @@
     <Compile Include="midi.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="mode.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="spi.c">
       <SubType>compile</SubType>
     </Compile>

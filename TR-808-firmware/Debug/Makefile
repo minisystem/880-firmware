@@ -43,6 +43,7 @@ C_SRCS +=  \
 ../leds.c \
 ../main.c \
 ../midi.c \
+../mode.c \
 ../spi.c \
 ../switches.c \
 ../xnormidi-develop/bytequeue/bytequeue.c \
@@ -62,6 +63,7 @@ OBJS +=  \
 leds.o \
 main.o \
 midi.o \
+mode.o \
 spi.o \
 switches.o \
 xnormidi-develop/bytequeue/bytequeue.o \
@@ -74,6 +76,7 @@ OBJS_AS_ARGS +=  \
 leds.o \
 main.o \
 midi.o \
+mode.o \
 spi.o \
 switches.o \
 xnormidi-develop/bytequeue/bytequeue.o \
@@ -86,6 +89,7 @@ C_DEPS +=  \
 leds.d \
 main.d \
 midi.d \
+mode.d \
 spi.d \
 switches.d \
 xnormidi-develop/bytequeue/bytequeue.d \
@@ -98,6 +102,7 @@ C_DEPS_AS_ARGS +=  \
 leds.d \
 main.d \
 midi.d \
+mode.d \
 spi.d \
 switches.d \
 xnormidi-develop/bytequeue/bytequeue.d \
@@ -120,6 +125,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
