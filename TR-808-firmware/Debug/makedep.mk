@@ -2,6 +2,10 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+drums.c
+
+interrupts.c
+
 leds.c
 
 main.c

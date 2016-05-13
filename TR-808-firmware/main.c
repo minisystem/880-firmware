@@ -6,6 +6,7 @@
 */
 
 #include <avr/io.h>
+#include <stdio.h>
 #define F_CPU 16000000UL
 
 #include <avr/interrupt.h>
@@ -62,19 +63,26 @@ void live_hits(void) {
 	if (button[INST_BD_2_SW].state) {
 		
 		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
-		spi_data[drum_hit[BD].spi_byte_num] |= drum_hit[BD].trig_bit;
-		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
-				
-		update_spi();
-				
-
-				
-		PORTD &= ~(1<<TRIG);
-				
-		_delay_us(900); //deal with this bullshit
-				
-		spi_data[drum_hit[BD].spi_byte_num] &= ~(drum_hit[BD].trig_bit);
-		update_spi();
+		//spi_data[drum_hit[BD].spi_byte_num] |= drum_hit[BD].trig_bit;
+		//PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
+				//
+		//update_spi();
+				//
+//
+				//
+		//PORTD &= ~(1<<TRIG);
+				//
+		//_delay_us(900); //deal with this bullshit
+				//
+		//spi_data[drum_hit[BD].spi_byte_num] &= ~(drum_hit[BD].trig_bit);
+		//update_spi();
+		trigger_drum(BD, 0);
+	}
+	
+	if (button[INST_SD_3_SW].state) {
+		
+		button[INST_SD_3_SW].state ^= button[INST_SD_3_SW].state;
+		trigger_drum(SD,0);
 	}
 	
 	
@@ -186,11 +194,10 @@ int main(void)
 	
 	PORTC |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
 	
-	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER	
+	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
+	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
 	
-	//spi_data[led[STEP_1_LED].spi_byte] |= led[STEP_1_LED].bit; //move this to generic function something like: turn_on(STEP_1_LED) and turn_off(STEP_1_LED) and maybe even blink(STEP_1_LED) and blink_fast((STEP_1_LED)
-	//spi_data[led[MODE_1_PATTERN_CLEAR].spi_byte] |= led[MODE_1_PATTERN_CLEAR].bit;
-	//spi_data[led[FILL_MANUAL].spi_byte] |= led[FILL_MANUAL].bit;
+	
 	
 	turn_on(STEP_1_LED);
 	turn_on(MODE_2_PATTERN_FIRST_PART);
@@ -199,7 +206,11 @@ int main(void)
 	update_spi();
 	
 	
-
+	//setup Timer0 for drum triggering interrupt
+	
+	TCCR0A |= (1<<WGM01); //clear on compare match A
+	OCR0A = 225; //gives period of about 0.9ms
+	
 	
 	
 	

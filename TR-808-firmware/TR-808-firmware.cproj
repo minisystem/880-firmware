@@ -118,7 +118,13 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="drums.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hardware.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interrupts.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="leds.c">
