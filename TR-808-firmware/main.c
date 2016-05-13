@@ -63,19 +63,6 @@ void live_hits(void) {
 	if (button[INST_BD_2_SW].state) {
 		
 		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
-		//spi_data[drum_hit[BD].spi_byte_num] |= drum_hit[BD].trig_bit;
-		//PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
-				//
-		//update_spi();
-				//
-//
-				//
-		//PORTD &= ~(1<<TRIG);
-				//
-		//_delay_us(900); //deal with this bullshit
-				//
-		//spi_data[drum_hit[BD].spi_byte_num] &= ~(drum_hit[BD].trig_bit);
-		//update_spi();
 		trigger_drum(BD, 0);
 	}
 	
@@ -85,6 +72,59 @@ void live_hits(void) {
 		trigger_drum(SD,0);
 	}
 	
+	if (button[INST_LT_4_SW].state) {
+		
+		button[INST_LT_4_SW].state ^= button[INST_LT_4_SW].state;
+		trigger_drum(LT, 0);
+	}
+	
+	if (button[INST_MT_5_SW].state) {
+		
+		button[INST_MT_5_SW].state ^= button[INST_MT_5_SW].state;
+		trigger_drum(MT,0);
+	}	
+	
+	if (button[INST_HT_6_SW].state) {
+		
+		button[INST_HT_6_SW].state ^= button[INST_HT_6_SW].state;
+		trigger_drum(HT, 0);
+	}
+	
+	if (button[INST_RS_7_SW].state) {
+		
+		button[INST_RS_7_SW].state ^= button[INST_RS_7_SW].state;
+		trigger_drum(RS,0);
+	}
+	
+	if (button[INST_CP_8_SW].state) {
+		
+		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
+		trigger_drum(CP, 0);
+	}
+	
+	if (button[INST_CB_9_SW].state) {
+		
+		button[INST_CB_9_SW].state ^= button[INST_CB_9_SW].state;
+		trigger_drum(CB,0);
+	}	
+	if (button[INST_CY_10_SW].state) {
+		
+		button[INST_CY_10_SW].state ^= button[INST_CY_10_SW].state;
+		trigger_drum(CY,0);
+	}
+	
+	if (button[INST_OH_11_SW].state) {
+		
+		button[INST_OH_11_SW].state ^= button[INST_OH_11_SW].state;
+		trigger_drum(OH, 0);
+	}
+	
+	if (button[INST_CH_12_SW].state) {
+		
+		button[INST_CH_12_SW].state ^= button[INST_CH_12_SW].state;
+		trigger_drum(CH,0);
+	}
+		
 	
 }
 
@@ -109,37 +149,40 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 	//if (step_number++ == 15) step_number = 0;
 	if (note < 16) {
 		
-		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
-		spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
-		
-		if (drum_hit[note].switch_bit != -1) {//need to set instrument switch
-			
-			
-			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-			
-		}
-	
-	if (velocity > 64) {
-		spi_data[8] |= (1<<ACCENT);
-		turn_on(ACCENT_1_LED);
-	}
-		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
-		
-		update_spi();
-		
-
-		
-		PORTD &= ~(1<<TRIG);
-		
-		_delay_us(900); //deal with this bullshit
-		
-		spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
-		spi_data[drum_hit[note].spi_led_byte_num] &= ~(drum_hit[note].led_bit);
-		spi_data[8] &= ~(1<<ACCENT);
-		turn_off(ACCENT_1_LED);
-		
-		update_spi();
-		
+		//problem is hits can come in before trigger is finished. need to ensure that timer is done
+		//while(current_drum_hit != -1 );//move this into trigger_drum()
+		trigger_drum(note, velocity);
+		//spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
+		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
+		//
+		//if (drum_hit[note].switch_bit != -1) {//need to set instrument switch
+			//
+			//
+			//spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+			//
+		//}
+	//
+	//if (velocity > 64) {
+		//spi_data[8] |= (1<<ACCENT);
+		//turn_on(ACCENT_1_LED);
+	//}
+		//PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
+		//
+		//update_spi();
+		//
+//
+		//
+		//PORTD &= ~(1<<TRIG);
+		//
+		//_delay_us(900); //deal with this bullshit
+		//
+		//spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
+		//spi_data[drum_hit[note].spi_led_byte_num] &= ~(drum_hit[note].led_bit);
+		//spi_data[8] &= ~(1<<ACCENT);
+		//turn_off(ACCENT_1_LED);
+		//
+		//update_spi();
+		//
 
 		
 		

@@ -11,6 +11,8 @@
 #include "spi.h"
 
 uint8_t current_drum_hit = 0;
+volatile uint8_t trigger_finished = 1;
+
 struct drum_hit drum_hit[16] = {
 	
 	{0,8, 1<<BD_TRIG,-1, 0, 2, 1<<BD_LED_BIT},
@@ -33,6 +35,9 @@ struct drum_hit drum_hit[16] = {
 
 void trigger_drum(uint8_t note, uint8_t velocity) {
 	
+		while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before trigger new drum sound
+		current_drum_hit = note;
+
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
 		spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
 			
@@ -53,10 +58,10 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
 			
 		PORTD &= ~(1<<TRIG);
 		
-		current_drum_hit = note;
+		
 		//now need to set up interrupt for roughly 1 ms. 
 		//start timer
 		TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 		TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-	
+		trigger_finished = 0;
 }
