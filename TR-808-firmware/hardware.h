@@ -1,7 +1,15 @@
+/*
+ * hardware.h
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
 #define TRIG PD5
+
+#define TEMPO_POT 0b00000110 //ADC6
 	
 //define SPI pins
 #define SPI_MOSI		PE3

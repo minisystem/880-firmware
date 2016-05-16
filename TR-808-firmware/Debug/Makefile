@@ -40,6 +40,8 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../adc.c \
+../clock.c \
 ../drums.c \
 ../interrupts.c \
 ../leds.c \
@@ -62,6 +64,8 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+adc.o \
+clock.o \
 drums.o \
 interrupts.o \
 leds.o \
@@ -77,6 +81,8 @@ xnormidi-develop/midi_device.o \
 xnormidi-develop/sysex_tools.o
 
 OBJS_AS_ARGS +=  \
+adc.o \
+clock.o \
 drums.o \
 interrupts.o \
 leds.o \
@@ -92,6 +98,8 @@ xnormidi-develop/midi_device.o \
 xnormidi-develop/sysex_tools.o
 
 C_DEPS +=  \
+adc.d \
+clock.d \
 drums.d \
 interrupts.d \
 leds.d \
@@ -107,6 +115,8 @@ xnormidi-develop/midi_device.d \
 xnormidi-develop/sysex_tools.d
 
 C_DEPS_AS_ARGS +=  \
+adc.d \
+clock.d \
 drums.d \
 interrupts.d \
 leds.d \
@@ -135,6 +145,10 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 

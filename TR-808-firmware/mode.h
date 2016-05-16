@@ -1,3 +1,9 @@
+/*
+ * mode.h
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
 #ifndef MODE_H
 #define MODE_H
 

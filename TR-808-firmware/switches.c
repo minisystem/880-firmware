@@ -1,9 +1,9 @@
 /*
- *switches.c
- *JR-808 firmware ATMEGA328PB
- *minisystem
- *system79.com
-*/
+ * switches.c
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
 
 #include <stdio.h>
 #include <avr/io.h>

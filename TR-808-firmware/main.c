@@ -18,13 +18,16 @@
 #include "spi.h"
 #include "midi.h"
 #include "drums.h"
+#include "clock.h"
+#include "adc.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 //#include "xnormidi-develop/bytequeue/bytequeue.h" //this is required for MIDI sending
 
 MidiDevice midi_device;
 
-
+static uint16_t new_tempo_adc = 0;
+static uint16_t current_tempo_adc = 0;
 //struct step {
 	//
 	//struct button *button;
@@ -38,6 +41,25 @@ MidiDevice midi_device;
 
 	
 uint8_t step_number = 0;	
+
+void update_tempo() {
+	
+	int tempo_adc_change = 0;
+	new_tempo_adc = read_tempo_pot();
+	tempo_adc_change = new_tempo_adc - current_tempo_adc;
+	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
+	
+	internal_clock.rate = (1023 - current_tempo_adc) + 244; //244 is offset to get desirable tempo range
+
+	if (internal_clock.rate != internal_clock.previous_rate) {
+		
+		update_clock_rate(internal_clock.rate);
+		
+	}
+	
+	internal_clock.previous_rate = internal_clock.rate;	
+	
+}
 
 void update_step_board() {
 	
@@ -137,55 +159,18 @@ void refresh(void) {
 	parse_switch_data();
 	live_hits();
 	update_step_board();
-
+	update_tempo();
 	
 }
 
 
 void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
 	
-	//spi_data[1] = 1<<step_number;
-	//spi_data[0] = (1<<step_number)>>8;
-	//if (step_number++ == 15) step_number = 0;
-	if (note < 16) {
-		
-		//problem is hits can come in before trigger is finished. need to ensure that timer is done
-		//while(current_drum_hit != -1 );//move this into trigger_drum()
-		trigger_drum(note, velocity);
-		//spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
-		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
-		//
-		//if (drum_hit[note].switch_bit != -1) {//need to set instrument switch
-			//
-			//
-			//spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-			//
-		//}
-	//
-	//if (velocity > 64) {
-		//spi_data[8] |= (1<<ACCENT);
-		//turn_on(ACCENT_1_LED);
-	//}
-		//PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
-		//
-		//update_spi();
-		//
-//
-		//
-		//PORTD &= ~(1<<TRIG);
-		//
-		//_delay_us(900); //deal with this bullshit
-		//
-		//spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
-		//spi_data[drum_hit[note].spi_led_byte_num] &= ~(drum_hit[note].led_bit);
-		//spi_data[8] &= ~(1<<ACCENT);
-		//turn_off(ACCENT_1_LED);
-		//
-		//update_spi();
-		//
 
+	if (note < 16) { //TODO: implement MIDI learn functiont to dynamically map notes to drum hits
 		
-		
+		trigger_drum(note, velocity);
+	
 	}
 
 		
@@ -268,6 +253,12 @@ int main(void)
 	//setup MIDI USART
 	setup_midi_usart();
 	
+	setup_internal_clock();
+	internal_clock.divider = 24; //24 ppqn
+	internal_clock.ppqn_counter = 1;
+	//internal_clock.rate = 1267; //use fixed rate to get clock working
+	//update_clock_rate(internal_clock.rate);
+	setup_adc();
 	sei(); //enable global interrupts	
 	
     while (1) 

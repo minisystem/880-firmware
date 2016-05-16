@@ -1,3 +1,9 @@
+/*
+ * switches.h
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
 #ifndef SWITCHES_H
 #define SWITCHES_H
 
