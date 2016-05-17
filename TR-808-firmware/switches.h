@@ -68,6 +68,8 @@ struct button {
 extern struct button button[NUM_BUTTONS];	
 
 void parse_switch_data(void);
+
+void check_start_stop_tap(void);
 	
 	
 #endif

@@ -9,6 +9,9 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
+
+#define TIMER_OFFSET 100
+
 struct clock {
 	
 	uint8_t divider;

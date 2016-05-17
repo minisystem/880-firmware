@@ -6,9 +6,11 @@
 */
 
 #include <stdio.h>
+#include <avr/pgmspace.h>
 #include "hardware.h"
 #include "spi.h"
 #include "leds.h"
+
 
 struct led led[NUM_LEDS] = {
 	

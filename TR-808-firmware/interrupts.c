@@ -10,6 +10,7 @@
 #include "drums.h"
 #include "spi.h"
 #include "clock.h"
+#include "sequencer.h"
 
 ISR (TIMER0_COMPA_vect) {
 	
@@ -29,15 +30,21 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% gate width
 		
-		turn_off(STEP_1_LED);
+		//turn_off(STEP_1_LED);
+		spi_data[1] = 0;
+		spi_data[0] = 0;
 
 	}
 	
 	if (++internal_clock.ppqn_counter == internal_clock.divider) {
 		
 		internal_clock.ppqn_counter = 0;
+		sequencer.current_step++; //hopefully this will overflow from 15 to 0
+		spi_data[1] = 1 << sequencer.current_step;
+		spi_data[0] = (1 << sequencer.current_step) >> 8;
 		
-		turn_on(STEP_1_LED);
+		
+		//turn_on(STEP_1_LED);
 		
 
 	}

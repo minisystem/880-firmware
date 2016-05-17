@@ -50,7 +50,7 @@ void update_tempo() {
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
 	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
 	
-	internal_clock.rate = (1023 - current_tempo_adc) + 100; //244 is offset to get desirable tempo range
+	internal_clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
 	if (internal_clock.rate != internal_clock.previous_rate) {
 		
@@ -64,6 +64,13 @@ void update_tempo() {
 
 void update_step_board() {
 	
+	if (sequencer.START) {
+		
+		
+		
+		//spi_data[0] = 1 << sequencer.current_step;
+		//spi_data[1] = 1 << sequencer.current_inst)
+	}
 	for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
 		
 		if (button[i].state) {
@@ -260,9 +267,11 @@ int main(void)
 	setup_internal_clock();
 	internal_clock.divider = 24; //24 ppqn
 	internal_clock.ppqn_counter = 1;
-	internal_clock.rate = 1267; //use fixed rate to get clock working
+	internal_clock.rate = 250; //use fixed rate to get clock working
 	update_clock_rate(internal_clock.rate);
 	setup_adc();
+	
+	sequencer.START = 1;
 	//update_tempo();
 	sei(); //enable global interrupts	
 	
