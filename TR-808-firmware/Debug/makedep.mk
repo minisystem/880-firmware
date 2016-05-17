@@ -18,6 +18,8 @@ midi.c
 
 mode.c
 
+sequencer.c
+
 spi.c
 
 switches.c

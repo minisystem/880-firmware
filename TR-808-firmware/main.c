@@ -12,6 +12,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "mode.h"
+#include "sequencer.h"
 #include "hardware.h"
 #include "leds.h"
 #include "switches.h"
@@ -49,7 +50,7 @@ void update_tempo() {
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
 	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
 	
-	internal_clock.rate = (1023 - current_tempo_adc) + 244; //244 is offset to get desirable tempo range
+	internal_clock.rate = (1023 - current_tempo_adc) + 100; //244 is offset to get desirable tempo range
 
 	if (internal_clock.rate != internal_clock.previous_rate) {
 		
@@ -158,8 +159,11 @@ void refresh(void) {
 	read_switches();
 	parse_switch_data();
 	live_hits();
+	update_mode();
 	update_step_board();
-	update_tempo();
+	//update_mode();
+	//update_spi();
+	if (trigger_finished) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
 	
 }
 
@@ -264,6 +268,7 @@ int main(void)
     while (1) 
     {
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
+	
 	refresh();		
 
 	

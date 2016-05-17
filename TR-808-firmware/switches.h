@@ -43,6 +43,8 @@
 #define	STEP_7_SW	6
 #define	STEP_8_SW	7
 
+#define SHIFT_BIT 1
+
 enum {
 	OMAR_WAS_HERE = 0,
 	OMAR_NOT_HERE,

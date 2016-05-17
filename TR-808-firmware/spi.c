@@ -9,6 +9,8 @@
 #include <avr/io.h>
 #include "spi.h"
 #include "hardware.h"
+#include "sequencer.h"
+#include "switches.h"
 
 uint8_t spi_data[9] = {0};
 uint8_t spi_current_switch_data[5] = {0};
@@ -53,6 +55,7 @@ void read_switches(void) { //reads switch data
 	
 	PORTC &= ~(1<<SPI_SW_LATCH);
 	
+	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1);
 	//debounce
 	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
 	spi_previous_switch_data[0] ^= spi_current_switch_data[0];

@@ -154,6 +154,12 @@
     <Compile Include="mode.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="sequencer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sequencer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="spi.c">
       <SubType>compile</SubType>
     </Compile>

@@ -7,6 +7,7 @@
 #ifndef MODE_H
 #define MODE_H
 
+#define NUM_MODES 6 //number of modes
 enum global_mode {
 	
 	PATTERN_CLEAR,
@@ -18,6 +19,8 @@ enum global_mode {
 		
 	};
 
-uint8_t update_mode(void);
+extern uint8_t mode_index; 
+
+void update_mode(void);
 
 #endif
