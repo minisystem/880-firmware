@@ -38,7 +38,7 @@ void update_mode(void) {
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
 		spi_data[4] = (1<< mode_index) | data_mask; 
 		
-		update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
+		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
 		
 	}
 	

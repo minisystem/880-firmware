@@ -76,7 +76,7 @@ void update_step_board() {
 	}
 
 	
-	update_spi();
+	//update_spi();
 	
 	
 }
@@ -161,9 +161,9 @@ void refresh(void) {
 	live_hits();
 	update_mode();
 	update_step_board();
-	//update_mode();
-	//update_spi();
-	if (trigger_finished) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
+	
+	update_spi();
+	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
 	
 }
 
@@ -260,9 +260,10 @@ int main(void)
 	setup_internal_clock();
 	internal_clock.divider = 24; //24 ppqn
 	internal_clock.ppqn_counter = 1;
-	//internal_clock.rate = 1267; //use fixed rate to get clock working
-	//update_clock_rate(internal_clock.rate);
+	internal_clock.rate = 1267; //use fixed rate to get clock working
+	update_clock_rate(internal_clock.rate);
 	setup_adc();
+	//update_tempo();
 	sei(); //enable global interrupts	
 	
     while (1) 
