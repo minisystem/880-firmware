@@ -88,6 +88,6 @@ void read_switches(void) { //reads switch data
 	//spi_shift_byte(spi_data[7]);
 	//spi_shift_byte(spi_data[8]);
 	
-	
+
 	
 };

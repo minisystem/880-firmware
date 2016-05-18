@@ -12,7 +12,7 @@
 
 #include "mode.h"
 
-struct pattern { //patterns stored in eeprom - only retrieve patterns from eeprom as you need them
+struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
 	uint16_t first_part[16]; //use to light step LEDs and trigger drums?
 	uint16_t second_part[16];

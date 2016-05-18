@@ -65,7 +65,10 @@ struct button {
 	
 	};
 	
-extern struct button button[NUM_BUTTONS];	
+extern struct button button[NUM_BUTTONS];
+
+extern uint8_t current_start_stop_tap_state;
+extern uint8_t previous_start_stop_tap_state;	
 
 void parse_switch_data(void);
 

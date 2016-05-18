@@ -28,23 +28,40 @@ ISR (TIMER0_COMPA_vect) {
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	
-	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% gate width
+	if (sequencer.START) { 
 		
-		//turn_off(STEP_1_LED);
-		spi_data[1] = 0;
-		spi_data[0] = 0;
+		if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+		}
 
+	} else if ((internal_clock.beat_counter == 2) && (internal_clock.divider >> 1)) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+		
 	}
 	
 	if (++internal_clock.ppqn_counter == internal_clock.divider) {
 		
+		internal_clock.beat_counter++;
 		internal_clock.ppqn_counter = 0;
-		sequencer.current_step++; //hopefully this will overflow from 15 to 0
-		spi_data[1] = 1 << sequencer.current_step;
-		spi_data[0] = (1 << sequencer.current_step) >> 8;
+		sequencer.current_step++; //hopefully this will overflow from 15 to 0 - it does!
+		
+		if (sequencer.START) {
+			spi_data[1] = 1 << sequencer.current_step;// | sequencer.current_pattern.first_part[sequencer.current_inst];
+			spi_data[0] = (1 << sequencer.current_step) >> 8;// | (sequencer.current_pattern.first_part[sequencer.current_inst] >> 8);
+			
+		
+		//now load current step's drum data into corresponding spi_data bytes:
+		} else {
+		
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+			turn_on(STEP_1_LED);	
+			
+		}
 		
 		
-		//turn_on(STEP_1_LED);
 		
 
 	}

@@ -164,6 +164,7 @@ void live_hits(void) {
 void refresh(void) {
 	
 	read_switches();
+	check_start_stop_tap();
 	parse_switch_data();
 	live_hits();
 	update_mode();
@@ -226,6 +227,7 @@ int main(void)
 	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
 	DDRC |= (1<<SPI_CLK) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH);
 	DDRB |= (1<<SPI_EN);
+	//DDRB &= ~((1<<TAP) | (1<<START_STOP)); //set start/stop tap pins as inputs
 	
 	PORTE &= ~(1<<SPI_MOSI );
 	PORTC &= ~(1<<SPI_CLK | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH);
@@ -267,11 +269,11 @@ int main(void)
 	setup_internal_clock();
 	internal_clock.divider = 24; //24 ppqn
 	internal_clock.ppqn_counter = 1;
-	internal_clock.rate = 250; //use fixed rate to get clock working
+	internal_clock.rate = 120; //use fixed rate to get clock working
 	update_clock_rate(internal_clock.rate);
 	setup_adc();
 	
-	sequencer.START = 1;
+	sequencer.START = 0;
 	//update_tempo();
 	sei(); //enable global interrupts	
 	

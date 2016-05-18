@@ -7,8 +7,10 @@
 
 #include <stdio.h>
 #include <avr/io.h>
+#include "hardware.h"
 #include "switches.h"
 #include "spi.h"
+#include "sequencer.h"
 
 struct button button[NUM_BUTTONS] = {
 	
@@ -51,6 +53,9 @@ struct button button[NUM_BUTTONS] = {
 	
 	};
 	
+uint8_t current_start_stop_tap_state = 0;
+uint8_t previous_start_stop_tap_state = 0;	
+	
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
@@ -63,3 +68,18 @@ void parse_switch_data(void) {
 	
 	
 }	
+
+void check_start_stop_tap(void) {
+	
+	current_start_stop_tap_state = PINB;
+	current_start_stop_tap_state ^= previous_start_stop_tap_state;
+	previous_start_stop_tap_state ^= current_start_stop_tap_state;
+	current_start_stop_tap_state &= previous_start_stop_tap_state;
+	
+	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
+	if (!sequencer.START) {
+		sequencer.current_step = 0;
+	}
+
+	
+}

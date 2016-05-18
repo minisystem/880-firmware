@@ -16,6 +16,7 @@ struct clock {
 	
 	uint8_t divider;
 	uint8_t ppqn_counter;
+	uint8_t beat_counter:2; //counts quarter notes, may need to change it and handle it more when dealing with different time signatures
 	uint16_t rate; //output compare value for clock timer
 	uint16_t previous_rate;
 	

@@ -10,6 +10,9 @@
 #define TRIG PD5
 
 #define TEMPO_POT 0b00000110 //ADC6
+
+#define START_STOP		PB1
+#define TAP				PB2
 	
 //define SPI pins
 #define SPI_MOSI		PE3
