@@ -31,8 +31,9 @@ struct sequencer {
 	uint8_t START:1; //is sequencer running or not?
 	struct pattern current_pattern;
 	uint8_t current_step:4;
+	uint8_t current_pattern_num:4;
 	uint8_t current_measure;
-	uint8_t current_inst:4;
+	uint8_t current_inst:4; //this is index of drum_hit struct
 	
 	
 	};

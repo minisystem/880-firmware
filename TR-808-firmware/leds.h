@@ -81,6 +81,6 @@ void flash_once(uint8_t led_index);
 
 void toggle(uint8_t led_index);
 
-
+void turn_off_all_inst_leds(void);
 	
 #endif

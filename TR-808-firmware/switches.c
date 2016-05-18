@@ -11,6 +11,7 @@
 #include "switches.h"
 #include "spi.h"
 #include "sequencer.h"
+#include "drums.h"
 
 struct button button[NUM_BUTTONS] = {
 	
@@ -80,6 +81,22 @@ void check_start_stop_tap(void) {
 	if (!sequencer.START) {
 		sequencer.current_step = 0;
 	}
-
 	
 }
+	
+void check_inst_switches(void) {
+	
+	for (int i = INST_AC_1_SW; i <= INST_CH_12_SW; i++) {
+		
+		if (button[i].state) {
+			
+			button[i].state ^= button[i].state; //toggle state
+			turn_off_all_inst_leds();
+			turn_on(drum_hit[i - INST_AC_1_SW -1].led_index);
+			
+		}
+		
+	}
+}	
+
+	

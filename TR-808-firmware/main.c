@@ -165,10 +165,12 @@ void refresh(void) {
 	
 	read_switches();
 	check_start_stop_tap();
+	
 	parse_switch_data();
-	live_hits();
+	if (sequencer.mode == MANUAL_PLAY) live_hits();
 	update_mode();
 	update_step_board();
+	check_inst_switches();
 	
 	update_spi();
 	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
@@ -267,9 +269,9 @@ int main(void)
 	setup_midi_usart();
 	
 	setup_internal_clock();
-	internal_clock.divider = 24; //24 ppqn
+	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
 	internal_clock.ppqn_counter = 1;
-	internal_clock.rate = 120; //use fixed rate to get clock working
+	internal_clock.rate = 500; //use fixed rate to get clock working
 	update_clock_rate(internal_clock.rate);
 	setup_adc();
 	

@@ -73,6 +73,7 @@ extern uint8_t previous_start_stop_tap_state;
 void parse_switch_data(void);
 
 void check_start_stop_tap(void);
-	
+
+void check_inst_switches(void);	
 	
 #endif
