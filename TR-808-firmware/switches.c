@@ -86,16 +86,58 @@ void check_start_stop_tap(void) {
 	
 void check_inst_switches(void) {
 	
-	for (int i = INST_AC_1_SW; i <= INST_CH_12_SW; i++) {
+	for (int i = INST_BD_2_SW; i <= INST_CH_12_SW; i++) { //scan BD to CH
 		
 		if (button[i].state) {
 			
 			button[i].state ^= button[i].state; //toggle state
 			turn_off_all_inst_leds();
-			turn_on(drum_hit[i - INST_AC_1_SW -1].led_index);
+
 			
+			if(drum_hit[i - INST_BD_2_SW].switch_bit != 255) { // need to handle instrument toggle here
+				
+				
+				if (sequencer.current_inst == i - INST_BD_2_SW) {
+					//alternative drum hits are offset by 9 places in drum_hit array
+					turn_on(drum_hit[i-INST_BD_2_SW + 9].led_index);
+					sequencer.current_inst = i - INST_BD_2_SW + 9;
+					
+				} else {
+					
+					turn_on(drum_hit[i-INST_BD_2_SW].led_index);
+					sequencer.current_inst = i - INST_BD_2_SW;
+				}
+				
+				
+			} else {
+				
+				if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) {
+					
+					turn_on(drum_hit[MA].led_index);
+					sequencer.current_inst = MA;
+					
+				} else {
+					
+					turn_on(drum_hit[i - INST_BD_2_SW].led_index);
+					sequencer.current_inst = i - INST_BD_2_SW; //inst index starts with BD = 0
+				}
+				
+		
+				
+			}
+			
+
+						
+			//return; //could break out here and not bother scanning everything - means only one button press can be detected
 		}
 		
+	}
+	
+	if (button[INST_AC_1_SW].state) {
+		button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
+		turn_off_all_inst_leds();
+		turn_on(ACCENT_1_LED);
+		sequencer.current_inst = AC;
 	}
 }	
 

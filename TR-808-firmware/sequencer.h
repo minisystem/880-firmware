@@ -11,6 +11,7 @@
 #define SEQUENCER_H
 
 #include "mode.h"
+#include "drums.h"
 
 struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
@@ -33,7 +34,7 @@ struct sequencer {
 	uint8_t current_step:4;
 	uint8_t current_pattern_num:4;
 	uint8_t current_measure;
-	uint8_t current_inst:4; //this is index of drum_hit struct
+	enum drum current_inst; //this is index of drum_hit struct
 	
 	
 	};

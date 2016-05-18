@@ -21,7 +21,8 @@ enum drum { //index for drum hits
 	MC,
 	HC,
 	CL,
-	MA
+	MA,
+	AC
 	
 	
 };

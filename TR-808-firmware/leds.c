@@ -91,7 +91,7 @@ void flash_once(uint8_t led_index) { //need to think about how to flash LED for 
 	
 }
 
-void toggle(uint8_t led_index) {
+void toggle(uint8_t led_index) { //careful with this - state is not preserved when doing entire SPI byte manipulation (see  turn_off_all_inst_leds() for example)
 
 	//led[led_index].state ^= led[led_index].state;
 	//

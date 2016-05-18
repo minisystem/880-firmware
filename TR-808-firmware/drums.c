@@ -48,7 +48,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
 				
 			toggle(ACCENT_1_LED);	
 			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-				
+					
 		}
 			
 		if (velocity > 64) {

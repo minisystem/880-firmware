@@ -14,7 +14,7 @@ mode.d mode.o: .././mode.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  .././mode.h .././leds.h .././hardware.h .././switches.h .././sequencer.h \
- .././spi.h
+ .././drums.h .././spi.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
 
@@ -53,5 +53,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././switches.h:
 
 .././sequencer.h:
+
+.././drums.h:
 
 .././spi.h:
