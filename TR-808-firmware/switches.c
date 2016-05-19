@@ -111,7 +111,7 @@ void check_inst_switches(void) {
 				
 			} else {
 				
-				if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) {
+				if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
 					
 					turn_on(drum_hit[MA].led_index);
 					sequencer.current_inst = MA;

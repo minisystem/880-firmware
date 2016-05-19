@@ -43,6 +43,17 @@ static uint16_t current_tempo_adc = 0;
 	
 uint8_t step_number = 0;	
 
+void update_step_led_mask(void) {
+	
+	sequencer.step_led_mask = 0;
+	for (int i = 0; i < 16; i++) {
+		
+		sequencer.step_led_mask |= sequencer.current_pattern.first_part[i] & (1<<sequencer.current_inst);
+		
+	}
+	
+}
+
 void update_tempo() {
 	
 	int tempo_adc_change = 0;
@@ -64,23 +75,25 @@ void update_tempo() {
 
 void update_step_board() {
 	
-	if (sequencer.START) {
+	if (sequencer.START && (sequencer.mode == PATTERN_FIRST || sequencer.mode == PATTERN_SECOND)) {
 		
-		
+			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
+				
+				if (button[i].state) {
+					
+					toggle(i);
+					button[i].state ^= button[i].state;
+					sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
+					
+				}
+				
+			}
+		update_step_led_mask(); //eventually update only when there has been a change to pattern or to current selected instrument?		
 		
 		//spi_data[0] = 1 << sequencer.current_step;
 		//spi_data[1] = 1 << sequencer.current_inst)
 	}
-	for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
-		
-		if (button[i].state) {
-			
-			toggle(i);
-			button[i].state ^= button[i].state;
-			
-		}
-		
-	}
+
 
 	
 	//update_spi();

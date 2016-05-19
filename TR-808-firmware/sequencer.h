@@ -35,7 +35,7 @@ struct sequencer {
 	uint8_t current_pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
-	
+	uint16_t step_led_mask;
 	
 	};
 		
