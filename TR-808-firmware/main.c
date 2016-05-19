@@ -45,10 +45,10 @@ uint8_t step_number = 0;
 
 void update_step_led_mask(void) {
 	
-	sequencer.step_led_mask = 0;
+	sequencer.step_led_mask[sequencer.current_inst] = 0;
 	for (int i = 0; i < 16; i++) {
 		
-		sequencer.step_led_mask |= sequencer.current_pattern.first_part[i] & (1<<sequencer.current_inst);
+		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.current_pattern.first_part[i] & (1<<sequencer.current_inst);
 		
 	}
 	
@@ -85,11 +85,22 @@ void update_step_board() {
 					button[i].state ^= button[i].state;
 					sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
 					
+					if (sequencer.current_pattern.first_part[i] >> sequencer.current_inst) {
+						
+						sequencer.step_led_mask[sequencer.current_inst] |= 1<<i;
+						
+					} else {
+						
+						sequencer.step_led_mask[sequencer.current_inst] &= ~(1<<i);
+						
+					}
+					
 				}
 				
+				
 			}
-		update_step_led_mask(); //eventually update only when there has been a change to pattern or to current selected instrument?		
 		
+		//update_step_led_mask(); //eventually update only when there has been a change to pattern or to current selected instrument?		
 		//spi_data[0] = 1 << sequencer.current_step;
 		//spi_data[1] = 1 << sequencer.current_inst)
 	}
@@ -182,8 +193,9 @@ void refresh(void) {
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
 	update_mode();
-	update_step_board();
 	check_inst_switches();
+	update_step_board();
+	
 	
 	update_spi();
 	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
@@ -194,7 +206,7 @@ void refresh(void) {
 void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
 	
 
-	if (note < 16) { //TODO: implement MIDI learn functiont to dynamically map notes to drum hits
+	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits
 		
 		trigger_drum(note, velocity);
 	

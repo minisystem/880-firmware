@@ -92,7 +92,7 @@ void check_inst_switches(void) {
 			
 			button[i].state ^= button[i].state; //toggle state
 			turn_off_all_inst_leds();
-
+			
 			
 			if(drum_hit[i - INST_BD_2_SW].switch_bit != 255) { // need to handle instrument toggle here
 				
@@ -139,6 +139,7 @@ void check_inst_switches(void) {
 		turn_on(ACCENT_1_LED);
 		sequencer.current_inst = AC;
 	}
+	
 }	
 
 	
