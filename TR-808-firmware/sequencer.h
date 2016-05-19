@@ -32,10 +32,12 @@ struct sequencer {
 	uint8_t START:1; //is sequencer running or not?
 	struct pattern current_pattern;
 	uint8_t current_step:4;
+	uint8_t next_step_flag:1;
+	uint8_t trigger_finished:1;
 	uint8_t current_pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
-	uint16_t step_led_mask[16];
+	uint16_t step_led_mask[16]; //this may not need to be an array? implemented as array it is a useful shortcut though
 	
 	};
 		

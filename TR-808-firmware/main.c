@@ -85,15 +85,16 @@ void update_step_board() {
 					button[i].state ^= button[i].state;
 					sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
 					
-					if (sequencer.current_pattern.first_part[i] >> sequencer.current_inst) {
-						
-						sequencer.step_led_mask[sequencer.current_inst] |= 1<<i;
-						
-					} else {
-						
-						sequencer.step_led_mask[sequencer.current_inst] &= ~(1<<i);
-						
-					}
+					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;
+					//if (sequencer.current_pattern.first_part[i] >> sequencer.current_inst) {
+						//
+						//sequencer.step_led_mask[sequencer.current_inst] |= 1<<i;
+						//
+					//} else {
+						//
+						//sequencer.step_led_mask[sequencer.current_inst] &= ~(1<<i);
+						//
+					//}
 					
 				}
 				
@@ -195,9 +196,38 @@ void refresh(void) {
 	update_mode();
 	check_inst_switches();
 	update_step_board();
-	
-	
+	if (sequencer.next_step_flag) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
+
+		sequencer.next_step_flag = 0;
+		
+		if (sequencer.START) {
+			//while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initating next one
+			PORTD |= (1<<TRIG);
+			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.current_pattern.first_part[sequencer.current_inst];
+			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.first_part[sequencer.current_inst] >> 8);
+			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+			//trigger_step(); 
+			spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
+			TIMSK0 |= (1<<OCIE0A); //enable output compare match A
+			TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
+			sequencer.trigger_finished = 0;
+			
+		} else {
+			
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+			turn_on(STEP_1_LED);
+			
+		}		
+	}
+	if (sequencer.trigger_finished) {
+		
+		sequencer.trigger_finished = 0;
+		spi_data[8] = 0;
+	}
 	update_spi();
+	PORTD &= ~(1<<TRIG);
 	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
 	
 }
@@ -296,10 +326,10 @@ int main(void)
 	setup_internal_clock();
 	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
 	internal_clock.ppqn_counter = 1;
-	internal_clock.rate = 500; //use fixed rate to get clock working
+	internal_clock.rate = 400; //use fixed rate to get clock working
 	update_clock_rate(internal_clock.rate);
 	setup_adc();
-	
+	sequencer.trigger_finished = 1;
 	sequencer.START = 0;
 	//update_tempo();
 	sei(); //enable global interrupts	

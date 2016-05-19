@@ -62,5 +62,6 @@ extern uint8_t current_drum_hit; //global to hold current drum hit
 volatile uint8_t trigger_finished;
 
 void trigger_drum(uint8_t note, uint8_t velocity);
+void trigger_step(void);
 
 #endif
