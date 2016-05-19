@@ -12,6 +12,7 @@
 #include "spi.h"
 #include "sequencer.h"
 #include "drums.h"
+#include "clock.h"
 
 struct button button[NUM_BUTTONS] = {
 	
@@ -80,6 +81,11 @@ void check_start_stop_tap(void) {
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
 	if (!sequencer.START) {
 		sequencer.current_step = 0;
+		//sequencer.next_step_flag = 1;
+		//internal_clock.ppqn_counter = internal_clock.divider - 1;
+	} else {
+		
+		
 	}
 	
 }

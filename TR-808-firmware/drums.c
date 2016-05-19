@@ -76,17 +76,26 @@ void trigger_step(void) { //trigger all drums on current step
 	//
 	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
 	////spi_data[6]
-	//for (int i = BD; i <= MA; i++) {
-		//
-		//if ((sequencer.current_pattern.first_part[sequencer.current_step] >> i) &1) {
-			//
-			//trigger_drum(i, 0); //work out global and individual accents later
-		//}
-	//}
+	for (int i = BD; i <= MA; i++) {
+		
+		if ((sequencer.current_pattern.first_part[sequencer.current_step] >> i) &1) {
+			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
+			if (drum_hit[i].switch_bit != 255) {//need to set instrument switch
+						
+				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+						
+			}
+			
+		} else {
+			
+			spi_data[drum_hit[i].spi_byte_num] &= ~(drum_hit[i].trig_bit);
+			
+		}
+	}
 	
 	
 	//while(trigger_finished ==0);
-	spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
+	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
 	//PORTD |= 1<<TRIG;
 	//update_spi();
 	//PORTD &= ~(1<<TRIG);
