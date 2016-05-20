@@ -15,8 +15,9 @@
 
 struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
-	uint16_t first_part[16]; //use to light step LEDs and trigger drums?
+	uint16_t first_part[16]; 
 	uint16_t second_part[16];
+	uint8_t accent[16]; //this is a memory expensive way to store a single bit of accent data
 	uint8_t step_num:4; //1-16 (0-15)
 	uint8_t pre_scale:2; //1-4 (0-3)
 	
@@ -37,7 +38,7 @@ struct sequencer {
 	uint8_t current_pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
-	uint16_t step_led_mask[16]; //this may not need to be an array? implemented as array it is a useful shortcut though
+	uint16_t step_led_mask[17]; //this may not need to be an array? implemented as array it is a useful shortcut though
 	
 	};
 		

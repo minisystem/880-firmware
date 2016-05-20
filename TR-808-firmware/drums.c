@@ -36,7 +36,7 @@ struct drum_hit drum_hit[16] = {
 
 void trigger_drum(uint8_t note, uint8_t velocity) {
 	
-		while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
+		//while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
 		//could implement a trigger queue instead of waiting but this is really more of a concern from simultaneous drum hits coming from MIDI or live play. Sequencer triggers won't have this problem unless 
 		//individual accents are implemented for sequencer
 		current_drum_hit = note;
@@ -102,7 +102,11 @@ void trigger_step(void) { //trigger all drums on current step
 		}
 	}
 	
-	
+	//if (sequencer.current_pattern.accent[sequencer.current_step]) {
+		
+		//spi_data[8] |= (1<ACCENT);
+		
+	//}
 	//while(trigger_finished ==0);
 	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
 	//PORTD |= 1<<TRIG;

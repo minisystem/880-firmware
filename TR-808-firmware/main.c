@@ -77,40 +77,31 @@ void update_step_board() {
 	
 	if (sequencer.START && (sequencer.mode == PATTERN_FIRST || sequencer.mode == PATTERN_SECOND)) {
 		
-			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
+		if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 				
+			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
+							
 				if (button[i].state) {
-					
+								
 					toggle(i);
 					button[i].state ^= button[i].state;
-					sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
-					
-					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;
-					//if (sequencer.current_pattern.first_part[i] >> sequencer.current_inst) {
-						//
-						//sequencer.step_led_mask[sequencer.current_inst] |= 1<<i;
-						//
-					//} else {
-						//
-						//sequencer.step_led_mask[sequencer.current_inst] &= ~(1<<i);
-						//
-					//}
-					
+					sequencer.current_pattern.accent[i] ^= 1<<0; //just toggle first bit
+					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
 				}
-				
-				
 			}
-		
-		//update_step_led_mask(); //eventually update only when there has been a change to pattern or to current selected instrument?		
-		//spi_data[0] = 1 << sequencer.current_step;
-		//spi_data[1] = 1 << sequencer.current_inst)
+			return;		
+		}
+		for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
+				
+			if (button[i].state) {
+					
+				toggle(i);
+				button[i].state ^= button[i].state;
+				sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
+				sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;				
+			}			
+		}
 	}
-
-
-	
-	//update_spi();
-	
-	
 }
 
 void live_hits(void) {
@@ -200,14 +191,14 @@ void refresh(void) {
 		
 		if (sequencer.next_step_flag) {
 			sequencer.next_step_flag = 0;
-			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initating next one
+			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 			PORTD |= (1<<TRIG);
 			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.current_pattern.first_part[sequencer.current_inst];
 			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
 			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.first_part[sequencer.current_inst] >> 8);
 			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
-			//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
+			if (sequencer.current_pattern.accent[sequencer.current_step] &1) spi_data[8] |= 1<<ACCENT;
 			TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 			TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
 			sequencer.trigger_finished = 0;
@@ -229,8 +220,9 @@ void refresh(void) {
 	if (sequencer.trigger_finished) {
 		
 		//sequencer.trigger_finished = 0;
-		spi_data[8] = 0;
+		spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
 	}
+	
 	update_spi();
 	PORTD &= ~(1<<TRIG);
 	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
