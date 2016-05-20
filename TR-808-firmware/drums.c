@@ -70,12 +70,21 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
 		trigger_finished = 0;
 }
 
+void clear_all_trigs(void) {
+
+	spi_data[8] = 0;
+	spi_data[6] &= 0b11110000; //make these masks constants
+	spi_data[7] &= 0b11011111;	
+	
+}
+
 void trigger_step(void) { //trigger all drums on current step
 	
-	while(trigger_finished == 0);
+	//while(trigger_finished == 0);
 	//
 	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
 	////spi_data[6]
+	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((sequencer.current_pattern.first_part[sequencer.current_step] >> i) &1) {
@@ -86,9 +95,9 @@ void trigger_step(void) { //trigger all drums on current step
 						
 			}
 			
-		} else {
-			
-			spi_data[drum_hit[i].spi_byte_num] &= ~(drum_hit[i].trig_bit);
+		//} else { //need to handle switched drums here - this turns off drum secondary drum hit
+			//
+			//spi_data[drum_hit[i].spi_byte_num] &= ~(drum_hit[i].trig_bit);
 			
 		}
 	}

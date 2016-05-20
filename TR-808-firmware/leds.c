@@ -108,7 +108,7 @@ void toggle(uint8_t led_index) { //careful with this - state is not preserved wh
 	}
 }
 
-void turn_off_all_inst_leds(void) {
+void turn_off_all_inst_leds(void) { //TODO: make masks constants
 
 	spi_data[2] &= spi_data[2] & 0b00001111; //turn off AC, BD, SD, LT
 	spi_data[7] &= spi_data[7] & 0b00100000; // turn off MT, HT, RS, CP, MA, CB, CY

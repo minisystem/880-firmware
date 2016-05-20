@@ -63,5 +63,6 @@ volatile uint8_t trigger_finished;
 
 void trigger_drum(uint8_t note, uint8_t velocity);
 void trigger_step(void);
+void clear_all_trigs(void);
 
 #endif
