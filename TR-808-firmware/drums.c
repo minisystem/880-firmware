@@ -79,11 +79,7 @@ void clear_all_trigs(void) {
 }
 
 void trigger_step(void) { //trigger all drums on current step
-	
-	//while(trigger_finished == 0);
-	//
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
-	////spi_data[6]
+
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
 		
@@ -93,29 +89,7 @@ void trigger_step(void) { //trigger all drums on current step
 						
 				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 						
-			}
-			
-		//} else { //need to handle switched drums here - this turns off drum secondary drum hit
-			//
-			//spi_data[drum_hit[i].spi_byte_num] &= ~(drum_hit[i].trig_bit);
-			
+			}		
 		}
 	}
-	
-	//if (sequencer.current_pattern.accent[sequencer.current_step]) {
-		
-		//spi_data[8] |= (1<ACCENT);
-		
-	//}
-	//while(trigger_finished ==0);
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1;
-	//PORTD |= 1<<TRIG;
-	//update_spi();
-	//PORTD &= ~(1<<TRIG);
-	//now need to set up interrupt for roughly 1 ms.
-	//start timer
-	//TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-	//TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-	//trigger_finished = 0;
-	
 }

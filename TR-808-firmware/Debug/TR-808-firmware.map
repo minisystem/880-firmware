@@ -584,34 +584,34 @@ END GROUP
  .text.live_hits
                 0x00000604      0x10a main.o
                 0x00000604                live_hits
- .text.refresh  0x0000070e       0xfa main.o
+ .text.refresh  0x0000070e       0xf0 main.o
                 0x0000070e                refresh
  .text.setup_midi_usart
-                0x00000808       0x12 main.o
-                0x00000808                setup_midi_usart
+                0x000007fe       0x12 main.o
+                0x000007fe                setup_midi_usart
  .text.__vector_18
-                0x0000081a       0x6a main.o
-                0x0000081a                __vector_18
- .text.main     0x00000884       0xc0 main.o
-                0x00000884                main
+                0x00000810       0x6a main.o
+                0x00000810                __vector_18
+ .text.main     0x0000087a       0xc0 main.o
+                0x0000087a                main
  .text.update_mode
-                0x00000944       0x72 mode.o
-                0x00000944                update_mode
+                0x0000093a       0x72 mode.o
+                0x0000093a                update_mode
  .text.spi_shift_byte
-                0x000009b6       0x14 spi.o
-                0x000009b6                spi_shift_byte
+                0x000009ac       0x14 spi.o
+                0x000009ac                spi_shift_byte
  .text.update_spi
-                0x000009ca       0x48 spi.o
-                0x000009ca                update_spi
+                0x000009c0       0x48 spi.o
+                0x000009c0                update_spi
  .text.read_switches
-                0x00000a12       0x92 spi.o
-                0x00000a12                read_switches
+                0x00000a08       0x92 spi.o
+                0x00000a08                read_switches
  .text.parse_switch_data
-                0x00000aa4       0x4e switches.o
-                0x00000aa4                parse_switch_data
+                0x00000a9a       0x4e switches.o
+                0x00000a9a                parse_switch_data
  .text.check_start_stop_tap
-                0x00000af2       0x3a switches.o
-                0x00000af2                check_start_stop_tap
+                0x00000ae8       0x44 switches.o
+                0x00000ae8                check_start_stop_tap
  .text.check_inst_switches
                 0x00000b2c      0x14a switches.o
                 0x00000b2c                check_inst_switches
@@ -885,41 +885,41 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x467f
+.debug_info     0x00000000     0x46f2
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0xae adc.o
  .debug_info    0x000000ae      0x14b clock.o
  .debug_info    0x000001f9      0x402 drums.o
  .debug_info    0x000005fb      0x324 interrupts.o
  .debug_info    0x0000091f      0x1fa leds.o
- .debug_info    0x00000b19      0xd4c main.o
- .debug_info    0x00001865      0x37f mode.o
- .debug_info    0x00001be4      0x278 sequencer.o
- .debug_info    0x00001e5c      0x3f7 spi.o
- .debug_info    0x00002253      0x4bd switches.o
- .debug_info    0x00002710      0x2ba xnormidi-develop/bytequeue/bytequeue.o
- .debug_info    0x000029ca       0xc8 xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_info    0x00002a92     0x11ac xnormidi-develop/midi.o
- .debug_info    0x00003c3e      0xa41 xnormidi-develop/midi_device.o
+ .debug_info    0x00000b19      0xd4a main.o
+ .debug_info    0x00001863      0x37f mode.o
+ .debug_info    0x00001be2      0x278 sequencer.o
+ .debug_info    0x00001e5a      0x3f7 spi.o
+ .debug_info    0x00002251      0x532 switches.o
+ .debug_info    0x00002783      0x2ba xnormidi-develop/bytequeue/bytequeue.o
+ .debug_info    0x00002a3d       0xc8 xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_info    0x00002b05     0x11ac xnormidi-develop/midi.o
+ .debug_info    0x00003cb1      0xa41 xnormidi-develop/midi_device.o
 
-.debug_abbrev   0x00000000     0x1269
+.debug_abbrev   0x00000000     0x1237
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x69 adc.o
  .debug_abbrev  0x00000069       0xbe clock.o
  .debug_abbrev  0x00000127      0x187 drums.o
  .debug_abbrev  0x000002ae       0xf5 interrupts.o
  .debug_abbrev  0x000003a3      0x144 leds.o
- .debug_abbrev  0x000004e7      0x2c5 main.o
- .debug_abbrev  0x000007ac      0x10d mode.o
- .debug_abbrev  0x000008b9       0xc6 sequencer.o
- .debug_abbrev  0x0000097f      0x151 spi.o
- .debug_abbrev  0x00000ad0      0x1a4 switches.o
- .debug_abbrev  0x00000c74      0x16f xnormidi-develop/bytequeue/bytequeue.o
- .debug_abbrev  0x00000de3       0x8b xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_abbrev  0x00000e6e      0x1f6 xnormidi-develop/midi.o
- .debug_abbrev  0x00001064      0x205 xnormidi-develop/midi_device.o
+ .debug_abbrev  0x000004e7      0x29c main.o
+ .debug_abbrev  0x00000783      0x10d mode.o
+ .debug_abbrev  0x00000890       0xc6 sequencer.o
+ .debug_abbrev  0x00000956      0x151 spi.o
+ .debug_abbrev  0x00000aa7      0x19b switches.o
+ .debug_abbrev  0x00000c42      0x16f xnormidi-develop/bytequeue/bytequeue.o
+ .debug_abbrev  0x00000db1       0x8b xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_abbrev  0x00000e3c      0x1f6 xnormidi-develop/midi.o
+ .debug_abbrev  0x00001032      0x205 xnormidi-develop/midi_device.o
 
-.debug_line     0x00000000     0x1389
+.debug_line     0x00000000     0x139e
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0xba adc.o
  .debug_line    0x000000ba       0xbf clock.o
@@ -930,11 +930,11 @@ END GROUP
  .debug_line    0x0000076b       0xec mode.o
  .debug_line    0x00000857       0xb4 sequencer.o
  .debug_line    0x0000090b      0x10c spi.o
- .debug_line    0x00000a17      0x150 switches.o
- .debug_line    0x00000b67      0x132 xnormidi-develop/bytequeue/bytequeue.o
- .debug_line    0x00000c99       0xea xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_line    0x00000d83      0x3db xnormidi-develop/midi.o
- .debug_line    0x0000115e      0x22b xnormidi-develop/midi_device.o
+ .debug_line    0x00000a17      0x165 switches.o
+ .debug_line    0x00000b7c      0x132 xnormidi-develop/bytequeue/bytequeue.o
+ .debug_line    0x00000cae       0xea xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_line    0x00000d98      0x3db xnormidi-develop/midi.o
+ .debug_line    0x00001173      0x22b xnormidi-develop/midi_device.o
 
 .debug_frame    0x00000000      0x9b4
  *(.debug_frame)
@@ -952,7 +952,7 @@ END GROUP
  .debug_frame   0x00000508      0x380 xnormidi-develop/midi.o
  .debug_frame   0x00000888      0x12c xnormidi-develop/midi_device.o
 
-.debug_str      0x00000000      0xfab
+.debug_str      0x00000000      0xfb7
  *(.debug_str)
  .debug_str     0x00000000      0x151 adc.o
                                 0x18a (size before relaxing)
@@ -972,15 +972,15 @@ END GROUP
                                 0x2b3 (size before relaxing)
  .debug_str     0x00000956       0x59 spi.o
                                 0x322 (size before relaxing)
- .debug_str     0x000009af       0x59 switches.o
-                                0x3e9 (size before relaxing)
- .debug_str     0x00000a08       0xed xnormidi-develop/bytequeue/bytequeue.o
+ .debug_str     0x000009af       0x65 switches.o
+                                0x43f (size before relaxing)
+ .debug_str     0x00000a14       0xed xnormidi-develop/bytequeue/bytequeue.o
                                 0x288 (size before relaxing)
- .debug_str     0x00000af5       0x37 xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_str     0x00000b01       0x37 xnormidi-develop/bytequeue/interrupt_setting.o
                                 0x1df (size before relaxing)
- .debug_str     0x00000b2c      0x3d8 xnormidi-develop/midi.o
+ .debug_str     0x00000b38      0x3d8 xnormidi-develop/midi.o
                                 0x8d2 (size before relaxing)
- .debug_str     0x00000f04       0xa7 xnormidi-develop/midi_device.o
+ .debug_str     0x00000f10       0xa7 xnormidi-develop/midi_device.o
                                 0x628 (size before relaxing)
 
 .debug_loc      0x00000000     0x1e3a

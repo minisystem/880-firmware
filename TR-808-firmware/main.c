@@ -29,16 +29,6 @@ MidiDevice midi_device;
 
 static uint16_t new_tempo_adc = 0;
 static uint16_t current_tempo_adc = 0;
-//struct step {
-	//
-	//struct button *button;
-	//struct led *led;
-	//
-	//};	
-	//
-//struct step step[16];	
-//
-//step[0].button = &button[STEP_1_SW];
 
 	
 uint8_t step_number = 0;	
@@ -217,10 +207,11 @@ void refresh(void) {
 		
 	}
 	
-	if (sequencer.trigger_finished) {
+	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds
 		
 		//sequencer.trigger_finished = 0;
-		spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
+		//clear_all_trigs();
+		//spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
 	}
 	
 	update_spi();

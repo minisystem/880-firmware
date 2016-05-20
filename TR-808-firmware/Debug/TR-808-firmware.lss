@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 000003f8  00000000  00000000  000015a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   0000467f  00000000  00000000  000019a0  2**0
+  6 .debug_info   000046f2  00000000  00000000  000019a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00001269  00000000  00000000  0000601f  2**0
+  7 .debug_abbrev 00001237  00000000  00000000  00006092  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00001389  00000000  00000000  00007288  2**0
+  8 .debug_line   0000139e  00000000  00000000  000072c9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000009b4  00000000  00000000  00008614  2**2
+  9 .debug_frame  000009b4  00000000  00000000  00008668  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000fab  00000000  00000000  00008fc8  2**0
+ 10 .debug_str    00000fb7  00000000  00000000  0000901c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001e3a  00000000  00000000  00009f73  2**0
+ 11 .debug_loc    00001e3a  00000000  00000000  00009fd3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000310  00000000  00000000  0000bdad  2**0
+ 12 .debug_ranges 00000310  00000000  00000000  0000be0d  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -51,7 +51,7 @@ Disassembly of section .text:
       3c:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       40:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       44:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
-      48:	0c 94 0d 04 	jmp	0x81a	; 0x81a <__vector_18>
+      48:	0c 94 08 04 	jmp	0x810	; 0x810 <__vector_18>
       4c:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       50:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       54:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
@@ -128,7 +128,7 @@ Disassembly of section .text:
       fe:	a4 3e       	cpi	r26, 0xE4	; 228
      100:	b2 07       	cpc	r27, r18
      102:	e1 f7       	brne	.-8      	; 0xfc <.do_clear_bss_loop>
-     104:	0e 94 42 04 	call	0x884	; 0x884 <main>
+     104:	0e 94 3d 04 	call	0x87a	; 0x87a <main>
      108:	0c 94 a7 09 	jmp	0x134e	; 0x134e <_exit>
 
 0000010c <__bad_interrupt>:
@@ -304,7 +304,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
      1fe:	5d 9a       	sbi	0x0b, 5	; 11
 			
 		update_spi();
-     200:	0e 94 e5 04 	call	0x9ca	; 0x9ca <update_spi>
+     200:	0e 94 e0 04 	call	0x9c0	; 0x9c0 <update_spi>
 			
 		PORTD &= ~(1<<TRIG);
      204:	5d 98       	cbi	0x0b, 5	; 11
@@ -355,11 +355,7 @@ void clear_all_trigs(void) {
 void trigger_step(void) { //trigger all drums on current step
      236:	cf 93       	push	r28
      238:	df 93       	push	r29
-	
-	//while(trigger_finished == 0);
-	//
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
-	////spi_data[6]
+
 	clear_all_trigs();
      23a:	0e 94 11 01 	call	0x222	; 0x222 <clear_all_trigs>
 	for (int i = BD; i <= MA; i++) {
@@ -376,10 +372,10 @@ void trigger_step(void) { //trigger all drums on current step
      250:	51 81       	ldd	r21, Z+1	; 0x01
      252:	c3 e0       	ldi	r28, 0x03	; 3
      254:	d1 e0       	ldi	r29, 0x01	; 1
-	//while(trigger_finished == 0);
-	//
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
-	////spi_data[6]
+}
+
+void trigger_step(void) { //trigger all drums on current step
+
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
      256:	80 e0       	ldi	r24, 0x00	; 0
@@ -392,8 +388,8 @@ void trigger_step(void) { //trigger all drums on current step
 				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
      25a:	6e e5       	ldi	r22, 0x5E	; 94
      25c:	72 e0       	ldi	r23, 0x02	; 2
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
-	////spi_data[6]
+void trigger_step(void) { //trigger all drums on current step
+
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
 		
@@ -461,10 +457,10 @@ void trigger_step(void) { //trigger all drums on current step
      2ce:	2a 27       	eor	r18, r26
      2d0:	fb 01       	movw	r30, r22
      2d2:	23 83       	std	Z+3, r18	; 0x03
-	//while(trigger_finished == 0);
-	//
-	//spi_data[8] = sequencer.current_pattern.first_part[sequencer.current_step] << 1 //left shift by 1 bit because AC is handled separately - may want to eventually integrate accent into drum_hit array
-	////spi_data[6]
+}
+
+void trigger_step(void) { //trigger all drums on current step
+
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
      2d4:	01 96       	adiw	r24, 0x01	; 1
@@ -473,11 +469,11 @@ void trigger_step(void) { //trigger all drums on current step
      2da:	91 05       	cpc	r25, r1
      2dc:	09 f0       	breq	.+2      	; 0x2e0 <trigger_step+0xaa>
      2de:	bf cf       	rjmp	.-130    	; 0x25e <trigger_step+0x28>
-	//start timer
-	//TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-	//TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-	//trigger_finished = 0;
-	
+				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+						
+			}		
+		}
+	}
      2e0:	df 91       	pop	r29
      2e2:	cf 91       	pop	r28
      2e4:	08 95       	ret
@@ -1244,19 +1240,19 @@ void refresh(void) {
      710:	df 93       	push	r29
 	
 	read_switches();
-     712:	0e 94 09 05 	call	0xa12	; 0xa12 <read_switches>
+     712:	0e 94 04 05 	call	0xa08	; 0xa08 <read_switches>
 	check_start_stop_tap();
-     716:	0e 94 79 05 	call	0xaf2	; 0xaf2 <check_start_stop_tap>
+     716:	0e 94 74 05 	call	0xae8	; 0xae8 <check_start_stop_tap>
 	
 	parse_switch_data();
-     71a:	0e 94 52 05 	call	0xaa4	; 0xaa4 <parse_switch_data>
+     71a:	0e 94 4d 05 	call	0xa9a	; 0xa9a <parse_switch_data>
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
      71e:	80 91 6b 03 	lds	r24, 0x036B
      722:	83 30       	cpi	r24, 0x03	; 3
      724:	11 f4       	brne	.+4      	; 0x72a <refresh+0x1c>
      726:	0e 94 02 03 	call	0x604	; 0x604 <live_hits>
 	update_mode();
-     72a:	0e 94 a2 04 	call	0x944	; 0x944 <update_mode>
+     72a:	0e 94 9d 04 	call	0x93a	; 0x93a <update_mode>
 	check_inst_switches();
      72e:	0e 94 96 05 	call	0xb2c	; 0xb2c <check_inst_switches>
 	update_step_board();
@@ -1389,630 +1385,631 @@ void refresh(void) {
 			turn_on(STEP_1_LED);
      7ec:	80 e0       	ldi	r24, 0x00	; 0
      7ee:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
-		
-	}
-	
-	if (sequencer.trigger_finished) {
-     7f2:	80 91 be 03 	lds	r24, 0x03BE
-     7f6:	85 fd       	sbrc	r24, 5
-		
 		//sequencer.trigger_finished = 0;
-		spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
-     7f8:	10 92 66 02 	sts	0x0266, r1
+		//clear_all_trigs();
+		//spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
 	}
 	
 	update_spi();
-     7fc:	0e 94 e5 04 	call	0x9ca	; 0x9ca <update_spi>
+     7f2:	0e 94 e0 04 	call	0x9c0	; 0x9c0 <update_spi>
 	PORTD &= ~(1<<TRIG);
-     800:	5d 98       	cbi	0x0b, 5	; 11
+     7f6:	5d 98       	cbi	0x0b, 5	; 11
 	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
 	
 }
-     802:	df 91       	pop	r29
-     804:	cf 91       	pop	r28
-     806:	08 95       	ret
+     7f8:	df 91       	pop	r29
+     7fa:	cf 91       	pop	r28
+     7fc:	08 95       	ret
 
-00000808 <setup_midi_usart>:
+000007fe <setup_midi_usart>:
 
 void setup_midi_usart(void)
 {
 	uint16_t ubbr_value = 31; //16MHz/(16*31250 BAUD) - 1
 	//write ubbr_value to H and L UBBR1 registers:
 	UBRR0L = (unsigned char) ubbr_value;
-     808:	8f e1       	ldi	r24, 0x1F	; 31
-     80a:	80 93 c4 00 	sts	0x00C4, r24
+     7fe:	8f e1       	ldi	r24, 0x1F	; 31
+     800:	80 93 c4 00 	sts	0x00C4, r24
 	UBRR0H = (unsigned char) (ubbr_value >> 8);
-     80e:	10 92 c5 00 	sts	0x00C5, r1
+     804:	10 92 c5 00 	sts	0x00C5, r1
 	
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0) | (1<<RXCIE0);
-     812:	88 e9       	ldi	r24, 0x98	; 152
-     814:	80 93 c1 00 	sts	0x00C1, r24
-     818:	08 95       	ret
+     808:	88 e9       	ldi	r24, 0x98	; 152
+     80a:	80 93 c1 00 	sts	0x00C1, r24
+     80e:	08 95       	ret
 
-0000081a <__vector_18>:
+00000810 <__vector_18>:
 	//UCSR0C |= (0<<UMSEL0)|(0<<UMSEL01)|(0<<UPM01)|(0<<UPM00)|(0<<USBS0)|(0<<UCSZ02)|(1<<UCSZ01)|(1<<UCSZ00);
 }
 
 
 
 ISR (USART0_RX_vect) { // USART receive interrupt
-     81a:	1f 92       	push	r1
-     81c:	0f 92       	push	r0
-     81e:	0f b6       	in	r0, 0x3f	; 63
-     820:	0f 92       	push	r0
-     822:	11 24       	eor	r1, r1
-     824:	2f 93       	push	r18
-     826:	3f 93       	push	r19
-     828:	4f 93       	push	r20
-     82a:	5f 93       	push	r21
-     82c:	6f 93       	push	r22
-     82e:	7f 93       	push	r23
-     830:	8f 93       	push	r24
-     832:	9f 93       	push	r25
-     834:	af 93       	push	r26
-     836:	bf 93       	push	r27
-     838:	ef 93       	push	r30
-     83a:	ff 93       	push	r31
-     83c:	cf 93       	push	r28
-     83e:	df 93       	push	r29
-     840:	1f 92       	push	r1
-     842:	cd b7       	in	r28, 0x3d	; 61
-     844:	de b7       	in	r29, 0x3e	; 62
+     810:	1f 92       	push	r1
+     812:	0f 92       	push	r0
+     814:	0f b6       	in	r0, 0x3f	; 63
+     816:	0f 92       	push	r0
+     818:	11 24       	eor	r1, r1
+     81a:	2f 93       	push	r18
+     81c:	3f 93       	push	r19
+     81e:	4f 93       	push	r20
+     820:	5f 93       	push	r21
+     822:	6f 93       	push	r22
+     824:	7f 93       	push	r23
+     826:	8f 93       	push	r24
+     828:	9f 93       	push	r25
+     82a:	af 93       	push	r26
+     82c:	bf 93       	push	r27
+     82e:	ef 93       	push	r30
+     830:	ff 93       	push	r31
+     832:	cf 93       	push	r28
+     834:	df 93       	push	r29
+     836:	1f 92       	push	r1
+     838:	cd b7       	in	r28, 0x3d	; 61
+     83a:	de b7       	in	r29, 0x3e	; 62
 	//PORTB ^= (1<<ARP_SYNC_LED); //toggle arp VCO_SYNC_LATCH_BIT LED
 	uint8_t inByte = UDR0;
-     846:	80 91 c6 00 	lds	r24, 0x00C6
-     84a:	89 83       	std	Y+1, r24	; 0x01
+     83c:	80 91 c6 00 	lds	r24, 0x00C6
+     840:	89 83       	std	Y+1, r24	; 0x01
 	midi_device_input(&midi_device, 1, &inByte);
-     84c:	ae 01       	movw	r20, r28
-     84e:	4f 5f       	subi	r20, 0xFF	; 255
-     850:	5f 4f       	sbci	r21, 0xFF	; 255
-     852:	61 e0       	ldi	r22, 0x01	; 1
-     854:	8e e7       	ldi	r24, 0x7E	; 126
-     856:	92 e0       	ldi	r25, 0x02	; 2
-     858:	0e 94 3a 07 	call	0xe74	; 0xe74 <midi_device_input>
+     842:	ae 01       	movw	r20, r28
+     844:	4f 5f       	subi	r20, 0xFF	; 255
+     846:	5f 4f       	sbci	r21, 0xFF	; 255
+     848:	61 e0       	ldi	r22, 0x01	; 1
+     84a:	8e e7       	ldi	r24, 0x7E	; 126
+     84c:	92 e0       	ldi	r25, 0x02	; 2
+     84e:	0e 94 3a 07 	call	0xe74	; 0xe74 <midi_device_input>
 	//calling a function in an interrupt is inefficient according to AVR C guidelines
 	// so this function should maybe be inlined in main loop if inByte is made volatile
 	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
 }
-     85c:	0f 90       	pop	r0
-     85e:	df 91       	pop	r29
-     860:	cf 91       	pop	r28
-     862:	ff 91       	pop	r31
-     864:	ef 91       	pop	r30
-     866:	bf 91       	pop	r27
-     868:	af 91       	pop	r26
-     86a:	9f 91       	pop	r25
-     86c:	8f 91       	pop	r24
-     86e:	7f 91       	pop	r23
-     870:	6f 91       	pop	r22
-     872:	5f 91       	pop	r21
-     874:	4f 91       	pop	r20
-     876:	3f 91       	pop	r19
-     878:	2f 91       	pop	r18
-     87a:	0f 90       	pop	r0
-     87c:	0f be       	out	0x3f, r0	; 63
-     87e:	0f 90       	pop	r0
-     880:	1f 90       	pop	r1
-     882:	18 95       	reti
+     852:	0f 90       	pop	r0
+     854:	df 91       	pop	r29
+     856:	cf 91       	pop	r28
+     858:	ff 91       	pop	r31
+     85a:	ef 91       	pop	r30
+     85c:	bf 91       	pop	r27
+     85e:	af 91       	pop	r26
+     860:	9f 91       	pop	r25
+     862:	8f 91       	pop	r24
+     864:	7f 91       	pop	r23
+     866:	6f 91       	pop	r22
+     868:	5f 91       	pop	r21
+     86a:	4f 91       	pop	r20
+     86c:	3f 91       	pop	r19
+     86e:	2f 91       	pop	r18
+     870:	0f 90       	pop	r0
+     872:	0f be       	out	0x3f, r0	; 63
+     874:	0f 90       	pop	r0
+     876:	1f 90       	pop	r1
+     878:	18 95       	reti
 
-00000884 <main>:
+0000087a <main>:
 int main(void)
 {
 	
 	
 	
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
-     884:	55 9a       	sbi	0x0a, 5	; 10
+     87a:	55 9a       	sbi	0x0a, 5	; 10
 	
 	//setup SPI
 	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
-     886:	8d b1       	in	r24, 0x0d	; 13
-     888:	8c 60       	ori	r24, 0x0C	; 12
-     88a:	8d b9       	out	0x0d, r24	; 13
+     87c:	8d b1       	in	r24, 0x0d	; 13
+     87e:	8c 60       	ori	r24, 0x0C	; 12
+     880:	8d b9       	out	0x0d, r24	; 13
 	DDRC |= (1<<SPI_CLK) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH);
-     88c:	87 b1       	in	r24, 0x07	; 7
-     88e:	8e 60       	ori	r24, 0x0E	; 14
-     890:	87 b9       	out	0x07, r24	; 7
+     882:	87 b1       	in	r24, 0x07	; 7
+     884:	8e 60       	ori	r24, 0x0E	; 14
+     886:	87 b9       	out	0x07, r24	; 7
 	DDRB |= (1<<SPI_EN);
-     892:	20 9a       	sbi	0x04, 0	; 4
+     888:	20 9a       	sbi	0x04, 0	; 4
 	//DDRB &= ~((1<<TAP) | (1<<START_STOP)); //set start/stop tap pins as inputs
 	
 	PORTE &= ~(1<<SPI_MOSI );
-     894:	73 98       	cbi	0x0e, 3	; 14
+     88a:	73 98       	cbi	0x0e, 3	; 14
 	PORTC &= ~(1<<SPI_CLK | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH);
-     896:	88 b1       	in	r24, 0x08	; 8
-     898:	81 7f       	andi	r24, 0xF1	; 241
-     89a:	88 b9       	out	0x08, r24	; 8
+     88c:	88 b1       	in	r24, 0x08	; 8
+     88e:	81 7f       	andi	r24, 0xF1	; 241
+     890:	88 b9       	out	0x08, r24	; 8
 	PORTB &= ~(1<<SPI_EN); //active low
-     89c:	28 98       	cbi	0x05, 0	; 5
+     892:	28 98       	cbi	0x05, 0	; 5
 	
 	PORTC |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
-     89e:	43 9a       	sbi	0x08, 3	; 8
+     894:	43 9a       	sbi	0x08, 3	; 8
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
-     8a0:	80 e5       	ldi	r24, 0x50	; 80
-     8a2:	80 93 ac 00 	sts	0x00AC, r24
+     896:	80 e5       	ldi	r24, 0x50	; 80
+     898:	80 93 ac 00 	sts	0x00AC, r24
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
-     8a6:	ed ea       	ldi	r30, 0xAD	; 173
-     8a8:	f0 e0       	ldi	r31, 0x00	; 0
-     8aa:	80 81       	ld	r24, Z
-     8ac:	81 60       	ori	r24, 0x01	; 1
-     8ae:	80 83       	st	Z, r24
+     89c:	ed ea       	ldi	r30, 0xAD	; 173
+     89e:	f0 e0       	ldi	r31, 0x00	; 0
+     8a0:	80 81       	ld	r24, Z
+     8a2:	81 60       	ori	r24, 0x01	; 1
+     8a4:	80 83       	st	Z, r24
 	
 	
 	
 	turn_on(STEP_1_LED);
-     8b0:	80 e0       	ldi	r24, 0x00	; 0
-     8b2:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
+     8a6:	80 e0       	ldi	r24, 0x00	; 0
+     8a8:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
 	turn_on(MODE_2_PATTERN_FIRST_PART);
-     8b6:	8d e1       	ldi	r24, 0x1D	; 29
-     8b8:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
+     8ac:	8d e1       	ldi	r24, 0x1D	; 29
+     8ae:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
 	turn_on(FILL_MANUAL);
-     8bc:	82 e2       	ldi	r24, 0x22	; 34
-     8be:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
+     8b2:	82 e2       	ldi	r24, 0x22	; 34
+     8b4:	0e 94 e9 01 	call	0x3d2	; 0x3d2 <turn_on>
 	
 	update_spi();
-     8c2:	0e 94 e5 04 	call	0x9ca	; 0x9ca <update_spi>
+     8b8:	0e 94 e0 04 	call	0x9c0	; 0x9c0 <update_spi>
 	
 	
 	//setup Timer0 for drum triggering interrupt
 	
 	TCCR0A |= (1<<WGM01); //clear on compare match A
-     8c6:	84 b5       	in	r24, 0x24	; 36
-     8c8:	82 60       	ori	r24, 0x02	; 2
-     8ca:	84 bd       	out	0x24, r24	; 36
+     8bc:	84 b5       	in	r24, 0x24	; 36
+     8be:	82 60       	ori	r24, 0x02	; 2
+     8c0:	84 bd       	out	0x24, r24	; 36
 	OCR0A = 225; //gives period of about 0.9ms
-     8cc:	81 ee       	ldi	r24, 0xE1	; 225
-     8ce:	87 bd       	out	0x27, r24	; 39
+     8c2:	81 ee       	ldi	r24, 0xE1	; 225
+     8c4:	87 bd       	out	0x27, r24	; 39
 	
 	
 	
 	//setup MIDI
 	//initialize MIDI device
 	midi_device_init(&midi_device);
-     8d0:	8e e7       	ldi	r24, 0x7E	; 126
-     8d2:	92 e0       	ldi	r25, 0x02	; 2
-     8d4:	0e 94 09 07 	call	0xe12	; 0xe12 <midi_device_init>
+     8c6:	8e e7       	ldi	r24, 0x7E	; 126
+     8c8:	92 e0       	ldi	r25, 0x02	; 2
+     8ca:	0e 94 09 07 	call	0xe12	; 0xe12 <midi_device_init>
 	//register callbacks
 	midi_register_noteon_callback(&midi_device, note_on_event);
-     8d8:	6a e4       	ldi	r22, 0x4A	; 74
-     8da:	72 e0       	ldi	r23, 0x02	; 2
-     8dc:	8e e7       	ldi	r24, 0x7E	; 126
-     8de:	92 e0       	ldi	r25, 0x02	; 2
-     8e0:	0e 94 fd 06 	call	0xdfa	; 0xdfa <midi_register_noteon_callback>
+     8ce:	6a e4       	ldi	r22, 0x4A	; 74
+     8d0:	72 e0       	ldi	r23, 0x02	; 2
+     8d2:	8e e7       	ldi	r24, 0x7E	; 126
+     8d4:	92 e0       	ldi	r25, 0x02	; 2
+     8d6:	0e 94 fd 06 	call	0xdfa	; 0xdfa <midi_register_noteon_callback>
 	midi_register_noteoff_callback(&midi_device, note_off_event);
-     8e4:	68 e4       	ldi	r22, 0x48	; 72
-     8e6:	72 e0       	ldi	r23, 0x02	; 2
-     8e8:	8e e7       	ldi	r24, 0x7E	; 126
-     8ea:	92 e0       	ldi	r25, 0x02	; 2
-     8ec:	0e 94 01 07 	call	0xe02	; 0xe02 <midi_register_noteoff_callback>
+     8da:	68 e4       	ldi	r22, 0x48	; 72
+     8dc:	72 e0       	ldi	r23, 0x02	; 2
+     8de:	8e e7       	ldi	r24, 0x7E	; 126
+     8e0:	92 e0       	ldi	r25, 0x02	; 2
+     8e2:	0e 94 01 07 	call	0xe02	; 0xe02 <midi_register_noteoff_callback>
 	midi_register_realtime_callback(&midi_device, real_time_event);
-     8f0:	69 e4       	ldi	r22, 0x49	; 73
-     8f2:	72 e0       	ldi	r23, 0x02	; 2
-     8f4:	8e e7       	ldi	r24, 0x7E	; 126
-     8f6:	92 e0       	ldi	r25, 0x02	; 2
-     8f8:	0e 94 05 07 	call	0xe0a	; 0xe0a <midi_register_realtime_callback>
+     8e6:	69 e4       	ldi	r22, 0x49	; 73
+     8e8:	72 e0       	ldi	r23, 0x02	; 2
+     8ea:	8e e7       	ldi	r24, 0x7E	; 126
+     8ec:	92 e0       	ldi	r25, 0x02	; 2
+     8ee:	0e 94 05 07 	call	0xe0a	; 0xe0a <midi_register_realtime_callback>
 	//midi_register_songposition_callback(&midi_device, song_position_event);
 	//setup MIDI USART
 	setup_midi_usart();
-     8fc:	0e 94 04 04 	call	0x808	; 0x808 <setup_midi_usart>
+     8f2:	0e 94 ff 03 	call	0x7fe	; 0x7fe <setup_midi_usart>
 	
 	setup_internal_clock();
-     900:	0e 94 9b 00 	call	0x136	; 0x136 <setup_internal_clock>
+     8f6:	0e 94 9b 00 	call	0x136	; 0x136 <setup_internal_clock>
 	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
-     904:	e9 e6       	ldi	r30, 0x69	; 105
-     906:	f2 e0       	ldi	r31, 0x02	; 2
-     908:	86 e0       	ldi	r24, 0x06	; 6
-     90a:	80 83       	st	Z, r24
+     8fa:	e9 e6       	ldi	r30, 0x69	; 105
+     8fc:	f2 e0       	ldi	r31, 0x02	; 2
+     8fe:	86 e0       	ldi	r24, 0x06	; 6
+     900:	80 83       	st	Z, r24
 	internal_clock.ppqn_counter = 1;
-     90c:	81 e0       	ldi	r24, 0x01	; 1
-     90e:	81 83       	std	Z+1, r24	; 0x01
+     902:	81 e0       	ldi	r24, 0x01	; 1
+     904:	81 83       	std	Z+1, r24	; 0x01
 	internal_clock.rate = 400; //use fixed rate to get clock working
-     910:	80 e9       	ldi	r24, 0x90	; 144
-     912:	91 e0       	ldi	r25, 0x01	; 1
-     914:	94 83       	std	Z+4, r25	; 0x04
-     916:	83 83       	std	Z+3, r24	; 0x03
+     906:	80 e9       	ldi	r24, 0x90	; 144
+     908:	91 e0       	ldi	r25, 0x01	; 1
+     90a:	94 83       	std	Z+4, r25	; 0x04
+     90c:	83 83       	std	Z+3, r24	; 0x03
 	update_clock_rate(internal_clock.rate);
-     918:	0e 94 a2 00 	call	0x144	; 0x144 <update_clock_rate>
+     90e:	0e 94 a2 00 	call	0x144	; 0x144 <update_clock_rate>
 	setup_adc();
-     91c:	0e 94 88 00 	call	0x110	; 0x110 <setup_adc>
+     912:	0e 94 88 00 	call	0x110	; 0x110 <setup_adc>
 	sequencer.trigger_finished = 1;
-     920:	ee eb       	ldi	r30, 0xBE	; 190
+     916:	ee eb       	ldi	r30, 0xBE	; 190
+     918:	f3 e0       	ldi	r31, 0x03	; 3
+     91a:	80 81       	ld	r24, Z
+     91c:	80 62       	ori	r24, 0x20	; 32
+     91e:	80 83       	st	Z, r24
+	sequencer.START = 0;
+     920:	ec e6       	ldi	r30, 0x6C	; 108
      922:	f3 e0       	ldi	r31, 0x03	; 3
      924:	80 81       	ld	r24, Z
-     926:	80 62       	ori	r24, 0x20	; 32
+     926:	8d 7f       	andi	r24, 0xFD	; 253
      928:	80 83       	st	Z, r24
-	sequencer.START = 0;
-     92a:	ec e6       	ldi	r30, 0x6C	; 108
-     92c:	f3 e0       	ldi	r31, 0x03	; 3
-     92e:	80 81       	ld	r24, Z
-     930:	8d 7f       	andi	r24, 0xFD	; 253
-     932:	80 83       	st	Z, r24
 	//update_tempo();
 	sei(); //enable global interrupts	
-     934:	78 94       	sei
+     92a:	78 94       	sei
 	
     while (1) 
     {
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-     936:	8e e7       	ldi	r24, 0x7E	; 126
-     938:	92 e0       	ldi	r25, 0x02	; 2
-     93a:	0e 94 33 09 	call	0x1266	; 0x1266 <midi_device_process>
+     92c:	8e e7       	ldi	r24, 0x7E	; 126
+     92e:	92 e0       	ldi	r25, 0x02	; 2
+     930:	0e 94 33 09 	call	0x1266	; 0x1266 <midi_device_process>
 	
 	refresh();		
-     93e:	0e 94 87 03 	call	0x70e	; 0x70e <refresh>
+     934:	0e 94 87 03 	call	0x70e	; 0x70e <refresh>
 
 	
 	}
-     942:	f9 cf       	rjmp	.-14     	; 0x936 <__stack+0x37>
+     938:	f9 cf       	rjmp	.-14     	; 0x92c <__stack+0x2d>
 
-00000944 <update_mode>:
+0000093a <update_mode>:
 
 enum global_mode current_mode[6] = {PATTERN_CLEAR, PATTERN_FIRST, PATTERN_SECOND, MANUAL_PLAY, PLAY_RHYTHM, COMPOSE_RHYTHM};
 
 void update_mode(void) {
 	
 	if (button[MODE_SW].state) {
-     944:	80 91 4c 02 	lds	r24, 0x024C
-     948:	86 ff       	sbrs	r24, 6
-     94a:	34 c0       	rjmp	.+104    	; 0x9b4 <update_mode+0x70>
+     93a:	80 91 4c 02 	lds	r24, 0x024C
+     93e:	86 ff       	sbrs	r24, 6
+     940:	34 c0       	rjmp	.+104    	; 0x9aa <update_mode+0x70>
 		
 		button[MODE_SW].state ^= button[MODE_SW].state; //toggle switch state
-     94c:	ec e4       	ldi	r30, 0x4C	; 76
-     94e:	f2 e0       	ldi	r31, 0x02	; 2
-     950:	8f 7b       	andi	r24, 0xBF	; 191
-     952:	80 83       	st	Z, r24
+     942:	ec e4       	ldi	r30, 0x4C	; 76
+     944:	f2 e0       	ldi	r31, 0x02	; 2
+     946:	8f 7b       	andi	r24, 0xBF	; 191
+     948:	80 83       	st	Z, r24
 		
 		if (sequencer.SHIFT) {
-     954:	80 91 6c 03 	lds	r24, 0x036C
-     958:	80 ff       	sbrs	r24, 0
-     95a:	0c c0       	rjmp	.+24     	; 0x974 <update_mode+0x30>
+     94a:	80 91 6c 03 	lds	r24, 0x036C
+     94e:	80 ff       	sbrs	r24, 0
+     950:	0c c0       	rjmp	.+24     	; 0x96a <update_mode+0x30>
 			
 			
 			if (mode_index-- == 0) mode_index = NUM_MODES -1;
-     95c:	80 91 53 02 	lds	r24, 0x0253
-     960:	88 23       	and	r24, r24
-     962:	21 f0       	breq	.+8      	; 0x96c <update_mode+0x28>
-     964:	81 50       	subi	r24, 0x01	; 1
-     966:	80 93 53 02 	sts	0x0253, r24
-     96a:	0e c0       	rjmp	.+28     	; 0x988 <update_mode+0x44>
-     96c:	85 e0       	ldi	r24, 0x05	; 5
-     96e:	80 93 53 02 	sts	0x0253, r24
-     972:	0a c0       	rjmp	.+20     	; 0x988 <update_mode+0x44>
+     952:	80 91 53 02 	lds	r24, 0x0253
+     956:	88 23       	and	r24, r24
+     958:	21 f0       	breq	.+8      	; 0x962 <update_mode+0x28>
+     95a:	81 50       	subi	r24, 0x01	; 1
+     95c:	80 93 53 02 	sts	0x0253, r24
+     960:	0e c0       	rjmp	.+28     	; 0x97e <update_mode+0x44>
+     962:	85 e0       	ldi	r24, 0x05	; 5
+     964:	80 93 53 02 	sts	0x0253, r24
+     968:	0a c0       	rjmp	.+20     	; 0x97e <update_mode+0x44>
 			
 		} else {
 			
 			 if (++mode_index == NUM_MODES) mode_index = 0;
-     974:	80 91 53 02 	lds	r24, 0x0253
-     978:	8f 5f       	subi	r24, 0xFF	; 255
-     97a:	86 30       	cpi	r24, 0x06	; 6
-     97c:	19 f0       	breq	.+6      	; 0x984 <update_mode+0x40>
-     97e:	80 93 53 02 	sts	0x0253, r24
-     982:	02 c0       	rjmp	.+4      	; 0x988 <update_mode+0x44>
-     984:	10 92 53 02 	sts	0x0253, r1
+     96a:	80 91 53 02 	lds	r24, 0x0253
+     96e:	8f 5f       	subi	r24, 0xFF	; 255
+     970:	86 30       	cpi	r24, 0x06	; 6
+     972:	19 f0       	breq	.+6      	; 0x97a <update_mode+0x40>
+     974:	80 93 53 02 	sts	0x0253, r24
+     978:	02 c0       	rjmp	.+4      	; 0x97e <update_mode+0x44>
+     97a:	10 92 53 02 	sts	0x0253, r1
 			 
 		}
 		
 		sequencer.mode = current_mode[mode_index];
-     988:	20 91 53 02 	lds	r18, 0x0253
-     98c:	e2 2f       	mov	r30, r18
-     98e:	f0 e0       	ldi	r31, 0x00	; 0
-     990:	ea 5f       	subi	r30, 0xFA	; 250
-     992:	fd 4f       	sbci	r31, 0xFD	; 253
-     994:	80 81       	ld	r24, Z
-     996:	80 93 6b 03 	sts	0x036B, r24
+     97e:	20 91 53 02 	lds	r18, 0x0253
+     982:	e2 2f       	mov	r30, r18
+     984:	f0 e0       	ldi	r31, 0x00	; 0
+     986:	ea 5f       	subi	r30, 0xFA	; 250
+     988:	fd 4f       	sbci	r31, 0xFD	; 253
+     98a:	80 81       	ld	r24, Z
+     98c:	80 93 6b 03 	sts	0x036B, r24
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
 		spi_data[4] = (1<< mode_index) | data_mask; 
-     99a:	ee e5       	ldi	r30, 0x5E	; 94
-     99c:	f2 e0       	ldi	r31, 0x02	; 2
-     99e:	81 e0       	ldi	r24, 0x01	; 1
-     9a0:	90 e0       	ldi	r25, 0x00	; 0
-     9a2:	02 c0       	rjmp	.+4      	; 0x9a8 <update_mode+0x64>
-     9a4:	88 0f       	add	r24, r24
-     9a6:	99 1f       	adc	r25, r25
-     9a8:	2a 95       	dec	r18
-     9aa:	e2 f7       	brpl	.-8      	; 0x9a4 <update_mode+0x60>
+     990:	ee e5       	ldi	r30, 0x5E	; 94
+     992:	f2 e0       	ldi	r31, 0x02	; 2
+     994:	81 e0       	ldi	r24, 0x01	; 1
+     996:	90 e0       	ldi	r25, 0x00	; 0
+     998:	02 c0       	rjmp	.+4      	; 0x99e <update_mode+0x64>
+     99a:	88 0f       	add	r24, r24
+     99c:	99 1f       	adc	r25, r25
+     99e:	2a 95       	dec	r18
+     9a0:	e2 f7       	brpl	.-8      	; 0x99a <update_mode+0x60>
 			 if (++mode_index == NUM_MODES) mode_index = 0;
 			 
 		}
 		
 		sequencer.mode = current_mode[mode_index];
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
-     9ac:	94 81       	ldd	r25, Z+4	; 0x04
-     9ae:	90 7c       	andi	r25, 0xC0	; 192
+     9a2:	94 81       	ldd	r25, Z+4	; 0x04
+     9a4:	90 7c       	andi	r25, 0xC0	; 192
 		spi_data[4] = (1<< mode_index) | data_mask; 
-     9b0:	89 2b       	or	r24, r25
-     9b2:	84 83       	std	Z+4, r24	; 0x04
-     9b4:	08 95       	ret
+     9a6:	89 2b       	or	r24, r25
+     9a8:	84 83       	std	Z+4, r24	; 0x04
+     9aa:	08 95       	ret
 
-000009b6 <spi_shift_byte>:
+000009ac <spi_shift_byte>:
 uint8_t spi_previous_switch_data[5] = {0};
 uint8_t switch_states[5] = {0};
 	
 uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simultaneously reads switch data
 	
 	SPDR1 = byte;
-     9b6:	80 93 ae 00 	sts	0x00AE, r24
+     9ac:	80 93 ae 00 	sts	0x00AE, r24
 	while (!(SPSR1 & (1<<SPIF1)));
-     9ba:	ed ea       	ldi	r30, 0xAD	; 173
-     9bc:	f0 e0       	ldi	r31, 0x00	; 0
-     9be:	80 81       	ld	r24, Z
-     9c0:	88 23       	and	r24, r24
-     9c2:	ec f7       	brge	.-6      	; 0x9be <spi_shift_byte+0x8>
+     9b0:	ed ea       	ldi	r30, 0xAD	; 173
+     9b2:	f0 e0       	ldi	r31, 0x00	; 0
+     9b4:	80 81       	ld	r24, Z
+     9b6:	88 23       	and	r24, r24
+     9b8:	ec f7       	brge	.-6      	; 0x9b4 <spi_shift_byte+0x8>
 	return SPDR1;
-     9c4:	80 91 ae 00 	lds	r24, 0x00AE
+     9ba:	80 91 ae 00 	lds	r24, 0x00AE
 	
 }	
-     9c8:	08 95       	ret
+     9be:	08 95       	ret
 
-000009ca <update_spi>:
+000009c0 <update_spi>:
 
 void update_spi(void) { //updates LEDs and triggers, doesn't read data back
-     9ca:	cf 93       	push	r28
-     9cc:	df 93       	push	r29
+     9c0:	cf 93       	push	r28
+     9c2:	df 93       	push	r29
 	
 		spi_shift_byte(spi_data[0]);
-     9ce:	ce e5       	ldi	r28, 0x5E	; 94
-     9d0:	d2 e0       	ldi	r29, 0x02	; 2
-     9d2:	88 81       	ld	r24, Y
-     9d4:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9c4:	ce e5       	ldi	r28, 0x5E	; 94
+     9c6:	d2 e0       	ldi	r29, 0x02	; 2
+     9c8:	88 81       	ld	r24, Y
+     9ca:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[1]);
-     9d8:	89 81       	ldd	r24, Y+1	; 0x01
-     9da:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9ce:	89 81       	ldd	r24, Y+1	; 0x01
+     9d0:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[2]);
-     9de:	8a 81       	ldd	r24, Y+2	; 0x02
-     9e0:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9d4:	8a 81       	ldd	r24, Y+2	; 0x02
+     9d6:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[3]);
-     9e4:	8b 81       	ldd	r24, Y+3	; 0x03
-     9e6:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9da:	8b 81       	ldd	r24, Y+3	; 0x03
+     9dc:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[4]);
-     9ea:	8c 81       	ldd	r24, Y+4	; 0x04
-     9ec:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9e0:	8c 81       	ldd	r24, Y+4	; 0x04
+     9e2:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[5]);
-     9f0:	8d 81       	ldd	r24, Y+5	; 0x05
-     9f2:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9e6:	8d 81       	ldd	r24, Y+5	; 0x05
+     9e8:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[6]);
-     9f6:	8e 81       	ldd	r24, Y+6	; 0x06
-     9f8:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9ec:	8e 81       	ldd	r24, Y+6	; 0x06
+     9ee:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[7]);
-     9fc:	8f 81       	ldd	r24, Y+7	; 0x07
-     9fe:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9f2:	8f 81       	ldd	r24, Y+7	; 0x07
+     9f4:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		spi_shift_byte(spi_data[8]);
-     a02:	88 85       	ldd	r24, Y+8	; 0x08
-     a04:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
+     9f8:	88 85       	ldd	r24, Y+8	; 0x08
+     9fa:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
 		
 		PORTC &= ~(1<<SPI_LED_LATCH);
-     a08:	43 98       	cbi	0x08, 3	; 8
+     9fe:	43 98       	cbi	0x08, 3	; 8
 		PORTC |= (1<<SPI_LED_LATCH);
-     a0a:	43 9a       	sbi	0x08, 3	; 8
+     a00:	43 9a       	sbi	0x08, 3	; 8
 	
 	
 };
-     a0c:	df 91       	pop	r29
-     a0e:	cf 91       	pop	r28
-     a10:	08 95       	ret
+     a02:	df 91       	pop	r29
+     a04:	cf 91       	pop	r28
+     a06:	08 95       	ret
 
-00000a12 <read_switches>:
+00000a08 <read_switches>:
 
 void read_switches(void) { //reads switch data
-     a12:	cf 93       	push	r28
-     a14:	df 93       	push	r29
+     a08:	cf 93       	push	r28
+     a0a:	df 93       	push	r29
 	
 	PORTC |= (1<<SPI_SW_LATCH); //latch switch data
-     a16:	42 9a       	sbi	0x08, 2	; 8
+     a0c:	42 9a       	sbi	0x08, 2	; 8
 	
 	spi_current_switch_data[0] = spi_shift_byte(0x00); //not toggling LED latches so doesn't matter what we send out
-     a18:	80 e0       	ldi	r24, 0x00	; 0
-     a1a:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
-     a1e:	c9 e5       	ldi	r28, 0x59	; 89
-     a20:	d2 e0       	ldi	r29, 0x02	; 2
-     a22:	88 83       	st	Y, r24
+     a0e:	80 e0       	ldi	r24, 0x00	; 0
+     a10:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
+     a14:	c9 e5       	ldi	r28, 0x59	; 89
+     a16:	d2 e0       	ldi	r29, 0x02	; 2
+     a18:	88 83       	st	Y, r24
 	spi_current_switch_data[1] = spi_shift_byte(0x00);
-     a24:	80 e0       	ldi	r24, 0x00	; 0
-     a26:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
-     a2a:	89 83       	std	Y+1, r24	; 0x01
+     a1a:	80 e0       	ldi	r24, 0x00	; 0
+     a1c:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
+     a20:	89 83       	std	Y+1, r24	; 0x01
 	spi_current_switch_data[2] = spi_shift_byte(0x00);
-     a2c:	80 e0       	ldi	r24, 0x00	; 0
-     a2e:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
-     a32:	8a 83       	std	Y+2, r24	; 0x02
+     a22:	80 e0       	ldi	r24, 0x00	; 0
+     a24:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
+     a28:	8a 83       	std	Y+2, r24	; 0x02
 	spi_current_switch_data[3] = spi_shift_byte(0x00);
-     a34:	80 e0       	ldi	r24, 0x00	; 0
-     a36:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
-     a3a:	8b 83       	std	Y+3, r24	; 0x03
+     a2a:	80 e0       	ldi	r24, 0x00	; 0
+     a2c:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
+     a30:	8b 83       	std	Y+3, r24	; 0x03
 	spi_current_switch_data[4] = spi_shift_byte(0x00);
-     a3c:	80 e0       	ldi	r24, 0x00	; 0
-     a3e:	0e 94 db 04 	call	0x9b6	; 0x9b6 <spi_shift_byte>
-     a42:	8c 83       	std	Y+4, r24	; 0x04
+     a32:	80 e0       	ldi	r24, 0x00	; 0
+     a34:	0e 94 d6 04 	call	0x9ac	; 0x9ac <spi_shift_byte>
+     a38:	8c 83       	std	Y+4, r24	; 0x04
 	
 	PORTC &= ~(1<<SPI_SW_LATCH);
-     a44:	42 98       	cbi	0x08, 2	; 8
+     a3a:	42 98       	cbi	0x08, 2	; 8
 	
 	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1);
-     a46:	98 81       	ld	r25, Y
-     a48:	39 2f       	mov	r19, r25
-     a4a:	36 95       	lsr	r19
-     a4c:	ec e6       	ldi	r30, 0x6C	; 108
-     a4e:	f3 e0       	ldi	r31, 0x03	; 3
-     a50:	20 81       	ld	r18, Z
-     a52:	30 fb       	bst	r19, 0
-     a54:	20 f9       	bld	r18, 0
-     a56:	20 83       	st	Z, r18
+     a3c:	98 81       	ld	r25, Y
+     a3e:	39 2f       	mov	r19, r25
+     a40:	36 95       	lsr	r19
+     a42:	ec e6       	ldi	r30, 0x6C	; 108
+     a44:	f3 e0       	ldi	r31, 0x03	; 3
+     a46:	20 81       	ld	r18, Z
+     a48:	30 fb       	bst	r19, 0
+     a4a:	20 f9       	bld	r18, 0
+     a4c:	20 83       	st	Z, r18
 	//debounce
 	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
-     a58:	e4 e5       	ldi	r30, 0x54	; 84
-     a5a:	f2 e0       	ldi	r31, 0x02	; 2
-     a5c:	20 81       	ld	r18, Z
-     a5e:	92 27       	eor	r25, r18
+     a4e:	e4 e5       	ldi	r30, 0x54	; 84
+     a50:	f2 e0       	ldi	r31, 0x02	; 2
+     a52:	20 81       	ld	r18, Z
+     a54:	92 27       	eor	r25, r18
 	spi_previous_switch_data[0] ^= spi_current_switch_data[0];
-     a60:	29 27       	eor	r18, r25
-     a62:	20 83       	st	Z, r18
+     a56:	29 27       	eor	r18, r25
+     a58:	20 83       	st	Z, r18
 	spi_current_switch_data[0] &= spi_previous_switch_data[0];
-     a64:	92 23       	and	r25, r18
-     a66:	98 83       	st	Y, r25
+     a5a:	92 23       	and	r25, r18
+     a5c:	98 83       	st	Y, r25
 	
 	spi_current_switch_data[1] ^= spi_previous_switch_data[1];
-     a68:	21 81       	ldd	r18, Z+1	; 0x01
-     a6a:	99 81       	ldd	r25, Y+1	; 0x01
-     a6c:	92 27       	eor	r25, r18
+     a5e:	21 81       	ldd	r18, Z+1	; 0x01
+     a60:	99 81       	ldd	r25, Y+1	; 0x01
+     a62:	92 27       	eor	r25, r18
 	spi_previous_switch_data[1] ^= spi_current_switch_data[1];
-     a6e:	29 27       	eor	r18, r25
-     a70:	21 83       	std	Z+1, r18	; 0x01
+     a64:	29 27       	eor	r18, r25
+     a66:	21 83       	std	Z+1, r18	; 0x01
 	spi_current_switch_data[1] &= spi_previous_switch_data[1];
-     a72:	92 23       	and	r25, r18
-     a74:	99 83       	std	Y+1, r25	; 0x01
+     a68:	92 23       	and	r25, r18
+     a6a:	99 83       	std	Y+1, r25	; 0x01
 	
 	spi_current_switch_data[2] ^= spi_previous_switch_data[2];
-     a76:	22 81       	ldd	r18, Z+2	; 0x02
-     a78:	9a 81       	ldd	r25, Y+2	; 0x02
-     a7a:	92 27       	eor	r25, r18
+     a6c:	22 81       	ldd	r18, Z+2	; 0x02
+     a6e:	9a 81       	ldd	r25, Y+2	; 0x02
+     a70:	92 27       	eor	r25, r18
 	spi_previous_switch_data[2] ^= spi_current_switch_data[2];
-     a7c:	29 27       	eor	r18, r25
-     a7e:	22 83       	std	Z+2, r18	; 0x02
+     a72:	29 27       	eor	r18, r25
+     a74:	22 83       	std	Z+2, r18	; 0x02
 	spi_current_switch_data[2] &= spi_previous_switch_data[2];
-     a80:	92 23       	and	r25, r18
-     a82:	9a 83       	std	Y+2, r25	; 0x02
+     a76:	92 23       	and	r25, r18
+     a78:	9a 83       	std	Y+2, r25	; 0x02
 	
 	spi_current_switch_data[3] ^= spi_previous_switch_data[3];
-     a84:	23 81       	ldd	r18, Z+3	; 0x03
-     a86:	9b 81       	ldd	r25, Y+3	; 0x03
-     a88:	92 27       	eor	r25, r18
+     a7a:	23 81       	ldd	r18, Z+3	; 0x03
+     a7c:	9b 81       	ldd	r25, Y+3	; 0x03
+     a7e:	92 27       	eor	r25, r18
 	spi_previous_switch_data[3] ^= spi_current_switch_data[3];
-     a8a:	29 27       	eor	r18, r25
-     a8c:	23 83       	std	Z+3, r18	; 0x03
+     a80:	29 27       	eor	r18, r25
+     a82:	23 83       	std	Z+3, r18	; 0x03
 	spi_current_switch_data[3] &= spi_previous_switch_data[3];			
-     a8e:	92 23       	and	r25, r18
-     a90:	9b 83       	std	Y+3, r25	; 0x03
+     a84:	92 23       	and	r25, r18
+     a86:	9b 83       	std	Y+3, r25	; 0x03
 	
 	spi_current_switch_data[4] ^= spi_previous_switch_data[4];
-     a92:	94 81       	ldd	r25, Z+4	; 0x04
-     a94:	89 27       	eor	r24, r25
+     a88:	94 81       	ldd	r25, Z+4	; 0x04
+     a8a:	89 27       	eor	r24, r25
 	spi_previous_switch_data[4] ^= spi_current_switch_data[4];
-     a96:	98 27       	eor	r25, r24
-     a98:	94 83       	std	Z+4, r25	; 0x04
+     a8c:	98 27       	eor	r25, r24
+     a8e:	94 83       	std	Z+4, r25	; 0x04
 	spi_current_switch_data[4] &= spi_previous_switch_data[4];
-     a9a:	89 23       	and	r24, r25
-     a9c:	8c 83       	std	Y+4, r24	; 0x04
+     a90:	89 23       	and	r24, r25
+     a92:	8c 83       	std	Y+4, r24	; 0x04
 	//spi_shift_byte(spi_data[7]);
 	//spi_shift_byte(spi_data[8]);
 	
 
 	
-     a9e:	df 91       	pop	r29
-     aa0:	cf 91       	pop	r28
-     aa2:	08 95       	ret
+     a94:	df 91       	pop	r29
+     a96:	cf 91       	pop	r28
+     a98:	08 95       	ret
 
-00000aa4 <parse_switch_data>:
+00000a9a <parse_switch_data>:
 uint8_t current_start_stop_tap_state = 0;
 uint8_t previous_start_stop_tap_state = 0;	
 	
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-     aa4:	40 e0       	ldi	r20, 0x00	; 0
-     aa6:	50 e0       	ldi	r21, 0x00	; 0
+     a9a:	40 e0       	ldi	r20, 0x00	; 0
+     a9c:	50 e0       	ldi	r21, 0x00	; 0
 		
 		//button[i].current_state = (switch_states[button[i].spi_byte] & button[i].spi_bit) & 1; //need to fix this
 		uint8_t current_state = (spi_current_switch_data[button[i].spi_byte] >> button[i].spi_bit) &1 ;
 		button[i].state ^= current_state;
-     aa8:	da 01       	movw	r26, r20
-     aaa:	aa 0f       	add	r26, r26
-     aac:	bb 1f       	adc	r27, r27
-     aae:	a4 5f       	subi	r26, 0xF4	; 244
-     ab0:	bd 4f       	sbci	r27, 0xFD	; 253
+     a9e:	da 01       	movw	r26, r20
+     aa0:	aa 0f       	add	r26, r26
+     aa2:	bb 1f       	adc	r27, r27
+     aa4:	a4 5f       	subi	r26, 0xF4	; 244
+     aa6:	bd 4f       	sbci	r27, 0xFD	; 253
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
 		
 		//button[i].current_state = (switch_states[button[i].spi_byte] & button[i].spi_bit) & 1; //need to fix this
 		uint8_t current_state = (spi_current_switch_data[button[i].spi_byte] >> button[i].spi_bit) &1 ;
-     ab2:	8c 91       	ld	r24, X
-     ab4:	e8 2f       	mov	r30, r24
-     ab6:	e6 95       	lsr	r30
-     ab8:	e6 95       	lsr	r30
-     aba:	e6 95       	lsr	r30
-     abc:	e7 70       	andi	r30, 0x07	; 7
-     abe:	f0 e0       	ldi	r31, 0x00	; 0
-     ac0:	e7 5a       	subi	r30, 0xA7	; 167
-     ac2:	fd 4f       	sbci	r31, 0xFD	; 253
-     ac4:	20 81       	ld	r18, Z
-     ac6:	30 e0       	ldi	r19, 0x00	; 0
-     ac8:	98 2f       	mov	r25, r24
-     aca:	97 70       	andi	r25, 0x07	; 7
-     acc:	02 c0       	rjmp	.+4      	; 0xad2 <parse_switch_data+0x2e>
-     ace:	35 95       	asr	r19
-     ad0:	27 95       	ror	r18
-     ad2:	9a 95       	dec	r25
-     ad4:	e2 f7       	brpl	.-8      	; 0xace <parse_switch_data+0x2a>
-     ad6:	21 70       	andi	r18, 0x01	; 1
+     aa8:	8c 91       	ld	r24, X
+     aaa:	e8 2f       	mov	r30, r24
+     aac:	e6 95       	lsr	r30
+     aae:	e6 95       	lsr	r30
+     ab0:	e6 95       	lsr	r30
+     ab2:	e7 70       	andi	r30, 0x07	; 7
+     ab4:	f0 e0       	ldi	r31, 0x00	; 0
+     ab6:	e7 5a       	subi	r30, 0xA7	; 167
+     ab8:	fd 4f       	sbci	r31, 0xFD	; 253
+     aba:	20 81       	ld	r18, Z
+     abc:	30 e0       	ldi	r19, 0x00	; 0
+     abe:	98 2f       	mov	r25, r24
+     ac0:	97 70       	andi	r25, 0x07	; 7
+     ac2:	02 c0       	rjmp	.+4      	; 0xac8 <parse_switch_data+0x2e>
+     ac4:	35 95       	asr	r19
+     ac6:	27 95       	ror	r18
+     ac8:	9a 95       	dec	r25
+     aca:	e2 f7       	brpl	.-8      	; 0xac4 <parse_switch_data+0x2a>
+     acc:	21 70       	andi	r18, 0x01	; 1
 		button[i].state ^= current_state;
-     ad8:	86 fb       	bst	r24, 6
-     ada:	99 27       	eor	r25, r25
-     adc:	90 f9       	bld	r25, 0
-     ade:	29 27       	eor	r18, r25
-     ae0:	20 fb       	bst	r18, 0
-     ae2:	86 f9       	bld	r24, 6
-     ae4:	8c 93       	st	X, r24
+     ace:	86 fb       	bst	r24, 6
+     ad0:	99 27       	eor	r25, r25
+     ad2:	90 f9       	bld	r25, 0
+     ad4:	29 27       	eor	r18, r25
+     ad6:	20 fb       	bst	r18, 0
+     ad8:	86 f9       	bld	r24, 6
+     ada:	8c 93       	st	X, r24
 uint8_t current_start_stop_tap_state = 0;
 uint8_t previous_start_stop_tap_state = 0;	
 	
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-     ae6:	4f 5f       	subi	r20, 0xFF	; 255
-     ae8:	5f 4f       	sbci	r21, 0xFF	; 255
-     aea:	43 32       	cpi	r20, 0x23	; 35
-     aec:	51 05       	cpc	r21, r1
-     aee:	e1 f6       	brne	.-72     	; 0xaa8 <parse_switch_data+0x4>
+     adc:	4f 5f       	subi	r20, 0xFF	; 255
+     ade:	5f 4f       	sbci	r21, 0xFF	; 255
+     ae0:	43 32       	cpi	r20, 0x23	; 35
+     ae2:	51 05       	cpc	r21, r1
+     ae4:	e1 f6       	brne	.-72     	; 0xa9e <parse_switch_data+0x4>
 		button[i].state ^= current_state;
 		
 	}
 	
 	
 }	
-     af0:	08 95       	ret
+     ae6:	08 95       	ret
 
-00000af2 <check_start_stop_tap>:
+00000ae8 <check_start_stop_tap>:
 
 void check_start_stop_tap(void) {
 	
 	current_start_stop_tap_state = PINB;
-     af2:	93 b1       	in	r25, 0x03	; 3
+     ae8:	93 b1       	in	r25, 0x03	; 3
 	current_start_stop_tap_state ^= previous_start_stop_tap_state;
-     af4:	80 91 67 02 	lds	r24, 0x0267
-     af8:	98 27       	eor	r25, r24
+     aea:	80 91 67 02 	lds	r24, 0x0267
+     aee:	98 27       	eor	r25, r24
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
-     afa:	89 27       	eor	r24, r25
-     afc:	80 93 67 02 	sts	0x0267, r24
+     af0:	89 27       	eor	r24, r25
+     af2:	80 93 67 02 	sts	0x0267, r24
 	current_start_stop_tap_state &= previous_start_stop_tap_state;
-     b00:	89 23       	and	r24, r25
-     b02:	80 93 68 02 	sts	0x0268, r24
-	
+     af6:	89 23       	and	r24, r25
+     af8:	80 93 68 02 	sts	0x0268, r24
+	uint8_t start_state = sequencer.START;
+     afc:	ec e6       	ldi	r30, 0x6C	; 108
+     afe:	f3 e0       	ldi	r31, 0x03	; 3
+     b00:	90 81       	ld	r25, Z
+     b02:	91 fb       	bst	r25, 1
+     b04:	22 27       	eor	r18, r18
+     b06:	20 f9       	bld	r18, 0
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
-     b06:	86 95       	lsr	r24
-     b08:	ec e6       	ldi	r30, 0x6C	; 108
-     b0a:	f3 e0       	ldi	r31, 0x03	; 3
-     b0c:	90 81       	ld	r25, Z
-     b0e:	91 fb       	bst	r25, 1
-     b10:	22 27       	eor	r18, r18
-     b12:	20 f9       	bld	r18, 0
-     b14:	82 27       	eor	r24, r18
-     b16:	80 fb       	bst	r24, 0
-     b18:	91 f9       	bld	r25, 1
-     b1a:	90 83       	st	Z, r25
-	if (!sequencer.START) {
-     b1c:	91 fd       	sbrc	r25, 1
-     b1e:	05 c0       	rjmp	.+10     	; 0xb2a <check_start_stop_tap+0x38>
+     b08:	86 95       	lsr	r24
+     b0a:	82 27       	eor	r24, r18
+     b0c:	80 fb       	bst	r24, 0
+     b0e:	91 f9       	bld	r25, 1
+     b10:	90 83       	st	Z, r25
+	
+	if (sequencer.START && (start_state == 0)) {
+     b12:	91 ff       	sbrs	r25, 1
+     b14:	0a c0       	rjmp	.+20     	; 0xb2a <check_start_stop_tap+0x42>
+     b16:	21 11       	cpse	r18, r1
+     b18:	08 c0       	rjmp	.+16     	; 0xb2a <check_start_stop_tap+0x42>
+		
 		sequencer.current_step = 0;
-     b20:	ee eb       	ldi	r30, 0xBE	; 190
-     b22:	f3 e0       	ldi	r31, 0x03	; 3
-     b24:	80 81       	ld	r24, Z
-     b26:	80 7f       	andi	r24, 0xF0	; 240
-     b28:	80 83       	st	Z, r24
+     b1a:	ee eb       	ldi	r30, 0xBE	; 190
+     b1c:	f3 e0       	ldi	r31, 0x03	; 3
+     b1e:	80 81       	ld	r24, Z
+		sequencer.next_step_flag = 1;
+     b20:	80 7f       	andi	r24, 0xF0	; 240
+     b22:	80 61       	ori	r24, 0x10	; 16
+     b24:	80 83       	st	Z, r24
+		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
+     b26:	10 92 6a 02 	sts	0x026A, r1
      b2a:	08 95       	ret
 
 00000b2c <check_inst_switches>:
-		
-	}
+		//
+	//}
 	
 }
 	
