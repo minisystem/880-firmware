@@ -168,7 +168,7 @@ void live_hits(void) {
 
 
 void refresh(void) {
-	
+	update_tempo();
 	read_switches();
 	check_start_stop_tap();
 	
@@ -314,8 +314,8 @@ int main(void)
 	setup_internal_clock();
 	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
 	internal_clock.ppqn_counter = 1;
-	internal_clock.rate = 400; //use fixed rate to get clock working
-	update_clock_rate(internal_clock.rate);
+	//internal_clock.rate = 400; //use fixed rate to get clock working
+	//update_clock_rate(internal_clock.rate);
 	setup_adc();
 	sequencer.trigger_finished = 1;
 	sequencer.START = 0;
