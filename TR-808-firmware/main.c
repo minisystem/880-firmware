@@ -201,9 +201,9 @@ void refresh(void) {
 	} else if (sequencer.next_step_flag){
 		
 			sequencer.next_step_flag = 0;
-			spi_data[1] = 0;
-			spi_data[0] = 0;
-			turn_on(STEP_1_LED);
+			//spi_data[1] = 0;
+			//spi_data[0] = 0;
+			//turn_on(STEP_1_LED);
 		
 	}
 	

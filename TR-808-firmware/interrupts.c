@@ -44,11 +44,13 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			spi_data[0] = sequencer.step_led_mask[sequencer.current_inst] >> 8;
 		}
 
-	} else if ((internal_clock.beat_counter == 2) && (internal_clock.divider >> 1)) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
-			spi_data[1] = 0;
-			spi_data[0] = 0;
-		
-	}
+	} else {
+		spi_data[1] = 0;
+		spi_data[0] = 0;
+		if (internal_clock.beat_counter <2) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+			turn_on(STEP_1_LED);
+		}
+	} 
 	
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
