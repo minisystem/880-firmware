@@ -14,7 +14,7 @@
 uint8_t current_drum_hit = 0;
 volatile uint8_t trigger_finished = 1;
 
-struct drum_hit drum_hit[16] = {
+struct drum_hit drum_hit[17] = {
 	
 	{0,8, 1<<BD_TRIG,255, 0, BD_2_LED},
 	{1,8, 1<<SD_TRIG,255, 0, SD_3_LED},
@@ -31,7 +31,9 @@ struct drum_hit drum_hit[16] = {
 	{12,8, 1<<MT_TRIG, 1<<MT_MC_SW, 0, MC_LED},
 	{13,8, 1<<HT_TRIG, 1<<HT_HC_SW, 0, HC_LED},
 	{14,8, 1<<RS_TRIG, 1<<RS_CL_SW, 1, CL_LED},
-	{15,7, 1<<MA_TRIG,255, 0, MA_LED}
+	{15,7, 1<<MA_TRIG,255, 0, MA_LED},
+	{16,8, 1<<ACCENT, 255, 0, ACCENT_1_LED} //this last accent element is a bit of a hack - not currently used to access accent, but useful to turn on accent LED when accent it triggered by step sequencer (see interrupt.c)
+			
 };
 
 void trigger_drum(uint8_t note, uint8_t velocity) {
@@ -84,6 +86,7 @@ void trigger_step(void) { //trigger all drums on current step
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((sequencer.current_pattern.first_part[sequencer.current_step] >> i) &1) {
+			turn_on(drum_hit[i].led_index);
 			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
 			if (drum_hit[i].switch_bit != 255) {//need to set instrument switch
 						

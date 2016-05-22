@@ -168,7 +168,8 @@ void live_hits(void) {
 
 
 void refresh(void) {
-	update_tempo();
+	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
+	update_tempo(); //meh, doesn't seem to make a huge difference.
 	read_switches();
 	check_start_stop_tap();
 	
@@ -188,7 +189,10 @@ void refresh(void) {
 			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.first_part[sequencer.current_inst] >> 8);
 			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
-			if (sequencer.current_pattern.accent[sequencer.current_step] &1) spi_data[8] |= 1<<ACCENT;
+			if (sequencer.current_pattern.accent[sequencer.current_step] &1) {
+				spi_data[8] |= 1<<ACCENT;
+				turn_on(ACCENT_1_LED);
+			}
 			TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 			TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
 			sequencer.trigger_finished = 0;
@@ -207,7 +211,7 @@ void refresh(void) {
 		
 	}
 	
-	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds
+	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
 		
 		//sequencer.trigger_finished = 0;
 		//clear_all_trigs();

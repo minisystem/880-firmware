@@ -38,7 +38,7 @@ struct drum_hit { //can save a few bytes here y getting ride of spi led byte and
 	
 };
 
-extern struct drum_hit drum_hit[16];// = {
+extern struct drum_hit drum_hit[17];// = {
 	//
 	//{0,8, 1<<BD_TRIG,-1, 0, 2, 1<<BD_LED_BIT},
 	//{1,8, 1<<SD_TRIG,-1, 0, 2, 1<<SD_LED_BIT},
