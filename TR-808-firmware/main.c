@@ -38,7 +38,7 @@ void update_step_led_mask(void) {
 	sequencer.step_led_mask[sequencer.current_inst] = 0;
 	for (int i = 0; i < 16; i++) {
 		
-		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.current_pattern.first_part[i] & (1<<sequencer.current_inst);
+		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.current_pattern.part[i] & (1<<sequencer.current_inst);
 		
 	}
 	
@@ -87,7 +87,7 @@ void update_step_board() {
 					
 				toggle(i);
 				button[i].state ^= button[i].state;
-				sequencer.current_pattern.first_part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
+				sequencer.current_pattern.part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
 				sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;				
 			}			
 		}
@@ -184,9 +184,9 @@ void refresh(void) {
 			sequencer.next_step_flag = 0;
 			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.current_pattern.first_part[sequencer.current_inst];
+			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.current_pattern.part[sequencer.current_inst];
 			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.first_part[sequencer.current_inst] >> 8);
+			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.part[sequencer.current_inst] >> 8);
 			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
 			if (sequencer.current_pattern.accent[sequencer.current_step] &1) {
