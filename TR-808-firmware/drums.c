@@ -49,7 +49,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
 			
 		if (drum_hit[note].switch_bit != 255) {//need to set instrument switch
 				
-			toggle(ACCENT_1_LED);	
+			toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
 			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 					
 		}

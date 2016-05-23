@@ -80,13 +80,22 @@ void check_start_stop_tap(void) {
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
 	
-	if (sequencer.START && (start_state == 0)) {
+	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
 		
 		sequencer.current_step = 0;
 		sequencer.next_step_flag = 1;
 		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
 		
-	} else { }
+	}
+	
+	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
+		
+		turn_off_all_inst_leds();
+		turn_on(drum_hit[sequencer.current_inst].led_index);
+		
+	} 
+		
+		
 	//if (!sequencer.START) {
 		//sequencer.current_step = 0;
 		////sequencer.next_step_flag = 1;
