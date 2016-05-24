@@ -69,13 +69,13 @@ void update_step_board() {
 		
 		if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 				
-			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
+			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of PATTERN_SECOND
 							
 				if (button[i].state) {
 								
 					toggle(i);
 					button[i].state ^= button[i].state;
-					sequencer.pattern[sequencer.variation].accent[i] ^= 1<<0; //just toggle first bit
+					sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
 					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
 				}
 			}
@@ -185,12 +185,12 @@ void refresh(void) {
 			sequencer.next_step_flag = 0;
 			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.pattern[sequencer.variation].first_part[sequencer.current_inst];
+			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];
 			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.pattern[sequencer.variation].first_part[sequencer.current_inst] >> 8);
+			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);
 			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
-			if (sequencer.pattern[sequencer.variation].accent[sequencer.current_step] &1) {
+			if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
 				spi_data[8] |= 1<<ACCENT;
 				turn_on(ACCENT_1_LED);
 			}
@@ -326,6 +326,7 @@ int main(void)
 	sequencer.START = 0;
 	//update_tempo();
 	sequencer.variation_mode = 0;
+	sequencer.step_num = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
 	turn_on(BASIC_VAR_A_LED);
 	sei(); //enable global interrupts	
 	

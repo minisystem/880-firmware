@@ -49,7 +49,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		}
 
 	} else {
-		spi_data[1] = 0;
+		spi_data[1] = 0; //need to put this somewhere else - this code is executing way too many times
 		spi_data[0] = 0;
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		switch (sequencer.variation_mode) {
@@ -63,7 +63,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			break;
 					
 		}
-		if (internal_clock.beat_counter <2) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+		if (internal_clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 			
 
 			if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	
@@ -79,9 +79,17 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
 		sequencer.next_step_flag = 1;
-		internal_clock.beat_counter++;
+		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		sequencer.current_step++; //hopefully this will overflow from 15 to 0 - it does!
+		if (sequencer.current_step++ == sequencer.step_num) { //end of measure
+			
+			sequencer.current_step = 0;
+			if (sequencer.var_change || sequencer.variation_mode == VAR_AB) {
+				sequencer.var_change = 0;	
+				sequencer.variation ^= 1<<0;
+			}
+			//sequencer.current_measure++;
+		}
 	}
 	
 }

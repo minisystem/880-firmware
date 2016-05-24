@@ -161,6 +161,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle 
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
+		if (sequencer.START) sequencer.var_change = 1;
 		//if (sequencer.START) {
 			//
 			//sequencer.var_change = 1; //set variation change flag
