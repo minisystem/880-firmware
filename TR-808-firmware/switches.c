@@ -161,35 +161,35 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle 
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
-		if (sequencer.START) {
-			
-			sequencer.var_change = 1; //set variation change flag
-		} else { //if sequencer isn't running then change right away
-			
-			switch (sequencer.variation_mode) {
-				
-				case VAR_A:
-					turn_on(BASIC_VAR_A_LED);
-					turn_off(BASIC_VAR_B_LED);
-					sequencer.variation = VAR_A;
-					break;
-				case VAR_B:
-					turn_on(BASIC_VAR_B_LED);
-					turn_off(BASIC_VAR_A_LED);
-					sequencer.variation = VAR_B;
-					break;
-				case VAR_AB:
-					turn_on(BASIC_VAR_A_LED); //turn on both
-					turn_on(BASIC_VAR_B_LED);
-					break;	
-				
-			}
-			
-			
-			
-		}
-		toggle(BASIC_VAR_A_LED); //need to ensure initial states are set correctly
-		toggle(BASIC_VAR_B_LED);
+		//if (sequencer.START) {
+			//
+			//sequencer.var_change = 1; //set variation change flag
+		//} else { //if sequencer isn't running then change right away
+			//
+			//switch (sequencer.variation_mode) {
+				//
+				//case VAR_A:
+					//turn_on(BASIC_VAR_A_LED);
+					//turn_off(BASIC_VAR_B_LED);
+					//sequencer.variation = VAR_A;
+					//break;
+				//case VAR_B:
+					//turn_on(BASIC_VAR_B_LED);
+					//turn_off(BASIC_VAR_A_LED);
+					//sequencer.variation = VAR_B;
+					//break;
+				//case VAR_AB:
+					//turn_on(BASIC_VAR_A_LED); //turn on both
+					//turn_on(BASIC_VAR_B_LED);
+					//break;	
+				//
+			//}
+			//
+			//
+			//
+		//}
+		//toggle(BASIC_VAR_A_LED); //need to ensure initial states are set correctly
+		//toggle(BASIC_VAR_B_LED);
 		
 	}
 	

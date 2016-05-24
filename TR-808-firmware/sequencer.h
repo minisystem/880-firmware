@@ -46,6 +46,7 @@ struct sequencer {
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint16_t step_led_mask[17]; //this may not need to be an array? implemented as array it is a useful shortcut though
+	uint8_t var_led_mask;
 	
 	};
 		

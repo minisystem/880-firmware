@@ -38,10 +38,12 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	if (sequencer.START) { 
 		
-		if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of
+		if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
 			
 			spi_data[1] = sequencer.step_led_mask[sequencer.current_inst];
 			spi_data[0] = sequencer.step_led_mask[sequencer.current_inst] >> 8;
+			spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+			spi_data[5] |= sequencer.var_led_mask; 
 			turn_off_all_inst_leds();
 			turn_on(drum_hit[sequencer.current_inst].led_index);
 		}
@@ -49,21 +51,29 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	} else {
 		spi_data[1] = 0;
 		spi_data[0] = 0;
+		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+		switch (sequencer.variation_mode) {
+					
+			case VAR_A: case VAR_AB:
+			sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+			break;
+					
+			case VAR_B:
+			sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+			break;
+					
+		}
 		if (internal_clock.beat_counter <2) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
-			if (sequencer.variation_mode == VAR_AB) {
-				
-				if (sequencer.variation == VAR_A) {
+			
+
+			if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	
 					
-					
-					
-				} else {
-					
-					
-				}
-				
-			}
+
+			
 			turn_on(STEP_1_LED); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
 		}
+		spi_data[5] |= sequencer.var_led_mask;
+		
 	} 
 	
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
