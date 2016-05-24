@@ -40,8 +40,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		
 		if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
 			
-			spi_data[1] = sequencer.step_led_mask[sequencer.current_inst];
-			spi_data[0] = sequencer.step_led_mask[sequencer.current_inst] >> 8;
+			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 			spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 			spi_data[5] |= sequencer.var_led_mask; 
 			turn_off_all_inst_leds();
@@ -49,7 +49,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		}
 
 	} else {
-		spi_data[1] = 0; //need to put this somewhere else - this code is executing way too many times
+		spi_data[1] = 0; //need to put this somewhere else - this code doesn't need to execute on every interrupt - should execute on every step or half step
 		spi_data[0] = 0;
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		switch (sequencer.variation_mode) {
@@ -86,7 +86,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			sequencer.current_step = 0;
 			if (sequencer.var_change || sequencer.variation_mode == VAR_AB) {
 				sequencer.var_change = 0;	
-				sequencer.variation ^= 1<<0;
+				sequencer.variation ^= 1<<0; //toggle state
 			}
 			//sequencer.current_measure++;
 		}

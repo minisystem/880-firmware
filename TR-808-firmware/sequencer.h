@@ -21,6 +21,7 @@ struct pattern { //current pattern is loaded into ram from eeprom. changing patt
 	
 	uint16_t part[32]; 
 	uint32_t accent; //32 steps of accent data
+	uint16_t step_led_mask[17];
 	//uint8_t step_num:4; //1-16 (0-15)
 	uint8_t pre_scale:2; //1-4 (0-3) //IS THIS GLOBAL OR IS IT PATTERN SPECIFIC?
 	
@@ -45,7 +46,7 @@ struct sequencer {
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
-	uint16_t step_led_mask[17]; //this may not need to be an array? implemented as array it is a useful shortcut though
+	
 	uint8_t var_led_mask;
 	
 	};

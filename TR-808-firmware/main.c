@@ -35,10 +35,10 @@ uint8_t step_number = 0;
 
 void update_step_led_mask(void) {
 	
-	sequencer.step_led_mask[sequencer.current_inst] = 0;
+	sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
 	for (int i = 0; i < 16; i++) {
 		
-		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
+		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
 		
 	}
 	
@@ -76,7 +76,7 @@ void update_step_board() {
 					toggle(i);
 					button[i].state ^= button[i].state;
 					sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
-					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
+					sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
 				}
 			}
 			return;		
@@ -88,7 +88,7 @@ void update_step_board() {
 				toggle(i);
 				button[i].state ^= button[i].state;
 				sequencer.pattern[sequencer.variation].part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
-				sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;				
+				sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;				
 			}			
 		}
 	}
@@ -185,10 +185,10 @@ void refresh(void) {
 			sequencer.next_step_flag = 0;
 			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];
-			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);
-			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+			spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+			spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+			spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
 			if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
 				spi_data[8] |= 1<<ACCENT;
