@@ -38,7 +38,7 @@ void update_step_led_mask(void) {
 	sequencer.step_led_mask[sequencer.current_inst] = 0;
 	for (int i = 0; i < 16; i++) {
 		
-		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.current_pattern.part[i] & (1<<sequencer.current_inst);
+		sequencer.step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
 		
 	}
 	
@@ -75,7 +75,7 @@ void update_step_board() {
 								
 					toggle(i);
 					button[i].state ^= button[i].state;
-					sequencer.current_pattern.accent[i] ^= 1<<0; //just toggle first bit
+					sequencer.pattern[sequencer.variation].accent[i] ^= 1<<0; //just toggle first bit
 					sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
 				}
 			}
@@ -87,7 +87,7 @@ void update_step_board() {
 					
 				toggle(i);
 				button[i].state ^= button[i].state;
-				sequencer.current_pattern.part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
+				sequencer.pattern[sequencer.variation].part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
 				sequencer.step_led_mask[sequencer.current_inst] ^= 1<<i;				
 			}			
 		}
@@ -176,6 +176,7 @@ void refresh(void) {
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
 	update_mode();
+	check_variation_switches();
 	check_inst_switches();
 	update_step_board();
 	if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
@@ -184,12 +185,12 @@ void refresh(void) {
 			sequencer.next_step_flag = 0;
 			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.current_pattern.part[sequencer.current_inst];
+			spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.current_inst];// | sequencer.pattern[sequencer.variation].first_part[sequencer.current_inst];
 			spi_data[1] &= ~(sequencer.step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.current_pattern.part[sequencer.current_inst] >> 8);
+			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.current_inst] >> 8);// | (sequencer.pattern[sequencer.variation].first_part[sequencer.current_inst] >> 8);
 			spi_data[0] &= ~((sequencer.step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			trigger_step(); 
-			if (sequencer.current_pattern.accent[sequencer.current_step] &1) {
+			if (sequencer.pattern[sequencer.variation].accent[sequencer.current_step] &1) {
 				spi_data[8] |= 1<<ACCENT;
 				turn_on(ACCENT_1_LED);
 			}
@@ -324,6 +325,8 @@ int main(void)
 	sequencer.trigger_finished = 1;
 	sequencer.START = 0;
 	//update_tempo();
+	sequencer.variation_mode = 0;
+	turn_on(BASIC_VAR_A_LED);
 	sei(); //enable global interrupts	
 	
     while (1) 

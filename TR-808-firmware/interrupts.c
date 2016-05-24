@@ -50,6 +50,18 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		spi_data[1] = 0;
 		spi_data[0] = 0;
 		if (internal_clock.beat_counter <2) { //1/4 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+			if (sequencer.variation_mode == VAR_AB) {
+				
+				if (sequencer.variation == VAR_A) {
+					
+					
+					
+				} else {
+					
+					
+				}
+				
+			}
 			turn_on(STEP_1_LED); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
 		}
 	} 

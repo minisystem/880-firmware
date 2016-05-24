@@ -75,5 +75,7 @@ void parse_switch_data(void);
 void check_start_stop_tap(void);
 
 void check_inst_switches(void);	
+
+void check_variation_switches(void);
 	
 #endif
