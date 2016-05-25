@@ -85,7 +85,14 @@ void check_start_stop_tap(void) {
 		sequencer.current_step = 0;
 		sequencer.next_step_flag = 1;
 		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
-		
+		sequencer.var_change = 0;
+		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
+			
+			sequencer.variation = VAR_A; //start on variation A
+		} else {
+			
+			sequencer.variation = VAR_B;
+		}
 	}
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
