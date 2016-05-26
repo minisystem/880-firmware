@@ -46,7 +46,18 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				
 			if (sequencer.var_change == 1) {
 				sequencer.var_change = 0;
-				sequencer.variation ^= 1<<0; //this isn't quite right because if you're switching from A/B back to A then this will sometimes switch to B when it should switch to A
+				switch (sequencer.variation_mode) {
+				
+				case VAR_A: case VAR_AB:
+					sequencer.variation = VAR_A;
+					break;
+				case VAR_B:
+					sequencer.variation = VAR_B;
+					break;	
+				
+					
+				}
+				
 			} else if (sequencer.variation_mode == VAR_AB) {
 					
 				sequencer.variation ^= 1<<0; //toggle state
@@ -143,7 +154,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}
 		}
 		
-		spi_data[5] |= sequencer.var_led_mask;// | 0b11111100;
+		spi_data[5] |= sequencer.var_led_mask;
 		
 	} 
 	
