@@ -82,7 +82,13 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
 					break;					
 				case VAR_B:
-					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					if (sequencer.var_change == 1) {
+						
+						sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+						
+					}else {
+						sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					}
 					break;			
 				case VAR_AB:
 					if (sequencer.variation == VAR_A) {
@@ -100,18 +106,22 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 					switch (sequencer.variation_mode) {
 						
 						case VAR_A:
-						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						break;
-						case VAR_B:
-						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						break;
-						case VAR_AB:
-						if (sequencer.variation == VAR_A) {
 							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+							break;
+						case VAR_B:
+							if (sequencer.var_change == 1) {
+								sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 							} else {
-							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						}
-						break;
+								sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;	
+							}
+							break;
+						case VAR_AB:
+							if (sequencer.variation == VAR_A) {
+								sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+								} else {
+								sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+							}
+							break;
 					}				
 	
 				
