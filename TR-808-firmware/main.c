@@ -27,41 +27,14 @@
 
 MidiDevice midi_device;
 
-static uint16_t new_tempo_adc = 0;
-static uint16_t current_tempo_adc = 0;
+
 
 	
 uint8_t step_number = 0;	
 
-void update_step_led_mask(void) {
-	
-	sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
-	for (int i = 0; i < 16; i++) {
-		
-		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
-		
-	}
-	
-}
 
-void update_tempo() {
-	
-	int tempo_adc_change = 0;
-	new_tempo_adc = read_tempo_pot();
-	tempo_adc_change = new_tempo_adc - current_tempo_adc;
-	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
-	
-	internal_clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
-	if (internal_clock.rate != internal_clock.previous_rate) {
-		
-		update_clock_rate(internal_clock.rate);
-		
-	}
-	
-	internal_clock.previous_rate = internal_clock.rate;	
-	
-}
+
 
 void update_step_board() {
 	
@@ -94,75 +67,6 @@ void update_step_board() {
 	}
 }
 
-void live_hits(void) {
-	
-	if (button[INST_BD_2_SW].state) {
-		
-		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
-		trigger_drum(BD, 0);
-	}
-	
-	if (button[INST_SD_3_SW].state) {
-		
-		button[INST_SD_3_SW].state ^= button[INST_SD_3_SW].state;
-		trigger_drum(SD,0);
-	}
-	
-	if (button[INST_LT_4_SW].state) {
-		
-		button[INST_LT_4_SW].state ^= button[INST_LT_4_SW].state;
-		trigger_drum(LT, 0);
-	}
-	
-	if (button[INST_MT_5_SW].state) {
-		
-		button[INST_MT_5_SW].state ^= button[INST_MT_5_SW].state;
-		trigger_drum(MT,0);
-	}	
-	
-	if (button[INST_HT_6_SW].state) {
-		
-		button[INST_HT_6_SW].state ^= button[INST_HT_6_SW].state;
-		trigger_drum(HT, 0);
-	}
-	
-	if (button[INST_RS_7_SW].state) {
-		
-		button[INST_RS_7_SW].state ^= button[INST_RS_7_SW].state;
-		trigger_drum(RS,0);
-	}
-	
-	if (button[INST_CP_8_SW].state) {
-		
-		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
-		trigger_drum(CP, 0);
-	}
-	
-	if (button[INST_CB_9_SW].state) {
-		
-		button[INST_CB_9_SW].state ^= button[INST_CB_9_SW].state;
-		trigger_drum(CB,0);
-	}	
-	if (button[INST_CY_10_SW].state) {
-		
-		button[INST_CY_10_SW].state ^= button[INST_CY_10_SW].state;
-		trigger_drum(CY,0);
-	}
-	
-	if (button[INST_OH_11_SW].state) {
-		
-		button[INST_OH_11_SW].state ^= button[INST_OH_11_SW].state;
-		trigger_drum(OH, 0);
-	}
-	
-	if (button[INST_CH_12_SW].state) {
-		
-		button[INST_CH_12_SW].state ^= button[INST_CH_12_SW].state;
-		trigger_drum(CH,0);
-	}
-		
-	
-}
 
 
 
@@ -328,6 +232,7 @@ int main(void)
 	sequencer.variation_mode = 0;
 	sequencer.step_num = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
 	turn_on(BASIC_VAR_A_LED);
+	sequencer.mode = PATTERN_FIRST;
 	sei(); //enable global interrupts	
 	
     while (1) 

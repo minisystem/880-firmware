@@ -13,6 +13,7 @@
 #include "mode.h"
 #include "drums.h"
 
+
 #define VAR_A	0
 #define VAR_B	1
 #define VAR_AB	2
@@ -42,6 +43,7 @@ struct sequencer {
 	uint8_t step_num:5;
 	uint8_t current_step:5; //will need to increase this with sequences >16 steps, or use offset?
 	uint8_t next_step_flag:1;
+	uint8_t half_step_flag:1;
 	uint8_t trigger_finished:1;
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
@@ -54,5 +56,6 @@ struct sequencer {
 
 extern struct sequencer sequencer;
 
+void update_tempo(void);
 
 #endif 

@@ -14,7 +14,7 @@ drums.d drums.o: .././drums.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  .././drums.h .././hardware.h .././leds.h .././spi.h .././sequencer.h \
- .././mode.h
+ .././mode.h .././switches.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
 
@@ -55,3 +55,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././sequencer.h:
 
 .././mode.h:
+
+.././switches.h:

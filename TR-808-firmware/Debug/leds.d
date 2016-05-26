@@ -14,7 +14,8 @@ leds.d leds.o: .././leds.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- .././hardware.h .././spi.h .././leds.h
+ .././hardware.h .././spi.h .././leds.h .././sequencer.h .././mode.h \
+ .././drums.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
 
@@ -51,3 +52,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././spi.h:
 
 .././leds.h:
+
+.././sequencer.h:
+
+.././mode.h:
+
+.././drums.h:

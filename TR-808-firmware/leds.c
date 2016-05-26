@@ -10,6 +10,7 @@
 #include "hardware.h"
 #include "spi.h"
 #include "leds.h"
+#include "sequencer.h"
 
 
 struct led led[NUM_LEDS] = {
@@ -117,3 +118,13 @@ void turn_off_all_inst_leds(void) { //TODO: make masks constants
 	
 }
 	
+void update_step_led_mask(void) {
+	
+	sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
+	for (int i = 0; i < 16; i++) {
+		
+		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
+		
+	}
+	
+}	

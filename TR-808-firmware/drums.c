@@ -10,6 +10,7 @@
 #include "leds.h"
 #include "spi.h"
 #include "sequencer.h"
+#include "switches.h"
 
 uint8_t current_drum_hit = 0;
 volatile uint8_t trigger_finished = 1;
@@ -36,7 +37,7 @@ struct drum_hit drum_hit[17] = {
 			
 };
 
-void trigger_drum(uint8_t note, uint8_t velocity) {
+void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be compatible with synchronized spi updating
 	
 		//while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
 		//could implement a trigger queue instead of waiting but this is really more of a concern from simultaneous drum hits coming from MIDI or live play. Sequencer triggers won't have this problem unless 
@@ -60,7 +61,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) {
 		}
 		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
 			
-		update_spi();
+		update_spi(); //can't do this here, not synchronized. duh.
 			
 		PORTD &= ~(1<<TRIG);
 		
@@ -95,4 +96,74 @@ void trigger_step(void) { //trigger all drums on current step
 			}		
 		}
 	}
+}
+
+void live_hits(void) {
+	
+	if (button[INST_BD_2_SW].state) {
+		
+		button[INST_BD_2_SW].state ^= button[INST_BD_2_SW].state;
+		trigger_drum(BD, 0);
+	}
+	
+	if (button[INST_SD_3_SW].state) {
+		
+		button[INST_SD_3_SW].state ^= button[INST_SD_3_SW].state;
+		trigger_drum(SD,0);
+	}
+	
+	if (button[INST_LT_4_SW].state) {
+		
+		button[INST_LT_4_SW].state ^= button[INST_LT_4_SW].state;
+		trigger_drum(LT, 0);
+	}
+	
+	if (button[INST_MT_5_SW].state) {
+		
+		button[INST_MT_5_SW].state ^= button[INST_MT_5_SW].state;
+		trigger_drum(MT,0);
+	}
+	
+	if (button[INST_HT_6_SW].state) {
+		
+		button[INST_HT_6_SW].state ^= button[INST_HT_6_SW].state;
+		trigger_drum(HT, 0);
+	}
+	
+	if (button[INST_RS_7_SW].state) {
+		
+		button[INST_RS_7_SW].state ^= button[INST_RS_7_SW].state;
+		trigger_drum(RS,0);
+	}
+	
+	if (button[INST_CP_8_SW].state) {
+		
+		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
+		trigger_drum(CP, 0);
+	}
+	
+	if (button[INST_CB_9_SW].state) {
+		
+		button[INST_CB_9_SW].state ^= button[INST_CB_9_SW].state;
+		trigger_drum(CB,0);
+	}
+	if (button[INST_CY_10_SW].state) {
+		
+		button[INST_CY_10_SW].state ^= button[INST_CY_10_SW].state;
+		trigger_drum(CY,0);
+	}
+	
+	if (button[INST_OH_11_SW].state) {
+		
+		button[INST_OH_11_SW].state ^= button[INST_OH_11_SW].state;
+		trigger_drum(OH, 0);
+	}
+	
+	if (button[INST_CH_12_SW].state) {
+		
+		button[INST_CH_12_SW].state ^= button[INST_CH_12_SW].state;
+		trigger_drum(CH,0);
+	}
+	
+	
 }
