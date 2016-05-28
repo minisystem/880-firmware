@@ -189,3 +189,62 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 	
 	
 }	
+
+void check_clear_switch(void) {
+	
+	if (sequencer.CLEAR && sequencer.START == 0) {
+		
+		switch (sequencer.mode) {
+			
+			case PATTERN_CLEAR:
+				toggle(MODE_1_PATTERN_CLEAR);
+				//spi_data[0] = 0; //turn off all step LEDs
+				//spi_data[1] = 0;
+				for (int i = 0; i <= sequencer.step_num; i++) {
+					
+					sequencer.pattern[sequencer.variation].part[i] = 0;
+					
+				}
+				
+				for (int i = 0; i <17; i++) {
+					
+					sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
+					
+				}
+				
+				sequencer.pattern[sequencer.variation].accent = 0;	
+				
+				break;
+				
+			case PATTERN_FIRST:
+			
+				break;	
+			
+			case PATTERN_SECOND:
+			
+				break;
+				
+			case MANUAL_PLAY:
+			
+				break;
+				
+			case PLAY_RHYTHM:
+			
+				break;
+				
+			case COMPOSE_RHYTHM:
+			
+				break;			
+			
+		}
+		
+	} else {
+		
+		if (sequencer.mode == PATTERN_CLEAR) { //need to ensure LED is on after toggling while CLEAR button is held
+			
+			turn_on(MODE_1_PATTERN_CLEAR);
+		}
+		
+	}
+	
+}

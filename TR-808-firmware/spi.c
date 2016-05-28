@@ -55,7 +55,8 @@ void read_switches(void) { //reads switch data
 	
 	PORTC &= ~(1<<SPI_SW_LATCH);
 	
-	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1);
+	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
+	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
 	//debounce
 	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
 	spi_previous_switch_data[0] ^= spi_current_switch_data[0];

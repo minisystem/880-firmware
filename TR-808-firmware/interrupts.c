@@ -12,7 +12,9 @@
 #include "spi.h"
 #include "clock.h"
 #include "sequencer.h"
-
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
+#include "midi.h"
 
 
 ISR (TIMER0_COMPA_vect) {
@@ -34,7 +36,7 @@ ISR (TIMER0_COMPA_vect) {
 }
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
-	
+	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
 		sequencer.next_step_flag = 1;
@@ -64,7 +66,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}
 			//sequencer.current_measure++;
 		}
-	}
+	} //should make the else if so second condition doesn't need to be tested
 	
 	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
 		

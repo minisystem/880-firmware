@@ -80,41 +80,11 @@ void refresh(void) {
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
 	update_mode();
+	check_clear_switch();
 	check_variation_switches();
 	check_inst_switches();
 	update_step_board();
-	if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
-		
-		if (sequencer.next_step_flag) {
-			sequencer.next_step_flag = 0;
-			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
-			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-			spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-			spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-			trigger_step(); 
-			if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
-				spi_data[8] |= 1<<ACCENT;
-				turn_on(ACCENT_1_LED);
-			}
-			TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-			TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-			sequencer.trigger_finished = 0;
-			
-		} else {
-			
-
-			
-		}		
-	} else if (sequencer.next_step_flag){
-		
-			sequencer.next_step_flag = 0;
-			//spi_data[1] = 0;
-			//spi_data[0] = 0;
-			//turn_on(STEP_1_LED);
-		
-	}
+	process_step();
 	
 	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
 		
@@ -153,7 +123,8 @@ void setup_midi_usart(void)
 	UBRR0L = (unsigned char) ubbr_value;
 	UBRR0H = (unsigned char) (ubbr_value >> 8);
 	
-	UCSR0B = (1<<RXEN0)|(1<<TXEN0) | (1<<RXCIE0);
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0) | (1<<RXCIE0) | (1<<TXCIE0);
+	DDRD |= (1<<PD1); //set PD1 and UART TX
 	//UCSR0C |= (0<<UMSEL0)|(0<<UMSEL01)|(0<<UPM01)|(0<<UPM00)|(0<<USBS0)|(0<<UCSZ02)|(1<<UCSZ01)|(1<<UCSZ00);
 }
 
@@ -166,6 +137,12 @@ ISR (USART0_RX_vect) { // USART receive interrupt
 	//calling a function in an interrupt is inefficient according to AVR C guidelines
 	// so this function should maybe be inlined in main loop if inByte is made volatile
 	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
+}
+
+ISR (USART0_TX_vect) {
+
+
+	
 }
 
 

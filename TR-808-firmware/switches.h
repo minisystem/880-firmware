@@ -43,7 +43,8 @@
 #define	STEP_7_SW	6
 #define	STEP_8_SW	7
 
-#define SHIFT_BIT 1
+#define SHIFT_BIT 1 //bit in spi data byte
+#define CLEAR_BIT 4 
 
 enum {
 	OMAR_WAS_HERE = 0,
@@ -77,5 +78,7 @@ void check_start_stop_tap(void);
 void check_inst_switches(void);	
 
 void check_variation_switches(void);
+
+void check_clear_switch(void);
 	
 #endif

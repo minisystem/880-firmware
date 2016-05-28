@@ -36,6 +36,7 @@ struct sequencer {
 	enum global_mode mode;
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
+	uint8_t CLEAR:1; //is the clear button being held?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t variation:1; //variation A or variation B
 	uint8_t variation_mode:2; //0 = A, 1 = B, 2 = toggle AB
@@ -57,5 +58,6 @@ struct sequencer {
 extern struct sequencer sequencer;
 
 void update_tempo(void);
+void process_step(void);
 
 #endif 

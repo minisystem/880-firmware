@@ -3,31 +3,31 @@ TR-808-firmware.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000158  00800100  00001826  000018ba  2**0
+  0 .data         00000158  00800100  0000192c  000019c0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00001826  00000000  00000000  00000094  2**1
+  1 .text         0000192c  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          000001f3  00800258  00800258  00001a12  2**0
+  2 .bss          000001f3  00800258  00800258  00001b18  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00001a12  2**0
+  3 .comment      00000030  00000000  00000000  00001b18  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00001a44  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00001b48  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000400  00000000  00000000  00001a84  2**0
+  5 .debug_aranges 00000418  00000000  00000000  00001b88  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00004e6f  00000000  00000000  00001e84  2**0
+  6 .debug_info   00004fe1  00000000  00000000  00001fa0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000013ce  00000000  00000000  00006cf3  2**0
+  7 .debug_abbrev 00001464  00000000  00000000  00006f81  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000144b  00000000  00000000  000080c1  2**0
+  8 .debug_line   000014ba  00000000  00000000  000083e5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000a70  00000000  00000000  0000950c  2**2
+  9 .debug_frame  00000acc  00000000  00000000  000098a0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000ff7  00000000  00000000  00009f7c  2**0
+ 10 .debug_str    00001023  00000000  00000000  0000a36c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00002000  00000000  00000000  0000af73  2**0
+ 11 .debug_loc    000020da  00000000  00000000  0000b38f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000320  00000000  00000000  0000cf73  2**0
+ 12 .debug_ranges 00000350  00000000  00000000  0000d469  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -51,9 +51,9 @@ Disassembly of section .text:
       3c:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       40:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       44:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
-      48:	0c 94 e7 05 	jmp	0xbce	; 0xbce <__vector_18>
+      48:	0c 94 54 05 	jmp	0xaa8	; 0xaa8 <__vector_18>
       4c:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
-      50:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
+      50:	0c 94 89 05 	jmp	0xb12	; 0xb12 <__vector_20>
       54:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       58:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       5c:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
@@ -78,21 +78,21 @@ Disassembly of section .text:
       a8:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       ac:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
       b0:	0c 94 86 00 	jmp	0x10c	; 0x10c <__bad_interrupt>
-      b4:	5d 09       	sbc	r21, r13
-      b6:	5b 09       	sbc	r21, r11
-      b8:	5d 09       	sbc	r21, r13
-      ba:	5f 09       	sbc	r21, r15
-      bc:	5f 09       	sbc	r21, r15
-      be:	65 09       	sbc	r22, r5
-      c0:	5f 09       	sbc	r21, r15
-      c2:	65 09       	sbc	r22, r5
-      c4:	65 09       	sbc	r22, r5
-      c6:	65 09       	sbc	r22, r5
-      c8:	65 09       	sbc	r22, r5
-      ca:	65 09       	sbc	r22, r5
-      cc:	5f 09       	sbc	r21, r15
-      ce:	65 09       	sbc	r22, r5
-      d0:	65 09       	sbc	r22, r5
+      b4:	e0 09       	sbc	r30, r0
+      b6:	de 09       	sbc	r29, r14
+      b8:	e0 09       	sbc	r30, r0
+      ba:	e2 09       	sbc	r30, r2
+      bc:	e2 09       	sbc	r30, r2
+      be:	e8 09       	sbc	r30, r8
+      c0:	e2 09       	sbc	r30, r2
+      c2:	e8 09       	sbc	r30, r8
+      c4:	e8 09       	sbc	r30, r8
+      c6:	e8 09       	sbc	r30, r8
+      c8:	e8 09       	sbc	r30, r8
+      ca:	e8 09       	sbc	r30, r8
+      cc:	e2 09       	sbc	r30, r2
+      ce:	e8 09       	sbc	r30, r8
+      d0:	e8 09       	sbc	r30, r8
 
 000000d2 <__ctors_end>:
       d2:	11 24       	eor	r1, r1
@@ -106,8 +106,8 @@ Disassembly of section .text:
       de:	12 e0       	ldi	r17, 0x02	; 2
       e0:	a0 e0       	ldi	r26, 0x00	; 0
       e2:	b1 e0       	ldi	r27, 0x01	; 1
-      e4:	e6 e2       	ldi	r30, 0x26	; 38
-      e6:	f8 e1       	ldi	r31, 0x18	; 24
+      e4:	ec e2       	ldi	r30, 0x2C	; 44
+      e6:	f9 e1       	ldi	r31, 0x19	; 25
       e8:	02 c0       	rjmp	.+4      	; 0xee <__do_copy_data+0x10>
       ea:	05 90       	lpm	r0, Z+
       ec:	0d 92       	st	X+, r0
@@ -128,8 +128,8 @@ Disassembly of section .text:
       fe:	ab 34       	cpi	r26, 0x4B	; 75
      100:	b2 07       	cpc	r27, r18
      102:	e1 f7       	brne	.-8      	; 0xfc <.do_clear_bss_loop>
-     104:	0e 94 1c 06 	call	0xc38	; 0xc38 <main>
-     108:	0c 94 11 0c 	jmp	0x1822	; 0x1822 <_exit>
+     104:	0e 94 93 05 	call	0xb26	; 0xb26 <main>
+     108:	0c 94 94 0c 	jmp	0x1928	; 0x1928 <_exit>
 
 0000010c <__bad_interrupt>:
      10c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -349,7 +349,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
      236:	5d 9a       	sbi	0x0b, 5	; 11
 			
 		update_spi(); //can't do this here, not synchronized. duh.
-     238:	0e 94 f3 06 	call	0xde6	; 0xde6 <update_spi>
+     238:	0e 94 03 07 	call	0xe06	; 0xe06 <update_spi>
 			
 		PORTD &= ~(1<<TRIG);
      23c:	5d 98       	cbi	0x0b, 5	; 11
@@ -752,9 +752,9 @@ void live_hits(void) {
      492:	08 95       	ret
 
 00000494 <__vector_14>:
-#include "clock.h"
-#include "sequencer.h"
-
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
+#include "midi.h"
 
 
 ISR (TIMER0_COMPA_vect) {
@@ -821,7 +821,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
      4ee:	df 93       	push	r29
      4f0:	ef 93       	push	r30
      4f2:	ff 93       	push	r31
-	
+	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
      4f4:	e3 e7       	ldi	r30, 0x73	; 115
      4f6:	f2 e0       	ldi	r31, 0x02	; 2
@@ -935,7 +935,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}
 			//sequencer.current_measure++;
 		}
-	}
+	} //should make the else if so second condition doesn't need to be tested
 	
 	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
      59e:	86 95       	lsr	r24
@@ -1750,2605 +1750,2808 @@ void update_step_board() {
 
 
 
-
-
 void refresh(void) {
-     a58:	df 92       	push	r13
-     a5a:	ef 92       	push	r14
-     a5c:	ff 92       	push	r15
-     a5e:	0f 93       	push	r16
-     a60:	1f 93       	push	r17
-     a62:	cf 93       	push	r28
-     a64:	df 93       	push	r29
 	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
 	update_tempo(); //meh, doesn't seem to make a huge difference.
-     a66:	0e 94 bb 06 	call	0xd76	; 0xd76 <update_tempo>
+     a58:	0e 94 32 06 	call	0xc64	; 0xc64 <update_tempo>
 	read_switches();
-     a6a:	0e 94 17 07 	call	0xe2e	; 0xe2e <read_switches>
+     a5c:	0e 94 27 07 	call	0xe4e	; 0xe4e <read_switches>
 	check_start_stop_tap();
-     a6e:	0e 94 87 07 	call	0xf0e	; 0xf0e <check_start_stop_tap>
+     a60:	0e 94 9c 07 	call	0xf38	; 0xf38 <check_start_stop_tap>
 	
 	parse_switch_data();
-     a72:	0e 94 60 07 	call	0xec0	; 0xec0 <parse_switch_data>
+     a64:	0e 94 75 07 	call	0xeea	; 0xeea <parse_switch_data>
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
-     a76:	80 91 75 03 	lds	r24, 0x0375
-     a7a:	83 30       	cpi	r24, 0x03	; 3
-     a7c:	11 f4       	brne	.+4      	; 0xa82 <refresh+0x2a>
-     a7e:	0e 94 c5 01 	call	0x38a	; 0x38a <live_hits>
+     a68:	80 91 75 03 	lds	r24, 0x0375
+     a6c:	83 30       	cpi	r24, 0x03	; 3
+     a6e:	11 f4       	brne	.+4      	; 0xa74 <refresh+0x1c>
+     a70:	0e 94 c5 01 	call	0x38a	; 0x38a <live_hits>
 	update_mode();
-     a82:	0e 94 82 06 	call	0xd04	; 0xd04 <update_mode>
+     a74:	0e 94 f9 05 	call	0xbf2	; 0xbf2 <update_mode>
+	check_clear_switch();
+     a78:	0e 94 ba 08 	call	0x1174	; 0x1174 <check_clear_switch>
 	check_variation_switches();
-     a86:	0e 94 70 08 	call	0x10e0	; 0x10e0 <check_variation_switches>
+     a7c:	0e 94 85 08 	call	0x110a	; 0x110a <check_variation_switches>
 	check_inst_switches();
-     a8a:	0e 94 cb 07 	call	0xf96	; 0xf96 <check_inst_switches>
+     a80:	0e 94 e0 07 	call	0xfc0	; 0xfc0 <check_inst_switches>
 	update_step_board();
-     a8e:	0e 94 3b 04 	call	0x876	; 0x876 <update_step_board>
-	if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
-     a92:	80 91 76 03 	lds	r24, 0x0376
-     a96:	81 ff       	sbrs	r24, 1
-     a98:	7d c0       	rjmp	.+250    	; 0xb94 <refresh+0x13c>
-		
-		if (sequencer.next_step_flag) {
-     a9a:	80 91 46 04 	lds	r24, 0x0446
-     a9e:	86 ff       	sbrs	r24, 6
-     aa0:	82 c0       	rjmp	.+260    	; 0xba6 <refresh+0x14e>
-			sequencer.next_step_flag = 0;
-     aa2:	e5 e4       	ldi	r30, 0x45	; 69
-     aa4:	f4 e0       	ldi	r31, 0x04	; 4
-     aa6:	81 81       	ldd	r24, Z+1	; 0x01
-     aa8:	8f 7b       	andi	r24, 0xBF	; 191
-     aaa:	81 83       	std	Z+1, r24	; 0x01
-			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
-     aac:	80 91 47 04 	lds	r24, 0x0447
-     ab0:	81 70       	andi	r24, 0x01	; 1
-     ab2:	88 23       	and	r24, r24
-     ab4:	f1 f3       	breq	.-4      	; 0xab2 <refresh+0x5a>
-			PORTD |= (1<<TRIG);
-     ab6:	5d 9a       	sbi	0x0b, 5	; 11
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-     ab8:	06 e4       	ldi	r16, 0x46	; 70
-     aba:	14 e0       	ldi	r17, 0x04	; 4
-     abc:	d8 01       	movw	r26, r16
-     abe:	8c 91       	ld	r24, X
-     ac0:	86 95       	lsr	r24
-     ac2:	8f 71       	andi	r24, 0x1F	; 31
-     ac4:	21 e0       	ldi	r18, 0x01	; 1
-     ac6:	30 e0       	ldi	r19, 0x00	; 0
-     ac8:	02 c0       	rjmp	.+4      	; 0xace <refresh+0x76>
-     aca:	22 0f       	add	r18, r18
-     acc:	33 1f       	adc	r19, r19
-     ace:	8a 95       	dec	r24
-     ad0:	e2 f7       	brpl	.-8      	; 0xaca <refresh+0x72>
-     ad2:	e0 91 49 04 	lds	r30, 0x0449
-     ad6:	f0 e0       	ldi	r31, 0x00	; 0
-     ad8:	b2 96       	adiw	r30, 0x22	; 34
-     ada:	0f 2e       	mov	r0, r31
-     adc:	f5 e4       	ldi	r31, 0x45	; 69
-     ade:	ef 2e       	mov	r14, r31
-     ae0:	f4 e0       	ldi	r31, 0x04	; 4
-     ae2:	ff 2e       	mov	r15, r31
-     ae4:	f0 2d       	mov	r31, r0
-     ae6:	d7 01       	movw	r26, r14
-     ae8:	8c 91       	ld	r24, X
-     aea:	ee 0f       	add	r30, r30
-     aec:	ff 1f       	adc	r31, r31
-     aee:	0f 2e       	mov	r0, r31
-     af0:	f7 e6       	ldi	r31, 0x67	; 103
-     af2:	df 2e       	mov	r13, r31
-     af4:	f0 2d       	mov	r31, r0
-     af6:	81 70       	andi	r24, 0x01	; 1
-     af8:	d8 9e       	mul	r13, r24
-     afa:	e0 0d       	add	r30, r0
-     afc:	f1 1d       	adc	r31, r1
-     afe:	11 24       	eor	r1, r1
-     b00:	eb 58       	subi	r30, 0x8B	; 139
-     b02:	fc 4f       	sbci	r31, 0xFC	; 252
-     b04:	92 81       	ldd	r25, Z+2	; 0x02
-     b06:	83 81       	ldd	r24, Z+3	; 0x03
-			spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-     b08:	e8 e6       	ldi	r30, 0x68	; 104
-     b0a:	f2 e0       	ldi	r31, 0x02	; 2
-     b0c:	49 2f       	mov	r20, r25
-     b0e:	42 23       	and	r20, r18
-     b10:	40 95       	com	r20
-		
-		if (sequencer.next_step_flag) {
-			sequencer.next_step_flag = 0;
-			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
-			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-     b12:	92 2b       	or	r25, r18
-			spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-     b14:	94 23       	and	r25, r20
-     b16:	91 83       	std	Z+1, r25	; 0x01
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-			spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-     b18:	98 2f       	mov	r25, r24
-     b1a:	93 23       	and	r25, r19
-     b1c:	90 95       	com	r25
-			sequencer.next_step_flag = 0;
-			while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
-			PORTD |= (1<<TRIG);
-			spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-			spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-			spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-     b1e:	83 2b       	or	r24, r19
-			spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-     b20:	89 23       	and	r24, r25
-     b22:	80 83       	st	Z, r24
-			trigger_step(); 
-     b24:	0e 94 37 01 	call	0x26e	; 0x26e <trigger_step>
-			if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
-     b28:	f7 01       	movw	r30, r14
-     b2a:	80 81       	ld	r24, Z
-     b2c:	81 70       	andi	r24, 0x01	; 1
-     b2e:	c8 2f       	mov	r28, r24
-     b30:	f0 e0       	ldi	r31, 0x00	; 0
-     b32:	df 2f       	mov	r29, r31
-     b34:	dc 9e       	mul	r13, r28
-     b36:	f0 01       	movw	r30, r0
-     b38:	dd 9e       	mul	r13, r29
-     b3a:	f0 0d       	add	r31, r0
-     b3c:	11 24       	eor	r1, r1
-     b3e:	e9 54       	subi	r30, 0x49	; 73
-     b40:	fc 4f       	sbci	r31, 0xFC	; 252
-     b42:	d8 01       	movw	r26, r16
-     b44:	8c 91       	ld	r24, X
-     b46:	86 95       	lsr	r24
-     b48:	8f 71       	andi	r24, 0x1F	; 31
-     b4a:	40 81       	ld	r20, Z
-     b4c:	51 81       	ldd	r21, Z+1	; 0x01
-     b4e:	62 81       	ldd	r22, Z+2	; 0x02
-     b50:	73 81       	ldd	r23, Z+3	; 0x03
-     b52:	8a 01       	movw	r16, r20
-     b54:	9b 01       	movw	r18, r22
-     b56:	04 c0       	rjmp	.+8      	; 0xb60 <refresh+0x108>
-     b58:	36 95       	lsr	r19
-     b5a:	27 95       	ror	r18
-     b5c:	17 95       	ror	r17
-     b5e:	07 95       	ror	r16
-     b60:	8a 95       	dec	r24
-     b62:	d2 f7       	brpl	.-12     	; 0xb58 <refresh+0x100>
-     b64:	00 ff       	sbrs	r16, 0
-     b66:	08 c0       	rjmp	.+16     	; 0xb78 <refresh+0x120>
-				spi_data[8] |= 1<<ACCENT;
-     b68:	e8 e6       	ldi	r30, 0x68	; 104
-     b6a:	f2 e0       	ldi	r31, 0x02	; 2
-     b6c:	80 85       	ldd	r24, Z+8	; 0x08
-     b6e:	81 60       	ori	r24, 0x01	; 1
-     b70:	80 87       	std	Z+8, r24	; 0x08
-				turn_on(ACCENT_1_LED);
-     b72:	84 e1       	ldi	r24, 0x14	; 20
-     b74:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
-			}
-			TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-     b78:	ee e6       	ldi	r30, 0x6E	; 110
-     b7a:	f0 e0       	ldi	r31, 0x00	; 0
-     b7c:	80 81       	ld	r24, Z
-     b7e:	82 60       	ori	r24, 0x02	; 2
-     b80:	80 83       	st	Z, r24
-			TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-     b82:	85 b5       	in	r24, 0x25	; 37
-     b84:	83 60       	ori	r24, 0x03	; 3
-     b86:	85 bd       	out	0x25, r24	; 37
-			sequencer.trigger_finished = 0;
-     b88:	e5 e4       	ldi	r30, 0x45	; 69
-     b8a:	f4 e0       	ldi	r31, 0x04	; 4
-     b8c:	82 81       	ldd	r24, Z+2	; 0x02
-     b8e:	8e 7f       	andi	r24, 0xFE	; 254
-     b90:	82 83       	std	Z+2, r24	; 0x02
-     b92:	09 c0       	rjmp	.+18     	; 0xba6 <refresh+0x14e>
-		} else {
-			
-
-			
-		}		
-	} else if (sequencer.next_step_flag){
-     b94:	80 91 46 04 	lds	r24, 0x0446
-     b98:	86 ff       	sbrs	r24, 6
-     b9a:	05 c0       	rjmp	.+10     	; 0xba6 <refresh+0x14e>
-		
-			sequencer.next_step_flag = 0;
-     b9c:	e5 e4       	ldi	r30, 0x45	; 69
-     b9e:	f4 e0       	ldi	r31, 0x04	; 4
-     ba0:	81 81       	ldd	r24, Z+1	; 0x01
-     ba2:	8f 7b       	andi	r24, 0xBF	; 191
-     ba4:	81 83       	std	Z+1, r24	; 0x01
+     a84:	0e 94 3b 04 	call	0x876	; 0x876 <update_step_board>
+	process_step();
+     a88:	0e 94 60 06 	call	0xcc0	; 0xcc0 <process_step>
 		//sequencer.trigger_finished = 0;
 		//clear_all_trigs();
 		//spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
 	}
 	
 	update_spi();
-     ba6:	0e 94 f3 06 	call	0xde6	; 0xde6 <update_spi>
+     a8c:	0e 94 03 07 	call	0xe06	; 0xe06 <update_spi>
 	PORTD &= ~(1<<TRIG);
-     baa:	5d 98       	cbi	0x0b, 5	; 11
-	//if (trigger_finished && sequencer.SHIFT) update_tempo(); //turning off SPI during pot read creates problem for trigger interrupt
-	
-}
-     bac:	df 91       	pop	r29
-     bae:	cf 91       	pop	r28
-     bb0:	1f 91       	pop	r17
-     bb2:	0f 91       	pop	r16
-     bb4:	ff 90       	pop	r15
-     bb6:	ef 90       	pop	r14
-     bb8:	df 90       	pop	r13
-     bba:	08 95       	ret
+     a90:	5d 98       	cbi	0x0b, 5	; 11
+     a92:	08 95       	ret
 
-00000bbc <setup_midi_usart>:
+00000a94 <setup_midi_usart>:
 
 void setup_midi_usart(void)
 {
 	uint16_t ubbr_value = 31; //16MHz/(16*31250 BAUD) - 1
 	//write ubbr_value to H and L UBBR1 registers:
 	UBRR0L = (unsigned char) ubbr_value;
-     bbc:	8f e1       	ldi	r24, 0x1F	; 31
-     bbe:	80 93 c4 00 	sts	0x00C4, r24
+     a94:	8f e1       	ldi	r24, 0x1F	; 31
+     a96:	80 93 c4 00 	sts	0x00C4, r24
 	UBRR0H = (unsigned char) (ubbr_value >> 8);
-     bc2:	10 92 c5 00 	sts	0x00C5, r1
+     a9a:	10 92 c5 00 	sts	0x00C5, r1
 	
-	UCSR0B = (1<<RXEN0)|(1<<TXEN0) | (1<<RXCIE0);
-     bc6:	88 e9       	ldi	r24, 0x98	; 152
-     bc8:	80 93 c1 00 	sts	0x00C1, r24
-     bcc:	08 95       	ret
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0) | (1<<RXCIE0) | (1<<TXCIE0);
+     a9e:	88 ed       	ldi	r24, 0xD8	; 216
+     aa0:	80 93 c1 00 	sts	0x00C1, r24
+	DDRD |= (1<<PD1); //set PD1 and UART TX
+     aa4:	51 9a       	sbi	0x0a, 1	; 10
+     aa6:	08 95       	ret
 
-00000bce <__vector_18>:
+00000aa8 <__vector_18>:
 	//UCSR0C |= (0<<UMSEL0)|(0<<UMSEL01)|(0<<UPM01)|(0<<UPM00)|(0<<USBS0)|(0<<UCSZ02)|(1<<UCSZ01)|(1<<UCSZ00);
 }
 
 
 
 ISR (USART0_RX_vect) { // USART receive interrupt
-     bce:	1f 92       	push	r1
-     bd0:	0f 92       	push	r0
-     bd2:	0f b6       	in	r0, 0x3f	; 63
-     bd4:	0f 92       	push	r0
-     bd6:	11 24       	eor	r1, r1
-     bd8:	2f 93       	push	r18
-     bda:	3f 93       	push	r19
-     bdc:	4f 93       	push	r20
-     bde:	5f 93       	push	r21
-     be0:	6f 93       	push	r22
-     be2:	7f 93       	push	r23
-     be4:	8f 93       	push	r24
-     be6:	9f 93       	push	r25
-     be8:	af 93       	push	r26
-     bea:	bf 93       	push	r27
-     bec:	ef 93       	push	r30
-     bee:	ff 93       	push	r31
-     bf0:	cf 93       	push	r28
-     bf2:	df 93       	push	r29
-     bf4:	1f 92       	push	r1
-     bf6:	cd b7       	in	r28, 0x3d	; 61
-     bf8:	de b7       	in	r29, 0x3e	; 62
+     aa8:	1f 92       	push	r1
+     aaa:	0f 92       	push	r0
+     aac:	0f b6       	in	r0, 0x3f	; 63
+     aae:	0f 92       	push	r0
+     ab0:	11 24       	eor	r1, r1
+     ab2:	2f 93       	push	r18
+     ab4:	3f 93       	push	r19
+     ab6:	4f 93       	push	r20
+     ab8:	5f 93       	push	r21
+     aba:	6f 93       	push	r22
+     abc:	7f 93       	push	r23
+     abe:	8f 93       	push	r24
+     ac0:	9f 93       	push	r25
+     ac2:	af 93       	push	r26
+     ac4:	bf 93       	push	r27
+     ac6:	ef 93       	push	r30
+     ac8:	ff 93       	push	r31
+     aca:	cf 93       	push	r28
+     acc:	df 93       	push	r29
+     ace:	1f 92       	push	r1
+     ad0:	cd b7       	in	r28, 0x3d	; 61
+     ad2:	de b7       	in	r29, 0x3e	; 62
 	//PORTB ^= (1<<ARP_SYNC_LED); //toggle arp VCO_SYNC_LATCH_BIT LED
 	uint8_t inByte = UDR0;
-     bfa:	80 91 c6 00 	lds	r24, 0x00C6
-     bfe:	89 83       	std	Y+1, r24	; 0x01
+     ad4:	80 91 c6 00 	lds	r24, 0x00C6
+     ad8:	89 83       	std	Y+1, r24	; 0x01
 	midi_device_input(&midi_device, 1, &inByte);
-     c00:	ae 01       	movw	r20, r28
-     c02:	4f 5f       	subi	r20, 0xFF	; 255
-     c04:	5f 4f       	sbci	r21, 0xFF	; 255
-     c06:	61 e0       	ldi	r22, 0x01	; 1
-     c08:	88 e8       	ldi	r24, 0x88	; 136
-     c0a:	92 e0       	ldi	r25, 0x02	; 2
-     c0c:	0e 94 a4 09 	call	0x1348	; 0x1348 <midi_device_input>
+     ada:	ae 01       	movw	r20, r28
+     adc:	4f 5f       	subi	r20, 0xFF	; 255
+     ade:	5f 4f       	sbci	r21, 0xFF	; 255
+     ae0:	61 e0       	ldi	r22, 0x01	; 1
+     ae2:	88 e8       	ldi	r24, 0x88	; 136
+     ae4:	92 e0       	ldi	r25, 0x02	; 2
+     ae6:	0e 94 27 0a 	call	0x144e	; 0x144e <midi_device_input>
 	//calling a function in an interrupt is inefficient according to AVR C guidelines
 	// so this function should maybe be inlined in main loop if inByte is made volatile
 	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
 }
-     c10:	0f 90       	pop	r0
-     c12:	df 91       	pop	r29
-     c14:	cf 91       	pop	r28
-     c16:	ff 91       	pop	r31
-     c18:	ef 91       	pop	r30
-     c1a:	bf 91       	pop	r27
-     c1c:	af 91       	pop	r26
-     c1e:	9f 91       	pop	r25
-     c20:	8f 91       	pop	r24
-     c22:	7f 91       	pop	r23
-     c24:	6f 91       	pop	r22
-     c26:	5f 91       	pop	r21
-     c28:	4f 91       	pop	r20
-     c2a:	3f 91       	pop	r19
-     c2c:	2f 91       	pop	r18
-     c2e:	0f 90       	pop	r0
-     c30:	0f be       	out	0x3f, r0	; 63
-     c32:	0f 90       	pop	r0
-     c34:	1f 90       	pop	r1
-     c36:	18 95       	reti
+     aea:	0f 90       	pop	r0
+     aec:	df 91       	pop	r29
+     aee:	cf 91       	pop	r28
+     af0:	ff 91       	pop	r31
+     af2:	ef 91       	pop	r30
+     af4:	bf 91       	pop	r27
+     af6:	af 91       	pop	r26
+     af8:	9f 91       	pop	r25
+     afa:	8f 91       	pop	r24
+     afc:	7f 91       	pop	r23
+     afe:	6f 91       	pop	r22
+     b00:	5f 91       	pop	r21
+     b02:	4f 91       	pop	r20
+     b04:	3f 91       	pop	r19
+     b06:	2f 91       	pop	r18
+     b08:	0f 90       	pop	r0
+     b0a:	0f be       	out	0x3f, r0	; 63
+     b0c:	0f 90       	pop	r0
+     b0e:	1f 90       	pop	r1
+     b10:	18 95       	reti
 
-00000c38 <main>:
+00000b12 <__vector_20>:
+
+ISR (USART0_TX_vect) {
+     b12:	1f 92       	push	r1
+     b14:	0f 92       	push	r0
+     b16:	0f b6       	in	r0, 0x3f	; 63
+     b18:	0f 92       	push	r0
+     b1a:	11 24       	eor	r1, r1
+
+
+	
+}
+     b1c:	0f 90       	pop	r0
+     b1e:	0f be       	out	0x3f, r0	; 63
+     b20:	0f 90       	pop	r0
+     b22:	1f 90       	pop	r1
+     b24:	18 95       	reti
+
+00000b26 <main>:
 int main(void)
 {
 	
 	
 	
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
-     c38:	55 9a       	sbi	0x0a, 5	; 10
+     b26:	55 9a       	sbi	0x0a, 5	; 10
 	
 	//setup SPI
 	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
-     c3a:	8d b1       	in	r24, 0x0d	; 13
-     c3c:	8c 60       	ori	r24, 0x0C	; 12
-     c3e:	8d b9       	out	0x0d, r24	; 13
+     b28:	8d b1       	in	r24, 0x0d	; 13
+     b2a:	8c 60       	ori	r24, 0x0C	; 12
+     b2c:	8d b9       	out	0x0d, r24	; 13
 	DDRC |= (1<<SPI_CLK) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH);
-     c40:	87 b1       	in	r24, 0x07	; 7
-     c42:	8e 60       	ori	r24, 0x0E	; 14
-     c44:	87 b9       	out	0x07, r24	; 7
+     b2e:	87 b1       	in	r24, 0x07	; 7
+     b30:	8e 60       	ori	r24, 0x0E	; 14
+     b32:	87 b9       	out	0x07, r24	; 7
 	DDRB |= (1<<SPI_EN);
-     c46:	20 9a       	sbi	0x04, 0	; 4
+     b34:	20 9a       	sbi	0x04, 0	; 4
 	//DDRB &= ~((1<<TAP) | (1<<START_STOP)); //set start/stop tap pins as inputs
 	
 	PORTE &= ~(1<<SPI_MOSI );
-     c48:	73 98       	cbi	0x0e, 3	; 14
+     b36:	73 98       	cbi	0x0e, 3	; 14
 	PORTC &= ~(1<<SPI_CLK | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH);
-     c4a:	88 b1       	in	r24, 0x08	; 8
-     c4c:	81 7f       	andi	r24, 0xF1	; 241
-     c4e:	88 b9       	out	0x08, r24	; 8
+     b38:	88 b1       	in	r24, 0x08	; 8
+     b3a:	81 7f       	andi	r24, 0xF1	; 241
+     b3c:	88 b9       	out	0x08, r24	; 8
 	PORTB &= ~(1<<SPI_EN); //active low
-     c50:	28 98       	cbi	0x05, 0	; 5
+     b3e:	28 98       	cbi	0x05, 0	; 5
 	
 	PORTC |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
-     c52:	43 9a       	sbi	0x08, 3	; 8
+     b40:	43 9a       	sbi	0x08, 3	; 8
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
-     c54:	80 e5       	ldi	r24, 0x50	; 80
-     c56:	80 93 ac 00 	sts	0x00AC, r24
+     b42:	80 e5       	ldi	r24, 0x50	; 80
+     b44:	80 93 ac 00 	sts	0x00AC, r24
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
-     c5a:	ed ea       	ldi	r30, 0xAD	; 173
-     c5c:	f0 e0       	ldi	r31, 0x00	; 0
-     c5e:	80 81       	ld	r24, Z
-     c60:	81 60       	ori	r24, 0x01	; 1
-     c62:	80 83       	st	Z, r24
+     b48:	ed ea       	ldi	r30, 0xAD	; 173
+     b4a:	f0 e0       	ldi	r31, 0x00	; 0
+     b4c:	80 81       	ld	r24, Z
+     b4e:	81 60       	ori	r24, 0x01	; 1
+     b50:	80 83       	st	Z, r24
 	
 	
 	
 	turn_on(STEP_1_LED);
-     c64:	80 e0       	ldi	r24, 0x00	; 0
-     c66:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+     b52:	80 e0       	ldi	r24, 0x00	; 0
+     b54:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 	turn_on(MODE_2_PATTERN_FIRST_PART);
-     c6a:	8d e1       	ldi	r24, 0x1D	; 29
-     c6c:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+     b58:	8d e1       	ldi	r24, 0x1D	; 29
+     b5a:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 	turn_on(FILL_MANUAL);
-     c70:	82 e2       	ldi	r24, 0x22	; 34
-     c72:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+     b5e:	82 e2       	ldi	r24, 0x22	; 34
+     b60:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 	
 	update_spi();
-     c76:	0e 94 f3 06 	call	0xde6	; 0xde6 <update_spi>
+     b64:	0e 94 03 07 	call	0xe06	; 0xe06 <update_spi>
 	
 	
 	//setup Timer0 for drum triggering interrupt
 	
 	TCCR0A |= (1<<WGM01); //clear on compare match A
-     c7a:	84 b5       	in	r24, 0x24	; 36
-     c7c:	82 60       	ori	r24, 0x02	; 2
-     c7e:	84 bd       	out	0x24, r24	; 36
+     b68:	84 b5       	in	r24, 0x24	; 36
+     b6a:	82 60       	ori	r24, 0x02	; 2
+     b6c:	84 bd       	out	0x24, r24	; 36
 	OCR0A = 225; //gives period of about 0.9ms
-     c80:	81 ee       	ldi	r24, 0xE1	; 225
-     c82:	87 bd       	out	0x27, r24	; 39
+     b6e:	81 ee       	ldi	r24, 0xE1	; 225
+     b70:	87 bd       	out	0x27, r24	; 39
 	
 	
 	
 	//setup MIDI
 	//initialize MIDI device
 	midi_device_init(&midi_device);
-     c84:	88 e8       	ldi	r24, 0x88	; 136
-     c86:	92 e0       	ldi	r25, 0x02	; 2
-     c88:	0e 94 73 09 	call	0x12e6	; 0x12e6 <midi_device_init>
+     b72:	88 e8       	ldi	r24, 0x88	; 136
+     b74:	92 e0       	ldi	r25, 0x02	; 2
+     b76:	0e 94 f6 09 	call	0x13ec	; 0x13ec <midi_device_init>
 	//register callbacks
 	midi_register_noteon_callback(&midi_device, note_on_event);
-     c8c:	64 e3       	ldi	r22, 0x34	; 52
-     c8e:	74 e0       	ldi	r23, 0x04	; 4
-     c90:	88 e8       	ldi	r24, 0x88	; 136
-     c92:	92 e0       	ldi	r25, 0x02	; 2
-     c94:	0e 94 67 09 	call	0x12ce	; 0x12ce <midi_register_noteon_callback>
+     b7a:	64 e3       	ldi	r22, 0x34	; 52
+     b7c:	74 e0       	ldi	r23, 0x04	; 4
+     b7e:	88 e8       	ldi	r24, 0x88	; 136
+     b80:	92 e0       	ldi	r25, 0x02	; 2
+     b82:	0e 94 ea 09 	call	0x13d4	; 0x13d4 <midi_register_noteon_callback>
 	midi_register_noteoff_callback(&midi_device, note_off_event);
-     c98:	62 e3       	ldi	r22, 0x32	; 50
-     c9a:	74 e0       	ldi	r23, 0x04	; 4
-     c9c:	88 e8       	ldi	r24, 0x88	; 136
-     c9e:	92 e0       	ldi	r25, 0x02	; 2
-     ca0:	0e 94 6b 09 	call	0x12d6	; 0x12d6 <midi_register_noteoff_callback>
+     b86:	62 e3       	ldi	r22, 0x32	; 50
+     b88:	74 e0       	ldi	r23, 0x04	; 4
+     b8a:	88 e8       	ldi	r24, 0x88	; 136
+     b8c:	92 e0       	ldi	r25, 0x02	; 2
+     b8e:	0e 94 ee 09 	call	0x13dc	; 0x13dc <midi_register_noteoff_callback>
 	midi_register_realtime_callback(&midi_device, real_time_event);
-     ca4:	63 e3       	ldi	r22, 0x33	; 51
-     ca6:	74 e0       	ldi	r23, 0x04	; 4
-     ca8:	88 e8       	ldi	r24, 0x88	; 136
-     caa:	92 e0       	ldi	r25, 0x02	; 2
-     cac:	0e 94 6f 09 	call	0x12de	; 0x12de <midi_register_realtime_callback>
+     b92:	63 e3       	ldi	r22, 0x33	; 51
+     b94:	74 e0       	ldi	r23, 0x04	; 4
+     b96:	88 e8       	ldi	r24, 0x88	; 136
+     b98:	92 e0       	ldi	r25, 0x02	; 2
+     b9a:	0e 94 f2 09 	call	0x13e4	; 0x13e4 <midi_register_realtime_callback>
 	//midi_register_songposition_callback(&midi_device, song_position_event);
 	//setup MIDI USART
 	setup_midi_usart();
-     cb0:	0e 94 de 05 	call	0xbbc	; 0xbbc <setup_midi_usart>
+     b9e:	0e 94 4a 05 	call	0xa94	; 0xa94 <setup_midi_usart>
 	
 	setup_internal_clock();
-     cb4:	0e 94 b7 00 	call	0x16e	; 0x16e <setup_internal_clock>
+     ba2:	0e 94 b7 00 	call	0x16e	; 0x16e <setup_internal_clock>
 	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
-     cb8:	e3 e7       	ldi	r30, 0x73	; 115
-     cba:	f2 e0       	ldi	r31, 0x02	; 2
-     cbc:	86 e0       	ldi	r24, 0x06	; 6
-     cbe:	80 83       	st	Z, r24
+     ba6:	e3 e7       	ldi	r30, 0x73	; 115
+     ba8:	f2 e0       	ldi	r31, 0x02	; 2
+     baa:	86 e0       	ldi	r24, 0x06	; 6
+     bac:	80 83       	st	Z, r24
 	internal_clock.ppqn_counter = 1;
-     cc0:	c1 e0       	ldi	r28, 0x01	; 1
-     cc2:	c1 83       	std	Z+1, r28	; 0x01
+     bae:	c1 e0       	ldi	r28, 0x01	; 1
+     bb0:	c1 83       	std	Z+1, r28	; 0x01
 	//internal_clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(internal_clock.rate);
 	setup_adc();
-     cc4:	0e 94 88 00 	call	0x110	; 0x110 <setup_adc>
+     bb2:	0e 94 88 00 	call	0x110	; 0x110 <setup_adc>
 	sequencer.trigger_finished = 1;
-     cc8:	e5 e4       	ldi	r30, 0x45	; 69
-     cca:	f4 e0       	ldi	r31, 0x04	; 4
-     ccc:	82 81       	ldd	r24, Z+2	; 0x02
-     cce:	81 60       	ori	r24, 0x01	; 1
-     cd0:	82 83       	std	Z+2, r24	; 0x02
+     bb6:	e5 e4       	ldi	r30, 0x45	; 69
+     bb8:	f4 e0       	ldi	r31, 0x04	; 4
+     bba:	82 81       	ldd	r24, Z+2	; 0x02
+     bbc:	81 60       	ori	r24, 0x01	; 1
+     bbe:	82 83       	std	Z+2, r24	; 0x02
 	sequencer.START = 0;
-     cd2:	a6 e7       	ldi	r26, 0x76	; 118
-     cd4:	b3 e0       	ldi	r27, 0x03	; 3
-     cd6:	8c 91       	ld	r24, X
-     cd8:	8d 7f       	andi	r24, 0xFD	; 253
-     cda:	8c 93       	st	X, r24
+     bc0:	a6 e7       	ldi	r26, 0x76	; 118
+     bc2:	b3 e0       	ldi	r27, 0x03	; 3
+     bc4:	8c 91       	ld	r24, X
+     bc6:	8d 7f       	andi	r24, 0xFD	; 253
+     bc8:	8c 93       	st	X, r24
 	//update_tempo();
 	sequencer.variation_mode = 0;
-     cdc:	80 81       	ld	r24, Z
-     cde:	89 7f       	andi	r24, 0xF9	; 249
+     bca:	80 81       	ld	r24, Z
+     bcc:	89 7f       	andi	r24, 0xF9	; 249
 	sequencer.step_num = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
-     ce0:	80 6f       	ori	r24, 0xF0	; 240
-     ce2:	80 83       	st	Z, r24
-     ce4:	81 81       	ldd	r24, Z+1	; 0x01
-     ce6:	8e 7f       	andi	r24, 0xFE	; 254
-     ce8:	81 83       	std	Z+1, r24	; 0x01
+     bce:	80 6f       	ori	r24, 0xF0	; 240
+     bd0:	80 83       	st	Z, r24
+     bd2:	81 81       	ldd	r24, Z+1	; 0x01
+     bd4:	8e 7f       	andi	r24, 0xFE	; 254
+     bd6:	81 83       	std	Z+1, r24	; 0x01
 	turn_on(BASIC_VAR_A_LED);
-     cea:	84 e2       	ldi	r24, 0x24	; 36
-     cec:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+     bd8:	84 e2       	ldi	r24, 0x24	; 36
+     bda:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 	sequencer.mode = PATTERN_FIRST;
-     cf0:	c0 93 75 03 	sts	0x0375, r28
+     bde:	c0 93 75 03 	sts	0x0375, r28
 	sei(); //enable global interrupts	
-     cf4:	78 94       	sei
+     be2:	78 94       	sei
 	
     while (1) 
     {
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-     cf6:	88 e8       	ldi	r24, 0x88	; 136
-     cf8:	92 e0       	ldi	r25, 0x02	; 2
-     cfa:	0e 94 9d 0b 	call	0x173a	; 0x173a <midi_device_process>
+     be4:	88 e8       	ldi	r24, 0x88	; 136
+     be6:	92 e0       	ldi	r25, 0x02	; 2
+     be8:	0e 94 20 0c 	call	0x1840	; 0x1840 <midi_device_process>
 	
 	refresh();		
-     cfe:	0e 94 2c 05 	call	0xa58	; 0xa58 <refresh>
+     bec:	0e 94 2c 05 	call	0xa58	; 0xa58 <refresh>
 
 	
 	}
-     d02:	f9 cf       	rjmp	.-14     	; 0xcf6 <main+0xbe>
+     bf0:	f9 cf       	rjmp	.-14     	; 0xbe4 <main+0xbe>
 
-00000d04 <update_mode>:
+00000bf2 <update_mode>:
 
 enum global_mode current_mode[6] = {PATTERN_CLEAR, PATTERN_FIRST, PATTERN_SECOND, MANUAL_PLAY, PLAY_RHYTHM, COMPOSE_RHYTHM};
 
 void update_mode(void) {
 	
 	if (button[MODE_SW].state) {
-     d04:	80 91 52 02 	lds	r24, 0x0252
-     d08:	86 ff       	sbrs	r24, 6
-     d0a:	34 c0       	rjmp	.+104    	; 0xd74 <update_mode+0x70>
+     bf2:	80 91 52 02 	lds	r24, 0x0252
+     bf6:	86 ff       	sbrs	r24, 6
+     bf8:	34 c0       	rjmp	.+104    	; 0xc62 <update_mode+0x70>
 		
 		button[MODE_SW].state ^= button[MODE_SW].state; //toggle switch state
-     d0c:	e2 e5       	ldi	r30, 0x52	; 82
-     d0e:	f2 e0       	ldi	r31, 0x02	; 2
-     d10:	8f 7b       	andi	r24, 0xBF	; 191
-     d12:	80 83       	st	Z, r24
+     bfa:	e2 e5       	ldi	r30, 0x52	; 82
+     bfc:	f2 e0       	ldi	r31, 0x02	; 2
+     bfe:	8f 7b       	andi	r24, 0xBF	; 191
+     c00:	80 83       	st	Z, r24
 		
 		if (sequencer.SHIFT) {
-     d14:	80 91 76 03 	lds	r24, 0x0376
-     d18:	80 ff       	sbrs	r24, 0
-     d1a:	0c c0       	rjmp	.+24     	; 0xd34 <update_mode+0x30>
+     c02:	80 91 76 03 	lds	r24, 0x0376
+     c06:	80 ff       	sbrs	r24, 0
+     c08:	0c c0       	rjmp	.+24     	; 0xc22 <update_mode+0x30>
 			
 			
 			if (mode_index-- == 0) mode_index = NUM_MODES -1;
-     d1c:	80 91 59 02 	lds	r24, 0x0259
-     d20:	88 23       	and	r24, r24
-     d22:	21 f0       	breq	.+8      	; 0xd2c <update_mode+0x28>
-     d24:	81 50       	subi	r24, 0x01	; 1
-     d26:	80 93 59 02 	sts	0x0259, r24
-     d2a:	0e c0       	rjmp	.+28     	; 0xd48 <update_mode+0x44>
-     d2c:	85 e0       	ldi	r24, 0x05	; 5
-     d2e:	80 93 59 02 	sts	0x0259, r24
-     d32:	0a c0       	rjmp	.+20     	; 0xd48 <update_mode+0x44>
+     c0a:	80 91 59 02 	lds	r24, 0x0259
+     c0e:	88 23       	and	r24, r24
+     c10:	21 f0       	breq	.+8      	; 0xc1a <update_mode+0x28>
+     c12:	81 50       	subi	r24, 0x01	; 1
+     c14:	80 93 59 02 	sts	0x0259, r24
+     c18:	0e c0       	rjmp	.+28     	; 0xc36 <update_mode+0x44>
+     c1a:	85 e0       	ldi	r24, 0x05	; 5
+     c1c:	80 93 59 02 	sts	0x0259, r24
+     c20:	0a c0       	rjmp	.+20     	; 0xc36 <update_mode+0x44>
 			
 		} else {
 			
 			 if (++mode_index == NUM_MODES) mode_index = 0;
-     d34:	80 91 59 02 	lds	r24, 0x0259
-     d38:	8f 5f       	subi	r24, 0xFF	; 255
-     d3a:	86 30       	cpi	r24, 0x06	; 6
-     d3c:	19 f0       	breq	.+6      	; 0xd44 <update_mode+0x40>
-     d3e:	80 93 59 02 	sts	0x0259, r24
-     d42:	02 c0       	rjmp	.+4      	; 0xd48 <update_mode+0x44>
-     d44:	10 92 59 02 	sts	0x0259, r1
+     c22:	80 91 59 02 	lds	r24, 0x0259
+     c26:	8f 5f       	subi	r24, 0xFF	; 255
+     c28:	86 30       	cpi	r24, 0x06	; 6
+     c2a:	19 f0       	breq	.+6      	; 0xc32 <update_mode+0x40>
+     c2c:	80 93 59 02 	sts	0x0259, r24
+     c30:	02 c0       	rjmp	.+4      	; 0xc36 <update_mode+0x44>
+     c32:	10 92 59 02 	sts	0x0259, r1
 			 
 		}
 		
 		sequencer.mode = current_mode[mode_index];
-     d48:	20 91 59 02 	lds	r18, 0x0259
-     d4c:	e2 2f       	mov	r30, r18
-     d4e:	f0 e0       	ldi	r31, 0x00	; 0
-     d50:	e4 5f       	subi	r30, 0xF4	; 244
-     d52:	fd 4f       	sbci	r31, 0xFD	; 253
-     d54:	80 81       	ld	r24, Z
-     d56:	80 93 75 03 	sts	0x0375, r24
+     c36:	20 91 59 02 	lds	r18, 0x0259
+     c3a:	e2 2f       	mov	r30, r18
+     c3c:	f0 e0       	ldi	r31, 0x00	; 0
+     c3e:	e4 5f       	subi	r30, 0xF4	; 244
+     c40:	fd 4f       	sbci	r31, 0xFD	; 253
+     c42:	80 81       	ld	r24, Z
+     c44:	80 93 75 03 	sts	0x0375, r24
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
 		spi_data[4] = (1<< mode_index) | data_mask; 
-     d5a:	e8 e6       	ldi	r30, 0x68	; 104
-     d5c:	f2 e0       	ldi	r31, 0x02	; 2
-     d5e:	81 e0       	ldi	r24, 0x01	; 1
-     d60:	90 e0       	ldi	r25, 0x00	; 0
-     d62:	02 c0       	rjmp	.+4      	; 0xd68 <update_mode+0x64>
-     d64:	88 0f       	add	r24, r24
-     d66:	99 1f       	adc	r25, r25
-     d68:	2a 95       	dec	r18
-     d6a:	e2 f7       	brpl	.-8      	; 0xd64 <update_mode+0x60>
+     c48:	e8 e6       	ldi	r30, 0x68	; 104
+     c4a:	f2 e0       	ldi	r31, 0x02	; 2
+     c4c:	81 e0       	ldi	r24, 0x01	; 1
+     c4e:	90 e0       	ldi	r25, 0x00	; 0
+     c50:	02 c0       	rjmp	.+4      	; 0xc56 <update_mode+0x64>
+     c52:	88 0f       	add	r24, r24
+     c54:	99 1f       	adc	r25, r25
+     c56:	2a 95       	dec	r18
+     c58:	e2 f7       	brpl	.-8      	; 0xc52 <update_mode+0x60>
 			 if (++mode_index == NUM_MODES) mode_index = 0;
 			 
 		}
 		
 		sequencer.mode = current_mode[mode_index];
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
-     d6c:	94 81       	ldd	r25, Z+4	; 0x04
-     d6e:	90 7c       	andi	r25, 0xC0	; 192
+     c5a:	94 81       	ldd	r25, Z+4	; 0x04
+     c5c:	90 7c       	andi	r25, 0xC0	; 192
 		spi_data[4] = (1<< mode_index) | data_mask; 
-     d70:	89 2b       	or	r24, r25
-     d72:	84 83       	std	Z+4, r24	; 0x04
-     d74:	08 95       	ret
+     c5e:	89 2b       	or	r24, r25
+     c60:	84 83       	std	Z+4, r24	; 0x04
+     c62:	08 95       	ret
 
-00000d76 <update_tempo>:
+00000c64 <update_tempo>:
 
 void update_tempo(void) {
 	static uint16_t new_tempo_adc = 0;
 	static uint16_t current_tempo_adc = 0;
 	int tempo_adc_change = 0;
 	new_tempo_adc = read_tempo_pot();
-     d76:	0e 94 9b 00 	call	0x136	; 0x136 <read_tempo_pot>
-     d7a:	90 93 5d 02 	sts	0x025D, r25
-     d7e:	80 93 5c 02 	sts	0x025C, r24
+     c64:	0e 94 9b 00 	call	0x136	; 0x136 <read_tempo_pot>
+     c68:	90 93 5d 02 	sts	0x025D, r25
+     c6c:	80 93 5c 02 	sts	0x025C, r24
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
-     d82:	20 91 5a 02 	lds	r18, 0x025A
-     d86:	30 91 5b 02 	lds	r19, 0x025B
-     d8a:	82 1b       	sub	r24, r18
-     d8c:	93 0b       	sbc	r25, r19
+     c70:	20 91 5a 02 	lds	r18, 0x025A
+     c74:	30 91 5b 02 	lds	r19, 0x025B
+     c78:	82 1b       	sub	r24, r18
+     c7a:	93 0b       	sbc	r25, r19
 	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
-     d8e:	95 95       	asr	r25
-     d90:	87 95       	ror	r24
-     d92:	95 95       	asr	r25
-     d94:	87 95       	ror	r24
-     d96:	82 0f       	add	r24, r18
-     d98:	93 1f       	adc	r25, r19
-     d9a:	90 93 5b 02 	sts	0x025B, r25
-     d9e:	80 93 5a 02 	sts	0x025A, r24
+     c7c:	95 95       	asr	r25
+     c7e:	87 95       	ror	r24
+     c80:	95 95       	asr	r25
+     c82:	87 95       	ror	r24
+     c84:	82 0f       	add	r24, r18
+     c86:	93 1f       	adc	r25, r19
+     c88:	90 93 5b 02 	sts	0x025B, r25
+     c8c:	80 93 5a 02 	sts	0x025A, r24
 	
 	internal_clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
-     da2:	23 e6       	ldi	r18, 0x63	; 99
-     da4:	34 e0       	ldi	r19, 0x04	; 4
-     da6:	a9 01       	movw	r20, r18
-     da8:	48 1b       	sub	r20, r24
-     daa:	59 0b       	sbc	r21, r25
-     dac:	ca 01       	movw	r24, r20
-     dae:	e3 e7       	ldi	r30, 0x73	; 115
-     db0:	f2 e0       	ldi	r31, 0x02	; 2
-     db2:	54 83       	std	Z+4, r21	; 0x04
-     db4:	43 83       	std	Z+3, r20	; 0x03
+     c90:	23 e6       	ldi	r18, 0x63	; 99
+     c92:	34 e0       	ldi	r19, 0x04	; 4
+     c94:	a9 01       	movw	r20, r18
+     c96:	48 1b       	sub	r20, r24
+     c98:	59 0b       	sbc	r21, r25
+     c9a:	ca 01       	movw	r24, r20
+     c9c:	e3 e7       	ldi	r30, 0x73	; 115
+     c9e:	f2 e0       	ldi	r31, 0x02	; 2
+     ca0:	54 83       	std	Z+4, r21	; 0x04
+     ca2:	43 83       	std	Z+3, r20	; 0x03
 
 	if (internal_clock.rate != internal_clock.previous_rate) {
-     db6:	25 81       	ldd	r18, Z+5	; 0x05
-     db8:	36 81       	ldd	r19, Z+6	; 0x06
-     dba:	42 17       	cp	r20, r18
-     dbc:	53 07       	cpc	r21, r19
-     dbe:	11 f0       	breq	.+4      	; 0xdc4 <update_tempo+0x4e>
+     ca4:	25 81       	ldd	r18, Z+5	; 0x05
+     ca6:	36 81       	ldd	r19, Z+6	; 0x06
+     ca8:	42 17       	cp	r20, r18
+     caa:	53 07       	cpc	r21, r19
+     cac:	11 f0       	breq	.+4      	; 0xcb2 <update_tempo+0x4e>
 		
 		update_clock_rate(internal_clock.rate);
-     dc0:	0e 94 be 00 	call	0x17c	; 0x17c <update_clock_rate>
+     cae:	0e 94 be 00 	call	0x17c	; 0x17c <update_clock_rate>
 		
 	}
 	
 	internal_clock.previous_rate = internal_clock.rate;
-     dc4:	e3 e7       	ldi	r30, 0x73	; 115
-     dc6:	f2 e0       	ldi	r31, 0x02	; 2
-     dc8:	83 81       	ldd	r24, Z+3	; 0x03
-     dca:	94 81       	ldd	r25, Z+4	; 0x04
-     dcc:	96 83       	std	Z+6, r25	; 0x06
-     dce:	85 83       	std	Z+5, r24	; 0x05
-     dd0:	08 95       	ret
+     cb2:	e3 e7       	ldi	r30, 0x73	; 115
+     cb4:	f2 e0       	ldi	r31, 0x02	; 2
+     cb6:	83 81       	ldd	r24, Z+3	; 0x03
+     cb8:	94 81       	ldd	r25, Z+4	; 0x04
+     cba:	96 83       	std	Z+6, r25	; 0x06
+     cbc:	85 83       	std	Z+5, r24	; 0x05
+     cbe:	08 95       	ret
 
-00000dd2 <spi_shift_byte>:
+00000cc0 <process_step>:
+	
+}
+
+void process_step(void) {
+     cc0:	df 92       	push	r13
+     cc2:	ef 92       	push	r14
+     cc4:	ff 92       	push	r15
+     cc6:	0f 93       	push	r16
+     cc8:	1f 93       	push	r17
+     cca:	cf 93       	push	r28
+     ccc:	df 93       	push	r29
+	
+		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
+     cce:	80 91 76 03 	lds	r24, 0x0376
+     cd2:	81 ff       	sbrs	r24, 1
+     cd4:	7d c0       	rjmp	.+250    	; 0xdd0 <process_step+0x110>
+			
+			if (sequencer.next_step_flag) {
+     cd6:	80 91 46 04 	lds	r24, 0x0446
+     cda:	86 ff       	sbrs	r24, 6
+     cdc:	82 c0       	rjmp	.+260    	; 0xde2 <process_step+0x122>
+				sequencer.next_step_flag = 0;
+     cde:	e5 e4       	ldi	r30, 0x45	; 69
+     ce0:	f4 e0       	ldi	r31, 0x04	; 4
+     ce2:	81 81       	ldd	r24, Z+1	; 0x01
+     ce4:	8f 7b       	andi	r24, 0xBF	; 191
+     ce6:	81 83       	std	Z+1, r24	; 0x01
+				while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+     ce8:	80 91 47 04 	lds	r24, 0x0447
+     cec:	81 70       	andi	r24, 0x01	; 1
+     cee:	88 23       	and	r24, r24
+     cf0:	f1 f3       	breq	.-4      	; 0xcee <process_step+0x2e>
+				PORTD |= (1<<TRIG);
+     cf2:	5d 9a       	sbi	0x0b, 5	; 11
+				spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+     cf4:	06 e4       	ldi	r16, 0x46	; 70
+     cf6:	14 e0       	ldi	r17, 0x04	; 4
+     cf8:	d8 01       	movw	r26, r16
+     cfa:	8c 91       	ld	r24, X
+     cfc:	86 95       	lsr	r24
+     cfe:	8f 71       	andi	r24, 0x1F	; 31
+     d00:	21 e0       	ldi	r18, 0x01	; 1
+     d02:	30 e0       	ldi	r19, 0x00	; 0
+     d04:	02 c0       	rjmp	.+4      	; 0xd0a <process_step+0x4a>
+     d06:	22 0f       	add	r18, r18
+     d08:	33 1f       	adc	r19, r19
+     d0a:	8a 95       	dec	r24
+     d0c:	e2 f7       	brpl	.-8      	; 0xd06 <process_step+0x46>
+     d0e:	e0 91 49 04 	lds	r30, 0x0449
+     d12:	f0 e0       	ldi	r31, 0x00	; 0
+     d14:	b2 96       	adiw	r30, 0x22	; 34
+     d16:	0f 2e       	mov	r0, r31
+     d18:	f5 e4       	ldi	r31, 0x45	; 69
+     d1a:	ef 2e       	mov	r14, r31
+     d1c:	f4 e0       	ldi	r31, 0x04	; 4
+     d1e:	ff 2e       	mov	r15, r31
+     d20:	f0 2d       	mov	r31, r0
+     d22:	d7 01       	movw	r26, r14
+     d24:	8c 91       	ld	r24, X
+     d26:	ee 0f       	add	r30, r30
+     d28:	ff 1f       	adc	r31, r31
+     d2a:	0f 2e       	mov	r0, r31
+     d2c:	f7 e6       	ldi	r31, 0x67	; 103
+     d2e:	df 2e       	mov	r13, r31
+     d30:	f0 2d       	mov	r31, r0
+     d32:	81 70       	andi	r24, 0x01	; 1
+     d34:	d8 9e       	mul	r13, r24
+     d36:	e0 0d       	add	r30, r0
+     d38:	f1 1d       	adc	r31, r1
+     d3a:	11 24       	eor	r1, r1
+     d3c:	eb 58       	subi	r30, 0x8B	; 139
+     d3e:	fc 4f       	sbci	r31, 0xFC	; 252
+     d40:	92 81       	ldd	r25, Z+2	; 0x02
+     d42:	83 81       	ldd	r24, Z+3	; 0x03
+				spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+     d44:	e8 e6       	ldi	r30, 0x68	; 104
+     d46:	f2 e0       	ldi	r31, 0x02	; 2
+     d48:	49 2f       	mov	r20, r25
+     d4a:	42 23       	and	r20, r18
+     d4c:	40 95       	com	r20
+			
+			if (sequencer.next_step_flag) {
+				sequencer.next_step_flag = 0;
+				while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+				PORTD |= (1<<TRIG);
+				spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+     d4e:	92 2b       	or	r25, r18
+				spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+     d50:	94 23       	and	r25, r20
+     d52:	91 83       	std	Z+1, r25	; 0x01
+				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+				spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+     d54:	98 2f       	mov	r25, r24
+     d56:	93 23       	and	r25, r19
+     d58:	90 95       	com	r25
+				sequencer.next_step_flag = 0;
+				while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+				PORTD |= (1<<TRIG);
+				spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+				spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+     d5a:	83 2b       	or	r24, r19
+				spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+     d5c:	89 23       	and	r24, r25
+     d5e:	80 83       	st	Z, r24
+				trigger_step();
+     d60:	0e 94 37 01 	call	0x26e	; 0x26e <trigger_step>
+				if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
+     d64:	f7 01       	movw	r30, r14
+     d66:	80 81       	ld	r24, Z
+     d68:	81 70       	andi	r24, 0x01	; 1
+     d6a:	c8 2f       	mov	r28, r24
+     d6c:	f0 e0       	ldi	r31, 0x00	; 0
+     d6e:	df 2f       	mov	r29, r31
+     d70:	dc 9e       	mul	r13, r28
+     d72:	f0 01       	movw	r30, r0
+     d74:	dd 9e       	mul	r13, r29
+     d76:	f0 0d       	add	r31, r0
+     d78:	11 24       	eor	r1, r1
+     d7a:	e9 54       	subi	r30, 0x49	; 73
+     d7c:	fc 4f       	sbci	r31, 0xFC	; 252
+     d7e:	d8 01       	movw	r26, r16
+     d80:	8c 91       	ld	r24, X
+     d82:	86 95       	lsr	r24
+     d84:	8f 71       	andi	r24, 0x1F	; 31
+     d86:	40 81       	ld	r20, Z
+     d88:	51 81       	ldd	r21, Z+1	; 0x01
+     d8a:	62 81       	ldd	r22, Z+2	; 0x02
+     d8c:	73 81       	ldd	r23, Z+3	; 0x03
+     d8e:	8a 01       	movw	r16, r20
+     d90:	9b 01       	movw	r18, r22
+     d92:	04 c0       	rjmp	.+8      	; 0xd9c <process_step+0xdc>
+     d94:	36 95       	lsr	r19
+     d96:	27 95       	ror	r18
+     d98:	17 95       	ror	r17
+     d9a:	07 95       	ror	r16
+     d9c:	8a 95       	dec	r24
+     d9e:	d2 f7       	brpl	.-12     	; 0xd94 <process_step+0xd4>
+     da0:	00 ff       	sbrs	r16, 0
+     da2:	08 c0       	rjmp	.+16     	; 0xdb4 <process_step+0xf4>
+					spi_data[8] |= 1<<ACCENT;
+     da4:	e8 e6       	ldi	r30, 0x68	; 104
+     da6:	f2 e0       	ldi	r31, 0x02	; 2
+     da8:	80 85       	ldd	r24, Z+8	; 0x08
+     daa:	81 60       	ori	r24, 0x01	; 1
+     dac:	80 87       	std	Z+8, r24	; 0x08
+					turn_on(ACCENT_1_LED);
+     dae:	84 e1       	ldi	r24, 0x14	; 20
+     db0:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+				}
+				TIMSK0 |= (1<<OCIE0A); //enable output compare match A
+     db4:	ee e6       	ldi	r30, 0x6E	; 110
+     db6:	f0 e0       	ldi	r31, 0x00	; 0
+     db8:	80 81       	ld	r24, Z
+     dba:	82 60       	ori	r24, 0x02	; 2
+     dbc:	80 83       	st	Z, r24
+				TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
+     dbe:	85 b5       	in	r24, 0x25	; 37
+     dc0:	83 60       	ori	r24, 0x03	; 3
+     dc2:	85 bd       	out	0x25, r24	; 37
+				sequencer.trigger_finished = 0;
+     dc4:	e5 e4       	ldi	r30, 0x45	; 69
+     dc6:	f4 e0       	ldi	r31, 0x04	; 4
+     dc8:	82 81       	ldd	r24, Z+2	; 0x02
+     dca:	8e 7f       	andi	r24, 0xFE	; 254
+     dcc:	82 83       	std	Z+2, r24	; 0x02
+     dce:	09 c0       	rjmp	.+18     	; 0xde2 <process_step+0x122>
+				} else {
+				
+
+				
+			}
+		} else if (sequencer.next_step_flag){
+     dd0:	80 91 46 04 	lds	r24, 0x0446
+     dd4:	86 ff       	sbrs	r24, 6
+     dd6:	05 c0       	rjmp	.+10     	; 0xde2 <process_step+0x122>
+			
+			sequencer.next_step_flag = 0;
+     dd8:	e5 e4       	ldi	r30, 0x45	; 69
+     dda:	f4 e0       	ldi	r31, 0x04	; 4
+     ddc:	81 81       	ldd	r24, Z+1	; 0x01
+     dde:	8f 7b       	andi	r24, 0xBF	; 191
+     de0:	81 83       	std	Z+1, r24	; 0x01
+			//spi_data[1] = 0;
+			//spi_data[0] = 0;
+			//turn_on(STEP_1_LED);
+			
+		}
+     de2:	df 91       	pop	r29
+     de4:	cf 91       	pop	r28
+     de6:	1f 91       	pop	r17
+     de8:	0f 91       	pop	r16
+     dea:	ff 90       	pop	r15
+     dec:	ef 90       	pop	r14
+     dee:	df 90       	pop	r13
+     df0:	08 95       	ret
+
+00000df2 <spi_shift_byte>:
 uint8_t spi_previous_switch_data[5] = {0};
 uint8_t switch_states[5] = {0};
 	
 uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simultaneously reads switch data
 	
 	SPDR1 = byte;
-     dd2:	80 93 ae 00 	sts	0x00AE, r24
+     df2:	80 93 ae 00 	sts	0x00AE, r24
 	while (!(SPSR1 & (1<<SPIF1)));
-     dd6:	ed ea       	ldi	r30, 0xAD	; 173
-     dd8:	f0 e0       	ldi	r31, 0x00	; 0
-     dda:	80 81       	ld	r24, Z
-     ddc:	88 23       	and	r24, r24
-     dde:	ec f7       	brge	.-6      	; 0xdda <spi_shift_byte+0x8>
+     df6:	ed ea       	ldi	r30, 0xAD	; 173
+     df8:	f0 e0       	ldi	r31, 0x00	; 0
+     dfa:	80 81       	ld	r24, Z
+     dfc:	88 23       	and	r24, r24
+     dfe:	ec f7       	brge	.-6      	; 0xdfa <spi_shift_byte+0x8>
 	return SPDR1;
-     de0:	80 91 ae 00 	lds	r24, 0x00AE
+     e00:	80 91 ae 00 	lds	r24, 0x00AE
 	
 }	
-     de4:	08 95       	ret
+     e04:	08 95       	ret
 
-00000de6 <update_spi>:
+00000e06 <update_spi>:
 
 void update_spi(void) { //updates LEDs and triggers, doesn't read data back
-     de6:	cf 93       	push	r28
-     de8:	df 93       	push	r29
+     e06:	cf 93       	push	r28
+     e08:	df 93       	push	r29
 	
 		spi_shift_byte(spi_data[0]);
-     dea:	c8 e6       	ldi	r28, 0x68	; 104
-     dec:	d2 e0       	ldi	r29, 0x02	; 2
-     dee:	88 81       	ld	r24, Y
-     df0:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e0a:	c8 e6       	ldi	r28, 0x68	; 104
+     e0c:	d2 e0       	ldi	r29, 0x02	; 2
+     e0e:	88 81       	ld	r24, Y
+     e10:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[1]);
-     df4:	89 81       	ldd	r24, Y+1	; 0x01
-     df6:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e14:	89 81       	ldd	r24, Y+1	; 0x01
+     e16:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[2]);
-     dfa:	8a 81       	ldd	r24, Y+2	; 0x02
-     dfc:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e1a:	8a 81       	ldd	r24, Y+2	; 0x02
+     e1c:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[3]);
-     e00:	8b 81       	ldd	r24, Y+3	; 0x03
-     e02:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e20:	8b 81       	ldd	r24, Y+3	; 0x03
+     e22:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[4]);
-     e06:	8c 81       	ldd	r24, Y+4	; 0x04
-     e08:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e26:	8c 81       	ldd	r24, Y+4	; 0x04
+     e28:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[5]);
-     e0c:	8d 81       	ldd	r24, Y+5	; 0x05
-     e0e:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e2c:	8d 81       	ldd	r24, Y+5	; 0x05
+     e2e:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[6]);
-     e12:	8e 81       	ldd	r24, Y+6	; 0x06
-     e14:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e32:	8e 81       	ldd	r24, Y+6	; 0x06
+     e34:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[7]);
-     e18:	8f 81       	ldd	r24, Y+7	; 0x07
-     e1a:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e38:	8f 81       	ldd	r24, Y+7	; 0x07
+     e3a:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		spi_shift_byte(spi_data[8]);
-     e1e:	88 85       	ldd	r24, Y+8	; 0x08
-     e20:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
+     e3e:	88 85       	ldd	r24, Y+8	; 0x08
+     e40:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
 		
 		PORTC &= ~(1<<SPI_LED_LATCH);
-     e24:	43 98       	cbi	0x08, 3	; 8
+     e44:	43 98       	cbi	0x08, 3	; 8
 		PORTC |= (1<<SPI_LED_LATCH);
-     e26:	43 9a       	sbi	0x08, 3	; 8
+     e46:	43 9a       	sbi	0x08, 3	; 8
 	
 	
 };
-     e28:	df 91       	pop	r29
-     e2a:	cf 91       	pop	r28
-     e2c:	08 95       	ret
+     e48:	df 91       	pop	r29
+     e4a:	cf 91       	pop	r28
+     e4c:	08 95       	ret
 
-00000e2e <read_switches>:
+00000e4e <read_switches>:
 
 void read_switches(void) { //reads switch data
-     e2e:	cf 93       	push	r28
-     e30:	df 93       	push	r29
+     e4e:	cf 93       	push	r28
+     e50:	df 93       	push	r29
 	
 	PORTC |= (1<<SPI_SW_LATCH); //latch switch data
-     e32:	42 9a       	sbi	0x08, 2	; 8
+     e52:	42 9a       	sbi	0x08, 2	; 8
 	
 	spi_current_switch_data[0] = spi_shift_byte(0x00); //not toggling LED latches so doesn't matter what we send out
-     e34:	80 e0       	ldi	r24, 0x00	; 0
-     e36:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
-     e3a:	c3 e6       	ldi	r28, 0x63	; 99
-     e3c:	d2 e0       	ldi	r29, 0x02	; 2
-     e3e:	88 83       	st	Y, r24
+     e54:	80 e0       	ldi	r24, 0x00	; 0
+     e56:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
+     e5a:	c3 e6       	ldi	r28, 0x63	; 99
+     e5c:	d2 e0       	ldi	r29, 0x02	; 2
+     e5e:	88 83       	st	Y, r24
 	spi_current_switch_data[1] = spi_shift_byte(0x00);
-     e40:	80 e0       	ldi	r24, 0x00	; 0
-     e42:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
-     e46:	89 83       	std	Y+1, r24	; 0x01
+     e60:	80 e0       	ldi	r24, 0x00	; 0
+     e62:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
+     e66:	89 83       	std	Y+1, r24	; 0x01
 	spi_current_switch_data[2] = spi_shift_byte(0x00);
-     e48:	80 e0       	ldi	r24, 0x00	; 0
-     e4a:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
-     e4e:	8a 83       	std	Y+2, r24	; 0x02
+     e68:	80 e0       	ldi	r24, 0x00	; 0
+     e6a:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
+     e6e:	8a 83       	std	Y+2, r24	; 0x02
 	spi_current_switch_data[3] = spi_shift_byte(0x00);
-     e50:	80 e0       	ldi	r24, 0x00	; 0
-     e52:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
-     e56:	8b 83       	std	Y+3, r24	; 0x03
+     e70:	80 e0       	ldi	r24, 0x00	; 0
+     e72:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
+     e76:	8b 83       	std	Y+3, r24	; 0x03
 	spi_current_switch_data[4] = spi_shift_byte(0x00);
-     e58:	80 e0       	ldi	r24, 0x00	; 0
-     e5a:	0e 94 e9 06 	call	0xdd2	; 0xdd2 <spi_shift_byte>
-     e5e:	8c 83       	std	Y+4, r24	; 0x04
+     e78:	80 e0       	ldi	r24, 0x00	; 0
+     e7a:	0e 94 f9 06 	call	0xdf2	; 0xdf2 <spi_shift_byte>
+     e7e:	8c 83       	std	Y+4, r24	; 0x04
 	
 	PORTC &= ~(1<<SPI_SW_LATCH);
-     e60:	42 98       	cbi	0x08, 2	; 8
+     e80:	42 98       	cbi	0x08, 2	; 8
 	
-	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1);
-     e62:	98 81       	ld	r25, Y
-     e64:	39 2f       	mov	r19, r25
-     e66:	36 95       	lsr	r19
-     e68:	e6 e7       	ldi	r30, 0x76	; 118
-     e6a:	f3 e0       	ldi	r31, 0x03	; 3
-     e6c:	20 81       	ld	r18, Z
-     e6e:	30 fb       	bst	r19, 0
-     e70:	20 f9       	bld	r18, 0
-     e72:	20 83       	st	Z, r18
+	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
+     e82:	28 81       	ld	r18, Y
+     e84:	92 2f       	mov	r25, r18
+     e86:	96 95       	lsr	r25
+     e88:	e6 e7       	ldi	r30, 0x76	; 118
+     e8a:	f3 e0       	ldi	r31, 0x03	; 3
+     e8c:	30 81       	ld	r19, Z
+     e8e:	90 fb       	bst	r25, 0
+     e90:	30 f9       	bld	r19, 0
+	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
+     e92:	9a 81       	ldd	r25, Y+2	; 0x02
+     e94:	49 2f       	mov	r20, r25
+     e96:	42 95       	swap	r20
+     e98:	4f 70       	andi	r20, 0x0F	; 15
+     e9a:	40 fb       	bst	r20, 0
+     e9c:	32 f9       	bld	r19, 2
+     e9e:	30 83       	st	Z, r19
 	//debounce
 	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
-     e74:	ee e5       	ldi	r30, 0x5E	; 94
-     e76:	f2 e0       	ldi	r31, 0x02	; 2
-     e78:	20 81       	ld	r18, Z
-     e7a:	92 27       	eor	r25, r18
+     ea0:	ee e5       	ldi	r30, 0x5E	; 94
+     ea2:	f2 e0       	ldi	r31, 0x02	; 2
+     ea4:	30 81       	ld	r19, Z
+     ea6:	23 27       	eor	r18, r19
 	spi_previous_switch_data[0] ^= spi_current_switch_data[0];
-     e7c:	29 27       	eor	r18, r25
-     e7e:	20 83       	st	Z, r18
+     ea8:	32 27       	eor	r19, r18
+     eaa:	30 83       	st	Z, r19
 	spi_current_switch_data[0] &= spi_previous_switch_data[0];
-     e80:	92 23       	and	r25, r18
-     e82:	98 83       	st	Y, r25
+     eac:	23 23       	and	r18, r19
+     eae:	28 83       	st	Y, r18
 	
 	spi_current_switch_data[1] ^= spi_previous_switch_data[1];
-     e84:	21 81       	ldd	r18, Z+1	; 0x01
-     e86:	99 81       	ldd	r25, Y+1	; 0x01
-     e88:	92 27       	eor	r25, r18
+     eb0:	31 81       	ldd	r19, Z+1	; 0x01
+     eb2:	29 81       	ldd	r18, Y+1	; 0x01
+     eb4:	23 27       	eor	r18, r19
 	spi_previous_switch_data[1] ^= spi_current_switch_data[1];
-     e8a:	29 27       	eor	r18, r25
-     e8c:	21 83       	std	Z+1, r18	; 0x01
+     eb6:	32 27       	eor	r19, r18
+     eb8:	31 83       	std	Z+1, r19	; 0x01
 	spi_current_switch_data[1] &= spi_previous_switch_data[1];
-     e8e:	92 23       	and	r25, r18
-     e90:	99 83       	std	Y+1, r25	; 0x01
+     eba:	23 23       	and	r18, r19
+     ebc:	29 83       	std	Y+1, r18	; 0x01
 	
 	spi_current_switch_data[2] ^= spi_previous_switch_data[2];
-     e92:	22 81       	ldd	r18, Z+2	; 0x02
-     e94:	9a 81       	ldd	r25, Y+2	; 0x02
-     e96:	92 27       	eor	r25, r18
+     ebe:	22 81       	ldd	r18, Z+2	; 0x02
+     ec0:	92 27       	eor	r25, r18
 	spi_previous_switch_data[2] ^= spi_current_switch_data[2];
-     e98:	29 27       	eor	r18, r25
-     e9a:	22 83       	std	Z+2, r18	; 0x02
+     ec2:	29 27       	eor	r18, r25
+     ec4:	22 83       	std	Z+2, r18	; 0x02
 	spi_current_switch_data[2] &= spi_previous_switch_data[2];
-     e9c:	92 23       	and	r25, r18
-     e9e:	9a 83       	std	Y+2, r25	; 0x02
+     ec6:	92 23       	and	r25, r18
+     ec8:	9a 83       	std	Y+2, r25	; 0x02
 	
 	spi_current_switch_data[3] ^= spi_previous_switch_data[3];
-     ea0:	23 81       	ldd	r18, Z+3	; 0x03
-     ea2:	9b 81       	ldd	r25, Y+3	; 0x03
-     ea4:	92 27       	eor	r25, r18
+     eca:	23 81       	ldd	r18, Z+3	; 0x03
+     ecc:	9b 81       	ldd	r25, Y+3	; 0x03
+     ece:	92 27       	eor	r25, r18
 	spi_previous_switch_data[3] ^= spi_current_switch_data[3];
-     ea6:	29 27       	eor	r18, r25
-     ea8:	23 83       	std	Z+3, r18	; 0x03
+     ed0:	29 27       	eor	r18, r25
+     ed2:	23 83       	std	Z+3, r18	; 0x03
 	spi_current_switch_data[3] &= spi_previous_switch_data[3];			
-     eaa:	92 23       	and	r25, r18
-     eac:	9b 83       	std	Y+3, r25	; 0x03
+     ed4:	92 23       	and	r25, r18
+     ed6:	9b 83       	std	Y+3, r25	; 0x03
 	
 	spi_current_switch_data[4] ^= spi_previous_switch_data[4];
-     eae:	94 81       	ldd	r25, Z+4	; 0x04
-     eb0:	89 27       	eor	r24, r25
+     ed8:	94 81       	ldd	r25, Z+4	; 0x04
+     eda:	89 27       	eor	r24, r25
 	spi_previous_switch_data[4] ^= spi_current_switch_data[4];
-     eb2:	98 27       	eor	r25, r24
-     eb4:	94 83       	std	Z+4, r25	; 0x04
+     edc:	98 27       	eor	r25, r24
+     ede:	94 83       	std	Z+4, r25	; 0x04
 	spi_current_switch_data[4] &= spi_previous_switch_data[4];
-     eb6:	89 23       	and	r24, r25
-     eb8:	8c 83       	std	Y+4, r24	; 0x04
+     ee0:	89 23       	and	r24, r25
+     ee2:	8c 83       	std	Y+4, r24	; 0x04
 	//spi_shift_byte(spi_data[7]);
 	//spi_shift_byte(spi_data[8]);
 	
 
 	
-     eba:	df 91       	pop	r29
-     ebc:	cf 91       	pop	r28
-     ebe:	08 95       	ret
+     ee4:	df 91       	pop	r29
+     ee6:	cf 91       	pop	r28
+     ee8:	08 95       	ret
 
-00000ec0 <parse_switch_data>:
+00000eea <parse_switch_data>:
 uint8_t current_start_stop_tap_state = 0;
 uint8_t previous_start_stop_tap_state = 0;	
 	
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-     ec0:	40 e0       	ldi	r20, 0x00	; 0
-     ec2:	50 e0       	ldi	r21, 0x00	; 0
+     eea:	40 e0       	ldi	r20, 0x00	; 0
+     eec:	50 e0       	ldi	r21, 0x00	; 0
 		
 		//button[i].current_state = (switch_states[button[i].spi_byte] & button[i].spi_bit) & 1; //need to fix this
 		uint8_t current_state = (spi_current_switch_data[button[i].spi_byte] >> button[i].spi_bit) &1 ;
 		button[i].state ^= current_state;
-     ec4:	da 01       	movw	r26, r20
-     ec6:	aa 0f       	add	r26, r26
-     ec8:	bb 1f       	adc	r27, r27
-     eca:	ae 5e       	subi	r26, 0xEE	; 238
-     ecc:	bd 4f       	sbci	r27, 0xFD	; 253
+     eee:	da 01       	movw	r26, r20
+     ef0:	aa 0f       	add	r26, r26
+     ef2:	bb 1f       	adc	r27, r27
+     ef4:	ae 5e       	subi	r26, 0xEE	; 238
+     ef6:	bd 4f       	sbci	r27, 0xFD	; 253
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
 		
 		//button[i].current_state = (switch_states[button[i].spi_byte] & button[i].spi_bit) & 1; //need to fix this
 		uint8_t current_state = (spi_current_switch_data[button[i].spi_byte] >> button[i].spi_bit) &1 ;
-     ece:	8c 91       	ld	r24, X
-     ed0:	e8 2f       	mov	r30, r24
-     ed2:	e6 95       	lsr	r30
-     ed4:	e6 95       	lsr	r30
-     ed6:	e6 95       	lsr	r30
-     ed8:	e7 70       	andi	r30, 0x07	; 7
-     eda:	f0 e0       	ldi	r31, 0x00	; 0
-     edc:	ed 59       	subi	r30, 0x9D	; 157
-     ede:	fd 4f       	sbci	r31, 0xFD	; 253
-     ee0:	20 81       	ld	r18, Z
-     ee2:	30 e0       	ldi	r19, 0x00	; 0
-     ee4:	98 2f       	mov	r25, r24
-     ee6:	97 70       	andi	r25, 0x07	; 7
-     ee8:	02 c0       	rjmp	.+4      	; 0xeee <parse_switch_data+0x2e>
-     eea:	35 95       	asr	r19
-     eec:	27 95       	ror	r18
-     eee:	9a 95       	dec	r25
-     ef0:	e2 f7       	brpl	.-8      	; 0xeea <parse_switch_data+0x2a>
-     ef2:	21 70       	andi	r18, 0x01	; 1
+     ef8:	8c 91       	ld	r24, X
+     efa:	e8 2f       	mov	r30, r24
+     efc:	e6 95       	lsr	r30
+     efe:	e6 95       	lsr	r30
+     f00:	e6 95       	lsr	r30
+     f02:	e7 70       	andi	r30, 0x07	; 7
+     f04:	f0 e0       	ldi	r31, 0x00	; 0
+     f06:	ed 59       	subi	r30, 0x9D	; 157
+     f08:	fd 4f       	sbci	r31, 0xFD	; 253
+     f0a:	20 81       	ld	r18, Z
+     f0c:	30 e0       	ldi	r19, 0x00	; 0
+     f0e:	98 2f       	mov	r25, r24
+     f10:	97 70       	andi	r25, 0x07	; 7
+     f12:	02 c0       	rjmp	.+4      	; 0xf18 <parse_switch_data+0x2e>
+     f14:	35 95       	asr	r19
+     f16:	27 95       	ror	r18
+     f18:	9a 95       	dec	r25
+     f1a:	e2 f7       	brpl	.-8      	; 0xf14 <parse_switch_data+0x2a>
+     f1c:	21 70       	andi	r18, 0x01	; 1
 		button[i].state ^= current_state;
-     ef4:	86 fb       	bst	r24, 6
-     ef6:	99 27       	eor	r25, r25
-     ef8:	90 f9       	bld	r25, 0
-     efa:	29 27       	eor	r18, r25
-     efc:	20 fb       	bst	r18, 0
-     efe:	86 f9       	bld	r24, 6
-     f00:	8c 93       	st	X, r24
+     f1e:	86 fb       	bst	r24, 6
+     f20:	99 27       	eor	r25, r25
+     f22:	90 f9       	bld	r25, 0
+     f24:	29 27       	eor	r18, r25
+     f26:	20 fb       	bst	r18, 0
+     f28:	86 f9       	bld	r24, 6
+     f2a:	8c 93       	st	X, r24
 uint8_t current_start_stop_tap_state = 0;
 uint8_t previous_start_stop_tap_state = 0;	
 	
 void parse_switch_data(void) {
 	
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-     f02:	4f 5f       	subi	r20, 0xFF	; 255
-     f04:	5f 4f       	sbci	r21, 0xFF	; 255
-     f06:	43 32       	cpi	r20, 0x23	; 35
-     f08:	51 05       	cpc	r21, r1
-     f0a:	e1 f6       	brne	.-72     	; 0xec4 <parse_switch_data+0x4>
+     f2c:	4f 5f       	subi	r20, 0xFF	; 255
+     f2e:	5f 4f       	sbci	r21, 0xFF	; 255
+     f30:	43 32       	cpi	r20, 0x23	; 35
+     f32:	51 05       	cpc	r21, r1
+     f34:	e1 f6       	brne	.-72     	; 0xeee <parse_switch_data+0x4>
 		button[i].state ^= current_state;
 		
 	}
 	
 	
 }	
-     f0c:	08 95       	ret
+     f36:	08 95       	ret
 
-00000f0e <check_start_stop_tap>:
+00000f38 <check_start_stop_tap>:
 
 void check_start_stop_tap(void) {
 	
 	current_start_stop_tap_state = PINB;
-     f0e:	93 b1       	in	r25, 0x03	; 3
+     f38:	93 b1       	in	r25, 0x03	; 3
 	current_start_stop_tap_state ^= previous_start_stop_tap_state;
-     f10:	80 91 71 02 	lds	r24, 0x0271
-     f14:	98 27       	eor	r25, r24
+     f3a:	80 91 71 02 	lds	r24, 0x0271
+     f3e:	98 27       	eor	r25, r24
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
-     f16:	89 27       	eor	r24, r25
-     f18:	80 93 71 02 	sts	0x0271, r24
+     f40:	89 27       	eor	r24, r25
+     f42:	80 93 71 02 	sts	0x0271, r24
 	current_start_stop_tap_state &= previous_start_stop_tap_state;
-     f1c:	89 23       	and	r24, r25
-     f1e:	80 93 72 02 	sts	0x0272, r24
+     f46:	89 23       	and	r24, r25
+     f48:	80 93 72 02 	sts	0x0272, r24
 	uint8_t start_state = sequencer.START;
-     f22:	e6 e7       	ldi	r30, 0x76	; 118
-     f24:	f3 e0       	ldi	r31, 0x03	; 3
-     f26:	90 81       	ld	r25, Z
-     f28:	91 fb       	bst	r25, 1
-     f2a:	22 27       	eor	r18, r18
-     f2c:	20 f9       	bld	r18, 0
+     f4c:	e6 e7       	ldi	r30, 0x76	; 118
+     f4e:	f3 e0       	ldi	r31, 0x03	; 3
+     f50:	90 81       	ld	r25, Z
+     f52:	91 fb       	bst	r25, 1
+     f54:	22 27       	eor	r18, r18
+     f56:	20 f9       	bld	r18, 0
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
-     f2e:	86 95       	lsr	r24
-     f30:	82 27       	eor	r24, r18
-     f32:	80 fb       	bst	r24, 0
-     f34:	91 f9       	bld	r25, 1
-     f36:	90 83       	st	Z, r25
+     f58:	86 95       	lsr	r24
+     f5a:	82 27       	eor	r24, r18
+     f5c:	80 fb       	bst	r24, 0
+     f5e:	91 f9       	bld	r25, 1
+     f60:	90 83       	st	Z, r25
 	
 	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
-     f38:	91 ff       	sbrs	r25, 1
-     f3a:	2a c0       	rjmp	.+84     	; 0xf90 <check_start_stop_tap+0x82>
-     f3c:	21 11       	cpse	r18, r1
-     f3e:	2a c0       	rjmp	.+84     	; 0xf94 <check_start_stop_tap+0x86>
+     f62:	91 ff       	sbrs	r25, 1
+     f64:	2a c0       	rjmp	.+84     	; 0xfba <check_start_stop_tap+0x82>
+     f66:	21 11       	cpse	r18, r1
+     f68:	2a c0       	rjmp	.+84     	; 0xfbe <check_start_stop_tap+0x86>
 		
 		sequencer.current_step = 0;
-     f40:	e5 e4       	ldi	r30, 0x45	; 69
-     f42:	f4 e0       	ldi	r31, 0x04	; 4
-     f44:	81 81       	ldd	r24, Z+1	; 0x01
+     f6a:	e5 e4       	ldi	r30, 0x45	; 69
+     f6c:	f4 e0       	ldi	r31, 0x04	; 4
+     f6e:	81 81       	ldd	r24, Z+1	; 0x01
 		sequencer.next_step_flag = 1;
-     f46:	81 7c       	andi	r24, 0xC1	; 193
-     f48:	80 64       	ori	r24, 0x40	; 64
-     f4a:	81 83       	std	Z+1, r24	; 0x01
+     f70:	81 7c       	andi	r24, 0xC1	; 193
+     f72:	80 64       	ori	r24, 0x40	; 64
+     f74:	81 83       	std	Z+1, r24	; 0x01
 		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
-     f4c:	10 92 74 02 	sts	0x0274, r1
+     f76:	10 92 74 02 	sts	0x0274, r1
 		sequencer.var_change = 0;
-     f50:	80 81       	ld	r24, Z
-     f52:	87 7f       	andi	r24, 0xF7	; 247
-     f54:	80 83       	st	Z, r24
+     f7a:	80 81       	ld	r24, Z
+     f7c:	87 7f       	andi	r24, 0xF7	; 247
+     f7e:	80 83       	st	Z, r24
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-     f56:	81 fd       	sbrc	r24, 1
-     f58:	03 c0       	rjmp	.+6      	; 0xf60 <check_start_stop_tap+0x52>
+     f80:	81 fd       	sbrc	r24, 1
+     f82:	03 c0       	rjmp	.+6      	; 0xf8a <check_start_stop_tap+0x52>
 			
 			sequencer.variation = VAR_A; //start on variation A
-     f5a:	8e 7f       	andi	r24, 0xFE	; 254
-     f5c:	80 83       	st	Z, r24
-     f5e:	08 95       	ret
+     f84:	8e 7f       	andi	r24, 0xFE	; 254
+     f86:	80 83       	st	Z, r24
+     f88:	08 95       	ret
 		} else {
 			
 			sequencer.variation = VAR_B;
-     f60:	e5 e4       	ldi	r30, 0x45	; 69
-     f62:	f4 e0       	ldi	r31, 0x04	; 4
-     f64:	80 81       	ld	r24, Z
-     f66:	81 60       	ori	r24, 0x01	; 1
-     f68:	80 83       	st	Z, r24
-     f6a:	08 95       	ret
+     f8a:	e5 e4       	ldi	r30, 0x45	; 69
+     f8c:	f4 e0       	ldi	r31, 0x04	; 4
+     f8e:	80 81       	ld	r24, Z
+     f90:	81 60       	ori	r24, 0x01	; 1
+     f92:	80 83       	st	Z, r24
+     f94:	08 95       	ret
 		}
 	}
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
 		
 		turn_off_all_inst_leds();
-     f6c:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
+     f96:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
 		turn_on(drum_hit[sequencer.current_inst].led_index);
-     f70:	80 91 49 04 	lds	r24, 0x0449
-     f74:	90 e0       	ldi	r25, 0x00	; 0
-     f76:	fc 01       	movw	r30, r24
-     f78:	ee 0f       	add	r30, r30
-     f7a:	ff 1f       	adc	r31, r31
-     f7c:	e8 0f       	add	r30, r24
-     f7e:	f9 1f       	adc	r31, r25
-     f80:	ee 0f       	add	r30, r30
-     f82:	ff 1f       	adc	r31, r31
-     f84:	e0 50       	subi	r30, 0x00	; 0
-     f86:	ff 4f       	sbci	r31, 0xFF	; 255
-     f88:	85 81       	ldd	r24, Z+5	; 0x05
-     f8a:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
-     f8e:	08 95       	ret
+     f9a:	80 91 49 04 	lds	r24, 0x0449
+     f9e:	90 e0       	ldi	r25, 0x00	; 0
+     fa0:	fc 01       	movw	r30, r24
+     fa2:	ee 0f       	add	r30, r30
+     fa4:	ff 1f       	adc	r31, r31
+     fa6:	e8 0f       	add	r30, r24
+     fa8:	f9 1f       	adc	r31, r25
+     faa:	ee 0f       	add	r30, r30
+     fac:	ff 1f       	adc	r31, r31
+     fae:	e0 50       	subi	r30, 0x00	; 0
+     fb0:	ff 4f       	sbci	r31, 0xFF	; 255
+     fb2:	85 81       	ldd	r24, Z+5	; 0x05
+     fb4:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+     fb8:	08 95       	ret
 			
 			sequencer.variation = VAR_B;
 		}
 	}
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
-     f90:	21 30       	cpi	r18, 0x01	; 1
-     f92:	61 f3       	breq	.-40     	; 0xf6c <check_start_stop_tap+0x5e>
-     f94:	08 95       	ret
+     fba:	21 30       	cpi	r18, 0x01	; 1
+     fbc:	61 f3       	breq	.-40     	; 0xf96 <check_start_stop_tap+0x5e>
+     fbe:	08 95       	ret
 
-00000f96 <check_inst_switches>:
+00000fc0 <check_inst_switches>:
 		
 	} 
 	
 }
 	
 void check_inst_switches(void) {
-     f96:	3f 92       	push	r3
-     f98:	4f 92       	push	r4
-     f9a:	5f 92       	push	r5
-     f9c:	6f 92       	push	r6
-     f9e:	7f 92       	push	r7
-     fa0:	8f 92       	push	r8
-     fa2:	9f 92       	push	r9
-     fa4:	af 92       	push	r10
-     fa6:	bf 92       	push	r11
-     fa8:	cf 92       	push	r12
-     faa:	df 92       	push	r13
-     fac:	ef 92       	push	r14
-     fae:	ff 92       	push	r15
-     fb0:	0f 93       	push	r16
-     fb2:	1f 93       	push	r17
-     fb4:	cf 93       	push	r28
-     fb6:	df 93       	push	r29
-     fb8:	0f 2e       	mov	r0, r31
-     fba:	f5 e0       	ldi	r31, 0x05	; 5
-     fbc:	ef 2e       	mov	r14, r31
-     fbe:	f1 e0       	ldi	r31, 0x01	; 1
-     fc0:	ff 2e       	mov	r15, r31
-     fc2:	f0 2d       	mov	r31, r0
-     fc4:	0f 2e       	mov	r0, r31
-     fc6:	fb e3       	ldi	r31, 0x3B	; 59
-     fc8:	8f 2e       	mov	r8, r31
-     fca:	f1 e0       	ldi	r31, 0x01	; 1
-     fcc:	9f 2e       	mov	r9, r31
-     fce:	f0 2d       	mov	r31, r0
-     fd0:	02 e1       	ldi	r16, 0x12	; 18
-     fd2:	10 e0       	ldi	r17, 0x00	; 0
-     fd4:	c1 e1       	ldi	r28, 0x11	; 17
-     fd6:	d0 e0       	ldi	r29, 0x00	; 0
-     fd8:	c1 2c       	mov	r12, r1
-     fda:	d1 2c       	mov	r13, r1
+     fc0:	3f 92       	push	r3
+     fc2:	4f 92       	push	r4
+     fc4:	5f 92       	push	r5
+     fc6:	6f 92       	push	r6
+     fc8:	7f 92       	push	r7
+     fca:	8f 92       	push	r8
+     fcc:	9f 92       	push	r9
+     fce:	af 92       	push	r10
+     fd0:	bf 92       	push	r11
+     fd2:	cf 92       	push	r12
+     fd4:	df 92       	push	r13
+     fd6:	ef 92       	push	r14
+     fd8:	ff 92       	push	r15
+     fda:	0f 93       	push	r16
+     fdc:	1f 93       	push	r17
+     fde:	cf 93       	push	r28
+     fe0:	df 93       	push	r29
+     fe2:	0f 2e       	mov	r0, r31
+     fe4:	f5 e0       	ldi	r31, 0x05	; 5
+     fe6:	ef 2e       	mov	r14, r31
+     fe8:	f1 e0       	ldi	r31, 0x01	; 1
+     fea:	ff 2e       	mov	r15, r31
+     fec:	f0 2d       	mov	r31, r0
+     fee:	0f 2e       	mov	r0, r31
+     ff0:	fb e3       	ldi	r31, 0x3B	; 59
+     ff2:	8f 2e       	mov	r8, r31
+     ff4:	f1 e0       	ldi	r31, 0x01	; 1
+     ff6:	9f 2e       	mov	r9, r31
+     ff8:	f0 2d       	mov	r31, r0
+     ffa:	02 e1       	ldi	r16, 0x12	; 18
+     ffc:	10 e0       	ldi	r17, 0x00	; 0
+     ffe:	c1 e1       	ldi	r28, 0x11	; 17
+    1000:	d0 e0       	ldi	r29, 0x00	; 0
+    1002:	c1 2c       	mov	r12, r1
+    1004:	d1 2c       	mov	r13, r1
 				}
 				
 				
 			} else {
 				
 				if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
-     fdc:	0f 2e       	mov	r0, r31
-     fde:	f9 e4       	ldi	r31, 0x49	; 73
-     fe0:	af 2e       	mov	r10, r31
-     fe2:	f4 e0       	ldi	r31, 0x04	; 4
-     fe4:	bf 2e       	mov	r11, r31
-     fe6:	f0 2d       	mov	r31, r0
+    1006:	0f 2e       	mov	r0, r31
+    1008:	f9 e4       	ldi	r31, 0x49	; 73
+    100a:	af 2e       	mov	r10, r31
+    100c:	f4 e0       	ldi	r31, 0x04	; 4
+    100e:	bf 2e       	mov	r11, r31
+    1010:	f0 2d       	mov	r31, r0
 					
 					turn_on(drum_hit[MA].led_index);
-     fe8:	0f 2e       	mov	r0, r31
-     fea:	ff e5       	ldi	r31, 0x5F	; 95
-     fec:	4f 2e       	mov	r4, r31
-     fee:	f1 e0       	ldi	r31, 0x01	; 1
-     ff0:	5f 2e       	mov	r5, r31
-     ff2:	f0 2d       	mov	r31, r0
+    1012:	0f 2e       	mov	r0, r31
+    1014:	ff e5       	ldi	r31, 0x5F	; 95
+    1016:	4f 2e       	mov	r4, r31
+    1018:	f1 e0       	ldi	r31, 0x01	; 1
+    101a:	5f 2e       	mov	r5, r31
+    101c:	f0 2d       	mov	r31, r0
 					sequencer.current_inst = MA;
-     ff4:	0f 2e       	mov	r0, r31
-     ff6:	ff e0       	ldi	r31, 0x0F	; 15
-     ff8:	3f 2e       	mov	r3, r31
-     ffa:	f0 2d       	mov	r31, r0
-     ffc:	0c c0       	rjmp	.+24     	; 0x1016 <check_inst_switches+0x80>
-     ffe:	8f ef       	ldi	r24, 0xFF	; 255
-    1000:	c8 1a       	sub	r12, r24
-    1002:	d8 0a       	sbc	r13, r24
-    1004:	21 96       	adiw	r28, 0x01	; 1
-    1006:	0f 5f       	subi	r16, 0xFF	; 255
-    1008:	1f 4f       	sbci	r17, 0xFF	; 255
-    100a:	a6 e0       	ldi	r26, 0x06	; 6
-    100c:	ea 0e       	add	r14, r26
-    100e:	f1 1c       	adc	r15, r1
-    1010:	b6 e0       	ldi	r27, 0x06	; 6
-    1012:	8b 0e       	add	r8, r27
-    1014:	91 1c       	adc	r9, r1
+    101e:	0f 2e       	mov	r0, r31
+    1020:	ff e0       	ldi	r31, 0x0F	; 15
+    1022:	3f 2e       	mov	r3, r31
+    1024:	f0 2d       	mov	r31, r0
+    1026:	0c c0       	rjmp	.+24     	; 0x1040 <check_inst_switches+0x80>
+    1028:	8f ef       	ldi	r24, 0xFF	; 255
+    102a:	c8 1a       	sub	r12, r24
+    102c:	d8 0a       	sbc	r13, r24
+    102e:	21 96       	adiw	r28, 0x01	; 1
+    1030:	0f 5f       	subi	r16, 0xFF	; 255
+    1032:	1f 4f       	sbci	r17, 0xFF	; 255
+    1034:	a6 e0       	ldi	r26, 0x06	; 6
+    1036:	ea 0e       	add	r14, r26
+    1038:	f1 1c       	adc	r15, r1
+    103a:	b6 e0       	ldi	r27, 0x06	; 6
+    103c:	8b 0e       	add	r8, r27
+    103e:	91 1c       	adc	r9, r1
 	
 void check_inst_switches(void) {
 	
 	for (int i = INST_BD_2_SW; i <= INST_CH_12_SW; i++) { //scan BD to CH
 		
 		if (button[i].state) {
-    1016:	fe 01       	movw	r30, r28
-    1018:	ee 0f       	add	r30, r30
-    101a:	ff 1f       	adc	r31, r31
-    101c:	ee 5e       	subi	r30, 0xEE	; 238
-    101e:	fd 4f       	sbci	r31, 0xFD	; 253
-    1020:	80 81       	ld	r24, Z
-    1022:	86 ff       	sbrs	r24, 6
-    1024:	37 c0       	rjmp	.+110    	; 0x1094 <check_inst_switches+0xfe>
+    1040:	fe 01       	movw	r30, r28
+    1042:	ee 0f       	add	r30, r30
+    1044:	ff 1f       	adc	r31, r31
+    1046:	ee 5e       	subi	r30, 0xEE	; 238
+    1048:	fd 4f       	sbci	r31, 0xFD	; 253
+    104a:	80 81       	ld	r24, Z
+    104c:	86 ff       	sbrs	r24, 6
+    104e:	37 c0       	rjmp	.+110    	; 0x10be <check_inst_switches+0xfe>
 			
 			button[i].state ^= button[i].state; //toggle state
-    1026:	fe 01       	movw	r30, r28
-    1028:	ee 0f       	add	r30, r30
-    102a:	ff 1f       	adc	r31, r31
-    102c:	ee 5e       	subi	r30, 0xEE	; 238
-    102e:	fd 4f       	sbci	r31, 0xFD	; 253
-    1030:	8f 7b       	andi	r24, 0xBF	; 191
-    1032:	80 83       	st	Z, r24
+    1050:	fe 01       	movw	r30, r28
+    1052:	ee 0f       	add	r30, r30
+    1054:	ff 1f       	adc	r31, r31
+    1056:	ee 5e       	subi	r30, 0xEE	; 238
+    1058:	fd 4f       	sbci	r31, 0xFD	; 253
+    105a:	8f 7b       	andi	r24, 0xBF	; 191
+    105c:	80 83       	st	Z, r24
 			turn_off_all_inst_leds();
-    1034:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
-    1038:	f7 01       	movw	r30, r14
-    103a:	d7 01       	movw	r26, r14
-    103c:	12 97       	sbiw	r26, 0x02	; 2
+    105e:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
+    1062:	f7 01       	movw	r30, r14
+    1064:	d7 01       	movw	r26, r14
+    1066:	12 97       	sbiw	r26, 0x02	; 2
 			
 			
 			if(drum_hit[i - INST_BD_2_SW].switch_bit != 255) { // need to handle instrument toggle here
-    103e:	8c 91       	ld	r24, X
-    1040:	8f 3f       	cpi	r24, 0xFF	; 255
-    1042:	a9 f0       	breq	.+42     	; 0x106e <check_inst_switches+0xd8>
+    1068:	8c 91       	ld	r24, X
+    106a:	8f 3f       	cpi	r24, 0xFF	; 255
+    106c:	a9 f0       	breq	.+42     	; 0x1098 <check_inst_switches+0xd8>
 				
 				
 				if (sequencer.current_inst == i - INST_BD_2_SW) {
-    1044:	d5 01       	movw	r26, r10
-    1046:	8c 91       	ld	r24, X
-    1048:	90 e0       	ldi	r25, 0x00	; 0
-    104a:	c8 16       	cp	r12, r24
-    104c:	d9 06       	cpc	r13, r25
-    104e:	49 f4       	brne	.+18     	; 0x1062 <check_inst_switches+0xcc>
+    106e:	d5 01       	movw	r26, r10
+    1070:	8c 91       	ld	r24, X
+    1072:	90 e0       	ldi	r25, 0x00	; 0
+    1074:	c8 16       	cp	r12, r24
+    1076:	d9 06       	cpc	r13, r25
+    1078:	49 f4       	brne	.+18     	; 0x108c <check_inst_switches+0xcc>
 					//alternative drum hits are offset by 9 places in drum_hit array
 					turn_on(drum_hit[i-INST_BD_2_SW + 9].led_index);
-    1050:	f4 01       	movw	r30, r8
-    1052:	80 81       	ld	r24, Z
-    1054:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
-    1058:	89 e0       	ldi	r24, 0x09	; 9
-    105a:	8c 0d       	add	r24, r12
+    107a:	f4 01       	movw	r30, r8
+    107c:	80 81       	ld	r24, Z
+    107e:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    1082:	89 e0       	ldi	r24, 0x09	; 9
+    1084:	8c 0d       	add	r24, r12
 					sequencer.current_inst = i - INST_BD_2_SW + 9;
-    105c:	d5 01       	movw	r26, r10
-    105e:	8c 93       	st	X, r24
-    1060:	19 c0       	rjmp	.+50     	; 0x1094 <check_inst_switches+0xfe>
+    1086:	d5 01       	movw	r26, r10
+    1088:	8c 93       	st	X, r24
+    108a:	19 c0       	rjmp	.+50     	; 0x10be <check_inst_switches+0xfe>
 					
 				} else {
 					
 					turn_on(drum_hit[i-INST_BD_2_SW].led_index);
-    1062:	80 81       	ld	r24, Z
-    1064:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    108c:	80 81       	ld	r24, Z
+    108e:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 					sequencer.current_inst = i - INST_BD_2_SW;
-    1068:	f5 01       	movw	r30, r10
-    106a:	c0 82       	st	Z, r12
-    106c:	13 c0       	rjmp	.+38     	; 0x1094 <check_inst_switches+0xfe>
+    1092:	f5 01       	movw	r30, r10
+    1094:	c0 82       	st	Z, r12
+    1096:	13 c0       	rjmp	.+38     	; 0x10be <check_inst_switches+0xfe>
 				}
 				
 				
 			} else {
 				
 				if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
-    106e:	d5 01       	movw	r26, r10
-    1070:	8c 91       	ld	r24, X
-    1072:	86 30       	cpi	r24, 0x06	; 6
-    1074:	51 f4       	brne	.+20     	; 0x108a <check_inst_switches+0xf4>
-    1076:	c7 31       	cpi	r28, 0x17	; 23
-    1078:	d1 05       	cpc	r29, r1
-    107a:	39 f4       	brne	.+14     	; 0x108a <check_inst_switches+0xf4>
+    1098:	d5 01       	movw	r26, r10
+    109a:	8c 91       	ld	r24, X
+    109c:	86 30       	cpi	r24, 0x06	; 6
+    109e:	51 f4       	brne	.+20     	; 0x10b4 <check_inst_switches+0xf4>
+    10a0:	c7 31       	cpi	r28, 0x17	; 23
+    10a2:	d1 05       	cpc	r29, r1
+    10a4:	39 f4       	brne	.+14     	; 0x10b4 <check_inst_switches+0xf4>
 					
 					turn_on(drum_hit[MA].led_index);
-    107c:	f2 01       	movw	r30, r4
-    107e:	80 81       	ld	r24, Z
-    1080:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    10a6:	f2 01       	movw	r30, r4
+    10a8:	80 81       	ld	r24, Z
+    10aa:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 					sequencer.current_inst = MA;
-    1084:	d5 01       	movw	r26, r10
-    1086:	3c 92       	st	X, r3
-    1088:	ba cf       	rjmp	.-140    	; 0xffe <check_inst_switches+0x68>
+    10ae:	d5 01       	movw	r26, r10
+    10b0:	3c 92       	st	X, r3
+    10b2:	ba cf       	rjmp	.-140    	; 0x1028 <check_inst_switches+0x68>
 					
 				} else {
 					
 					turn_on(drum_hit[i - INST_BD_2_SW].led_index);
-    108a:	80 81       	ld	r24, Z
-    108c:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    10b4:	80 81       	ld	r24, Z
+    10b6:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 					sequencer.current_inst = i - INST_BD_2_SW; //inst index starts with BD = 0
-    1090:	f5 01       	movw	r30, r10
-    1092:	c0 82       	st	Z, r12
+    10ba:	f5 01       	movw	r30, r10
+    10bc:	c0 82       	st	Z, r12
 	
 }
 	
 void check_inst_switches(void) {
 	
 	for (int i = INST_BD_2_SW; i <= INST_CH_12_SW; i++) { //scan BD to CH
-    1094:	0c 31       	cpi	r16, 0x1C	; 28
-    1096:	11 05       	cpc	r17, r1
-    1098:	0c f4       	brge	.+2      	; 0x109c <check_inst_switches+0x106>
-    109a:	b1 cf       	rjmp	.-158    	; 0xffe <check_inst_switches+0x68>
+    10be:	0c 31       	cpi	r16, 0x1C	; 28
+    10c0:	11 05       	cpc	r17, r1
+    10c2:	0c f4       	brge	.+2      	; 0x10c6 <check_inst_switches+0x106>
+    10c4:	b1 cf       	rjmp	.-158    	; 0x1028 <check_inst_switches+0x68>
 			//return; //could break out here and not bother scanning everything - means only one button press can be detected
 		}
 		
 	}
 	
 	if (button[INST_AC_1_SW].state) {
-    109c:	80 91 32 02 	lds	r24, 0x0232
-    10a0:	86 ff       	sbrs	r24, 6
-    10a2:	0c c0       	rjmp	.+24     	; 0x10bc <check_inst_switches+0x126>
+    10c6:	80 91 32 02 	lds	r24, 0x0232
+    10ca:	86 ff       	sbrs	r24, 6
+    10cc:	0c c0       	rjmp	.+24     	; 0x10e6 <check_inst_switches+0x126>
 		button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
-    10a4:	e2 e3       	ldi	r30, 0x32	; 50
-    10a6:	f2 e0       	ldi	r31, 0x02	; 2
-    10a8:	8f 7b       	andi	r24, 0xBF	; 191
-    10aa:	80 83       	st	Z, r24
+    10ce:	e2 e3       	ldi	r30, 0x32	; 50
+    10d0:	f2 e0       	ldi	r31, 0x02	; 2
+    10d2:	8f 7b       	andi	r24, 0xBF	; 191
+    10d4:	80 83       	st	Z, r24
 		turn_off_all_inst_leds();
-    10ac:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
+    10d6:	0e 94 23 04 	call	0x846	; 0x846 <turn_off_all_inst_leds>
 		turn_on(ACCENT_1_LED);
-    10b0:	84 e1       	ldi	r24, 0x14	; 20
-    10b2:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    10da:	84 e1       	ldi	r24, 0x14	; 20
+    10dc:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
 		sequencer.current_inst = AC;
-    10b6:	80 e1       	ldi	r24, 0x10	; 16
-    10b8:	80 93 49 04 	sts	0x0449, r24
+    10e0:	80 e1       	ldi	r24, 0x10	; 16
+    10e2:	80 93 49 04 	sts	0x0449, r24
 	}
 	
 }	
-    10bc:	df 91       	pop	r29
-    10be:	cf 91       	pop	r28
-    10c0:	1f 91       	pop	r17
-    10c2:	0f 91       	pop	r16
-    10c4:	ff 90       	pop	r15
-    10c6:	ef 90       	pop	r14
-    10c8:	df 90       	pop	r13
-    10ca:	cf 90       	pop	r12
-    10cc:	bf 90       	pop	r11
-    10ce:	af 90       	pop	r10
-    10d0:	9f 90       	pop	r9
-    10d2:	8f 90       	pop	r8
-    10d4:	7f 90       	pop	r7
-    10d6:	6f 90       	pop	r6
-    10d8:	5f 90       	pop	r5
-    10da:	4f 90       	pop	r4
-    10dc:	3f 90       	pop	r3
-    10de:	08 95       	ret
+    10e6:	df 91       	pop	r29
+    10e8:	cf 91       	pop	r28
+    10ea:	1f 91       	pop	r17
+    10ec:	0f 91       	pop	r16
+    10ee:	ff 90       	pop	r15
+    10f0:	ef 90       	pop	r14
+    10f2:	df 90       	pop	r13
+    10f4:	cf 90       	pop	r12
+    10f6:	bf 90       	pop	r11
+    10f8:	af 90       	pop	r10
+    10fa:	9f 90       	pop	r9
+    10fc:	8f 90       	pop	r8
+    10fe:	7f 90       	pop	r7
+    1100:	6f 90       	pop	r6
+    1102:	5f 90       	pop	r5
+    1104:	4f 90       	pop	r4
+    1106:	3f 90       	pop	r3
+    1108:	08 95       	ret
 
-000010e0 <check_variation_switches>:
+0000110a <check_variation_switches>:
 
 void check_variation_switches(void) { //at the moment, just check one switch and cycle through A, B and A/B
 	
 	if (button[BASIC_VAR_A_SW].state) {
-    10e0:	80 91 4e 02 	lds	r24, 0x024E
-    10e4:	86 ff       	sbrs	r24, 6
-    10e6:	30 c0       	rjmp	.+96     	; 0x1148 <check_variation_switches+0x68>
+    110a:	80 91 4e 02 	lds	r24, 0x024E
+    110e:	86 ff       	sbrs	r24, 6
+    1110:	30 c0       	rjmp	.+96     	; 0x1172 <check_variation_switches+0x68>
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle 
-    10e8:	ee e4       	ldi	r30, 0x4E	; 78
-    10ea:	f2 e0       	ldi	r31, 0x02	; 2
-    10ec:	8f 7b       	andi	r24, 0xBF	; 191
-    10ee:	80 83       	st	Z, r24
+    1112:	ee e4       	ldi	r30, 0x4E	; 78
+    1114:	f2 e0       	ldi	r31, 0x02	; 2
+    1116:	8f 7b       	andi	r24, 0xBF	; 191
+    1118:	80 83       	st	Z, r24
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
-    10f0:	80 91 45 04 	lds	r24, 0x0445
-    10f4:	86 95       	lsr	r24
-    10f6:	8f 5f       	subi	r24, 0xFF	; 255
-    10f8:	83 70       	andi	r24, 0x03	; 3
-    10fa:	83 30       	cpi	r24, 0x03	; 3
-    10fc:	41 f0       	breq	.+16     	; 0x110e <check_variation_switches+0x2e>
-    10fe:	e5 e4       	ldi	r30, 0x45	; 69
-    1100:	f4 e0       	ldi	r31, 0x04	; 4
-    1102:	88 0f       	add	r24, r24
-    1104:	90 81       	ld	r25, Z
-    1106:	99 7f       	andi	r25, 0xF9	; 249
-    1108:	89 2b       	or	r24, r25
-    110a:	80 83       	st	Z, r24
-    110c:	05 c0       	rjmp	.+10     	; 0x1118 <check_variation_switches+0x38>
-    110e:	e5 e4       	ldi	r30, 0x45	; 69
-    1110:	f4 e0       	ldi	r31, 0x04	; 4
-    1112:	80 81       	ld	r24, Z
-    1114:	89 7f       	andi	r24, 0xF9	; 249
-    1116:	80 83       	st	Z, r24
+    111a:	80 91 45 04 	lds	r24, 0x0445
+    111e:	86 95       	lsr	r24
+    1120:	8f 5f       	subi	r24, 0xFF	; 255
+    1122:	83 70       	andi	r24, 0x03	; 3
+    1124:	83 30       	cpi	r24, 0x03	; 3
+    1126:	41 f0       	breq	.+16     	; 0x1138 <check_variation_switches+0x2e>
+    1128:	e5 e4       	ldi	r30, 0x45	; 69
+    112a:	f4 e0       	ldi	r31, 0x04	; 4
+    112c:	88 0f       	add	r24, r24
+    112e:	90 81       	ld	r25, Z
+    1130:	99 7f       	andi	r25, 0xF9	; 249
+    1132:	89 2b       	or	r24, r25
+    1134:	80 83       	st	Z, r24
+    1136:	05 c0       	rjmp	.+10     	; 0x1142 <check_variation_switches+0x38>
+    1138:	e5 e4       	ldi	r30, 0x45	; 69
+    113a:	f4 e0       	ldi	r31, 0x04	; 4
+    113c:	80 81       	ld	r24, Z
+    113e:	89 7f       	andi	r24, 0xF9	; 249
+    1140:	80 83       	st	Z, r24
 		if (sequencer.START) {
-    1118:	80 91 76 03 	lds	r24, 0x0376
-    111c:	81 ff       	sbrs	r24, 1
-    111e:	06 c0       	rjmp	.+12     	; 0x112c <check_variation_switches+0x4c>
+    1142:	80 91 76 03 	lds	r24, 0x0376
+    1146:	81 ff       	sbrs	r24, 1
+    1148:	06 c0       	rjmp	.+12     	; 0x1156 <check_variation_switches+0x4c>
 			
 			 sequencer.var_change = 1; //set change flag to be handled when new measure starts
-    1120:	e5 e4       	ldi	r30, 0x45	; 69
-    1122:	f4 e0       	ldi	r31, 0x04	; 4
-    1124:	80 81       	ld	r24, Z
-    1126:	88 60       	ori	r24, 0x08	; 8
-    1128:	80 83       	st	Z, r24
-    112a:	08 95       	ret
+    114a:	e5 e4       	ldi	r30, 0x45	; 69
+    114c:	f4 e0       	ldi	r31, 0x04	; 4
+    114e:	80 81       	ld	r24, Z
+    1150:	88 60       	ori	r24, 0x08	; 8
+    1152:	80 83       	st	Z, r24
+    1154:	08 95       	ret
 		} else { //otherwise change immediately
 			
 			if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-    112c:	80 91 45 04 	lds	r24, 0x0445
-    1130:	81 fd       	sbrc	r24, 1
-    1132:	05 c0       	rjmp	.+10     	; 0x113e <check_variation_switches+0x5e>
+    1156:	80 91 45 04 	lds	r24, 0x0445
+    115a:	81 fd       	sbrc	r24, 1
+    115c:	05 c0       	rjmp	.+10     	; 0x1168 <check_variation_switches+0x5e>
 				
 				sequencer.variation = VAR_A;
-    1134:	e5 e4       	ldi	r30, 0x45	; 69
-    1136:	f4 e0       	ldi	r31, 0x04	; 4
-    1138:	8e 7f       	andi	r24, 0xFE	; 254
-    113a:	80 83       	st	Z, r24
-    113c:	08 95       	ret
+    115e:	e5 e4       	ldi	r30, 0x45	; 69
+    1160:	f4 e0       	ldi	r31, 0x04	; 4
+    1162:	8e 7f       	andi	r24, 0xFE	; 254
+    1164:	80 83       	st	Z, r24
+    1166:	08 95       	ret
 				
 			} else {
 				
 				sequencer.variation = VAR_B;
-    113e:	e5 e4       	ldi	r30, 0x45	; 69
-    1140:	f4 e0       	ldi	r31, 0x04	; 4
-    1142:	80 81       	ld	r24, Z
-    1144:	81 60       	ori	r24, 0x01	; 1
-    1146:	80 83       	st	Z, r24
-    1148:	08 95       	ret
+    1168:	e5 e4       	ldi	r30, 0x45	; 69
+    116a:	f4 e0       	ldi	r31, 0x04	; 4
+    116c:	80 81       	ld	r24, Z
+    116e:	81 60       	ori	r24, 0x01	; 1
+    1170:	80 83       	st	Z, r24
+    1172:	08 95       	ret
 
-0000114a <bytequeue_init>:
+00001174 <check_clear_switch>:
+	}
+	
+	
+}	
+
+void check_clear_switch(void) {
+    1174:	ef 92       	push	r14
+    1176:	ff 92       	push	r15
+    1178:	0f 93       	push	r16
+    117a:	1f 93       	push	r17
+    117c:	cf 93       	push	r28
+    117e:	df 93       	push	r29
+	
+	if (sequencer.CLEAR && sequencer.START == 0) {
+    1180:	80 91 76 03 	lds	r24, 0x0376
+    1184:	86 70       	andi	r24, 0x06	; 6
+    1186:	84 30       	cpi	r24, 0x04	; 4
+    1188:	09 f0       	breq	.+2      	; 0x118c <check_clear_switch+0x18>
+    118a:	42 c0       	rjmp	.+132    	; 0x1210 <check_clear_switch+0x9c>
+		
+		switch (sequencer.mode) {
+    118c:	80 91 75 03 	lds	r24, 0x0375
+    1190:	81 11       	cpse	r24, r1
+    1192:	57 c0       	rjmp	.+174    	; 0x1242 <check_clear_switch+0xce>
+			
+			case PATTERN_CLEAR:
+				toggle(MODE_1_PATTERN_CLEAR);
+    1194:	8c e1       	ldi	r24, 0x1C	; 28
+    1196:	0e 94 10 04 	call	0x820	; 0x820 <toggle>
+				//spi_data[0] = 0; //turn off all step LEDs
+				//spi_data[1] = 0;
+				for (int i = 0; i <= sequencer.step_num; i++) {
+    119a:	20 91 45 04 	lds	r18, 0x0445
+    119e:	82 2f       	mov	r24, r18
+    11a0:	82 95       	swap	r24
+    11a2:	8f 70       	andi	r24, 0x0F	; 15
+    11a4:	20 91 46 04 	lds	r18, 0x0446
+    11a8:	21 70       	andi	r18, 0x01	; 1
+    11aa:	22 95       	swap	r18
+    11ac:	20 7f       	andi	r18, 0xF0	; 240
+    11ae:	28 2b       	or	r18, r24
+    11b0:	30 e0       	ldi	r19, 0x00	; 0
+					
+					sequencer.pattern[sequencer.variation].part[i] = 0;
+    11b2:	80 91 45 04 	lds	r24, 0x0445
+    11b6:	80 fb       	bst	r24, 0
+    11b8:	ee 24       	eor	r14, r14
+    11ba:	e0 f8       	bld	r14, 0
+    11bc:	f1 2c       	mov	r15, r1
+    11be:	87 e6       	ldi	r24, 0x67	; 103
+    11c0:	8e 9d       	mul	r24, r14
+    11c2:	f0 01       	movw	r30, r0
+    11c4:	8f 9d       	mul	r24, r15
+    11c6:	f0 0d       	add	r31, r0
+    11c8:	11 24       	eor	r1, r1
+    11ca:	e9 58       	subi	r30, 0x89	; 137
+    11cc:	fc 4f       	sbci	r31, 0xFC	; 252
+    11ce:	80 e0       	ldi	r24, 0x00	; 0
+    11d0:	90 e0       	ldi	r25, 0x00	; 0
+    11d2:	11 92       	st	Z+, r1
+    11d4:	11 92       	st	Z+, r1
+			
+			case PATTERN_CLEAR:
+				toggle(MODE_1_PATTERN_CLEAR);
+				//spi_data[0] = 0; //turn off all step LEDs
+				//spi_data[1] = 0;
+				for (int i = 0; i <= sequencer.step_num; i++) {
+    11d6:	01 96       	adiw	r24, 0x01	; 1
+    11d8:	28 17       	cp	r18, r24
+    11da:	39 07       	cpc	r19, r25
+    11dc:	d4 f7       	brge	.-12     	; 0x11d2 <check_clear_switch+0x5e>
+    11de:	20 c0       	rjmp	.+64     	; 0x1220 <check_clear_switch+0xac>
+					
+				}
+				
+				for (int i = 0; i <17; i++) {
+					
+					sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
+    11e0:	11 92       	st	Z+, r1
+    11e2:	11 92       	st	Z+, r1
+					
+					sequencer.pattern[sequencer.variation].part[i] = 0;
+					
+				}
+				
+				for (int i = 0; i <17; i++) {
+    11e4:	e8 17       	cp	r30, r24
+    11e6:	f9 07       	cpc	r31, r25
+    11e8:	d9 f7       	brne	.-10     	; 0x11e0 <check_clear_switch+0x6c>
+					
+					sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
+					
+				}
+				
+				sequencer.pattern[sequencer.variation].accent = 0;	
+    11ea:	80 91 45 04 	lds	r24, 0x0445
+    11ee:	81 70       	andi	r24, 0x01	; 1
+    11f0:	c8 2f       	mov	r28, r24
+    11f2:	80 e0       	ldi	r24, 0x00	; 0
+    11f4:	d8 2f       	mov	r29, r24
+    11f6:	87 e6       	ldi	r24, 0x67	; 103
+    11f8:	8c 9f       	mul	r24, r28
+    11fa:	f0 01       	movw	r30, r0
+    11fc:	8d 9f       	mul	r24, r29
+    11fe:	f0 0d       	add	r31, r0
+    1200:	11 24       	eor	r1, r1
+    1202:	e9 54       	subi	r30, 0x49	; 73
+    1204:	fc 4f       	sbci	r31, 0xFC	; 252
+    1206:	10 82       	st	Z, r1
+    1208:	11 82       	std	Z+1, r1	; 0x01
+    120a:	12 82       	std	Z+2, r1	; 0x02
+    120c:	13 82       	std	Z+3, r1	; 0x03
+				
+				break;
+    120e:	19 c0       	rjmp	.+50     	; 0x1242 <check_clear_switch+0xce>
+			
+		}
+		
+	} else {
+		
+		if (sequencer.mode == PATTERN_CLEAR) { //need to ensure LED is on after toggling while CLEAR button is held
+    1210:	80 91 75 03 	lds	r24, 0x0375
+    1214:	81 11       	cpse	r24, r1
+    1216:	15 c0       	rjmp	.+42     	; 0x1242 <check_clear_switch+0xce>
+			
+			turn_on(MODE_1_PATTERN_CLEAR);
+    1218:	8c e1       	ldi	r24, 0x1C	; 28
+    121a:	0e 94 d3 03 	call	0x7a6	; 0x7a6 <turn_on>
+    121e:	11 c0       	rjmp	.+34     	; 0x1242 <check_clear_switch+0xce>
+					
+				}
+				
+				for (int i = 0; i <17; i++) {
+					
+					sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
+    1220:	80 91 45 04 	lds	r24, 0x0445
+    1224:	08 2f       	mov	r16, r24
+    1226:	01 70       	andi	r16, 0x01	; 1
+    1228:	10 e0       	ldi	r17, 0x00	; 0
+    122a:	27 e6       	ldi	r18, 0x67	; 103
+    122c:	20 9f       	mul	r18, r16
+    122e:	c0 01       	movw	r24, r0
+    1230:	21 9f       	mul	r18, r17
+    1232:	90 0d       	add	r25, r0
+    1234:	11 24       	eor	r1, r1
+    1236:	fc 01       	movw	r30, r24
+    1238:	e5 54       	subi	r30, 0x45	; 69
+    123a:	fc 4f       	sbci	r31, 0xFC	; 252
+    123c:	83 52       	subi	r24, 0x23	; 35
+    123e:	9c 4f       	sbci	r25, 0xFC	; 252
+    1240:	cf cf       	rjmp	.-98     	; 0x11e0 <check_clear_switch+0x6c>
+			turn_on(MODE_1_PATTERN_CLEAR);
+		}
+		
+	}
+	
+    1242:	df 91       	pop	r29
+    1244:	cf 91       	pop	r28
+    1246:	1f 91       	pop	r17
+    1248:	0f 91       	pop	r16
+    124a:	ff 90       	pop	r15
+    124c:	ef 90       	pop	r14
+    124e:	08 95       	ret
+
+00001250 <bytequeue_init>:
 //along with avr-bytequeue.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "bytequeue.h"
 #include "interrupt_setting.h"
 
 void bytequeue_init(byteQueue_t * queue, uint8_t * dataArray, byteQueueIndex_t arrayLen){
-    114a:	fc 01       	movw	r30, r24
+    1250:	fc 01       	movw	r30, r24
    queue->length = arrayLen;
-    114c:	42 83       	std	Z+2, r20	; 0x02
+    1252:	42 83       	std	Z+2, r20	; 0x02
    queue->data = dataArray;
-    114e:	74 83       	std	Z+4, r23	; 0x04
-    1150:	63 83       	std	Z+3, r22	; 0x03
+    1254:	74 83       	std	Z+4, r23	; 0x04
+    1256:	63 83       	std	Z+3, r22	; 0x03
    queue->start = queue->end = 0;
-    1152:	11 82       	std	Z+1, r1	; 0x01
-    1154:	10 82       	st	Z, r1
-    1156:	08 95       	ret
+    1258:	11 82       	std	Z+1, r1	; 0x01
+    125a:	10 82       	st	Z, r1
+    125c:	08 95       	ret
 
-00001158 <bytequeue_enqueue>:
+0000125e <bytequeue_enqueue>:
 }
 
 bool bytequeue_enqueue(byteQueue_t * queue, uint8_t item){
-    1158:	ff 92       	push	r15
-    115a:	0f 93       	push	r16
-    115c:	1f 93       	push	r17
-    115e:	cf 93       	push	r28
-    1160:	df 93       	push	r29
-    1162:	ec 01       	movw	r28, r24
-    1164:	06 2f       	mov	r16, r22
+    125e:	ff 92       	push	r15
+    1260:	0f 93       	push	r16
+    1262:	1f 93       	push	r17
+    1264:	cf 93       	push	r28
+    1266:	df 93       	push	r29
+    1268:	ec 01       	movw	r28, r24
+    126a:	06 2f       	mov	r16, r22
    interrupt_setting_t setting = store_and_clear_interrupt();
-    1166:	0e 94 25 09 	call	0x124a	; 0x124a <store_and_clear_interrupt>
-    116a:	18 2f       	mov	r17, r24
+    126c:	0e 94 a8 09 	call	0x1350	; 0x1350 <store_and_clear_interrupt>
+    1270:	18 2f       	mov	r17, r24
    //full
    if(((queue->end + 1) % queue->length) == queue->start){
-    116c:	f9 80       	ldd	r15, Y+1	; 0x01
-    116e:	4f 2d       	mov	r20, r15
-    1170:	50 e0       	ldi	r21, 0x00	; 0
-    1172:	ca 01       	movw	r24, r20
-    1174:	01 96       	adiw	r24, 0x01	; 1
-    1176:	2a 81       	ldd	r18, Y+2	; 0x02
-    1178:	62 2f       	mov	r22, r18
-    117a:	70 e0       	ldi	r23, 0x00	; 0
-    117c:	0e 94 d4 0b 	call	0x17a8	; 0x17a8 <__divmodhi4>
-    1180:	28 81       	ld	r18, Y
-    1182:	30 e0       	ldi	r19, 0x00	; 0
-    1184:	82 17       	cp	r24, r18
-    1186:	93 07       	cpc	r25, r19
-    1188:	29 f4       	brne	.+10     	; 0x1194 <bytequeue_enqueue+0x3c>
+    1272:	f9 80       	ldd	r15, Y+1	; 0x01
+    1274:	4f 2d       	mov	r20, r15
+    1276:	50 e0       	ldi	r21, 0x00	; 0
+    1278:	ca 01       	movw	r24, r20
+    127a:	01 96       	adiw	r24, 0x01	; 1
+    127c:	2a 81       	ldd	r18, Y+2	; 0x02
+    127e:	62 2f       	mov	r22, r18
+    1280:	70 e0       	ldi	r23, 0x00	; 0
+    1282:	0e 94 57 0c 	call	0x18ae	; 0x18ae <__divmodhi4>
+    1286:	28 81       	ld	r18, Y
+    1288:	30 e0       	ldi	r19, 0x00	; 0
+    128a:	82 17       	cp	r24, r18
+    128c:	93 07       	cpc	r25, r19
+    128e:	29 f4       	brne	.+10     	; 0x129a <bytequeue_enqueue+0x3c>
       restore_interrupt_setting(setting);
-    118a:	81 2f       	mov	r24, r17
-    118c:	0e 94 28 09 	call	0x1250	; 0x1250 <restore_interrupt_setting>
+    1290:	81 2f       	mov	r24, r17
+    1292:	0e 94 ab 09 	call	0x1356	; 0x1356 <restore_interrupt_setting>
       return false;
-    1190:	80 e0       	ldi	r24, 0x00	; 0
-    1192:	12 c0       	rjmp	.+36     	; 0x11b8 <bytequeue_enqueue+0x60>
+    1296:	80 e0       	ldi	r24, 0x00	; 0
+    1298:	12 c0       	rjmp	.+36     	; 0x12be <bytequeue_enqueue+0x60>
    } else {
       queue->data[queue->end] = item;
-    1194:	eb 81       	ldd	r30, Y+3	; 0x03
-    1196:	fc 81       	ldd	r31, Y+4	; 0x04
-    1198:	ef 0d       	add	r30, r15
-    119a:	f1 1d       	adc	r31, r1
-    119c:	00 83       	st	Z, r16
+    129a:	eb 81       	ldd	r30, Y+3	; 0x03
+    129c:	fc 81       	ldd	r31, Y+4	; 0x04
+    129e:	ef 0d       	add	r30, r15
+    12a0:	f1 1d       	adc	r31, r1
+    12a2:	00 83       	st	Z, r16
       queue->end = (queue->end + 1) % queue->length;
-    119e:	29 81       	ldd	r18, Y+1	; 0x01
-    11a0:	30 e0       	ldi	r19, 0x00	; 0
-    11a2:	c9 01       	movw	r24, r18
-    11a4:	01 96       	adiw	r24, 0x01	; 1
-    11a6:	6a 81       	ldd	r22, Y+2	; 0x02
-    11a8:	70 e0       	ldi	r23, 0x00	; 0
-    11aa:	0e 94 d4 0b 	call	0x17a8	; 0x17a8 <__divmodhi4>
-    11ae:	89 83       	std	Y+1, r24	; 0x01
+    12a4:	29 81       	ldd	r18, Y+1	; 0x01
+    12a6:	30 e0       	ldi	r19, 0x00	; 0
+    12a8:	c9 01       	movw	r24, r18
+    12aa:	01 96       	adiw	r24, 0x01	; 1
+    12ac:	6a 81       	ldd	r22, Y+2	; 0x02
+    12ae:	70 e0       	ldi	r23, 0x00	; 0
+    12b0:	0e 94 57 0c 	call	0x18ae	; 0x18ae <__divmodhi4>
+    12b4:	89 83       	std	Y+1, r24	; 0x01
       restore_interrupt_setting(setting);
-    11b0:	81 2f       	mov	r24, r17
-    11b2:	0e 94 28 09 	call	0x1250	; 0x1250 <restore_interrupt_setting>
+    12b6:	81 2f       	mov	r24, r17
+    12b8:	0e 94 ab 09 	call	0x1356	; 0x1356 <restore_interrupt_setting>
       return true;
-    11b6:	81 e0       	ldi	r24, 0x01	; 1
+    12bc:	81 e0       	ldi	r24, 0x01	; 1
    }
 }
-    11b8:	df 91       	pop	r29
-    11ba:	cf 91       	pop	r28
-    11bc:	1f 91       	pop	r17
-    11be:	0f 91       	pop	r16
-    11c0:	ff 90       	pop	r15
-    11c2:	08 95       	ret
+    12be:	df 91       	pop	r29
+    12c0:	cf 91       	pop	r28
+    12c2:	1f 91       	pop	r17
+    12c4:	0f 91       	pop	r16
+    12c6:	ff 90       	pop	r15
+    12c8:	08 95       	ret
 
-000011c4 <bytequeue_length>:
+000012ca <bytequeue_length>:
 
 byteQueueIndex_t bytequeue_length(byteQueue_t * queue){
-    11c4:	cf 93       	push	r28
-    11c6:	df 93       	push	r29
-    11c8:	ec 01       	movw	r28, r24
+    12ca:	cf 93       	push	r28
+    12cc:	df 93       	push	r29
+    12ce:	ec 01       	movw	r28, r24
    byteQueueIndex_t len;
    interrupt_setting_t setting = store_and_clear_interrupt();
-    11ca:	0e 94 25 09 	call	0x124a	; 0x124a <store_and_clear_interrupt>
+    12d0:	0e 94 a8 09 	call	0x1350	; 0x1350 <store_and_clear_interrupt>
    if(queue->end >= queue->start)
-    11ce:	39 81       	ldd	r19, Y+1	; 0x01
-    11d0:	28 81       	ld	r18, Y
-    11d2:	32 17       	cp	r19, r18
-    11d4:	18 f0       	brcs	.+6      	; 0x11dc <bytequeue_length+0x18>
+    12d4:	39 81       	ldd	r19, Y+1	; 0x01
+    12d6:	28 81       	ld	r18, Y
+    12d8:	32 17       	cp	r19, r18
+    12da:	18 f0       	brcs	.+6      	; 0x12e2 <bytequeue_length+0x18>
       len = queue->end - queue->start;
-    11d6:	c3 2f       	mov	r28, r19
-    11d8:	c2 1b       	sub	r28, r18
-    11da:	04 c0       	rjmp	.+8      	; 0x11e4 <bytequeue_length+0x20>
-    11dc:	9a 81       	ldd	r25, Y+2	; 0x02
-    11de:	c3 2f       	mov	r28, r19
-    11e0:	c9 0f       	add	r28, r25
+    12dc:	c3 2f       	mov	r28, r19
+    12de:	c2 1b       	sub	r28, r18
+    12e0:	04 c0       	rjmp	.+8      	; 0x12ea <bytequeue_length+0x20>
+    12e2:	9a 81       	ldd	r25, Y+2	; 0x02
+    12e4:	c3 2f       	mov	r28, r19
+    12e6:	c9 0f       	add	r28, r25
    else
       len = (queue->length - queue->start) + queue->end;
-    11e2:	c2 1b       	sub	r28, r18
+    12e8:	c2 1b       	sub	r28, r18
    restore_interrupt_setting(setting);
-    11e4:	0e 94 28 09 	call	0x1250	; 0x1250 <restore_interrupt_setting>
+    12ea:	0e 94 ab 09 	call	0x1356	; 0x1356 <restore_interrupt_setting>
    return len;
 }
-    11e8:	8c 2f       	mov	r24, r28
-    11ea:	df 91       	pop	r29
-    11ec:	cf 91       	pop	r28
-    11ee:	08 95       	ret
+    12ee:	8c 2f       	mov	r24, r28
+    12f0:	df 91       	pop	r29
+    12f2:	cf 91       	pop	r28
+    12f4:	08 95       	ret
 
-000011f0 <bytequeue_get>:
+000012f6 <bytequeue_get>:
 
 //we don't need to avoid interrupts if there is only one reader
 uint8_t bytequeue_get(byteQueue_t * queue, byteQueueIndex_t index){
-    11f0:	fc 01       	movw	r30, r24
+    12f6:	fc 01       	movw	r30, r24
    return queue->data[(queue->start + index) % queue->length];
-    11f2:	80 81       	ld	r24, Z
-    11f4:	70 e0       	ldi	r23, 0x00	; 0
-    11f6:	9b 01       	movw	r18, r22
-    11f8:	28 0f       	add	r18, r24
-    11fa:	31 1d       	adc	r19, r1
-    11fc:	c9 01       	movw	r24, r18
-    11fe:	62 81       	ldd	r22, Z+2	; 0x02
-    1200:	70 e0       	ldi	r23, 0x00	; 0
-    1202:	0e 94 d4 0b 	call	0x17a8	; 0x17a8 <__divmodhi4>
-    1206:	03 80       	ldd	r0, Z+3	; 0x03
-    1208:	f4 81       	ldd	r31, Z+4	; 0x04
-    120a:	e0 2d       	mov	r30, r0
-    120c:	e8 0f       	add	r30, r24
-    120e:	f9 1f       	adc	r31, r25
+    12f8:	80 81       	ld	r24, Z
+    12fa:	70 e0       	ldi	r23, 0x00	; 0
+    12fc:	9b 01       	movw	r18, r22
+    12fe:	28 0f       	add	r18, r24
+    1300:	31 1d       	adc	r19, r1
+    1302:	c9 01       	movw	r24, r18
+    1304:	62 81       	ldd	r22, Z+2	; 0x02
+    1306:	70 e0       	ldi	r23, 0x00	; 0
+    1308:	0e 94 57 0c 	call	0x18ae	; 0x18ae <__divmodhi4>
+    130c:	03 80       	ldd	r0, Z+3	; 0x03
+    130e:	f4 81       	ldd	r31, Z+4	; 0x04
+    1310:	e0 2d       	mov	r30, r0
+    1312:	e8 0f       	add	r30, r24
+    1314:	f9 1f       	adc	r31, r25
 }
-    1210:	80 81       	ld	r24, Z
-    1212:	08 95       	ret
+    1316:	80 81       	ld	r24, Z
+    1318:	08 95       	ret
 
-00001214 <bytequeue_remove>:
+0000131a <bytequeue_remove>:
 
 //we just update the start index to remove elements
 void bytequeue_remove(byteQueue_t * queue, byteQueueIndex_t numToRemove){
-    1214:	1f 93       	push	r17
-    1216:	cf 93       	push	r28
-    1218:	df 93       	push	r29
-    121a:	ec 01       	movw	r28, r24
-    121c:	16 2f       	mov	r17, r22
+    131a:	1f 93       	push	r17
+    131c:	cf 93       	push	r28
+    131e:	df 93       	push	r29
+    1320:	ec 01       	movw	r28, r24
+    1322:	16 2f       	mov	r17, r22
    interrupt_setting_t setting = store_and_clear_interrupt();
-    121e:	0e 94 25 09 	call	0x124a	; 0x124a <store_and_clear_interrupt>
-    1222:	48 2f       	mov	r20, r24
+    1324:	0e 94 a8 09 	call	0x1350	; 0x1350 <store_and_clear_interrupt>
+    1328:	48 2f       	mov	r20, r24
    queue->start = (queue->start + numToRemove) % queue->length;
-    1224:	88 81       	ld	r24, Y
-    1226:	21 2f       	mov	r18, r17
-    1228:	30 e0       	ldi	r19, 0x00	; 0
-    122a:	b9 01       	movw	r22, r18
-    122c:	68 0f       	add	r22, r24
-    122e:	71 1d       	adc	r23, r1
-    1230:	cb 01       	movw	r24, r22
-    1232:	6a 81       	ldd	r22, Y+2	; 0x02
-    1234:	70 e0       	ldi	r23, 0x00	; 0
-    1236:	0e 94 d4 0b 	call	0x17a8	; 0x17a8 <__divmodhi4>
-    123a:	88 83       	st	Y, r24
+    132a:	88 81       	ld	r24, Y
+    132c:	21 2f       	mov	r18, r17
+    132e:	30 e0       	ldi	r19, 0x00	; 0
+    1330:	b9 01       	movw	r22, r18
+    1332:	68 0f       	add	r22, r24
+    1334:	71 1d       	adc	r23, r1
+    1336:	cb 01       	movw	r24, r22
+    1338:	6a 81       	ldd	r22, Y+2	; 0x02
+    133a:	70 e0       	ldi	r23, 0x00	; 0
+    133c:	0e 94 57 0c 	call	0x18ae	; 0x18ae <__divmodhi4>
+    1340:	88 83       	st	Y, r24
    restore_interrupt_setting(setting);
-    123c:	84 2f       	mov	r24, r20
-    123e:	0e 94 28 09 	call	0x1250	; 0x1250 <restore_interrupt_setting>
+    1342:	84 2f       	mov	r24, r20
+    1344:	0e 94 ab 09 	call	0x1356	; 0x1356 <restore_interrupt_setting>
 }
-    1242:	df 91       	pop	r29
-    1244:	cf 91       	pop	r28
-    1246:	1f 91       	pop	r17
-    1248:	08 95       	ret
+    1348:	df 91       	pop	r29
+    134a:	cf 91       	pop	r28
+    134c:	1f 91       	pop	r17
+    134e:	08 95       	ret
 
-0000124a <store_and_clear_interrupt>:
+00001350 <store_and_clear_interrupt>:
 
 #include "interrupt_setting.h"
 #include <avr/interrupt.h>
 
 interrupt_setting_t store_and_clear_interrupt(void) {
    uint8_t sreg = SREG;
-    124a:	8f b7       	in	r24, 0x3f	; 63
+    1350:	8f b7       	in	r24, 0x3f	; 63
    cli();
-    124c:	f8 94       	cli
+    1352:	f8 94       	cli
    return sreg;
 }
-    124e:	08 95       	ret
+    1354:	08 95       	ret
 
-00001250 <restore_interrupt_setting>:
+00001356 <restore_interrupt_setting>:
 
 void restore_interrupt_setting(interrupt_setting_t setting) {
    SREG = setting;
-    1250:	8f bf       	out	0x3f, r24	; 63
-    1252:	08 95       	ret
+    1356:	8f bf       	out	0x3f, r24	; 63
+    1358:	08 95       	ret
 
-00001254 <midi_is_statusbyte>:
+0000135a <midi_is_statusbyte>:
 #define NULL 0
 #endif
 
 bool midi_is_statusbyte(uint8_t theByte){
    return (bool)(theByte & MIDI_STATUSMASK);
 }
-    1254:	88 1f       	adc	r24, r24
-    1256:	88 27       	eor	r24, r24
-    1258:	88 1f       	adc	r24, r24
-    125a:	08 95       	ret
+    135a:	88 1f       	adc	r24, r24
+    135c:	88 27       	eor	r24, r24
+    135e:	88 1f       	adc	r24, r24
+    1360:	08 95       	ret
 
-0000125c <midi_is_realtime>:
+00001362 <midi_is_realtime>:
 
 bool midi_is_realtime(uint8_t theByte){
    return (theByte >= MIDI_CLOCK);
-    125c:	91 e0       	ldi	r25, 0x01	; 1
-    125e:	88 3f       	cpi	r24, 0xF8	; 248
-    1260:	08 f4       	brcc	.+2      	; 0x1264 <midi_is_realtime+0x8>
-    1262:	90 e0       	ldi	r25, 0x00	; 0
+    1362:	91 e0       	ldi	r25, 0x01	; 1
+    1364:	88 3f       	cpi	r24, 0xF8	; 248
+    1366:	08 f4       	brcc	.+2      	; 0x136a <midi_is_realtime+0x8>
+    1368:	90 e0       	ldi	r25, 0x00	; 0
 }
-    1264:	89 2f       	mov	r24, r25
-    1266:	08 95       	ret
+    136a:	89 2f       	mov	r24, r25
+    136c:	08 95       	ret
 
-00001268 <midi_packet_length>:
+0000136e <midi_packet_length>:
 
 midi_packet_length_t midi_packet_length(uint8_t status){
    switch(status & 0xF0){
-    1268:	98 2f       	mov	r25, r24
-    126a:	90 7f       	andi	r25, 0xF0	; 240
-    126c:	90 3c       	cpi	r25, 0xC0	; 192
-    126e:	b1 f0       	breq	.+44     	; 0x129c <midi_packet_length+0x34>
-    1270:	58 f4       	brcc	.+22     	; 0x1288 <midi_packet_length+0x20>
-    1272:	90 39       	cpi	r25, 0x90	; 144
-    1274:	41 f1       	breq	.+80     	; 0x12c6 <midi_packet_length+0x5e>
-    1276:	18 f4       	brcc	.+6      	; 0x127e <midi_packet_length+0x16>
-    1278:	90 38       	cpi	r25, 0x80	; 128
-    127a:	19 f5       	brne	.+70     	; 0x12c2 <midi_packet_length+0x5a>
-    127c:	24 c0       	rjmp	.+72     	; 0x12c6 <midi_packet_length+0x5e>
-    127e:	90 3a       	cpi	r25, 0xA0	; 160
-    1280:	11 f1       	breq	.+68     	; 0x12c6 <midi_packet_length+0x5e>
-    1282:	90 3b       	cpi	r25, 0xB0	; 176
-    1284:	f1 f4       	brne	.+60     	; 0x12c2 <midi_packet_length+0x5a>
-    1286:	1f c0       	rjmp	.+62     	; 0x12c6 <midi_packet_length+0x5e>
-    1288:	90 3e       	cpi	r25, 0xE0	; 224
-    128a:	e9 f0       	breq	.+58     	; 0x12c6 <midi_packet_length+0x5e>
-    128c:	18 f4       	brcc	.+6      	; 0x1294 <midi_packet_length+0x2c>
-    128e:	90 3d       	cpi	r25, 0xD0	; 208
-    1290:	29 f0       	breq	.+10     	; 0x129c <midi_packet_length+0x34>
-    1292:	17 c0       	rjmp	.+46     	; 0x12c2 <midi_packet_length+0x5a>
-    1294:	90 3f       	cpi	r25, 0xF0	; 240
-    1296:	21 f0       	breq	.+8      	; 0x12a0 <midi_packet_length+0x38>
-    1298:	93 3f       	cpi	r25, 0xF3	; 243
-    129a:	99 f4       	brne	.+38     	; 0x12c2 <midi_packet_length+0x5a>
+    136e:	98 2f       	mov	r25, r24
+    1370:	90 7f       	andi	r25, 0xF0	; 240
+    1372:	90 3c       	cpi	r25, 0xC0	; 192
+    1374:	b1 f0       	breq	.+44     	; 0x13a2 <midi_packet_length+0x34>
+    1376:	58 f4       	brcc	.+22     	; 0x138e <midi_packet_length+0x20>
+    1378:	90 39       	cpi	r25, 0x90	; 144
+    137a:	41 f1       	breq	.+80     	; 0x13cc <midi_packet_length+0x5e>
+    137c:	18 f4       	brcc	.+6      	; 0x1384 <midi_packet_length+0x16>
+    137e:	90 38       	cpi	r25, 0x80	; 128
+    1380:	19 f5       	brne	.+70     	; 0x13c8 <midi_packet_length+0x5a>
+    1382:	24 c0       	rjmp	.+72     	; 0x13cc <midi_packet_length+0x5e>
+    1384:	90 3a       	cpi	r25, 0xA0	; 160
+    1386:	11 f1       	breq	.+68     	; 0x13cc <midi_packet_length+0x5e>
+    1388:	90 3b       	cpi	r25, 0xB0	; 176
+    138a:	f1 f4       	brne	.+60     	; 0x13c8 <midi_packet_length+0x5a>
+    138c:	1f c0       	rjmp	.+62     	; 0x13cc <midi_packet_length+0x5e>
+    138e:	90 3e       	cpi	r25, 0xE0	; 224
+    1390:	e9 f0       	breq	.+58     	; 0x13cc <midi_packet_length+0x5e>
+    1392:	18 f4       	brcc	.+6      	; 0x139a <midi_packet_length+0x2c>
+    1394:	90 3d       	cpi	r25, 0xD0	; 208
+    1396:	29 f0       	breq	.+10     	; 0x13a2 <midi_packet_length+0x34>
+    1398:	17 c0       	rjmp	.+46     	; 0x13c8 <midi_packet_length+0x5a>
+    139a:	90 3f       	cpi	r25, 0xF0	; 240
+    139c:	21 f0       	breq	.+8      	; 0x13a6 <midi_packet_length+0x38>
+    139e:	93 3f       	cpi	r25, 0xF3	; 243
+    13a0:	99 f4       	brne	.+38     	; 0x13c8 <midi_packet_length+0x5a>
       case MIDI_PITCHBEND:
          return THREE3;
       case MIDI_PROGCHANGE:
       case MIDI_CHANPRESSURE:
       case MIDI_SONGSELECT:
          return TWO2;
-    129c:	82 e0       	ldi	r24, 0x02	; 2
-    129e:	08 95       	ret
+    13a2:	82 e0       	ldi	r24, 0x02	; 2
+    13a4:	08 95       	ret
       case 0xF0:
          switch(status) {
-    12a0:	90 e0       	ldi	r25, 0x00	; 0
-    12a2:	fc 01       	movw	r30, r24
-    12a4:	e1 5f       	subi	r30, 0xF1	; 241
-    12a6:	f1 09       	sbc	r31, r1
-    12a8:	ef 30       	cpi	r30, 0x0F	; 15
-    12aa:	f1 05       	cpc	r31, r1
-    12ac:	40 f4       	brcc	.+16     	; 0x12be <midi_packet_length+0x56>
-    12ae:	e6 5a       	subi	r30, 0xA6	; 166
-    12b0:	ff 4f       	sbci	r31, 0xFF	; 255
-    12b2:	0c 94 e8 0b 	jmp	0x17d0	; 0x17d0 <__tablejump2__>
+    13a6:	90 e0       	ldi	r25, 0x00	; 0
+    13a8:	fc 01       	movw	r30, r24
+    13aa:	e1 5f       	subi	r30, 0xF1	; 241
+    13ac:	f1 09       	sbc	r31, r1
+    13ae:	ef 30       	cpi	r30, 0x0F	; 15
+    13b0:	f1 05       	cpc	r31, r1
+    13b2:	40 f4       	brcc	.+16     	; 0x13c4 <midi_packet_length+0x56>
+    13b4:	e6 5a       	subi	r30, 0xA6	; 166
+    13b6:	ff 4f       	sbci	r31, 0xFF	; 255
+    13b8:	0c 94 6b 0c 	jmp	0x18d6	; 0x18d6 <__tablejump2__>
             case MIDI_ACTIVESENSE:
             case MIDI_RESET:
             case MIDI_TUNEREQUEST:
                return ONE1;
             case MIDI_SONGPOSITION:
                return THREE3;
-    12b6:	83 e0       	ldi	r24, 0x03	; 3
-    12b8:	08 95       	ret
+    13bc:	83 e0       	ldi	r24, 0x03	; 3
+    13be:	08 95       	ret
             case MIDI_TC_QUARTERFRAME:
             case MIDI_SONGSELECT:
                return TWO2;
-    12ba:	82 e0       	ldi	r24, 0x02	; 2
-    12bc:	08 95       	ret
+    13c0:	82 e0       	ldi	r24, 0x02	; 2
+    13c2:	08 95       	ret
             case SYSEX_END:
             case SYSEX_BEGIN:
             default:
                return UNDEFINED;
-    12be:	80 e0       	ldi	r24, 0x00	; 0
-    12c0:	08 95       	ret
+    13c4:	80 e0       	ldi	r24, 0x00	; 0
+    13c6:	08 95       	ret
          }
       default:
          return UNDEFINED;
-    12c2:	80 e0       	ldi	r24, 0x00	; 0
-    12c4:	08 95       	ret
+    13c8:	80 e0       	ldi	r24, 0x00	; 0
+    13ca:	08 95       	ret
       case MIDI_CC:
       case MIDI_NOTEON:
       case MIDI_NOTEOFF:
       case MIDI_AFTERTOUCH:
       case MIDI_PITCHBEND:
          return THREE3;
-    12c6:	83 e0       	ldi	r24, 0x03	; 3
-    12c8:	08 95       	ret
+    13cc:	83 e0       	ldi	r24, 0x03	; 3
+    13ce:	08 95       	ret
             case MIDI_CONTINUE:
             case MIDI_STOP:
             case MIDI_ACTIVESENSE:
             case MIDI_RESET:
             case MIDI_TUNEREQUEST:
                return ONE1;
-    12ca:	81 e0       	ldi	r24, 0x01	; 1
+    13d0:	81 e0       	ldi	r24, 0x01	; 1
                return UNDEFINED;
          }
       default:
          return UNDEFINED;
    }
 }
-    12cc:	08 95       	ret
+    13d2:	08 95       	ret
 
-000012ce <midi_register_noteon_callback>:
+000013d4 <midi_register_noteon_callback>:
 void midi_register_cc_callback(MidiDevice * device, midi_three_byte_func_t func){
    device->input_cc_callback = func;
 }
 
 void midi_register_noteon_callback(MidiDevice * device, midi_three_byte_func_t func){
    device->input_noteon_callback = func;
-    12ce:	fc 01       	movw	r30, r24
-    12d0:	75 83       	std	Z+5, r23	; 0x05
-    12d2:	64 83       	std	Z+4, r22	; 0x04
-    12d4:	08 95       	ret
+    13d4:	fc 01       	movw	r30, r24
+    13d6:	75 83       	std	Z+5, r23	; 0x05
+    13d8:	64 83       	std	Z+4, r22	; 0x04
+    13da:	08 95       	ret
 
-000012d6 <midi_register_noteoff_callback>:
+000013dc <midi_register_noteoff_callback>:
 }
 
 void midi_register_noteoff_callback(MidiDevice * device, midi_three_byte_func_t func){
    device->input_noteoff_callback = func;
-    12d6:	fc 01       	movw	r30, r24
-    12d8:	77 83       	std	Z+7, r23	; 0x07
-    12da:	66 83       	std	Z+6, r22	; 0x06
-    12dc:	08 95       	ret
+    13dc:	fc 01       	movw	r30, r24
+    13de:	77 83       	std	Z+7, r23	; 0x07
+    13e0:	66 83       	std	Z+6, r22	; 0x06
+    13e2:	08 95       	ret
 
-000012de <midi_register_realtime_callback>:
+000013e4 <midi_register_realtime_callback>:
 void midi_register_tc_quarterframe_callback(MidiDevice * device, midi_two_byte_func_t func) {
    device->input_tc_quarterframe_callback = func;
 }
 
 void midi_register_realtime_callback(MidiDevice * device, midi_one_byte_func_t func){
    device->input_realtime_callback = func;
-    12de:	fc 01       	movw	r30, r24
-    12e0:	77 8b       	std	Z+23, r23	; 0x17
-    12e2:	66 8b       	std	Z+22, r22	; 0x16
-    12e4:	08 95       	ret
+    13e4:	fc 01       	movw	r30, r24
+    13e6:	77 8b       	std	Z+23, r23	; 0x17
+    13e8:	66 8b       	std	Z+22, r22	; 0x16
+    13ea:	08 95       	ret
 
-000012e6 <midi_device_init>:
+000013ec <midi_device_init>:
 
 //forward declarations, internally used to call the callbacks
 void midi_input_callbacks(MidiDevice * device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2);
 void midi_process_byte(MidiDevice * device, uint8_t input);
 
 void midi_device_init(MidiDevice * device){
-    12e6:	cf 93       	push	r28
-    12e8:	df 93       	push	r29
-    12ea:	ec 01       	movw	r28, r24
+    13ec:	cf 93       	push	r28
+    13ee:	df 93       	push	r29
+    13f0:	ec 01       	movw	r28, r24
   device->input_state = IDLE;
-    12ec:	1d a2       	std	Y+37, r1	; 0x25
+    13f2:	1d a2       	std	Y+37, r1	; 0x25
   device->input_count = 0;
-    12ee:	1f a2       	std	Y+39, r1	; 0x27
-    12f0:	1e a2       	std	Y+38, r1	; 0x26
+    13f4:	1f a2       	std	Y+39, r1	; 0x27
+    13f6:	1e a2       	std	Y+38, r1	; 0x26
   bytequeue_init(&device->input_queue, device->input_queue_data, MIDI_INPUT_QUEUE_LENGTH);
-    12f2:	bc 01       	movw	r22, r24
-    12f4:	68 5d       	subi	r22, 0xD8	; 216
-    12f6:	7f 4f       	sbci	r23, 0xFF	; 255
-    12f8:	40 ec       	ldi	r20, 0xC0	; 192
-    12fa:	88 51       	subi	r24, 0x18	; 24
-    12fc:	9f 4f       	sbci	r25, 0xFF	; 255
-    12fe:	0e 94 a5 08 	call	0x114a	; 0x114a <bytequeue_init>
+    13f8:	bc 01       	movw	r22, r24
+    13fa:	68 5d       	subi	r22, 0xD8	; 216
+    13fc:	7f 4f       	sbci	r23, 0xFF	; 255
+    13fe:	40 ec       	ldi	r20, 0xC0	; 192
+    1400:	88 51       	subi	r24, 0x18	; 24
+    1402:	9f 4f       	sbci	r25, 0xFF	; 255
+    1404:	0e 94 28 09 	call	0x1250	; 0x1250 <bytequeue_init>
 
   //three byte funcs
   device->input_cc_callback = NULL;
-    1302:	1b 82       	std	Y+3, r1	; 0x03
-    1304:	1a 82       	std	Y+2, r1	; 0x02
+    1408:	1b 82       	std	Y+3, r1	; 0x03
+    140a:	1a 82       	std	Y+2, r1	; 0x02
   device->input_noteon_callback = NULL;
-    1306:	1d 82       	std	Y+5, r1	; 0x05
-    1308:	1c 82       	std	Y+4, r1	; 0x04
+    140c:	1d 82       	std	Y+5, r1	; 0x05
+    140e:	1c 82       	std	Y+4, r1	; 0x04
   device->input_noteoff_callback = NULL;
-    130a:	1f 82       	std	Y+7, r1	; 0x07
-    130c:	1e 82       	std	Y+6, r1	; 0x06
+    1410:	1f 82       	std	Y+7, r1	; 0x07
+    1412:	1e 82       	std	Y+6, r1	; 0x06
   device->input_aftertouch_callback = NULL;
-    130e:	19 86       	std	Y+9, r1	; 0x09
-    1310:	18 86       	std	Y+8, r1	; 0x08
+    1414:	19 86       	std	Y+9, r1	; 0x09
+    1416:	18 86       	std	Y+8, r1	; 0x08
   device->input_pitchbend_callback = NULL;
-    1312:	1b 86       	std	Y+11, r1	; 0x0b
-    1314:	1a 86       	std	Y+10, r1	; 0x0a
+    1418:	1b 86       	std	Y+11, r1	; 0x0b
+    141a:	1a 86       	std	Y+10, r1	; 0x0a
   device->input_songposition_callback = NULL;
-    1316:	1d 86       	std	Y+13, r1	; 0x0d
-    1318:	1c 86       	std	Y+12, r1	; 0x0c
+    141c:	1d 86       	std	Y+13, r1	; 0x0d
+    141e:	1c 86       	std	Y+12, r1	; 0x0c
 
   //two byte funcs
   device->input_progchange_callback = NULL;
-    131a:	1f 86       	std	Y+15, r1	; 0x0f
-    131c:	1e 86       	std	Y+14, r1	; 0x0e
+    1420:	1f 86       	std	Y+15, r1	; 0x0f
+    1422:	1e 86       	std	Y+14, r1	; 0x0e
   device->input_chanpressure_callback = NULL;
-    131e:	19 8a       	std	Y+17, r1	; 0x11
-    1320:	18 8a       	std	Y+16, r1	; 0x10
+    1424:	19 8a       	std	Y+17, r1	; 0x11
+    1426:	18 8a       	std	Y+16, r1	; 0x10
   device->input_songselect_callback = NULL;
-    1322:	1b 8a       	std	Y+19, r1	; 0x13
-    1324:	1a 8a       	std	Y+18, r1	; 0x12
+    1428:	1b 8a       	std	Y+19, r1	; 0x13
+    142a:	1a 8a       	std	Y+18, r1	; 0x12
   device->input_tc_quarterframe_callback = NULL;
-    1326:	1d 8a       	std	Y+21, r1	; 0x15
-    1328:	1c 8a       	std	Y+20, r1	; 0x14
+    142c:	1d 8a       	std	Y+21, r1	; 0x15
+    142e:	1c 8a       	std	Y+20, r1	; 0x14
 
   //one byte funcs
   device->input_realtime_callback = NULL;
-    132a:	1f 8a       	std	Y+23, r1	; 0x17
-    132c:	1e 8a       	std	Y+22, r1	; 0x16
+    1430:	1f 8a       	std	Y+23, r1	; 0x17
+    1432:	1e 8a       	std	Y+22, r1	; 0x16
   device->input_tunerequest_callback = NULL;
-    132e:	19 8e       	std	Y+25, r1	; 0x19
-    1330:	18 8e       	std	Y+24, r1	; 0x18
+    1434:	19 8e       	std	Y+25, r1	; 0x19
+    1436:	18 8e       	std	Y+24, r1	; 0x18
 
   //var byte functions
   device->input_sysex_callback = NULL;
-    1332:	1b 8e       	std	Y+27, r1	; 0x1b
-    1334:	1a 8e       	std	Y+26, r1	; 0x1a
+    1438:	1b 8e       	std	Y+27, r1	; 0x1b
+    143a:	1a 8e       	std	Y+26, r1	; 0x1a
   device->input_fallthrough_callback = NULL;
-    1336:	1d 8e       	std	Y+29, r1	; 0x1d
-    1338:	1c 8e       	std	Y+28, r1	; 0x1c
+    143c:	1d 8e       	std	Y+29, r1	; 0x1d
+    143e:	1c 8e       	std	Y+28, r1	; 0x1c
   device->input_catchall_callback = NULL;
-    133a:	1f 8e       	std	Y+31, r1	; 0x1f
-    133c:	1e 8e       	std	Y+30, r1	; 0x1e
+    1440:	1f 8e       	std	Y+31, r1	; 0x1f
+    1442:	1e 8e       	std	Y+30, r1	; 0x1e
 
   device->pre_input_process_callback = NULL;
-    133e:	19 a2       	std	Y+33, r1	; 0x21
-    1340:	18 a2       	std	Y+32, r1	; 0x20
+    1444:	19 a2       	std	Y+33, r1	; 0x21
+    1446:	18 a2       	std	Y+32, r1	; 0x20
 }
-    1342:	df 91       	pop	r29
-    1344:	cf 91       	pop	r28
-    1346:	08 95       	ret
+    1448:	df 91       	pop	r29
+    144a:	cf 91       	pop	r28
+    144c:	08 95       	ret
 
-00001348 <midi_device_input>:
+0000144e <midi_device_input>:
 
 void midi_device_input(MidiDevice * device, uint8_t cnt, uint8_t * input) {
-    1348:	ef 92       	push	r14
-    134a:	ff 92       	push	r15
-    134c:	0f 93       	push	r16
-    134e:	1f 93       	push	r17
-    1350:	cf 93       	push	r28
-    1352:	df 93       	push	r29
+    144e:	ef 92       	push	r14
+    1450:	ff 92       	push	r15
+    1452:	0f 93       	push	r16
+    1454:	1f 93       	push	r17
+    1456:	cf 93       	push	r28
+    1458:	df 93       	push	r29
   uint8_t i;
   for (i = 0; i < cnt; i++)
-    1354:	66 23       	and	r22, r22
-    1356:	99 f0       	breq	.+38     	; 0x137e <midi_device_input+0x36>
-    1358:	ea 01       	movw	r28, r20
-    135a:	61 50       	subi	r22, 0x01	; 1
-    135c:	06 2f       	mov	r16, r22
-    135e:	10 e0       	ldi	r17, 0x00	; 0
-    1360:	0f 5f       	subi	r16, 0xFF	; 255
-    1362:	1f 4f       	sbci	r17, 0xFF	; 255
-    1364:	04 0f       	add	r16, r20
-    1366:	15 1f       	adc	r17, r21
+    145a:	66 23       	and	r22, r22
+    145c:	99 f0       	breq	.+38     	; 0x1484 <midi_device_input+0x36>
+    145e:	ea 01       	movw	r28, r20
+    1460:	61 50       	subi	r22, 0x01	; 1
+    1462:	06 2f       	mov	r16, r22
+    1464:	10 e0       	ldi	r17, 0x00	; 0
+    1466:	0f 5f       	subi	r16, 0xFF	; 255
+    1468:	1f 4f       	sbci	r17, 0xFF	; 255
+    146a:	04 0f       	add	r16, r20
+    146c:	15 1f       	adc	r17, r21
     bytequeue_enqueue(&device->input_queue, input[i]);
-    1368:	7c 01       	movw	r14, r24
-    136a:	28 ee       	ldi	r18, 0xE8	; 232
-    136c:	e2 0e       	add	r14, r18
-    136e:	f1 1c       	adc	r15, r1
-    1370:	69 91       	ld	r22, Y+
-    1372:	c7 01       	movw	r24, r14
-    1374:	0e 94 ac 08 	call	0x1158	; 0x1158 <bytequeue_enqueue>
+    146e:	7c 01       	movw	r14, r24
+    1470:	28 ee       	ldi	r18, 0xE8	; 232
+    1472:	e2 0e       	add	r14, r18
+    1474:	f1 1c       	adc	r15, r1
+    1476:	69 91       	ld	r22, Y+
+    1478:	c7 01       	movw	r24, r14
+    147a:	0e 94 2f 09 	call	0x125e	; 0x125e <bytequeue_enqueue>
   device->pre_input_process_callback = NULL;
 }
 
 void midi_device_input(MidiDevice * device, uint8_t cnt, uint8_t * input) {
   uint8_t i;
   for (i = 0; i < cnt; i++)
-    1378:	c0 17       	cp	r28, r16
-    137a:	d1 07       	cpc	r29, r17
-    137c:	c9 f7       	brne	.-14     	; 0x1370 <midi_device_input+0x28>
+    147e:	c0 17       	cp	r28, r16
+    1480:	d1 07       	cpc	r29, r17
+    1482:	c9 f7       	brne	.-14     	; 0x1476 <midi_device_input+0x28>
     bytequeue_enqueue(&device->input_queue, input[i]);
 }
-    137e:	df 91       	pop	r29
-    1380:	cf 91       	pop	r28
-    1382:	1f 91       	pop	r17
-    1384:	0f 91       	pop	r16
-    1386:	ff 90       	pop	r15
-    1388:	ef 90       	pop	r14
-    138a:	08 95       	ret
+    1484:	df 91       	pop	r29
+    1486:	cf 91       	pop	r28
+    1488:	1f 91       	pop	r17
+    148a:	0f 91       	pop	r16
+    148c:	ff 90       	pop	r15
+    148e:	ef 90       	pop	r14
+    1490:	08 95       	ret
 
-0000138c <midi_input_callbacks>:
+00001492 <midi_input_callbacks>:
       }
     }
   }
 }
 
 void midi_input_callbacks(MidiDevice * device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
-    138c:	af 92       	push	r10
-    138e:	bf 92       	push	r11
-    1390:	cf 92       	push	r12
-    1392:	df 92       	push	r13
-    1394:	ef 92       	push	r14
-    1396:	ff 92       	push	r15
-    1398:	0f 93       	push	r16
-    139a:	1f 93       	push	r17
-    139c:	cf 93       	push	r28
-    139e:	df 93       	push	r29
-    13a0:	00 d0       	rcall	.+0      	; 0x13a2 <midi_input_callbacks+0x16>
-    13a2:	1f 92       	push	r1
-    13a4:	cd b7       	in	r28, 0x3d	; 61
-    13a6:	de b7       	in	r29, 0x3e	; 62
-    13a8:	7c 01       	movw	r14, r24
-    13aa:	6b 01       	movw	r12, r22
-    13ac:	14 2f       	mov	r17, r20
-    13ae:	b2 2e       	mov	r11, r18
-    13b0:	a0 2e       	mov	r10, r16
+    1492:	af 92       	push	r10
+    1494:	bf 92       	push	r11
+    1496:	cf 92       	push	r12
+    1498:	df 92       	push	r13
+    149a:	ef 92       	push	r14
+    149c:	ff 92       	push	r15
+    149e:	0f 93       	push	r16
+    14a0:	1f 93       	push	r17
+    14a2:	cf 93       	push	r28
+    14a4:	df 93       	push	r29
+    14a6:	00 d0       	rcall	.+0      	; 0x14a8 <midi_input_callbacks+0x16>
+    14a8:	1f 92       	push	r1
+    14aa:	cd b7       	in	r28, 0x3d	; 61
+    14ac:	de b7       	in	r29, 0x3e	; 62
+    14ae:	7c 01       	movw	r14, r24
+    14b0:	6b 01       	movw	r12, r22
+    14b2:	14 2f       	mov	r17, r20
+    14b4:	b2 2e       	mov	r11, r18
+    14b6:	a0 2e       	mov	r10, r16
   //did we end up calling a callback?
   bool called = false;
   if (device->input_state == SYSEX_MESSAGE) {
-    13b2:	dc 01       	movw	r26, r24
-    13b4:	95 96       	adiw	r26, 0x25	; 37
-    13b6:	8c 91       	ld	r24, X
-    13b8:	95 97       	sbiw	r26, 0x25	; 37
-    13ba:	84 30       	cpi	r24, 0x04	; 4
-    13bc:	11 f5       	brne	.+68     	; 0x1402 <midi_input_callbacks+0x76>
+    14b8:	dc 01       	movw	r26, r24
+    14ba:	95 96       	adiw	r26, 0x25	; 37
+    14bc:	8c 91       	ld	r24, X
+    14be:	95 97       	sbiw	r26, 0x25	; 37
+    14c0:	84 30       	cpi	r24, 0x04	; 4
+    14c2:	11 f5       	brne	.+68     	; 0x1508 <midi_input_callbacks+0x76>
     if (device->input_sysex_callback) {
-    13be:	5a 96       	adiw	r26, 0x1a	; 26
-    13c0:	ed 91       	ld	r30, X+
-    13c2:	fc 91       	ld	r31, X
-    13c4:	5b 97       	sbiw	r26, 0x1b	; 27
-    13c6:	30 97       	sbiw	r30, 0x00	; 0
-    13c8:	09 f4       	brne	.+2      	; 0x13cc <midi_input_callbacks+0x40>
-    13ca:	cc c0       	rjmp	.+408    	; 0x1564 <midi_input_callbacks+0x1d8>
+    14c4:	5a 96       	adiw	r26, 0x1a	; 26
+    14c6:	ed 91       	ld	r30, X+
+    14c8:	fc 91       	ld	r31, X
+    14ca:	5b 97       	sbiw	r26, 0x1b	; 27
+    14cc:	30 97       	sbiw	r30, 0x00	; 0
+    14ce:	09 f4       	brne	.+2      	; 0x14d2 <midi_input_callbacks+0x40>
+    14d0:	cc c0       	rjmp	.+408    	; 0x166a <midi_input_callbacks+0x1d8>
       const uint16_t start = ((cnt - 1) / 3) * 3;
-    13cc:	9b 01       	movw	r18, r22
-    13ce:	21 50       	subi	r18, 0x01	; 1
-    13d0:	31 09       	sbc	r19, r1
-    13d2:	ab ea       	ldi	r26, 0xAB	; 171
-    13d4:	ba ea       	ldi	r27, 0xAA	; 170
-    13d6:	0e 94 ee 0b 	call	0x17dc	; 0x17dc <__umulhisi3>
-    13da:	96 95       	lsr	r25
-    13dc:	87 95       	ror	r24
-    13de:	9c 01       	movw	r18, r24
-    13e0:	22 0f       	add	r18, r18
-    13e2:	33 1f       	adc	r19, r19
-    13e4:	82 0f       	add	r24, r18
-    13e6:	93 1f       	adc	r25, r19
+    14d2:	9b 01       	movw	r18, r22
+    14d4:	21 50       	subi	r18, 0x01	; 1
+    14d6:	31 09       	sbc	r19, r1
+    14d8:	ab ea       	ldi	r26, 0xAB	; 171
+    14da:	ba ea       	ldi	r27, 0xAA	; 170
+    14dc:	0e 94 71 0c 	call	0x18e2	; 0x18e2 <__umulhisi3>
+    14e0:	96 95       	lsr	r25
+    14e2:	87 95       	ror	r24
+    14e4:	9c 01       	movw	r18, r24
+    14e6:	22 0f       	add	r18, r18
+    14e8:	33 1f       	adc	r19, r19
+    14ea:	82 0f       	add	r24, r18
+    14ec:	93 1f       	adc	r25, r19
       const uint8_t length = (cnt - start);
       uint8_t data[3];
       data[0] = byte0;
-    13e8:	49 83       	std	Y+1, r20	; 0x01
+    14ee:	49 83       	std	Y+1, r20	; 0x01
       data[1] = byte1;
-    13ea:	ba 82       	std	Y+2, r11	; 0x02
+    14f0:	ba 82       	std	Y+2, r11	; 0x02
       data[2] = byte2;
-    13ec:	0b 83       	std	Y+3, r16	; 0x03
+    14f2:	0b 83       	std	Y+3, r16	; 0x03
   //did we end up calling a callback?
   bool called = false;
   if (device->input_state == SYSEX_MESSAGE) {
     if (device->input_sysex_callback) {
       const uint16_t start = ((cnt - 1) / 3) * 3;
       const uint8_t length = (cnt - start);
-    13ee:	4c 2d       	mov	r20, r12
-    13f0:	48 1b       	sub	r20, r24
+    14f4:	4c 2d       	mov	r20, r12
+    14f6:	48 1b       	sub	r20, r24
       uint8_t data[3];
       data[0] = byte0;
       data[1] = byte1;
       data[2] = byte2;
       device->input_sysex_callback(device, start, length, data);
-    13f2:	9e 01       	movw	r18, r28
-    13f4:	2f 5f       	subi	r18, 0xFF	; 255
-    13f6:	3f 4f       	sbci	r19, 0xFF	; 255
-    13f8:	68 2f       	mov	r22, r24
-    13fa:	79 2f       	mov	r23, r25
-    13fc:	c7 01       	movw	r24, r14
-    13fe:	09 95       	icall
-    1400:	be c0       	rjmp	.+380    	; 0x157e <midi_input_callbacks+0x1f2>
+    14f8:	9e 01       	movw	r18, r28
+    14fa:	2f 5f       	subi	r18, 0xFF	; 255
+    14fc:	3f 4f       	sbci	r19, 0xFF	; 255
+    14fe:	68 2f       	mov	r22, r24
+    1500:	79 2f       	mov	r23, r25
+    1502:	c7 01       	movw	r24, r14
+    1504:	09 95       	icall
+    1506:	be c0       	rjmp	.+380    	; 0x1684 <midi_input_callbacks+0x1f2>
       called = true;
     }
   } else {
     switch (cnt) {
-    1402:	62 30       	cpi	r22, 0x02	; 2
-    1404:	71 05       	cpc	r23, r1
-    1406:	09 f4       	brne	.+2      	; 0x140a <midi_input_callbacks+0x7e>
-    1408:	55 c0       	rjmp	.+170    	; 0x14b4 <midi_input_callbacks+0x128>
-    140a:	63 30       	cpi	r22, 0x03	; 3
-    140c:	71 05       	cpc	r23, r1
-    140e:	29 f0       	breq	.+10     	; 0x141a <midi_input_callbacks+0x8e>
-    1410:	61 30       	cpi	r22, 0x01	; 1
-    1412:	71 05       	cpc	r23, r1
-    1414:	09 f0       	breq	.+2      	; 0x1418 <midi_input_callbacks+0x8c>
-    1416:	a1 c0       	rjmp	.+322    	; 0x155a <midi_input_callbacks+0x1ce>
-    1418:	88 c0       	rjmp	.+272    	; 0x152a <midi_input_callbacks+0x19e>
+    1508:	62 30       	cpi	r22, 0x02	; 2
+    150a:	71 05       	cpc	r23, r1
+    150c:	09 f4       	brne	.+2      	; 0x1510 <midi_input_callbacks+0x7e>
+    150e:	55 c0       	rjmp	.+170    	; 0x15ba <midi_input_callbacks+0x128>
+    1510:	63 30       	cpi	r22, 0x03	; 3
+    1512:	71 05       	cpc	r23, r1
+    1514:	29 f0       	breq	.+10     	; 0x1520 <midi_input_callbacks+0x8e>
+    1516:	61 30       	cpi	r22, 0x01	; 1
+    1518:	71 05       	cpc	r23, r1
+    151a:	09 f0       	breq	.+2      	; 0x151e <midi_input_callbacks+0x8c>
+    151c:	a1 c0       	rjmp	.+322    	; 0x1660 <midi_input_callbacks+0x1ce>
+    151e:	88 c0       	rjmp	.+272    	; 0x1630 <midi_input_callbacks+0x19e>
       case 3:
         {
           midi_three_byte_func_t func = NULL;
           switch (byte0 & 0xF0) {
-    141a:	84 2f       	mov	r24, r20
-    141c:	80 7f       	andi	r24, 0xF0	; 240
-    141e:	80 3a       	cpi	r24, 0xA0	; 160
-    1420:	f1 f0       	breq	.+60     	; 0x145e <midi_input_callbacks+0xd2>
-    1422:	28 f4       	brcc	.+10     	; 0x142e <midi_input_callbacks+0xa2>
-    1424:	80 38       	cpi	r24, 0x80	; 128
-    1426:	a9 f0       	breq	.+42     	; 0x1452 <midi_input_callbacks+0xc6>
-    1428:	80 39       	cpi	r24, 0x90	; 144
-    142a:	69 f0       	breq	.+26     	; 0x1446 <midi_input_callbacks+0xba>
-    142c:	2f c0       	rjmp	.+94     	; 0x148c <midi_input_callbacks+0x100>
-    142e:	80 3e       	cpi	r24, 0xE0	; 224
-    1430:	e1 f0       	breq	.+56     	; 0x146a <midi_input_callbacks+0xde>
-    1432:	80 3f       	cpi	r24, 0xF0	; 240
-    1434:	01 f1       	breq	.+64     	; 0x1476 <midi_input_callbacks+0xea>
-    1436:	80 3b       	cpi	r24, 0xB0	; 176
-    1438:	49 f5       	brne	.+82     	; 0x148c <midi_input_callbacks+0x100>
+    1520:	84 2f       	mov	r24, r20
+    1522:	80 7f       	andi	r24, 0xF0	; 240
+    1524:	80 3a       	cpi	r24, 0xA0	; 160
+    1526:	f1 f0       	breq	.+60     	; 0x1564 <midi_input_callbacks+0xd2>
+    1528:	28 f4       	brcc	.+10     	; 0x1534 <midi_input_callbacks+0xa2>
+    152a:	80 38       	cpi	r24, 0x80	; 128
+    152c:	a9 f0       	breq	.+42     	; 0x1558 <midi_input_callbacks+0xc6>
+    152e:	80 39       	cpi	r24, 0x90	; 144
+    1530:	69 f0       	breq	.+26     	; 0x154c <midi_input_callbacks+0xba>
+    1532:	2f c0       	rjmp	.+94     	; 0x1592 <midi_input_callbacks+0x100>
+    1534:	80 3e       	cpi	r24, 0xE0	; 224
+    1536:	e1 f0       	breq	.+56     	; 0x1570 <midi_input_callbacks+0xde>
+    1538:	80 3f       	cpi	r24, 0xF0	; 240
+    153a:	01 f1       	breq	.+64     	; 0x157c <midi_input_callbacks+0xea>
+    153c:	80 3b       	cpi	r24, 0xB0	; 176
+    153e:	49 f5       	brne	.+82     	; 0x1592 <midi_input_callbacks+0x100>
             case MIDI_CC:
               func = device->input_cc_callback;
-    143a:	d7 01       	movw	r26, r14
-    143c:	12 96       	adiw	r26, 0x02	; 2
-    143e:	ed 91       	ld	r30, X+
-    1440:	fc 91       	ld	r31, X
-    1442:	13 97       	sbiw	r26, 0x03	; 3
+    1540:	d7 01       	movw	r26, r14
+    1542:	12 96       	adiw	r26, 0x02	; 2
+    1544:	ed 91       	ld	r30, X+
+    1546:	fc 91       	ld	r31, X
+    1548:	13 97       	sbiw	r26, 0x03	; 3
               break;
-    1444:	25 c0       	rjmp	.+74     	; 0x1490 <midi_input_callbacks+0x104>
+    154a:	25 c0       	rjmp	.+74     	; 0x1596 <midi_input_callbacks+0x104>
             case MIDI_NOTEON:
               func = device->input_noteon_callback;
-    1446:	d7 01       	movw	r26, r14
-    1448:	14 96       	adiw	r26, 0x04	; 4
-    144a:	ed 91       	ld	r30, X+
-    144c:	fc 91       	ld	r31, X
-    144e:	15 97       	sbiw	r26, 0x05	; 5
+    154c:	d7 01       	movw	r26, r14
+    154e:	14 96       	adiw	r26, 0x04	; 4
+    1550:	ed 91       	ld	r30, X+
+    1552:	fc 91       	ld	r31, X
+    1554:	15 97       	sbiw	r26, 0x05	; 5
               break;
-    1450:	1f c0       	rjmp	.+62     	; 0x1490 <midi_input_callbacks+0x104>
+    1556:	1f c0       	rjmp	.+62     	; 0x1596 <midi_input_callbacks+0x104>
             case MIDI_NOTEOFF:
               func = device->input_noteoff_callback;
-    1452:	d7 01       	movw	r26, r14
-    1454:	16 96       	adiw	r26, 0x06	; 6
-    1456:	ed 91       	ld	r30, X+
-    1458:	fc 91       	ld	r31, X
-    145a:	17 97       	sbiw	r26, 0x07	; 7
+    1558:	d7 01       	movw	r26, r14
+    155a:	16 96       	adiw	r26, 0x06	; 6
+    155c:	ed 91       	ld	r30, X+
+    155e:	fc 91       	ld	r31, X
+    1560:	17 97       	sbiw	r26, 0x07	; 7
               break;
-    145c:	19 c0       	rjmp	.+50     	; 0x1490 <midi_input_callbacks+0x104>
+    1562:	19 c0       	rjmp	.+50     	; 0x1596 <midi_input_callbacks+0x104>
             case MIDI_AFTERTOUCH:
               func = device->input_aftertouch_callback;
-    145e:	d7 01       	movw	r26, r14
-    1460:	18 96       	adiw	r26, 0x08	; 8
-    1462:	ed 91       	ld	r30, X+
-    1464:	fc 91       	ld	r31, X
-    1466:	19 97       	sbiw	r26, 0x09	; 9
+    1564:	d7 01       	movw	r26, r14
+    1566:	18 96       	adiw	r26, 0x08	; 8
+    1568:	ed 91       	ld	r30, X+
+    156a:	fc 91       	ld	r31, X
+    156c:	19 97       	sbiw	r26, 0x09	; 9
               break;
-    1468:	13 c0       	rjmp	.+38     	; 0x1490 <midi_input_callbacks+0x104>
+    156e:	13 c0       	rjmp	.+38     	; 0x1596 <midi_input_callbacks+0x104>
             case MIDI_PITCHBEND:
               func = device->input_pitchbend_callback;
-    146a:	d7 01       	movw	r26, r14
-    146c:	1a 96       	adiw	r26, 0x0a	; 10
-    146e:	ed 91       	ld	r30, X+
-    1470:	fc 91       	ld	r31, X
-    1472:	1b 97       	sbiw	r26, 0x0b	; 11
+    1570:	d7 01       	movw	r26, r14
+    1572:	1a 96       	adiw	r26, 0x0a	; 10
+    1574:	ed 91       	ld	r30, X+
+    1576:	fc 91       	ld	r31, X
+    1578:	1b 97       	sbiw	r26, 0x0b	; 11
               break;
-    1474:	0d c0       	rjmp	.+26     	; 0x1490 <midi_input_callbacks+0x104>
+    157a:	0d c0       	rjmp	.+26     	; 0x1596 <midi_input_callbacks+0x104>
             case 0xF0:
               if (byte0 == MIDI_SONGPOSITION)
-    1476:	42 3f       	cpi	r20, 0xF2	; 242
-    1478:	09 f0       	breq	.+2      	; 0x147c <midi_input_callbacks+0xf0>
-    147a:	74 c0       	rjmp	.+232    	; 0x1564 <midi_input_callbacks+0x1d8>
+    157c:	42 3f       	cpi	r20, 0xF2	; 242
+    157e:	09 f0       	breq	.+2      	; 0x1582 <midi_input_callbacks+0xf0>
+    1580:	74 c0       	rjmp	.+232    	; 0x166a <midi_input_callbacks+0x1d8>
                 func = device->input_songposition_callback;
-    147c:	d7 01       	movw	r26, r14
-    147e:	1c 96       	adiw	r26, 0x0c	; 12
-    1480:	ed 91       	ld	r30, X+
-    1482:	fc 91       	ld	r31, X
-    1484:	1d 97       	sbiw	r26, 0x0d	; 13
+    1582:	d7 01       	movw	r26, r14
+    1584:	1c 96       	adiw	r26, 0x0c	; 12
+    1586:	ed 91       	ld	r30, X+
+    1588:	fc 91       	ld	r31, X
+    158a:	1d 97       	sbiw	r26, 0x0d	; 13
               break;
             default:
               break;
           }
           if(func) {
-    1486:	30 97       	sbiw	r30, 0x00	; 0
-    1488:	41 f4       	brne	.+16     	; 0x149a <midi_input_callbacks+0x10e>
-    148a:	6c c0       	rjmp	.+216    	; 0x1564 <midi_input_callbacks+0x1d8>
+    158c:	30 97       	sbiw	r30, 0x00	; 0
+    158e:	41 f4       	brne	.+16     	; 0x15a0 <midi_input_callbacks+0x10e>
+    1590:	6c c0       	rjmp	.+216    	; 0x166a <midi_input_callbacks+0x1d8>
     }
   } else {
     switch (cnt) {
       case 3:
         {
           midi_three_byte_func_t func = NULL;
-    148c:	e0 e0       	ldi	r30, 0x00	; 0
-    148e:	f0 e0       	ldi	r31, 0x00	; 0
+    1592:	e0 e0       	ldi	r30, 0x00	; 0
+    1594:	f0 e0       	ldi	r31, 0x00	; 0
                 func = device->input_songposition_callback;
               break;
             default:
               break;
           }
           if(func) {
-    1490:	30 97       	sbiw	r30, 0x00	; 0
-    1492:	09 f4       	brne	.+2      	; 0x1496 <midi_input_callbacks+0x10a>
-    1494:	67 c0       	rjmp	.+206    	; 0x1564 <midi_input_callbacks+0x1d8>
+    1596:	30 97       	sbiw	r30, 0x00	; 0
+    1598:	09 f4       	brne	.+2      	; 0x159c <midi_input_callbacks+0x10a>
+    159a:	67 c0       	rjmp	.+206    	; 0x166a <midi_input_callbacks+0x1d8>
             //mask off the channel for non song position functions
             if (byte0 == MIDI_SONGPOSITION)
-    1496:	12 3f       	cpi	r17, 0xF2	; 242
-    1498:	31 f4       	brne	.+12     	; 0x14a6 <midi_input_callbacks+0x11a>
+    159c:	12 3f       	cpi	r17, 0xF2	; 242
+    159e:	31 f4       	brne	.+12     	; 0x15ac <midi_input_callbacks+0x11a>
               func(device, byte0, byte1, byte2);
-    149a:	2a 2d       	mov	r18, r10
-    149c:	4b 2d       	mov	r20, r11
-    149e:	62 ef       	ldi	r22, 0xF2	; 242
-    14a0:	c7 01       	movw	r24, r14
-    14a2:	09 95       	icall
-    14a4:	6c c0       	rjmp	.+216    	; 0x157e <midi_input_callbacks+0x1f2>
+    15a0:	2a 2d       	mov	r18, r10
+    15a2:	4b 2d       	mov	r20, r11
+    15a4:	62 ef       	ldi	r22, 0xF2	; 242
+    15a6:	c7 01       	movw	r24, r14
+    15a8:	09 95       	icall
+    15aa:	6c c0       	rjmp	.+216    	; 0x1684 <midi_input_callbacks+0x1f2>
             else
               func(device, byte0 & 0x0F, byte1, byte2);
-    14a6:	2a 2d       	mov	r18, r10
-    14a8:	4b 2d       	mov	r20, r11
-    14aa:	61 2f       	mov	r22, r17
-    14ac:	6f 70       	andi	r22, 0x0F	; 15
-    14ae:	c7 01       	movw	r24, r14
-    14b0:	09 95       	icall
-    14b2:	65 c0       	rjmp	.+202    	; 0x157e <midi_input_callbacks+0x1f2>
+    15ac:	2a 2d       	mov	r18, r10
+    15ae:	4b 2d       	mov	r20, r11
+    15b0:	61 2f       	mov	r22, r17
+    15b2:	6f 70       	andi	r22, 0x0F	; 15
+    15b4:	c7 01       	movw	r24, r14
+    15b6:	09 95       	icall
+    15b8:	65 c0       	rjmp	.+202    	; 0x1684 <midi_input_callbacks+0x1f2>
         }
         break;
       case 2:
         {
           midi_two_byte_func_t func = NULL;
           switch (byte0 & 0xF0) {
-    14b4:	84 2f       	mov	r24, r20
-    14b6:	80 7f       	andi	r24, 0xF0	; 240
-    14b8:	80 3d       	cpi	r24, 0xD0	; 208
-    14ba:	51 f0       	breq	.+20     	; 0x14d0 <midi_input_callbacks+0x144>
-    14bc:	80 3f       	cpi	r24, 0xF0	; 240
-    14be:	71 f0       	breq	.+28     	; 0x14dc <midi_input_callbacks+0x150>
-    14c0:	80 3c       	cpi	r24, 0xC0	; 192
-    14c2:	01 f5       	brne	.+64     	; 0x1504 <midi_input_callbacks+0x178>
+    15ba:	84 2f       	mov	r24, r20
+    15bc:	80 7f       	andi	r24, 0xF0	; 240
+    15be:	80 3d       	cpi	r24, 0xD0	; 208
+    15c0:	51 f0       	breq	.+20     	; 0x15d6 <midi_input_callbacks+0x144>
+    15c2:	80 3f       	cpi	r24, 0xF0	; 240
+    15c4:	71 f0       	breq	.+28     	; 0x15e2 <midi_input_callbacks+0x150>
+    15c6:	80 3c       	cpi	r24, 0xC0	; 192
+    15c8:	01 f5       	brne	.+64     	; 0x160a <midi_input_callbacks+0x178>
             case MIDI_PROGCHANGE:
               func = device->input_progchange_callback;
-    14c4:	d7 01       	movw	r26, r14
-    14c6:	1e 96       	adiw	r26, 0x0e	; 14
-    14c8:	ed 91       	ld	r30, X+
-    14ca:	fc 91       	ld	r31, X
-    14cc:	1f 97       	sbiw	r26, 0x0f	; 15
+    15ca:	d7 01       	movw	r26, r14
+    15cc:	1e 96       	adiw	r26, 0x0e	; 14
+    15ce:	ed 91       	ld	r30, X+
+    15d0:	fc 91       	ld	r31, X
+    15d2:	1f 97       	sbiw	r26, 0x0f	; 15
               break;
-    14ce:	1c c0       	rjmp	.+56     	; 0x1508 <midi_input_callbacks+0x17c>
+    15d4:	1c c0       	rjmp	.+56     	; 0x160e <midi_input_callbacks+0x17c>
             case MIDI_CHANPRESSURE:
               func = device->input_chanpressure_callback;
-    14d0:	d7 01       	movw	r26, r14
-    14d2:	50 96       	adiw	r26, 0x10	; 16
-    14d4:	ed 91       	ld	r30, X+
-    14d6:	fc 91       	ld	r31, X
-    14d8:	51 97       	sbiw	r26, 0x11	; 17
+    15d6:	d7 01       	movw	r26, r14
+    15d8:	50 96       	adiw	r26, 0x10	; 16
+    15da:	ed 91       	ld	r30, X+
+    15dc:	fc 91       	ld	r31, X
+    15de:	51 97       	sbiw	r26, 0x11	; 17
               break;
-    14da:	16 c0       	rjmp	.+44     	; 0x1508 <midi_input_callbacks+0x17c>
+    15e0:	16 c0       	rjmp	.+44     	; 0x160e <midi_input_callbacks+0x17c>
             case 0xF0:
               if (byte0 == MIDI_SONGSELECT)
-    14dc:	43 3f       	cpi	r20, 0xF3	; 243
-    14de:	41 f4       	brne	.+16     	; 0x14f0 <midi_input_callbacks+0x164>
+    15e2:	43 3f       	cpi	r20, 0xF3	; 243
+    15e4:	41 f4       	brne	.+16     	; 0x15f6 <midi_input_callbacks+0x164>
                 func = device->input_songselect_callback;
-    14e0:	d7 01       	movw	r26, r14
-    14e2:	52 96       	adiw	r26, 0x12	; 18
-    14e4:	ed 91       	ld	r30, X+
-    14e6:	fc 91       	ld	r31, X
-    14e8:	53 97       	sbiw	r26, 0x13	; 19
+    15e6:	d7 01       	movw	r26, r14
+    15e8:	52 96       	adiw	r26, 0x12	; 18
+    15ea:	ed 91       	ld	r30, X+
+    15ec:	fc 91       	ld	r31, X
+    15ee:	53 97       	sbiw	r26, 0x13	; 19
                 func = device->input_tc_quarterframe_callback;
               break;
             default:
               break;
           }
           if(func) {
-    14ea:	30 97       	sbiw	r30, 0x00	; 0
-    14ec:	99 f4       	brne	.+38     	; 0x1514 <midi_input_callbacks+0x188>
-    14ee:	3a c0       	rjmp	.+116    	; 0x1564 <midi_input_callbacks+0x1d8>
+    15f0:	30 97       	sbiw	r30, 0x00	; 0
+    15f2:	99 f4       	brne	.+38     	; 0x161a <midi_input_callbacks+0x188>
+    15f4:	3a c0       	rjmp	.+116    	; 0x166a <midi_input_callbacks+0x1d8>
               func = device->input_chanpressure_callback;
               break;
             case 0xF0:
               if (byte0 == MIDI_SONGSELECT)
                 func = device->input_songselect_callback;
               else if (byte0 == MIDI_TC_QUARTERFRAME)
-    14f0:	41 3f       	cpi	r20, 0xF1	; 241
-    14f2:	c1 f5       	brne	.+112    	; 0x1564 <midi_input_callbacks+0x1d8>
+    15f6:	41 3f       	cpi	r20, 0xF1	; 241
+    15f8:	c1 f5       	brne	.+112    	; 0x166a <midi_input_callbacks+0x1d8>
                 func = device->input_tc_quarterframe_callback;
-    14f4:	d7 01       	movw	r26, r14
-    14f6:	54 96       	adiw	r26, 0x14	; 20
-    14f8:	ed 91       	ld	r30, X+
-    14fa:	fc 91       	ld	r31, X
-    14fc:	55 97       	sbiw	r26, 0x15	; 21
+    15fa:	d7 01       	movw	r26, r14
+    15fc:	54 96       	adiw	r26, 0x14	; 20
+    15fe:	ed 91       	ld	r30, X+
+    1600:	fc 91       	ld	r31, X
+    1602:	55 97       	sbiw	r26, 0x15	; 21
               break;
             default:
               break;
           }
           if(func) {
-    14fe:	30 97       	sbiw	r30, 0x00	; 0
-    1500:	49 f4       	brne	.+18     	; 0x1514 <midi_input_callbacks+0x188>
-    1502:	30 c0       	rjmp	.+96     	; 0x1564 <midi_input_callbacks+0x1d8>
+    1604:	30 97       	sbiw	r30, 0x00	; 0
+    1606:	49 f4       	brne	.+18     	; 0x161a <midi_input_callbacks+0x188>
+    1608:	30 c0       	rjmp	.+96     	; 0x166a <midi_input_callbacks+0x1d8>
           }
         }
         break;
       case 2:
         {
           midi_two_byte_func_t func = NULL;
-    1504:	e0 e0       	ldi	r30, 0x00	; 0
-    1506:	f0 e0       	ldi	r31, 0x00	; 0
+    160a:	e0 e0       	ldi	r30, 0x00	; 0
+    160c:	f0 e0       	ldi	r31, 0x00	; 0
                 func = device->input_tc_quarterframe_callback;
               break;
             default:
               break;
           }
           if(func) {
-    1508:	30 97       	sbiw	r30, 0x00	; 0
-    150a:	61 f1       	breq	.+88     	; 0x1564 <midi_input_callbacks+0x1d8>
+    160e:	30 97       	sbiw	r30, 0x00	; 0
+    1610:	61 f1       	breq	.+88     	; 0x166a <midi_input_callbacks+0x1d8>
             //mask off the channel
             if (byte0 == MIDI_SONGSELECT || byte0 == MIDI_TC_QUARTERFRAME)
-    150c:	81 2f       	mov	r24, r17
-    150e:	8d 7f       	andi	r24, 0xFD	; 253
-    1510:	81 3f       	cpi	r24, 0xF1	; 241
-    1512:	29 f4       	brne	.+10     	; 0x151e <midi_input_callbacks+0x192>
+    1612:	81 2f       	mov	r24, r17
+    1614:	8d 7f       	andi	r24, 0xFD	; 253
+    1616:	81 3f       	cpi	r24, 0xF1	; 241
+    1618:	29 f4       	brne	.+10     	; 0x1624 <midi_input_callbacks+0x192>
               func(device, byte0, byte1);
-    1514:	4b 2d       	mov	r20, r11
-    1516:	61 2f       	mov	r22, r17
-    1518:	c7 01       	movw	r24, r14
-    151a:	09 95       	icall
-    151c:	30 c0       	rjmp	.+96     	; 0x157e <midi_input_callbacks+0x1f2>
+    161a:	4b 2d       	mov	r20, r11
+    161c:	61 2f       	mov	r22, r17
+    161e:	c7 01       	movw	r24, r14
+    1620:	09 95       	icall
+    1622:	30 c0       	rjmp	.+96     	; 0x1684 <midi_input_callbacks+0x1f2>
             else
               func(device, byte0 & 0x0F, byte1);
-    151e:	4b 2d       	mov	r20, r11
-    1520:	61 2f       	mov	r22, r17
-    1522:	6f 70       	andi	r22, 0x0F	; 15
-    1524:	c7 01       	movw	r24, r14
-    1526:	09 95       	icall
-    1528:	2a c0       	rjmp	.+84     	; 0x157e <midi_input_callbacks+0x1f2>
+    1624:	4b 2d       	mov	r20, r11
+    1626:	61 2f       	mov	r22, r17
+    1628:	6f 70       	andi	r22, 0x0F	; 15
+    162a:	c7 01       	movw	r24, r14
+    162c:	09 95       	icall
+    162e:	2a c0       	rjmp	.+84     	; 0x1684 <midi_input_callbacks+0x1f2>
         }
         break;
       case 1:
         {
           midi_one_byte_func_t func = NULL;
           if (midi_is_realtime(byte0))
-    152a:	84 2f       	mov	r24, r20
-    152c:	0e 94 2e 09 	call	0x125c	; 0x125c <midi_is_realtime>
-    1530:	88 23       	and	r24, r24
-    1532:	31 f0       	breq	.+12     	; 0x1540 <midi_input_callbacks+0x1b4>
+    1630:	84 2f       	mov	r24, r20
+    1632:	0e 94 b1 09 	call	0x1362	; 0x1362 <midi_is_realtime>
+    1636:	88 23       	and	r24, r24
+    1638:	31 f0       	breq	.+12     	; 0x1646 <midi_input_callbacks+0x1b4>
             func = device->input_realtime_callback;
-    1534:	d7 01       	movw	r26, r14
-    1536:	56 96       	adiw	r26, 0x16	; 22
-    1538:	ed 91       	ld	r30, X+
-    153a:	fc 91       	ld	r31, X
-    153c:	57 97       	sbiw	r26, 0x17	; 23
-    153e:	07 c0       	rjmp	.+14     	; 0x154e <midi_input_callbacks+0x1c2>
+    163a:	d7 01       	movw	r26, r14
+    163c:	56 96       	adiw	r26, 0x16	; 22
+    163e:	ed 91       	ld	r30, X+
+    1640:	fc 91       	ld	r31, X
+    1642:	57 97       	sbiw	r26, 0x17	; 23
+    1644:	07 c0       	rjmp	.+14     	; 0x1654 <midi_input_callbacks+0x1c2>
           else if (byte0 == MIDI_TUNEREQUEST)
-    1540:	16 3f       	cpi	r17, 0xF6	; 246
-    1542:	81 f4       	brne	.+32     	; 0x1564 <midi_input_callbacks+0x1d8>
+    1646:	16 3f       	cpi	r17, 0xF6	; 246
+    1648:	81 f4       	brne	.+32     	; 0x166a <midi_input_callbacks+0x1d8>
             func = device->input_tunerequest_callback;
-    1544:	d7 01       	movw	r26, r14
-    1546:	58 96       	adiw	r26, 0x18	; 24
-    1548:	ed 91       	ld	r30, X+
-    154a:	fc 91       	ld	r31, X
-    154c:	59 97       	sbiw	r26, 0x19	; 25
+    164a:	d7 01       	movw	r26, r14
+    164c:	58 96       	adiw	r26, 0x18	; 24
+    164e:	ed 91       	ld	r30, X+
+    1650:	fc 91       	ld	r31, X
+    1652:	59 97       	sbiw	r26, 0x19	; 25
           if (func) {
-    154e:	30 97       	sbiw	r30, 0x00	; 0
-    1550:	49 f0       	breq	.+18     	; 0x1564 <midi_input_callbacks+0x1d8>
+    1654:	30 97       	sbiw	r30, 0x00	; 0
+    1656:	49 f0       	breq	.+18     	; 0x166a <midi_input_callbacks+0x1d8>
             func(device, byte0);
-    1552:	61 2f       	mov	r22, r17
-    1554:	c7 01       	movw	r24, r14
-    1556:	09 95       	icall
-    1558:	12 c0       	rjmp	.+36     	; 0x157e <midi_input_callbacks+0x1f2>
+    1658:	61 2f       	mov	r22, r17
+    165a:	c7 01       	movw	r24, r14
+    165c:	09 95       	icall
+    165e:	12 c0       	rjmp	.+36     	; 0x1684 <midi_input_callbacks+0x1f2>
           }
         }
         break;
       default:
         //just in case
         if (cnt > 3)
-    155a:	64 30       	cpi	r22, 0x04	; 4
-    155c:	71 05       	cpc	r23, r1
-    155e:	10 f0       	brcs	.+4      	; 0x1564 <midi_input_callbacks+0x1d8>
+    1660:	64 30       	cpi	r22, 0x04	; 4
+    1662:	71 05       	cpc	r23, r1
+    1664:	10 f0       	brcs	.+4      	; 0x166a <midi_input_callbacks+0x1d8>
           cnt = 0;
-    1560:	c1 2c       	mov	r12, r1
-    1562:	d1 2c       	mov	r13, r1
+    1666:	c1 2c       	mov	r12, r1
+    1668:	d1 2c       	mov	r13, r1
     }
   }
 
   //if there is fallthrough default callback and we haven't called a more specific one, 
   //call the fallthrough
   if (!called && device->input_fallthrough_callback)
-    1564:	d7 01       	movw	r26, r14
-    1566:	5c 96       	adiw	r26, 0x1c	; 28
-    1568:	ed 91       	ld	r30, X+
-    156a:	fc 91       	ld	r31, X
-    156c:	5d 97       	sbiw	r26, 0x1d	; 29
-    156e:	30 97       	sbiw	r30, 0x00	; 0
-    1570:	31 f0       	breq	.+12     	; 0x157e <midi_input_callbacks+0x1f2>
+    166a:	d7 01       	movw	r26, r14
+    166c:	5c 96       	adiw	r26, 0x1c	; 28
+    166e:	ed 91       	ld	r30, X+
+    1670:	fc 91       	ld	r31, X
+    1672:	5d 97       	sbiw	r26, 0x1d	; 29
+    1674:	30 97       	sbiw	r30, 0x00	; 0
+    1676:	31 f0       	breq	.+12     	; 0x1684 <midi_input_callbacks+0x1f2>
     device->input_fallthrough_callback(device, cnt, byte0, byte1, byte2);
-    1572:	0a 2d       	mov	r16, r10
-    1574:	2b 2d       	mov	r18, r11
-    1576:	41 2f       	mov	r20, r17
-    1578:	b6 01       	movw	r22, r12
-    157a:	c7 01       	movw	r24, r14
-    157c:	09 95       	icall
+    1678:	0a 2d       	mov	r16, r10
+    167a:	2b 2d       	mov	r18, r11
+    167c:	41 2f       	mov	r20, r17
+    167e:	b6 01       	movw	r22, r12
+    1680:	c7 01       	movw	r24, r14
+    1682:	09 95       	icall
   //always call the catch all if it exists
   if (device->input_catchall_callback)
-    157e:	d7 01       	movw	r26, r14
-    1580:	5e 96       	adiw	r26, 0x1e	; 30
-    1582:	ed 91       	ld	r30, X+
-    1584:	fc 91       	ld	r31, X
-    1586:	5f 97       	sbiw	r26, 0x1f	; 31
-    1588:	30 97       	sbiw	r30, 0x00	; 0
-    158a:	31 f0       	breq	.+12     	; 0x1598 <midi_input_callbacks+0x20c>
+    1684:	d7 01       	movw	r26, r14
+    1686:	5e 96       	adiw	r26, 0x1e	; 30
+    1688:	ed 91       	ld	r30, X+
+    168a:	fc 91       	ld	r31, X
+    168c:	5f 97       	sbiw	r26, 0x1f	; 31
+    168e:	30 97       	sbiw	r30, 0x00	; 0
+    1690:	31 f0       	breq	.+12     	; 0x169e <midi_input_callbacks+0x20c>
     device->input_catchall_callback(device, cnt, byte0, byte1, byte2);
-    158c:	0a 2d       	mov	r16, r10
-    158e:	2b 2d       	mov	r18, r11
-    1590:	41 2f       	mov	r20, r17
-    1592:	b6 01       	movw	r22, r12
-    1594:	c7 01       	movw	r24, r14
-    1596:	09 95       	icall
+    1692:	0a 2d       	mov	r16, r10
+    1694:	2b 2d       	mov	r18, r11
+    1696:	41 2f       	mov	r20, r17
+    1698:	b6 01       	movw	r22, r12
+    169a:	c7 01       	movw	r24, r14
+    169c:	09 95       	icall
 }
-    1598:	0f 90       	pop	r0
-    159a:	0f 90       	pop	r0
-    159c:	0f 90       	pop	r0
-    159e:	df 91       	pop	r29
-    15a0:	cf 91       	pop	r28
-    15a2:	1f 91       	pop	r17
-    15a4:	0f 91       	pop	r16
-    15a6:	ff 90       	pop	r15
-    15a8:	ef 90       	pop	r14
-    15aa:	df 90       	pop	r13
-    15ac:	cf 90       	pop	r12
-    15ae:	bf 90       	pop	r11
-    15b0:	af 90       	pop	r10
-    15b2:	08 95       	ret
+    169e:	0f 90       	pop	r0
+    16a0:	0f 90       	pop	r0
+    16a2:	0f 90       	pop	r0
+    16a4:	df 91       	pop	r29
+    16a6:	cf 91       	pop	r28
+    16a8:	1f 91       	pop	r17
+    16aa:	0f 91       	pop	r16
+    16ac:	ff 90       	pop	r15
+    16ae:	ef 90       	pop	r14
+    16b0:	df 90       	pop	r13
+    16b2:	cf 90       	pop	r12
+    16b4:	bf 90       	pop	r11
+    16b6:	af 90       	pop	r10
+    16b8:	08 95       	ret
 
-000015b4 <midi_process_byte>:
+000016ba <midi_process_byte>:
     midi_process_byte(device, val);
     bytequeue_remove(&device->input_queue, 1);
   }
 }
 
 void midi_process_byte(MidiDevice * device, uint8_t input) {
-    15b4:	ff 92       	push	r15
-    15b6:	0f 93       	push	r16
-    15b8:	1f 93       	push	r17
-    15ba:	cf 93       	push	r28
-    15bc:	df 93       	push	r29
-    15be:	ec 01       	movw	r28, r24
-    15c0:	16 2f       	mov	r17, r22
+    16ba:	ff 92       	push	r15
+    16bc:	0f 93       	push	r16
+    16be:	1f 93       	push	r17
+    16c0:	cf 93       	push	r28
+    16c2:	df 93       	push	r29
+    16c4:	ec 01       	movw	r28, r24
+    16c6:	16 2f       	mov	r17, r22
   if (midi_is_realtime(input)) {
-    15c2:	86 2f       	mov	r24, r22
-    15c4:	0e 94 2e 09 	call	0x125c	; 0x125c <midi_is_realtime>
-    15c8:	88 23       	and	r24, r24
-    15ca:	69 f0       	breq	.+26     	; 0x15e6 <midi_process_byte+0x32>
+    16c8:	86 2f       	mov	r24, r22
+    16ca:	0e 94 b1 09 	call	0x1362	; 0x1362 <midi_is_realtime>
+    16ce:	88 23       	and	r24, r24
+    16d0:	69 f0       	breq	.+26     	; 0x16ec <midi_process_byte+0x32>
     //call callback, store and restore state
     input_state_t state = device->input_state;
-    15cc:	fd a0       	ldd	r15, Y+37	; 0x25
+    16d2:	fd a0       	ldd	r15, Y+37	; 0x25
     device->input_state = ONE_BYTE_MESSAGE;
-    15ce:	81 e0       	ldi	r24, 0x01	; 1
-    15d0:	8d a3       	std	Y+37, r24	; 0x25
+    16d4:	81 e0       	ldi	r24, 0x01	; 1
+    16d6:	8d a3       	std	Y+37, r24	; 0x25
     midi_input_callbacks(device, 1, input, 0, 0);
-    15d2:	00 e0       	ldi	r16, 0x00	; 0
-    15d4:	20 e0       	ldi	r18, 0x00	; 0
-    15d6:	41 2f       	mov	r20, r17
-    15d8:	61 e0       	ldi	r22, 0x01	; 1
-    15da:	70 e0       	ldi	r23, 0x00	; 0
-    15dc:	ce 01       	movw	r24, r28
-    15de:	0e 94 c6 09 	call	0x138c	; 0x138c <midi_input_callbacks>
+    16d8:	00 e0       	ldi	r16, 0x00	; 0
+    16da:	20 e0       	ldi	r18, 0x00	; 0
+    16dc:	41 2f       	mov	r20, r17
+    16de:	61 e0       	ldi	r22, 0x01	; 1
+    16e0:	70 e0       	ldi	r23, 0x00	; 0
+    16e2:	ce 01       	movw	r24, r28
+    16e4:	0e 94 49 0a 	call	0x1492	; 0x1492 <midi_input_callbacks>
     device->input_state = state;
-    15e2:	fd a2       	std	Y+37, r15	; 0x25
-    15e4:	a4 c0       	rjmp	.+328    	; 0x172e <midi_process_byte+0x17a>
+    16e8:	fd a2       	std	Y+37, r15	; 0x25
+    16ea:	a4 c0       	rjmp	.+328    	; 0x1834 <midi_process_byte+0x17a>
   } else if (midi_is_statusbyte(input)) {
-    15e6:	81 2f       	mov	r24, r17
-    15e8:	0e 94 2a 09 	call	0x1254	; 0x1254 <midi_is_statusbyte>
-    15ec:	88 23       	and	r24, r24
-    15ee:	09 f4       	brne	.+2      	; 0x15f2 <midi_process_byte+0x3e>
-    15f0:	5d c0       	rjmp	.+186    	; 0x16ac <midi_process_byte+0xf8>
+    16ec:	81 2f       	mov	r24, r17
+    16ee:	0e 94 ad 09 	call	0x135a	; 0x135a <midi_is_statusbyte>
+    16f2:	88 23       	and	r24, r24
+    16f4:	09 f4       	brne	.+2      	; 0x16f8 <midi_process_byte+0x3e>
+    16f6:	5d c0       	rjmp	.+186    	; 0x17b2 <midi_process_byte+0xf8>
     //store the byte
     if (device->input_state != SYSEX_MESSAGE) {
-    15f2:	8d a1       	ldd	r24, Y+37	; 0x25
-    15f4:	84 30       	cpi	r24, 0x04	; 4
-    15f6:	29 f0       	breq	.+10     	; 0x1602 <midi_process_byte+0x4e>
+    16f8:	8d a1       	ldd	r24, Y+37	; 0x25
+    16fa:	84 30       	cpi	r24, 0x04	; 4
+    16fc:	29 f0       	breq	.+10     	; 0x1708 <midi_process_byte+0x4e>
       device->input_buffer[0] = input;
-    15f8:	1a a3       	std	Y+34, r17	; 0x22
+    16fe:	1a a3       	std	Y+34, r17	; 0x22
       device->input_count = 1;
-    15fa:	81 e0       	ldi	r24, 0x01	; 1
-    15fc:	90 e0       	ldi	r25, 0x00	; 0
-    15fe:	9f a3       	std	Y+39, r25	; 0x27
-    1600:	8e a3       	std	Y+38, r24	; 0x26
+    1700:	81 e0       	ldi	r24, 0x01	; 1
+    1702:	90 e0       	ldi	r25, 0x00	; 0
+    1704:	9f a3       	std	Y+39, r25	; 0x27
+    1706:	8e a3       	std	Y+38, r24	; 0x26
     }
     switch (midi_packet_length(input)) {
-    1602:	81 2f       	mov	r24, r17
-    1604:	0e 94 34 09 	call	0x1268	; 0x1268 <midi_packet_length>
-    1608:	81 30       	cpi	r24, 0x01	; 1
-    160a:	31 f0       	breq	.+12     	; 0x1618 <midi_process_byte+0x64>
-    160c:	b8 f0       	brcs	.+46     	; 0x163c <midi_process_byte+0x88>
-    160e:	82 30       	cpi	r24, 0x02	; 2
-    1610:	79 f0       	breq	.+30     	; 0x1630 <midi_process_byte+0x7c>
-    1612:	83 30       	cpi	r24, 0x03	; 3
-    1614:	81 f0       	breq	.+32     	; 0x1636 <midi_process_byte+0x82>
-    1616:	46 c0       	rjmp	.+140    	; 0x16a4 <midi_process_byte+0xf0>
+    1708:	81 2f       	mov	r24, r17
+    170a:	0e 94 b7 09 	call	0x136e	; 0x136e <midi_packet_length>
+    170e:	81 30       	cpi	r24, 0x01	; 1
+    1710:	31 f0       	breq	.+12     	; 0x171e <midi_process_byte+0x64>
+    1712:	b8 f0       	brcs	.+46     	; 0x1742 <midi_process_byte+0x88>
+    1714:	82 30       	cpi	r24, 0x02	; 2
+    1716:	79 f0       	breq	.+30     	; 0x1736 <midi_process_byte+0x7c>
+    1718:	83 30       	cpi	r24, 0x03	; 3
+    171a:	81 f0       	breq	.+32     	; 0x173c <midi_process_byte+0x82>
+    171c:	46 c0       	rjmp	.+140    	; 0x17aa <midi_process_byte+0xf0>
       case ONE1:
         device->input_state = ONE_BYTE_MESSAGE;;
-    1618:	81 e0       	ldi	r24, 0x01	; 1
-    161a:	8d a3       	std	Y+37, r24	; 0x25
+    171e:	81 e0       	ldi	r24, 0x01	; 1
+    1720:	8d a3       	std	Y+37, r24	; 0x25
         midi_input_callbacks(device, 1, input, 0, 0);
-    161c:	00 e0       	ldi	r16, 0x00	; 0
-    161e:	20 e0       	ldi	r18, 0x00	; 0
-    1620:	41 2f       	mov	r20, r17
-    1622:	61 e0       	ldi	r22, 0x01	; 1
-    1624:	70 e0       	ldi	r23, 0x00	; 0
-    1626:	ce 01       	movw	r24, r28
-    1628:	0e 94 c6 09 	call	0x138c	; 0x138c <midi_input_callbacks>
+    1722:	00 e0       	ldi	r16, 0x00	; 0
+    1724:	20 e0       	ldi	r18, 0x00	; 0
+    1726:	41 2f       	mov	r20, r17
+    1728:	61 e0       	ldi	r22, 0x01	; 1
+    172a:	70 e0       	ldi	r23, 0x00	; 0
+    172c:	ce 01       	movw	r24, r28
+    172e:	0e 94 49 0a 	call	0x1492	; 0x1492 <midi_input_callbacks>
         device->input_state = IDLE;
-    162c:	1d a2       	std	Y+37, r1	; 0x25
+    1732:	1d a2       	std	Y+37, r1	; 0x25
         break;
-    162e:	7f c0       	rjmp	.+254    	; 0x172e <midi_process_byte+0x17a>
+    1734:	7f c0       	rjmp	.+254    	; 0x1834 <midi_process_byte+0x17a>
       case TWO2:
         device->input_state = TWO_BYTE_MESSAGE;
-    1630:	82 e0       	ldi	r24, 0x02	; 2
-    1632:	8d a3       	std	Y+37, r24	; 0x25
+    1736:	82 e0       	ldi	r24, 0x02	; 2
+    1738:	8d a3       	std	Y+37, r24	; 0x25
         break;
-    1634:	7c c0       	rjmp	.+248    	; 0x172e <midi_process_byte+0x17a>
+    173a:	7c c0       	rjmp	.+248    	; 0x1834 <midi_process_byte+0x17a>
       case THREE3:
         device->input_state = THREE_BYTE_MESSAGE;
-    1636:	83 e0       	ldi	r24, 0x03	; 3
-    1638:	8d a3       	std	Y+37, r24	; 0x25
+    173c:	83 e0       	ldi	r24, 0x03	; 3
+    173e:	8d a3       	std	Y+37, r24	; 0x25
         break;
-    163a:	79 c0       	rjmp	.+242    	; 0x172e <midi_process_byte+0x17a>
+    1740:	79 c0       	rjmp	.+242    	; 0x1834 <midi_process_byte+0x17a>
       case UNDEFINED:
         switch(input) {
-    163c:	10 3f       	cpi	r17, 0xF0	; 240
-    163e:	19 f0       	breq	.+6      	; 0x1646 <midi_process_byte+0x92>
-    1640:	17 3f       	cpi	r17, 0xF7	; 247
-    1642:	51 f0       	breq	.+20     	; 0x1658 <midi_process_byte+0xa4>
-    1644:	2b c0       	rjmp	.+86     	; 0x169c <midi_process_byte+0xe8>
+    1742:	10 3f       	cpi	r17, 0xF0	; 240
+    1744:	19 f0       	breq	.+6      	; 0x174c <midi_process_byte+0x92>
+    1746:	17 3f       	cpi	r17, 0xF7	; 247
+    1748:	51 f0       	breq	.+20     	; 0x175e <midi_process_byte+0xa4>
+    174a:	2b c0       	rjmp	.+86     	; 0x17a2 <midi_process_byte+0xe8>
           case SYSEX_BEGIN:
             device->input_state = SYSEX_MESSAGE;
-    1646:	84 e0       	ldi	r24, 0x04	; 4
-    1648:	8d a3       	std	Y+37, r24	; 0x25
+    174c:	84 e0       	ldi	r24, 0x04	; 4
+    174e:	8d a3       	std	Y+37, r24	; 0x25
             device->input_buffer[0] = input;
-    164a:	80 ef       	ldi	r24, 0xF0	; 240
-    164c:	8a a3       	std	Y+34, r24	; 0x22
+    1750:	80 ef       	ldi	r24, 0xF0	; 240
+    1752:	8a a3       	std	Y+34, r24	; 0x22
             device->input_count = 1;
-    164e:	81 e0       	ldi	r24, 0x01	; 1
-    1650:	90 e0       	ldi	r25, 0x00	; 0
-    1652:	9f a3       	std	Y+39, r25	; 0x27
-    1654:	8e a3       	std	Y+38, r24	; 0x26
+    1754:	81 e0       	ldi	r24, 0x01	; 1
+    1756:	90 e0       	ldi	r25, 0x00	; 0
+    1758:	9f a3       	std	Y+39, r25	; 0x27
+    175a:	8e a3       	std	Y+38, r24	; 0x26
             break;
-    1656:	6b c0       	rjmp	.+214    	; 0x172e <midi_process_byte+0x17a>
+    175c:	6b c0       	rjmp	.+214    	; 0x1834 <midi_process_byte+0x17a>
           case SYSEX_END:
             //send what is left in the input buffer, set idle
             device->input_buffer[device->input_count % 3] = input;
-    1658:	4e a1       	ldd	r20, Y+38	; 0x26
-    165a:	5f a1       	ldd	r21, Y+39	; 0x27
-    165c:	9a 01       	movw	r18, r20
-    165e:	ab ea       	ldi	r26, 0xAB	; 171
-    1660:	ba ea       	ldi	r27, 0xAA	; 170
-    1662:	0e 94 ee 0b 	call	0x17dc	; 0x17dc <__umulhisi3>
-    1666:	96 95       	lsr	r25
-    1668:	87 95       	ror	r24
-    166a:	9c 01       	movw	r18, r24
-    166c:	22 0f       	add	r18, r18
-    166e:	33 1f       	adc	r19, r19
-    1670:	82 0f       	add	r24, r18
-    1672:	93 1f       	adc	r25, r19
-    1674:	fa 01       	movw	r30, r20
-    1676:	e8 1b       	sub	r30, r24
-    1678:	f9 0b       	sbc	r31, r25
-    167a:	ec 0f       	add	r30, r28
-    167c:	fd 1f       	adc	r31, r29
-    167e:	87 ef       	ldi	r24, 0xF7	; 247
-    1680:	82 a3       	std	Z+34, r24	; 0x22
+    175e:	4e a1       	ldd	r20, Y+38	; 0x26
+    1760:	5f a1       	ldd	r21, Y+39	; 0x27
+    1762:	9a 01       	movw	r18, r20
+    1764:	ab ea       	ldi	r26, 0xAB	; 171
+    1766:	ba ea       	ldi	r27, 0xAA	; 170
+    1768:	0e 94 71 0c 	call	0x18e2	; 0x18e2 <__umulhisi3>
+    176c:	96 95       	lsr	r25
+    176e:	87 95       	ror	r24
+    1770:	9c 01       	movw	r18, r24
+    1772:	22 0f       	add	r18, r18
+    1774:	33 1f       	adc	r19, r19
+    1776:	82 0f       	add	r24, r18
+    1778:	93 1f       	adc	r25, r19
+    177a:	fa 01       	movw	r30, r20
+    177c:	e8 1b       	sub	r30, r24
+    177e:	f9 0b       	sbc	r31, r25
+    1780:	ec 0f       	add	r30, r28
+    1782:	fd 1f       	adc	r31, r29
+    1784:	87 ef       	ldi	r24, 0xF7	; 247
+    1786:	82 a3       	std	Z+34, r24	; 0x22
             device->input_count += 1;
-    1682:	ba 01       	movw	r22, r20
-    1684:	6f 5f       	subi	r22, 0xFF	; 255
-    1686:	7f 4f       	sbci	r23, 0xFF	; 255
-    1688:	7f a3       	std	Y+39, r23	; 0x27
-    168a:	6e a3       	std	Y+38, r22	; 0x26
+    1788:	ba 01       	movw	r22, r20
+    178a:	6f 5f       	subi	r22, 0xFF	; 255
+    178c:	7f 4f       	sbci	r23, 0xFF	; 255
+    178e:	7f a3       	std	Y+39, r23	; 0x27
+    1790:	6e a3       	std	Y+38, r22	; 0x26
             //call the callback
             midi_input_callbacks(device, device->input_count, 
-    168c:	0c a1       	ldd	r16, Y+36	; 0x24
-    168e:	2b a1       	ldd	r18, Y+35	; 0x23
-    1690:	4a a1       	ldd	r20, Y+34	; 0x22
-    1692:	ce 01       	movw	r24, r28
-    1694:	0e 94 c6 09 	call	0x138c	; 0x138c <midi_input_callbacks>
+    1792:	0c a1       	ldd	r16, Y+36	; 0x24
+    1794:	2b a1       	ldd	r18, Y+35	; 0x23
+    1796:	4a a1       	ldd	r20, Y+34	; 0x22
+    1798:	ce 01       	movw	r24, r28
+    179a:	0e 94 49 0a 	call	0x1492	; 0x1492 <midi_input_callbacks>
                 device->input_buffer[0], device->input_buffer[1], device->input_buffer[2]);
             device->input_state = IDLE;
-    1698:	1d a2       	std	Y+37, r1	; 0x25
+    179e:	1d a2       	std	Y+37, r1	; 0x25
             break;
-    169a:	49 c0       	rjmp	.+146    	; 0x172e <midi_process_byte+0x17a>
+    17a0:	49 c0       	rjmp	.+146    	; 0x1834 <midi_process_byte+0x17a>
           default:
             device->input_state = IDLE;
-    169c:	1d a2       	std	Y+37, r1	; 0x25
+    17a2:	1d a2       	std	Y+37, r1	; 0x25
             device->input_count = 0;
-    169e:	1f a2       	std	Y+39, r1	; 0x27
-    16a0:	1e a2       	std	Y+38, r1	; 0x26
-    16a2:	45 c0       	rjmp	.+138    	; 0x172e <midi_process_byte+0x17a>
+    17a4:	1f a2       	std	Y+39, r1	; 0x27
+    17a6:	1e a2       	std	Y+38, r1	; 0x26
+    17a8:	45 c0       	rjmp	.+138    	; 0x1834 <midi_process_byte+0x17a>
         }
 
         break;
       default:
         device->input_state = IDLE;
-    16a4:	1d a2       	std	Y+37, r1	; 0x25
+    17aa:	1d a2       	std	Y+37, r1	; 0x25
         device->input_count = 0;
-    16a6:	1f a2       	std	Y+39, r1	; 0x27
-    16a8:	1e a2       	std	Y+38, r1	; 0x26
+    17ac:	1f a2       	std	Y+39, r1	; 0x27
+    17ae:	1e a2       	std	Y+38, r1	; 0x26
         break;
-    16aa:	41 c0       	rjmp	.+130    	; 0x172e <midi_process_byte+0x17a>
+    17b0:	41 c0       	rjmp	.+130    	; 0x1834 <midi_process_byte+0x17a>
     }
   } else {
     if (device->input_state != IDLE) {
-    16ac:	ed a1       	ldd	r30, Y+37	; 0x25
-    16ae:	ee 23       	and	r30, r30
-    16b0:	f1 f1       	breq	.+124    	; 0x172e <midi_process_byte+0x17a>
+    17b2:	ed a1       	ldd	r30, Y+37	; 0x25
+    17b4:	ee 23       	and	r30, r30
+    17b6:	f1 f1       	breq	.+124    	; 0x1834 <midi_process_byte+0x17a>
       //store the byte
       device->input_buffer[device->input_count % 3] = input;
-    16b2:	4e a1       	ldd	r20, Y+38	; 0x26
-    16b4:	5f a1       	ldd	r21, Y+39	; 0x27
-    16b6:	9a 01       	movw	r18, r20
-    16b8:	ab ea       	ldi	r26, 0xAB	; 171
-    16ba:	ba ea       	ldi	r27, 0xAA	; 170
-    16bc:	0e 94 ee 0b 	call	0x17dc	; 0x17dc <__umulhisi3>
-    16c0:	96 95       	lsr	r25
-    16c2:	87 95       	ror	r24
-    16c4:	9c 01       	movw	r18, r24
-    16c6:	22 0f       	add	r18, r18
-    16c8:	33 1f       	adc	r19, r19
-    16ca:	82 0f       	add	r24, r18
-    16cc:	93 1f       	adc	r25, r19
-    16ce:	9a 01       	movw	r18, r20
-    16d0:	28 1b       	sub	r18, r24
-    16d2:	39 0b       	sbc	r19, r25
-    16d4:	de 01       	movw	r26, r28
-    16d6:	a2 0f       	add	r26, r18
-    16d8:	b3 1f       	adc	r27, r19
-    16da:	92 96       	adiw	r26, 0x22	; 34
-    16dc:	1c 93       	st	X, r17
+    17b8:	4e a1       	ldd	r20, Y+38	; 0x26
+    17ba:	5f a1       	ldd	r21, Y+39	; 0x27
+    17bc:	9a 01       	movw	r18, r20
+    17be:	ab ea       	ldi	r26, 0xAB	; 171
+    17c0:	ba ea       	ldi	r27, 0xAA	; 170
+    17c2:	0e 94 71 0c 	call	0x18e2	; 0x18e2 <__umulhisi3>
+    17c6:	96 95       	lsr	r25
+    17c8:	87 95       	ror	r24
+    17ca:	9c 01       	movw	r18, r24
+    17cc:	22 0f       	add	r18, r18
+    17ce:	33 1f       	adc	r19, r19
+    17d0:	82 0f       	add	r24, r18
+    17d2:	93 1f       	adc	r25, r19
+    17d4:	9a 01       	movw	r18, r20
+    17d6:	28 1b       	sub	r18, r24
+    17d8:	39 0b       	sbc	r19, r25
+    17da:	de 01       	movw	r26, r28
+    17dc:	a2 0f       	add	r26, r18
+    17de:	b3 1f       	adc	r27, r19
+    17e0:	92 96       	adiw	r26, 0x22	; 34
+    17e2:	1c 93       	st	X, r17
       //increment count
       uint16_t prev = device->input_count;
       device->input_count += 1;
-    16de:	ba 01       	movw	r22, r20
-    16e0:	6f 5f       	subi	r22, 0xFF	; 255
-    16e2:	7f 4f       	sbci	r23, 0xFF	; 255
-    16e4:	7f a3       	std	Y+39, r23	; 0x27
-    16e6:	6e a3       	std	Y+38, r22	; 0x26
+    17e4:	ba 01       	movw	r22, r20
+    17e6:	6f 5f       	subi	r22, 0xFF	; 255
+    17e8:	7f 4f       	sbci	r23, 0xFF	; 255
+    17ea:	7f a3       	std	Y+39, r23	; 0x27
+    17ec:	6e a3       	std	Y+38, r22	; 0x26
 
       switch(prev % 3) {
-    16e8:	21 30       	cpi	r18, 0x01	; 1
-    16ea:	31 05       	cpc	r19, r1
-    16ec:	89 f0       	breq	.+34     	; 0x1710 <midi_process_byte+0x15c>
-    16ee:	22 30       	cpi	r18, 0x02	; 2
-    16f0:	31 05       	cpc	r19, r1
-    16f2:	e9 f4       	brne	.+58     	; 0x172e <midi_process_byte+0x17a>
+    17ee:	21 30       	cpi	r18, 0x01	; 1
+    17f0:	31 05       	cpc	r19, r1
+    17f2:	89 f0       	breq	.+34     	; 0x1816 <midi_process_byte+0x15c>
+    17f4:	22 30       	cpi	r18, 0x02	; 2
+    17f6:	31 05       	cpc	r19, r1
+    17f8:	e9 f4       	brne	.+58     	; 0x1834 <midi_process_byte+0x17a>
         case 2:
           //call callback
           midi_input_callbacks(device, device->input_count,
-    16f4:	0c a1       	ldd	r16, Y+36	; 0x24
-    16f6:	2b a1       	ldd	r18, Y+35	; 0x23
-    16f8:	4a a1       	ldd	r20, Y+34	; 0x22
-    16fa:	ce 01       	movw	r24, r28
-    16fc:	0e 94 c6 09 	call	0x138c	; 0x138c <midi_input_callbacks>
+    17fa:	0c a1       	ldd	r16, Y+36	; 0x24
+    17fc:	2b a1       	ldd	r18, Y+35	; 0x23
+    17fe:	4a a1       	ldd	r20, Y+34	; 0x22
+    1800:	ce 01       	movw	r24, r28
+    1802:	0e 94 49 0a 	call	0x1492	; 0x1492 <midi_input_callbacks>
               device->input_buffer[0], device->input_buffer[1], device->input_buffer[2]);
           if (device->input_state != SYSEX_MESSAGE) {
-    1700:	8d a1       	ldd	r24, Y+37	; 0x25
-    1702:	84 30       	cpi	r24, 0x04	; 4
-    1704:	a1 f0       	breq	.+40     	; 0x172e <midi_process_byte+0x17a>
+    1806:	8d a1       	ldd	r24, Y+37	; 0x25
+    1808:	84 30       	cpi	r24, 0x04	; 4
+    180a:	a1 f0       	breq	.+40     	; 0x1834 <midi_process_byte+0x17a>
             //set to 1, keeping status byte, allowing for running status
             device->input_count = 1;
-    1706:	81 e0       	ldi	r24, 0x01	; 1
-    1708:	90 e0       	ldi	r25, 0x00	; 0
-    170a:	9f a3       	std	Y+39, r25	; 0x27
-    170c:	8e a3       	std	Y+38, r24	; 0x26
-    170e:	0f c0       	rjmp	.+30     	; 0x172e <midi_process_byte+0x17a>
+    180c:	81 e0       	ldi	r24, 0x01	; 1
+    180e:	90 e0       	ldi	r25, 0x00	; 0
+    1810:	9f a3       	std	Y+39, r25	; 0x27
+    1812:	8e a3       	std	Y+38, r24	; 0x26
+    1814:	0f c0       	rjmp	.+30     	; 0x1834 <midi_process_byte+0x17a>
           }
           break;
         case 1:
           if (device->input_state == TWO_BYTE_MESSAGE) {
-    1710:	e2 30       	cpi	r30, 0x02	; 2
-    1712:	69 f4       	brne	.+26     	; 0x172e <midi_process_byte+0x17a>
+    1816:	e2 30       	cpi	r30, 0x02	; 2
+    1818:	69 f4       	brne	.+26     	; 0x1834 <midi_process_byte+0x17a>
             //call callback
             midi_input_callbacks(device, device->input_count,
-    1714:	00 e0       	ldi	r16, 0x00	; 0
-    1716:	2b a1       	ldd	r18, Y+35	; 0x23
-    1718:	4a a1       	ldd	r20, Y+34	; 0x22
-    171a:	ce 01       	movw	r24, r28
-    171c:	0e 94 c6 09 	call	0x138c	; 0x138c <midi_input_callbacks>
+    181a:	00 e0       	ldi	r16, 0x00	; 0
+    181c:	2b a1       	ldd	r18, Y+35	; 0x23
+    181e:	4a a1       	ldd	r20, Y+34	; 0x22
+    1820:	ce 01       	movw	r24, r28
+    1822:	0e 94 49 0a 	call	0x1492	; 0x1492 <midi_input_callbacks>
                 device->input_buffer[0], device->input_buffer[1], 0);
             if (device->input_state != SYSEX_MESSAGE) {
-    1720:	8d a1       	ldd	r24, Y+37	; 0x25
-    1722:	84 30       	cpi	r24, 0x04	; 4
-    1724:	21 f0       	breq	.+8      	; 0x172e <midi_process_byte+0x17a>
+    1826:	8d a1       	ldd	r24, Y+37	; 0x25
+    1828:	84 30       	cpi	r24, 0x04	; 4
+    182a:	21 f0       	breq	.+8      	; 0x1834 <midi_process_byte+0x17a>
               //set to 1, keeping status byte, allowing for running status
               device->input_count = 1;
-    1726:	81 e0       	ldi	r24, 0x01	; 1
-    1728:	90 e0       	ldi	r25, 0x00	; 0
-    172a:	9f a3       	std	Y+39, r25	; 0x27
-    172c:	8e a3       	std	Y+38, r24	; 0x26
+    182c:	81 e0       	ldi	r24, 0x01	; 1
+    182e:	90 e0       	ldi	r25, 0x00	; 0
+    1830:	9f a3       	std	Y+39, r25	; 0x27
+    1832:	8e a3       	std	Y+38, r24	; 0x26
           //one byte messages are dealt with directly
           break;
       }
     }
   }
 }
-    172e:	df 91       	pop	r29
-    1730:	cf 91       	pop	r28
-    1732:	1f 91       	pop	r17
-    1734:	0f 91       	pop	r16
-    1736:	ff 90       	pop	r15
-    1738:	08 95       	ret
+    1834:	df 91       	pop	r29
+    1836:	cf 91       	pop	r28
+    1838:	1f 91       	pop	r17
+    183a:	0f 91       	pop	r16
+    183c:	ff 90       	pop	r15
+    183e:	08 95       	ret
 
-0000173a <midi_device_process>:
+00001840 <midi_device_process>:
 
 void midi_device_set_pre_input_process_func(MidiDevice * device, midi_no_byte_func_t pre_process_func){
   device->pre_input_process_callback = pre_process_func;
 }
 
 void midi_device_process(MidiDevice * device) {
-    173a:	cf 92       	push	r12
-    173c:	df 92       	push	r13
-    173e:	ef 92       	push	r14
-    1740:	ff 92       	push	r15
-    1742:	0f 93       	push	r16
-    1744:	1f 93       	push	r17
-    1746:	cf 93       	push	r28
-    1748:	df 93       	push	r29
-    174a:	6c 01       	movw	r12, r24
+    1840:	cf 92       	push	r12
+    1842:	df 92       	push	r13
+    1844:	ef 92       	push	r14
+    1846:	ff 92       	push	r15
+    1848:	0f 93       	push	r16
+    184a:	1f 93       	push	r17
+    184c:	cf 93       	push	r28
+    184e:	df 93       	push	r29
+    1850:	6c 01       	movw	r12, r24
   //call the pre_input_process_callback if there is one
   if(device->pre_input_process_callback)
-    174c:	dc 01       	movw	r26, r24
-    174e:	90 96       	adiw	r26, 0x20	; 32
-    1750:	ed 91       	ld	r30, X+
-    1752:	fc 91       	ld	r31, X
-    1754:	91 97       	sbiw	r26, 0x21	; 33
-    1756:	30 97       	sbiw	r30, 0x00	; 0
-    1758:	09 f0       	breq	.+2      	; 0x175c <midi_device_process+0x22>
+    1852:	dc 01       	movw	r26, r24
+    1854:	90 96       	adiw	r26, 0x20	; 32
+    1856:	ed 91       	ld	r30, X+
+    1858:	fc 91       	ld	r31, X
+    185a:	91 97       	sbiw	r26, 0x21	; 33
+    185c:	30 97       	sbiw	r30, 0x00	; 0
+    185e:	09 f0       	breq	.+2      	; 0x1862 <midi_device_process+0x22>
     device->pre_input_process_callback(device);
-    175a:	09 95       	icall
+    1860:	09 95       	icall
 
   //pull stuff off the queue and process
   byteQueueIndex_t len = bytequeue_length(&device->input_queue);
-    175c:	86 01       	movw	r16, r12
-    175e:	08 51       	subi	r16, 0x18	; 24
-    1760:	1f 4f       	sbci	r17, 0xFF	; 255
-    1762:	c8 01       	movw	r24, r16
-    1764:	0e 94 e2 08 	call	0x11c4	; 0x11c4 <bytequeue_length>
+    1862:	86 01       	movw	r16, r12
+    1864:	08 51       	subi	r16, 0x18	; 24
+    1866:	1f 4f       	sbci	r17, 0xFF	; 255
+    1868:	c8 01       	movw	r24, r16
+    186a:	0e 94 65 09 	call	0x12ca	; 0x12ca <bytequeue_length>
   uint16_t i;
   //TODO limit number of bytes processed?
   for(i = 0; i < len; i++) {
-    1768:	e8 2e       	mov	r14, r24
-    176a:	f1 2c       	mov	r15, r1
-    176c:	e1 14       	cp	r14, r1
-    176e:	f1 04       	cpc	r15, r1
-    1770:	91 f0       	breq	.+36     	; 0x1796 <midi_device_process+0x5c>
-    1772:	c0 e0       	ldi	r28, 0x00	; 0
-    1774:	d0 e0       	ldi	r29, 0x00	; 0
+    186e:	e8 2e       	mov	r14, r24
+    1870:	f1 2c       	mov	r15, r1
+    1872:	e1 14       	cp	r14, r1
+    1874:	f1 04       	cpc	r15, r1
+    1876:	91 f0       	breq	.+36     	; 0x189c <midi_device_process+0x5c>
+    1878:	c0 e0       	ldi	r28, 0x00	; 0
+    187a:	d0 e0       	ldi	r29, 0x00	; 0
     uint8_t val = bytequeue_get(&device->input_queue, 0);
-    1776:	60 e0       	ldi	r22, 0x00	; 0
-    1778:	c8 01       	movw	r24, r16
-    177a:	0e 94 f8 08 	call	0x11f0	; 0x11f0 <bytequeue_get>
-    177e:	68 2f       	mov	r22, r24
+    187c:	60 e0       	ldi	r22, 0x00	; 0
+    187e:	c8 01       	movw	r24, r16
+    1880:	0e 94 7b 09 	call	0x12f6	; 0x12f6 <bytequeue_get>
+    1884:	68 2f       	mov	r22, r24
     midi_process_byte(device, val);
-    1780:	c6 01       	movw	r24, r12
-    1782:	0e 94 da 0a 	call	0x15b4	; 0x15b4 <midi_process_byte>
+    1886:	c6 01       	movw	r24, r12
+    1888:	0e 94 5d 0b 	call	0x16ba	; 0x16ba <midi_process_byte>
     bytequeue_remove(&device->input_queue, 1);
-    1786:	61 e0       	ldi	r22, 0x01	; 1
-    1788:	c8 01       	movw	r24, r16
-    178a:	0e 94 0a 09 	call	0x1214	; 0x1214 <bytequeue_remove>
+    188c:	61 e0       	ldi	r22, 0x01	; 1
+    188e:	c8 01       	movw	r24, r16
+    1890:	0e 94 8d 09 	call	0x131a	; 0x131a <bytequeue_remove>
 
   //pull stuff off the queue and process
   byteQueueIndex_t len = bytequeue_length(&device->input_queue);
   uint16_t i;
   //TODO limit number of bytes processed?
   for(i = 0; i < len; i++) {
-    178e:	21 96       	adiw	r28, 0x01	; 1
-    1790:	ce 15       	cp	r28, r14
-    1792:	df 05       	cpc	r29, r15
-    1794:	81 f7       	brne	.-32     	; 0x1776 <midi_device_process+0x3c>
+    1894:	21 96       	adiw	r28, 0x01	; 1
+    1896:	ce 15       	cp	r28, r14
+    1898:	df 05       	cpc	r29, r15
+    189a:	81 f7       	brne	.-32     	; 0x187c <midi_device_process+0x3c>
     uint8_t val = bytequeue_get(&device->input_queue, 0);
     midi_process_byte(device, val);
     bytequeue_remove(&device->input_queue, 1);
   }
 }
-    1796:	df 91       	pop	r29
-    1798:	cf 91       	pop	r28
-    179a:	1f 91       	pop	r17
-    179c:	0f 91       	pop	r16
-    179e:	ff 90       	pop	r15
-    17a0:	ef 90       	pop	r14
-    17a2:	df 90       	pop	r13
-    17a4:	cf 90       	pop	r12
-    17a6:	08 95       	ret
+    189c:	df 91       	pop	r29
+    189e:	cf 91       	pop	r28
+    18a0:	1f 91       	pop	r17
+    18a2:	0f 91       	pop	r16
+    18a4:	ff 90       	pop	r15
+    18a6:	ef 90       	pop	r14
+    18a8:	df 90       	pop	r13
+    18aa:	cf 90       	pop	r12
+    18ac:	08 95       	ret
 
-000017a8 <__divmodhi4>:
-    17a8:	97 fb       	bst	r25, 7
-    17aa:	07 2e       	mov	r0, r23
-    17ac:	16 f4       	brtc	.+4      	; 0x17b2 <__divmodhi4+0xa>
-    17ae:	00 94       	com	r0
-    17b0:	07 d0       	rcall	.+14     	; 0x17c0 <__divmodhi4_neg1>
-    17b2:	77 fd       	sbrc	r23, 7
-    17b4:	09 d0       	rcall	.+18     	; 0x17c8 <__divmodhi4_neg2>
-    17b6:	0e 94 fd 0b 	call	0x17fa	; 0x17fa <__udivmodhi4>
-    17ba:	07 fc       	sbrc	r0, 7
-    17bc:	05 d0       	rcall	.+10     	; 0x17c8 <__divmodhi4_neg2>
-    17be:	3e f4       	brtc	.+14     	; 0x17ce <__divmodhi4_exit>
+000018ae <__divmodhi4>:
+    18ae:	97 fb       	bst	r25, 7
+    18b0:	07 2e       	mov	r0, r23
+    18b2:	16 f4       	brtc	.+4      	; 0x18b8 <__divmodhi4+0xa>
+    18b4:	00 94       	com	r0
+    18b6:	07 d0       	rcall	.+14     	; 0x18c6 <__divmodhi4_neg1>
+    18b8:	77 fd       	sbrc	r23, 7
+    18ba:	09 d0       	rcall	.+18     	; 0x18ce <__divmodhi4_neg2>
+    18bc:	0e 94 80 0c 	call	0x1900	; 0x1900 <__udivmodhi4>
+    18c0:	07 fc       	sbrc	r0, 7
+    18c2:	05 d0       	rcall	.+10     	; 0x18ce <__divmodhi4_neg2>
+    18c4:	3e f4       	brtc	.+14     	; 0x18d4 <__divmodhi4_exit>
 
-000017c0 <__divmodhi4_neg1>:
-    17c0:	90 95       	com	r25
-    17c2:	81 95       	neg	r24
-    17c4:	9f 4f       	sbci	r25, 0xFF	; 255
-    17c6:	08 95       	ret
+000018c6 <__divmodhi4_neg1>:
+    18c6:	90 95       	com	r25
+    18c8:	81 95       	neg	r24
+    18ca:	9f 4f       	sbci	r25, 0xFF	; 255
+    18cc:	08 95       	ret
 
-000017c8 <__divmodhi4_neg2>:
-    17c8:	70 95       	com	r23
-    17ca:	61 95       	neg	r22
-    17cc:	7f 4f       	sbci	r23, 0xFF	; 255
+000018ce <__divmodhi4_neg2>:
+    18ce:	70 95       	com	r23
+    18d0:	61 95       	neg	r22
+    18d2:	7f 4f       	sbci	r23, 0xFF	; 255
 
-000017ce <__divmodhi4_exit>:
-    17ce:	08 95       	ret
+000018d4 <__divmodhi4_exit>:
+    18d4:	08 95       	ret
 
-000017d0 <__tablejump2__>:
-    17d0:	ee 0f       	add	r30, r30
-    17d2:	ff 1f       	adc	r31, r31
-    17d4:	05 90       	lpm	r0, Z+
-    17d6:	f4 91       	lpm	r31, Z
-    17d8:	e0 2d       	mov	r30, r0
-    17da:	09 94       	ijmp
+000018d6 <__tablejump2__>:
+    18d6:	ee 0f       	add	r30, r30
+    18d8:	ff 1f       	adc	r31, r31
+    18da:	05 90       	lpm	r0, Z+
+    18dc:	f4 91       	lpm	r31, Z
+    18de:	e0 2d       	mov	r30, r0
+    18e0:	09 94       	ijmp
 
-000017dc <__umulhisi3>:
-    17dc:	a2 9f       	mul	r26, r18
-    17de:	b0 01       	movw	r22, r0
-    17e0:	b3 9f       	mul	r27, r19
-    17e2:	c0 01       	movw	r24, r0
-    17e4:	a3 9f       	mul	r26, r19
-    17e6:	70 0d       	add	r23, r0
-    17e8:	81 1d       	adc	r24, r1
-    17ea:	11 24       	eor	r1, r1
-    17ec:	91 1d       	adc	r25, r1
-    17ee:	b2 9f       	mul	r27, r18
-    17f0:	70 0d       	add	r23, r0
-    17f2:	81 1d       	adc	r24, r1
-    17f4:	11 24       	eor	r1, r1
-    17f6:	91 1d       	adc	r25, r1
-    17f8:	08 95       	ret
+000018e2 <__umulhisi3>:
+    18e2:	a2 9f       	mul	r26, r18
+    18e4:	b0 01       	movw	r22, r0
+    18e6:	b3 9f       	mul	r27, r19
+    18e8:	c0 01       	movw	r24, r0
+    18ea:	a3 9f       	mul	r26, r19
+    18ec:	70 0d       	add	r23, r0
+    18ee:	81 1d       	adc	r24, r1
+    18f0:	11 24       	eor	r1, r1
+    18f2:	91 1d       	adc	r25, r1
+    18f4:	b2 9f       	mul	r27, r18
+    18f6:	70 0d       	add	r23, r0
+    18f8:	81 1d       	adc	r24, r1
+    18fa:	11 24       	eor	r1, r1
+    18fc:	91 1d       	adc	r25, r1
+    18fe:	08 95       	ret
 
-000017fa <__udivmodhi4>:
-    17fa:	aa 1b       	sub	r26, r26
-    17fc:	bb 1b       	sub	r27, r27
-    17fe:	51 e1       	ldi	r21, 0x11	; 17
-    1800:	07 c0       	rjmp	.+14     	; 0x1810 <__udivmodhi4_ep>
+00001900 <__udivmodhi4>:
+    1900:	aa 1b       	sub	r26, r26
+    1902:	bb 1b       	sub	r27, r27
+    1904:	51 e1       	ldi	r21, 0x11	; 17
+    1906:	07 c0       	rjmp	.+14     	; 0x1916 <__udivmodhi4_ep>
 
-00001802 <__udivmodhi4_loop>:
-    1802:	aa 1f       	adc	r26, r26
-    1804:	bb 1f       	adc	r27, r27
-    1806:	a6 17       	cp	r26, r22
-    1808:	b7 07       	cpc	r27, r23
-    180a:	10 f0       	brcs	.+4      	; 0x1810 <__udivmodhi4_ep>
-    180c:	a6 1b       	sub	r26, r22
-    180e:	b7 0b       	sbc	r27, r23
+00001908 <__udivmodhi4_loop>:
+    1908:	aa 1f       	adc	r26, r26
+    190a:	bb 1f       	adc	r27, r27
+    190c:	a6 17       	cp	r26, r22
+    190e:	b7 07       	cpc	r27, r23
+    1910:	10 f0       	brcs	.+4      	; 0x1916 <__udivmodhi4_ep>
+    1912:	a6 1b       	sub	r26, r22
+    1914:	b7 0b       	sbc	r27, r23
 
-00001810 <__udivmodhi4_ep>:
-    1810:	88 1f       	adc	r24, r24
-    1812:	99 1f       	adc	r25, r25
-    1814:	5a 95       	dec	r21
-    1816:	a9 f7       	brne	.-22     	; 0x1802 <__udivmodhi4_loop>
-    1818:	80 95       	com	r24
-    181a:	90 95       	com	r25
-    181c:	bc 01       	movw	r22, r24
-    181e:	cd 01       	movw	r24, r26
-    1820:	08 95       	ret
+00001916 <__udivmodhi4_ep>:
+    1916:	88 1f       	adc	r24, r24
+    1918:	99 1f       	adc	r25, r25
+    191a:	5a 95       	dec	r21
+    191c:	a9 f7       	brne	.-22     	; 0x1908 <__udivmodhi4_loop>
+    191e:	80 95       	com	r24
+    1920:	90 95       	com	r25
+    1922:	bc 01       	movw	r22, r24
+    1924:	cd 01       	movw	r24, r26
+    1926:	08 95       	ret
 
-00001822 <_exit>:
-    1822:	f8 94       	cli
+00001928 <_exit>:
+    1928:	f8 94       	cli
 
-00001824 <__stop_program>:
-    1824:	ff cf       	rjmp	.-2      	; 0x1824 <__stop_program>
+0000192a <__stop_program>:
+    192a:	ff cf       	rjmp	.-2      	; 0x192a <__stop_program>
