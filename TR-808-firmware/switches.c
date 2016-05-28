@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <avr/io.h>
+#include <string.h>
 #include "hardware.h"
 #include "switches.h"
 #include "spi.h"
@@ -198,19 +199,22 @@ void check_clear_switch(void) {
 			
 			case PATTERN_CLEAR:
 				toggle(MODE_1_PATTERN_CLEAR);
-				//spi_data[0] = 0; //turn off all step LEDs
-				//spi_data[1] = 0;
-				for (int i = 0; i <= sequencer.step_num; i++) {
-					
-					sequencer.pattern[sequencer.variation].part[i] = 0;
-					
-				}
 				
-				for (int i = 0; i <17; i++) {
-					
-					sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
-					
-				}
+				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));
+	
+				//for (int i = 0; i <= sequencer.step_num; i++) {
+					//
+					//sequencer.pattern[sequencer.variation].part[i] = 0;
+					//
+				//}
+				
+				memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));
+				
+				//for (int i = 0; i <17; i++) {
+					//
+					//sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
+					//
+				//}
 				
 				sequencer.pattern[sequencer.variation].accent = 0;	
 				
