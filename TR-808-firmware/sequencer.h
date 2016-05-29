@@ -13,10 +13,17 @@
 #include "mode.h"
 #include "drums.h"
 
-
-#define VAR_A	0
-#define VAR_B	1
-#define VAR_AB	2
+enum variation_mode {
+	 
+	 VAR_A,
+	 VAR_B,
+	 VAR_AB
+	
+	
+	};
+//#define VAR_A	0 //maybe make this enum?
+//#define VAR_B	1
+//#define VAR_AB	2
 
 struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
@@ -39,14 +46,15 @@ struct sequencer {
 	uint8_t CLEAR:1; //is the clear button being held?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t variation:1; //variation A or variation B
-	uint8_t variation_mode:2; //0 = A, 1 = B, 2 = toggle AB
+	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
 	uint8_t var_change:1; //flag to indicate variation has changed - reset at end of measure
-	uint8_t step_num_first:4;
-	uint8_t step_num_second:4;
-	uint8_t current_step:5; //will need to increase this with sequences >16 steps, or use offset?
+	uint8_t step_num_first:4; //number of steps for first part
+	uint8_t step_num_second:4; //number of steps for second part
+	uint8_t current_step:5; //max 32 steps
 	uint8_t next_step_flag:1;
 	uint8_t half_step_flag:1;
 	uint8_t trigger_finished:1;
+	uint8_t part_num:1; //0 or 1 first part or second part - will toggle
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
@@ -60,5 +68,6 @@ extern struct sequencer sequencer;
 
 void update_tempo(void);
 void process_step(void);
+void update_step_board(void);
 
 #endif 

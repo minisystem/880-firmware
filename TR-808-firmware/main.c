@@ -29,48 +29,6 @@ MidiDevice midi_device;
 
 
 
-	
-uint8_t step_number = 0;	
-
-
-
-
-
-void update_step_board() {
-	
-	if (sequencer.START && (sequencer.mode == PATTERN_FIRST || sequencer.mode == PATTERN_SECOND)) {
-		
-		if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
-				
-			for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of PATTERN_SECOND
-							
-				if (button[i].state) {
-								
-					toggle(i);
-					button[i].state ^= button[i].state;
-					sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
-					sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
-				}
-			}
-			return;		
-		}
-		for (int i = 0; i < 16; i++) { //button and led indices match for 0-15. How convenient.
-				
-			if (button[i].state) {
-					
-				toggle(i);
-				button[i].state ^= button[i].state;
-				sequencer.pattern[sequencer.variation].part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now				
-				sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;				
-			}			
-		}
-	}
-}
-
-
-
-
-
 void refresh(void) {
 	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
 	update_tempo(); //meh, doesn't seem to make a huge difference.
@@ -207,6 +165,7 @@ int main(void)
 	sequencer.START = 0;
 	//update_tempo();
 	
+	//set up default start up state. Eventually this should be recalled from EEPROM
 	sequencer.step_num_first = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);

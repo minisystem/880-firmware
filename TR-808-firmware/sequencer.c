@@ -78,3 +78,80 @@ void process_step(void) {
 			
 		}
 }
+
+void update_step_board() {
+	
+	if (sequencer.START) {
+		
+			switch (sequencer.mode) {		
+			
+			case PATTERN_FIRST:
+			
+				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
+					
+					for (int i = 0; i < 16; i++) {
+						
+							if (button[i].state) {
+								
+								button[i].state ^= button[i].state;
+								sequencer.step_num_first = i;
+								//if (sequencer.current_step > sequencer.step_num_first)
+								break;// - should we break out of here? multiple presses will mess things up, right?
+							}
+						
+					}
+					
+					break;
+				}
+				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
+			
+					for (int i = 0; i <= sequencer.step_num_first; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of PATTERN_SECOND
+				
+						if (button[i].state) {
+					
+							toggle(i);
+							button[i].state ^= button[i].state;
+							sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
+							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+						}
+					}
+					return;
+				}
+				for (int i = 0; i <= sequencer.step_num_first; i++) { //button and led indices match for 0-15. How convenient.
+			
+					if (button[i].state) {
+				
+						toggle(i);
+						button[i].state ^= button[i].state;
+						sequencer.pattern[sequencer.variation].part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
+						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+					}
+				}
+				break;
+			
+			case PATTERN_SECOND:
+			
+				break;
+				
+			case MANUAL_PLAY:
+			
+				break;
+				
+			case PLAY_RHYTHM:
+			
+				break;
+				
+			case COMPOSE_RHYTHM:
+			
+				break;
+				
+			case PATTERN_CLEAR:
+			
+				break;		 			
+			}
+	} else {
+		
+		//handle what here? changing selected pattern or rhythm? 
+		
+	}
+}
