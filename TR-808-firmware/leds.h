@@ -41,10 +41,10 @@
 #define	FILL_16	35
 #define	BASIC_VAR_A_LED	36
 #define	BASIC_VAR_B_LED	37
-#define	SCALE_1_LED	38
-#define	SCALE_2_LED	39
-#define	SCALE_3_LED	40
-#define	SCALE_4_LED	41
+#define	SCALE_4_LED	38
+#define	SCALE_3_LED	39
+#define	SCALE_2_LED	40
+#define	SCALE_1_LED	41
 #define	FIRST_PART_LED	42
 #define	SECOND_PART_LED	43
 #define	OH_11_LED	44

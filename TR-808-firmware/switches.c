@@ -73,7 +73,7 @@ void parse_switch_data(void) {
 }	
 
 void check_start_stop_tap(void) {
-	
+	//if (sequencer.mode == PATTERN_CLEAR) return; //do nothing
 	current_start_stop_tap_state = PINB;
 	current_start_stop_tap_state ^= previous_start_stop_tap_state;
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
@@ -198,26 +198,11 @@ void check_clear_switch(void) {
 		switch (sequencer.mode) {
 			
 			case PATTERN_CLEAR:
-				toggle(MODE_1_PATTERN_CLEAR);
-				
-				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));
-	
-				//for (int i = 0; i <= sequencer.step_num; i++) {
-					//
-					//sequencer.pattern[sequencer.variation].part[i] = 0;
-					//
-				//}
-				
-				memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));
-				
-				//for (int i = 0; i <17; i++) {
-					//
-					//sequencer.pattern[sequencer.variation].step_led_mask[i] = 0;
-					//
-				//}
-				
-				sequencer.pattern[sequencer.variation].accent = 0;	
-				
+			
+				toggle(MODE_1_PATTERN_CLEAR);			
+				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
+				memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));			
+				sequencer.pattern[sequencer.variation].accent = 0;				
 				break;
 				
 			case PATTERN_FIRST:

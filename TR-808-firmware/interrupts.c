@@ -42,8 +42,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		sequencer.next_step_flag = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == sequencer.step_num) { //end of measure
-				
+		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second)) { //end of measure - bah. determining end of measure is dependent on mode - editing first part vs second part plus what happens in rhythm mode?
+			//no, actuallys seems OK - 808 plays both parts and just shows LEDs for the ones you are editing	
 			sequencer.current_step = 0;
 				
 			if (sequencer.var_change == 1) {

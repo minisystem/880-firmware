@@ -49,7 +49,7 @@ void update_step_board() {
 					toggle(i);
 					button[i].state ^= button[i].state;
 					sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
-					sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i; //this creates array out of bound issue, because AC = 16. Why no compile errors or warnings?
+					sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 				}
 			}
 			return;		
@@ -206,10 +206,13 @@ int main(void)
 	sequencer.trigger_finished = 1;
 	sequencer.START = 0;
 	//update_tempo();
-	sequencer.variation_mode = 0;
-	sequencer.step_num = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
+	
+	sequencer.step_num_first = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
+	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = PATTERN_FIRST;
+	turn_on(FIRST_PART_LED);
+	turn_on(SCALE_3_LED);
 	sei(); //enable global interrupts	
 	
     while (1) 

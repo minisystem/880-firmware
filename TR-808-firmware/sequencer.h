@@ -41,7 +41,8 @@ struct sequencer {
 	uint8_t variation:1; //variation A or variation B
 	uint8_t variation_mode:2; //0 = A, 1 = B, 2 = toggle AB
 	uint8_t var_change:1; //flag to indicate variation has changed - reset at end of measure
-	uint8_t step_num:5;
+	uint8_t step_num_first:4;
+	uint8_t step_num_second:4;
 	uint8_t current_step:5; //will need to increase this with sequences >16 steps, or use offset?
 	uint8_t next_step_flag:1;
 	uint8_t half_step_flag:1;
