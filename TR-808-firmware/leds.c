@@ -119,20 +119,53 @@ void turn_off_all_inst_leds(void) { //TODO: make masks constants
 	
 }
 	
-void update_step_led_mask(void) { //this is meant to blank step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
-	//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
-	memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));
+void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
+	
+	memset(sequencer.pattern[VAR_A].step_led_mask, 0, sizeof(sequencer.pattern[VAR_A].step_led_mask));
+	memset(sequencer.pattern[VAR_B].step_led_mask, 0, sizeof(sequencer.pattern[VAR_B].step_led_mask));
 	
 	for (int i = 0; i <= sequencer.step_num_first; i++) {
 		
 		for (int inst = BD; inst <= MA; inst++) {
 			//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= ((sequencer.pattern[sequencer.variation].part[i]) & (1<<sequencer.current_inst)); //this doesn't work. not sure why not???
-			if ((sequencer.pattern[sequencer.variation].part[i] >> inst) & 1) sequencer.pattern[sequencer.variation].step_led_mask[inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_A].part[i] >> inst) & 1) sequencer.pattern[VAR_A].step_led_mask[inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_B].part[i] >> inst) & 1) sequencer.pattern[VAR_B].step_led_mask[inst] |= 1<<i;
 		}
 		
 		//also need to rebuild accent led_mask here:
-		if ((sequencer.pattern[sequencer.variation].accent >> i) &1) sequencer.pattern[sequencer.variation].step_led_mask[AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_A].accent >> i) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_B].accent >> i) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;
 	}
+	
+	//for (int inst = BD; inst <= MA; inst++) {
+		//
+		//if (sequencer.pattern[sequencer.variation].step_led_mask[inst] != 0) { //check if inst has steps programmed
+			////if there are steps, clear the mask for both variation A and B
+			//sequencer.pattern[VAR_A].step_led_mask[inst] = 0;
+			//sequencer.pattern[VAR_B].step_led_mask[inst] = 0;
+			//for (int i = 0; i <= sequencer.step_num_first; i++) { //now rebuild step led mask using pattern data 
+				//
+				//if ((sequencer.pattern[VAR_A].part[i] >> inst) & 1) sequencer.pattern[VAR_A].step_led_mask[inst] |= 1<<i;
+				//if ((sequencer.pattern[VAR_B].part[i] >> inst) & 1) sequencer.pattern[VAR_B].step_led_mask[inst] |= 1<<i;
+				//
+			//}
+			//
+		//}
+		//
+	//if (sequencer.pattern[sequencer.variation].step_led_mask[AC] != 0) {
+		//sequencer.pattern[VAR_A].step_led_mask[AC] = 0;
+		//sequencer.pattern[VAR_B].step_led_mask[AC] = 0;
+		//for (int i = 0; i <= sequencer.step_num_first; i++) { //now rebuild step led mask using pattern data
+					//
+			//if ((sequencer.pattern[VAR_A].accent >> i) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
+			//if ((sequencer.pattern[VAR_B].accent >> i) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;			
+		//}
+		//
+	//}
+		//
+		//
+	//}
+	
 	
 }	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 
