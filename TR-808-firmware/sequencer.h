@@ -50,6 +50,7 @@ struct sequencer {
 	uint8_t var_change:1; //flag to indicate variation has changed - reset at end of measure
 	uint8_t step_num_first:4; //number of steps for first part
 	uint8_t step_num_second:4; //number of steps for second part
+	uint8_t step_num_new:4; //holder to change step number at end of measure
 	uint8_t current_step:5; //max 32 steps
 	uint8_t next_step_flag:1;
 	uint8_t half_step_flag:1;
@@ -69,5 +70,6 @@ extern struct sequencer sequencer;
 void update_tempo(void);
 void process_step(void);
 void update_step_board(void);
+uint8_t step_mask(void);
 
 #endif 

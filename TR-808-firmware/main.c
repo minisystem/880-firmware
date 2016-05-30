@@ -40,8 +40,9 @@ void refresh(void) {
 	update_mode();
 	check_clear_switch();
 	check_variation_switches();
-	check_inst_switches();
+	check_inst_switches();	
 	update_step_board();
+	//update_step_led_mask();
 	process_step();
 	
 	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
@@ -167,6 +168,7 @@ int main(void)
 	
 	//set up default start up state. Eventually this should be recalled from EEPROM
 	sequencer.step_num_first = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
+	sequencer.step_num_new = 15;
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = PATTERN_FIRST;

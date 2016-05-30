@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <avr/pgmspace.h>
+#include <string.h>
 #include "hardware.h"
 #include "spi.h"
 #include "leds.h"
@@ -118,13 +119,26 @@ void turn_off_all_inst_leds(void) { //TODO: make masks constants
 	
 }
 	
-void update_step_led_mask(void) {
+void update_step_led_mask(void) { //this is meant to blank step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
+	//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
+	memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));
 	
-	sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] = 0;
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i <= sequencer.step_num_first; i++) {
 		
-		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= sequencer.pattern[sequencer.variation].part[i] & (1<<sequencer.current_inst);
+		for (int inst = BD; inst <= MA; inst++) {
+			//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= ((sequencer.pattern[sequencer.variation].part[i]) & (1<<sequencer.current_inst)); //this doesn't work. not sure why not???
+			if ((sequencer.pattern[sequencer.variation].part[i] >> inst) & 1) sequencer.pattern[sequencer.variation].step_led_mask[inst] |= 1<<i;
+		}
 		
+		//also need to rebuild accent led_mask here:
+		if ((sequencer.pattern[sequencer.variation].accent >> i) &1) sequencer.pattern[sequencer.variation].step_led_mask[AC] |= 1<<i;
 	}
 	
-}	
+}	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
+
+void refresh_step_leds(void) {
+	
+	spi_data[1] = 0;// (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+	spi_data[0] = 0;//((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+	
+}

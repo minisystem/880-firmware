@@ -38,6 +38,22 @@ void update_tempo(void) {
 	
 }
 
+uint8_t step_mask(void) {
+	
+	uint8_t step_mask = 255;
+		
+	if (sequencer.step_num_first < 8) {
+		
+		step_mask = step_mask >> (7-sequencer.step_num_first);
+
+	} else if (sequencer.step_num_first < 16) {
+		
+		
+	}
+	
+	return step_mask;
+}
+
 void process_step(void) {
 	
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
@@ -49,8 +65,10 @@ void process_step(void) {
 					PORTD |= (1<<TRIG);
 					spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 					spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+					//if (sequencer.step_num_first < 8) spi_data[1] &= 255 >> (7-sequencer.step_num_first);//mask instrument LEDs above step number
 					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
 					spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+					//spi_data[0] &= (0xFF << (15 - sequencer.step_num_first)) >> 8;
 					trigger_step();
 					if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
 						spi_data[8] |= 1<<ACCENT;
@@ -94,7 +112,7 @@ void update_step_board() {
 							if (button[i].state) {
 								
 								button[i].state ^= button[i].state;
-								sequencer.step_num_first = i;
+								sequencer.step_num_new = i;
 								//if (sequencer.current_step > sequencer.step_num_first)
 								break;// - should we break out of here? multiple presses will mess things up, right?
 							}

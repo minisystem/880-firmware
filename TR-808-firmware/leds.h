@@ -84,5 +84,7 @@ void toggle(uint8_t led_index);
 void turn_off_all_inst_leds(void);
 
 void update_step_led_mask(void);
+
+void refresh_step_leds(void); //update step board spi bytes if step number changes
 	
 #endif

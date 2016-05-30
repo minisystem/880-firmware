@@ -42,10 +42,13 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		sequencer.next_step_flag = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ >= (sequencer.step_num_first + sequencer.step_num_second)) { //end of measure - bah. determining end of measure is dependent on mode - editing first part vs second part plus what happens in rhythm mode?
+		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second)) { //end of measure - bah. determining end of measure is dependent on mode - editing first part vs second part plus what happens in rhythm mode?
 			//no, actuallys seems OK - 808 plays both parts and just shows LEDs for the ones you are editing	
 			sequencer.current_step = 0;
-				
+			//update step number
+			uint8_t old_step_num = sequencer.step_num_first;
+			sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part
+			if (old_step_num != sequencer.step_num_first) update_step_led_mask();
 			if (sequencer.var_change == 1) {
 				sequencer.var_change = 0;
 				switch (sequencer.variation_mode) {
@@ -72,7 +75,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) { 	
-			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 
 			turn_off_all_inst_leds();
