@@ -45,9 +45,9 @@ void refresh(void) {
 	//update_step_led_mask();
 	process_step();
 	
-	if (sequencer.trigger_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
+	if (flag.trig_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
 		
-		//sequencer.trigger_finished = 0;
+		//flag.trig_finished = 0;
 		//clear_all_trigs();
 		//spi_data[8] = 0; //err wait a sec - this trigger only works for AC, BC...CP. Does this mean only rising edge matters? Need to look into this.
 	}
@@ -162,7 +162,7 @@ int main(void)
 	//internal_clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(internal_clock.rate);
 	setup_adc();
-	sequencer.trigger_finished = 1;
+	flag.trig_finished = 1;
 	sequencer.START = 0;
 	//update_tempo();
 	

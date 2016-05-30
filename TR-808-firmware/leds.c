@@ -136,8 +136,10 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 		if ((sequencer.pattern[VAR_A].accent >> i) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
 		if ((sequencer.pattern[VAR_B].accent >> i) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;
 	}
+	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 	
-	//for (int inst = BD; inst <= MA; inst++) {
+	
+	//for (int inst = BD; inst <= MA; inst++) { //this is all me being two clever by half, or a tenth even.
 		//
 		//if (sequencer.pattern[sequencer.variation].step_led_mask[inst] != 0) { //check if inst has steps programmed
 			////if there are steps, clear the mask for both variation A and B
@@ -167,7 +169,7 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	//}
 	
 	
-}	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
+}	
 
 void refresh_step_leds(void) {
 	

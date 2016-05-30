@@ -36,7 +36,16 @@ struct pattern { //current pattern is loaded into ram from eeprom. changing patt
 	
 };
 
-
+struct flag {
+	
+	uint8_t next_step:1;
+	uint8_t half_step:1;
+	uint8_t variation_change:1;
+	uint8_t trig_finished:1;
+	
+	
+	
+	};
 
 struct sequencer {
 	
@@ -47,14 +56,10 @@ struct sequencer {
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t variation:1; //variation A or variation B
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
-	uint8_t var_change:1; //flag to indicate variation has changed - reset at end of measure
 	uint8_t step_num_first:4; //number of steps for first part
 	uint8_t step_num_second:4; //number of steps for second part
 	uint8_t step_num_new:4; //holder to change step number at end of measure
 	uint8_t current_step:5; //max 32 steps
-	uint8_t next_step_flag:1;
-	uint8_t half_step_flag:1;
-	uint8_t trigger_finished:1;
 	uint8_t part_num:1; //0 or 1 first part or second part - will toggle
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
@@ -66,6 +71,7 @@ struct sequencer {
 		
 
 extern struct sequencer sequencer;
+extern struct flag flag;
 
 void update_tempo(void);
 void process_step(void);

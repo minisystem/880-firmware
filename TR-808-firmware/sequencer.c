@@ -17,6 +17,7 @@
 #include "spi.h"
 
 struct sequencer sequencer;
+struct flag flag;
 
 void update_tempo(void) {
 	static uint16_t new_tempo_adc = 0;
@@ -59,9 +60,9 @@ void process_step(void) {
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
 			if (sequencer.mode == PATTERN_FIRST) {	
-				if (sequencer.next_step_flag) {
-					sequencer.next_step_flag = 0;
-					while(sequencer.trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+				if (flag.next_step) {
+					flag.next_step = 0;
+					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
 					spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 					spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
@@ -76,7 +77,7 @@ void process_step(void) {
 					}
 					TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 					TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-					sequencer.trigger_finished = 0;
+					flag.trig_finished = 0;
 				
 					} else {
 				
@@ -87,9 +88,9 @@ void process_step(void) {
 				
 			}
 				
-		} else if (sequencer.next_step_flag){
+		} else if (flag.next_step){
 			
-			sequencer.next_step_flag = 0;
+			flag.next_step = 0;
 			//spi_data[1] = 0;
 			//spi_data[0] = 0;
 			//turn_on(STEP_1_LED);

@@ -31,7 +31,7 @@ ISR (TIMER0_COMPA_vect) {
 	////toggle(drum_hit[current_drum_hit].led_index);
 	////toggle(ACCENT_1_LED);
 	//update_spi(); //should set flag here and update SPI from main loop. SPI should take about 10 microseconds
-	sequencer.trigger_finished = 1;
+	flag.trig_finished = 1;
 	
 }
 
@@ -39,7 +39,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
-		sequencer.next_step_flag = 1;
+		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
 		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second)) { //end of measure - bah. determining end of measure is dependent on mode - editing first part vs second part plus what happens in rhythm mode?
@@ -49,8 +49,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			uint8_t old_step_num = sequencer.step_num_first;
 			sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part
 			if (old_step_num != sequencer.step_num_first) update_step_led_mask();
-			if (sequencer.var_change == 1) {
-				sequencer.var_change = 0;
+			if (flag.variation_change == 1) {
+				flag.variation_change = 0;
 				switch (sequencer.variation_mode) {
 				
 				case VAR_A: case VAR_AB:
@@ -87,7 +87,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
 					break;					
 				case VAR_B:
-					if (sequencer.var_change == 1) {
+					if (flag.variation_change == 1) {
 						
 						sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
 						
@@ -106,7 +106,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			
 			if (internal_clock.beat_counter <2) {
 				
-				if (sequencer.var_change == 1) {
+				if (flag.variation_change == 1) {
 					
 					switch (sequencer.variation_mode) {
 						
@@ -114,7 +114,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 							break;
 						case VAR_B:
-							if (sequencer.var_change == 1) {
+							if (flag.variation_change == 1) {
 								sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 							} else {
 								sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;	

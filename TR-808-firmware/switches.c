@@ -84,9 +84,9 @@ void check_start_stop_tap(void) {
 	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
 		
 		sequencer.current_step = 0;
-		sequencer.next_step_flag = 1;
+		flag.next_step = 1;
 		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
-		sequencer.var_change = 0;
+		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
 			
 			sequencer.variation = VAR_A; //start on variation A
@@ -171,7 +171,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
 		if (sequencer.START) {
 			
-			 sequencer.var_change = 1; //set change flag to be handled when new measure starts
+			 flag.variation_change = 1; //set change flag to be handled when new measure starts
 		} else { //otherwise change immediately
 			
 			if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
