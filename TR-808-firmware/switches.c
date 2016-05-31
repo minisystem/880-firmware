@@ -205,11 +205,11 @@ void check_clear_switch(void) {
 				sequencer.pattern[sequencer.variation].accent = 0;				
 				break;
 				
-			case PATTERN_FIRST:
+			case FIRST_PART:
 			
 				break;	
 			
-			case PATTERN_SECOND:
+			case SECOND_PART:
 			
 				break;
 				

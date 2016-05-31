@@ -98,7 +98,7 @@ void trigger_step(void) { //trigger all drums on current step
 	}
 }
 
-void live_hits(void) {
+void live_hits(void) { //use switch case here you twit
 	
 	if (button[INST_BD_2_SW].state) {
 		

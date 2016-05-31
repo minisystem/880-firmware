@@ -132,7 +132,7 @@ int main(void)
 	
 	
 	turn_on(STEP_1_LED);
-	turn_on(MODE_2_PATTERN_FIRST_PART);
+	turn_on(MODE_2_FIRST_PART_PART);
 	turn_on(FILL_MANUAL);
 	
 	update_spi();
@@ -172,8 +172,8 @@ int main(void)
 	sequencer.step_num_new = 15;
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
-	sequencer.mode = PATTERN_FIRST;
-	sequencer.part_num = FIRST_PART;
+	sequencer.mode = FIRST_PART;
+	sequencer.part_num = FIRST;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
 	sei(); //enable global interrupts	

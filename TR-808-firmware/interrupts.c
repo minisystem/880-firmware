@@ -42,7 +42,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second)) { 
+		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second)) {  //TODO: handle switching between parts here. step_led_mask will need to be reconstructed when switching between parts.
+			//maybe worth having 32 bit step_led mask? Extra 68 bytes, but more bitshifting. 
 			flag.new_measure = 1;
 			sequencer.current_step = 0;
 			//update step number
@@ -75,6 +76,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		flag.half_step = 1;
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) { 	
+			
 			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 

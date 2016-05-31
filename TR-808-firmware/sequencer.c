@@ -59,13 +59,13 @@ void process_step(void) {
 	
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
-			if (sequencer.mode == PATTERN_FIRST) {	
+			if (sequencer.mode == FIRST_PART) {	
 				if (flag.next_step) {
 					flag.next_step = 0;
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
 					
-					if (sequencer.part_num == FIRST_PART) { //only blink step LEDs if playing first part
+					if (sequencer.part_num == FIRST) { //only blink step LEDs if playing first part
 						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));			
 						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
@@ -83,7 +83,7 @@ void process_step(void) {
 					} else {
 				
 				}
-			} else if (sequencer.mode == PATTERN_SECOND) {
+			} else if (sequencer.mode == SECOND_PART) {
 				
 				//handle patterns >16 steps here
 				
@@ -105,8 +105,9 @@ void update_step_board() {
 		
 			switch (sequencer.mode) {		
 			
-			case PATTERN_FIRST:
-			
+			case FIRST_PART: case SECOND_PART: //C grammar prevents label (SECOND_PART:) from preceding a declaration, so add a blank statement (;)
+				//;//<- I am a blank statement
+				
 				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
 					
 					for (int i = 0; i < 16; i++) {
@@ -115,43 +116,53 @@ void update_step_board() {
 								
 								button[i].state ^= button[i].state;
 								sequencer.step_num_new = i;
-								//if (sequencer.current_step > sequencer.step_num_first)
 								break;// - should we break out of here? multiple presses will mess things up, right?
 							}
 						
 					}
 					
-					break;
+					break; //break or return? or is it needed?
 				}
+				
+				uint8_t step_num;
+				uint8_t offset;
+				
+				if (sequencer.mode == FIRST_PART) {
+					
+					step_num = sequencer.step_num_first;
+					offset = 0;
+				} else {
+					
+					step_num = sequencer.step_num_second;
+					offset = 16; //offset for steps 16-31
+					
+				}
+				
 				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 			
-					for (int i = 0; i <= sequencer.step_num_first; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of PATTERN_SECOND
+					for (int i = 0; i <= step_num; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
 				
 						if (button[i].state) {
 					
 							toggle(i);
 							button[i].state ^= button[i].state;
-							sequencer.pattern[sequencer.variation].accent ^= 1<<i; //just toggle first bit
+							sequencer.pattern[sequencer.variation].accent ^= 1<<(i + offset); //offset accesses steps 16-32 of second part
 							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 						}
 					}
 					return;
 				}
-				for (int i = 0; i <= sequencer.step_num_first; i++) { //button and led indices match for 0-15. How convenient.
+				for (int i = 0; i <= step_num; i++) { //button and led indices match for 0-15. How convenient.
 			
 					if (button[i].state) {
 				
 						toggle(i);
 						button[i].state ^= button[i].state;
-						sequencer.pattern[sequencer.variation].part[i] ^= 1<<sequencer.current_inst; //just work with first part of pattern and only 16 steps for now
+						sequencer.pattern[sequencer.variation].part[i + offset] ^= 1<<sequencer.current_inst; //offset accesses steps 16-32 of second part
 						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 					}
 				}
-				break;
-			
-			case PATTERN_SECOND:
-			
-				break;
+				break;			
 				
 			case MANUAL_PLAY:
 			

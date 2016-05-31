@@ -22,8 +22,8 @@ enum variation_mode {
 	
 	};
 
-#define FIRST_PART 0
-#define SECOND_PART 1
+#define FIRST 0
+#define SECOND 1
 
 struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
