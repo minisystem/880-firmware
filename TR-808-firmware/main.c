@@ -40,6 +40,7 @@ void refresh(void) {
 	update_mode();
 	check_clear_switch();
 	check_variation_switches();
+	//update_variation();
 	check_inst_switches();	
 	update_step_board();
 	//update_step_led_mask();
@@ -172,6 +173,7 @@ int main(void)
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = PATTERN_FIRST;
+	sequencer.part_num = FIRST_PART;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
 	sei(); //enable global interrupts	

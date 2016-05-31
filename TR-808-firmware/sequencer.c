@@ -39,21 +39,21 @@ void update_tempo(void) {
 	
 }
 
-uint8_t step_mask(void) {
-	
-	uint8_t step_mask = 255;
-		
-	if (sequencer.step_num_first < 8) {
-		
-		step_mask = step_mask >> (7-sequencer.step_num_first);
-
-	} else if (sequencer.step_num_first < 16) {
-		
-		
-	}
-	
-	return step_mask;
-}
+//uint8_t step_mask(void) {
+	//
+	//uint8_t step_mask = 255;
+		//
+	//if (sequencer.step_num_first < 8) {
+		//
+		//step_mask = step_mask >> (7-sequencer.step_num_first);
+//
+	//} else if (sequencer.step_num_first < 16) {
+		//
+		//
+	//}
+	//
+	//return step_mask;
+//}
 
 void process_step(void) {
 	
@@ -64,12 +64,13 @@ void process_step(void) {
 					flag.next_step = 0;
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
-					spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-					spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-					//if (sequencer.step_num_first < 8) spi_data[1] &= 255 >> (7-sequencer.step_num_first);//mask instrument LEDs above step number
-					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-					spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-					//spi_data[0] &= (0xFF << (15 - sequencer.step_num_first)) >> 8;
+					
+					if (sequencer.part_num == FIRST_PART) { //only blink step LEDs if playing first part
+						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));			
+						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+					}
 					trigger_step();
 					if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
 						spi_data[8] |= 1<<ACCENT;
@@ -173,4 +174,39 @@ void update_step_board() {
 		//handle what here? changing selected pattern or rhythm? 
 		
 	}
+}
+
+void update_variation(void) { //not currently used 
+	
+	if (flag.new_measure) {
+		
+		if (flag.variation_change == 1) {
+			flag.variation_change = 0;
+			switch (sequencer.variation_mode) {
+							
+				case VAR_A: case VAR_AB:
+				sequencer.variation = VAR_A;
+				break;
+				case VAR_B:
+				sequencer.variation = VAR_B;
+				break;
+							
+							
+			}
+						
+			} else if (sequencer.variation_mode == VAR_AB) {
+						
+			sequencer.variation ^= 1<<0; //toggle state
+		}
+		
+	}
+	
+	
+		if (flag.half_step) {
+			
+			
+			
+			
+		}
+	
 }

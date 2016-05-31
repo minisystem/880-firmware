@@ -21,16 +21,15 @@ enum variation_mode {
 	
 	
 	};
-//#define VAR_A	0 //maybe make this enum?
-//#define VAR_B	1
-//#define VAR_AB	2
+
+#define FIRST_PART 0
+#define SECOND_PART 1
 
 struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
 	uint16_t part[32]; 
 	uint32_t accent; //32 steps of accent data
 	uint16_t step_led_mask[17];
-	//uint8_t step_num:4; //1-16 (0-15)
 	uint8_t pre_scale:2; //1-4 (0-3) //IS THIS GLOBAL OR IS IT PATTERN SPECIFIC?
 	
 	
@@ -42,6 +41,8 @@ struct flag {
 	uint8_t half_step:1;
 	uint8_t variation_change:1;
 	uint8_t trig_finished:1;
+	uint8_t step_num_change:1;
+	uint8_t new_measure:1;
 	
 	
 	
@@ -76,6 +77,8 @@ extern struct flag flag;
 void update_tempo(void);
 void process_step(void);
 void update_step_board(void);
-uint8_t step_mask(void);
+//uint8_t step_mask(void);
+
+void update_variation(void);
 
 #endif 
