@@ -59,17 +59,23 @@ void process_step(void) {
 	
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
-			if (sequencer.mode == FIRST_PART) {	
+			//if (sequencer.part_num == FIRST || sequencer.part_num == SECOND) {	
 				if (flag.next_step) {
 					flag.next_step = 0;
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
 					
-					if (sequencer.part_num == FIRST) { //only blink step LEDs if playing first part
+					if (sequencer.mode == FIRST_PART && sequencer.part_num == FIRST) { //only blink step LEDs if in current parts mode (ie. part_num == FIRST && mode == FIRST_PART
 						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));			
 						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
 						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+					} else if (sequencer.mode == SECOND_PART && sequencer.part_num == SECOND) {
+						spi_data[1] = (1 << (sequencer.current_step - sequencer.step_num_second)) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<(sequencer.current_step - sequencer.step_num_second)));
+						spi_data[0] = ((1 << (sequencer.current_step - sequencer.step_num_second)) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<(sequencer.current_step - sequencer.step_num_second)) >>8));
+						
 					}
 					trigger_step();
 					if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
@@ -83,11 +89,12 @@ void process_step(void) {
 					} else {
 				
 				}
-			} else if (sequencer.mode == SECOND_PART) {
+			//} else {//if (sequencer.part_num == SECOND) {
 				
-				//handle patterns >16 steps here
+				//handle patterns >16 steps here, or maybe not?
+
 				
-			}
+			//}
 				
 		} else if (flag.next_step){
 			
@@ -105,8 +112,7 @@ void update_step_board() {
 		
 			switch (sequencer.mode) {		
 			
-			case FIRST_PART: case SECOND_PART: //C grammar prevents label (SECOND_PART:) from preceding a declaration, so add a blank statement (;)
-				//;//<- I am a blank statement
+			case FIRST_PART: case SECOND_PART:
 				
 				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
 					
@@ -124,14 +130,14 @@ void update_step_board() {
 					break; //break or return? or is it needed?
 				}
 				
-				uint8_t step_num;
-				uint8_t offset;
+				uint8_t step_num = 0;
+				uint8_t offset = 0;
 				
 				if (sequencer.mode == FIRST_PART) {
 					
 					step_num = sequencer.step_num_first;
 					offset = 0;
-				} else {
+				} else if (sequencer.mode == SECOND_PART) {
 					
 					step_num = sequencer.step_num_second;
 					offset = 16; //offset for steps 16-31
@@ -146,7 +152,7 @@ void update_step_board() {
 					
 							toggle(i);
 							button[i].state ^= button[i].state;
-							sequencer.pattern[sequencer.variation].accent ^= 1<<(i + offset); //offset accesses steps 16-32 of second part
+							sequencer.pattern[sequencer.variation].accent ^= 1<<(i + offset); 
 							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 						}
 					}
@@ -155,15 +161,15 @@ void update_step_board() {
 				for (int i = 0; i <= step_num; i++) { //button and led indices match for 0-15. How convenient.
 			
 					if (button[i].state) {
-				
+						//toggle(SECOND_PART_LED);
 						toggle(i);
 						button[i].state ^= button[i].state;
-						sequencer.pattern[sequencer.variation].part[i + offset] ^= 1<<sequencer.current_inst; //offset accesses steps 16-32 of second part
+						sequencer.pattern[sequencer.variation].part[i + offset] ^= 1<<sequencer.current_inst;
 						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 					}
 				}
-				break;			
-				
+				break;
+			
 			case MANUAL_PLAY:
 			
 				break;

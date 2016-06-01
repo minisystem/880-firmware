@@ -169,6 +169,7 @@ int main(void)
 	
 	//set up default start up state. Eventually this should be recalled from EEPROM
 	sequencer.step_num_first = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
+	sequencer.step_num_second = 15;
 	sequencer.step_num_new = 15;
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
