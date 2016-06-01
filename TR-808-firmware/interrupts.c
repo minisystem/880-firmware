@@ -42,7 +42,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second +1)) { //+1 because of problem with length of second part
+		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second +1)) { //+1 because 15+15 = 30. BUT 0-15 + 0-15 = 32 steps so need to go from 0-31. brainfudge.
 			//maybe worth having 32 bit step_led mask? Extra 68 bytes, but more bitshifting. 
 			flag.new_measure = 1;
 			sequencer.current_step = 0;
@@ -54,6 +54,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			//uint8_t old_step_num = sequencer.step_num_first;
 			sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part, maybe just by addition?
 			//if (old_step_num != sequencer.step_num_first) update_step_led_mask();
+			
+			//handle variation
 			if (flag.variation_change == 1) {
 				flag.variation_change = 0;
 				switch (sequencer.variation_mode) {
@@ -74,13 +76,30 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}
 			//sequencer.current_measure++;
 		} else if ((sequencer.current_step == sequencer.step_num_first +1) && sequencer.START) {
-			sequencer.step_num_second = sequencer.step_num_new; //this just makes each part the same number of steps - need to change it so second part can have independent number of steps
+			//sequencer.step_num_second = sequencer.step_num_new; //this just makes each part the same number of steps - need to change it so second part can have independent number of steps
 			turn_off(FIRST_PART_LED);
 			turn_on(SECOND_PART_LED);
 			sequencer.part_num = SECOND;
 			update_step_led_mask();
 			
 		}
+		
+		//if (sequencer.START) {
+			//
+			//if (sequencer.current_step == sequencer.step_num_first +1) {
+				//
+				//turn_on(SECOND_PART_LED); turn_off(FIRST_PART_LED);
+				//sequencer.part_num = SECOND;
+				//update_step_led_mask();
+			//} else if (sequencer.current_step == 0) {
+				////turn_on(FIRST_PART_LED); turn_off(SECOND_);
+				//sequencer.part_num = FIRST;
+				//update_step_led_mask();
+				//
+			//}
+			
+			
+		//}
 		
 		
 	} //should make the else if so second condition doesn't need to be tested

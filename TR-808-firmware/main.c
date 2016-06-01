@@ -46,7 +46,7 @@ void refresh(void) {
 	//update_step_led_mask();
 	process_step();
 	
-	if (flag.trig_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be useful for MIDI sequencing
+	if (flag.trig_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be needed for MIDI sequencing
 		
 		//flag.trig_finished = 0;
 		//clear_all_trigs();
