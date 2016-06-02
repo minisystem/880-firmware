@@ -123,19 +123,18 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	
 	memset(sequencer.pattern[VAR_A].step_led_mask, 0, sizeof(sequencer.pattern[VAR_A].step_led_mask));
 	memset(sequencer.pattern[VAR_B].step_led_mask, 0, sizeof(sequencer.pattern[VAR_B].step_led_mask));
-	uint8_t step_num = sequencer.mode == FIRST_PART? sequencer.step_num_first : sequencer.step_num_second;
-	uint8_t offset = sequencer.mode == FIRST_PART? 0 : 16;
-	for (int i = 0; i <= step_num; i++) {
+
+	for (int i = 0; i <= sequencer.step_num[sequencer.part_playing]; i++) {
 		
 		for (int inst = BD; inst <= MA; inst++) {
 			//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= ((sequencer.pattern[sequencer.variation].part[i]) & (1<<sequencer.current_inst)); //this doesn't work. not sure why not???
-			if ((sequencer.pattern[VAR_A].part[i+offset] >> inst) & 1) sequencer.pattern[VAR_A].step_led_mask[inst] |= 1<<i;
-			if ((sequencer.pattern[VAR_B].part[i+offset] >> inst) & 1) sequencer.pattern[VAR_B].step_led_mask[inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.pattern[VAR_A].step_led_mask[inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.pattern[VAR_B].step_led_mask[inst] |= 1<<i;
 		}
 		
 		//also need to rebuild accent led_mask here:
-		if ((sequencer.pattern[VAR_A].accent >> (i+offset)) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
-		if ((sequencer.pattern[VAR_B].accent >> (i+offset)) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_A].accent >> i) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_B].accent >> i) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;
 	}
 	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 	

@@ -42,46 +42,47 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == (sequencer.step_num_first + sequencer.step_num_second +1)) { //+1 because 15+15 = 30. BUT 0-15 + 0-15 = 32 steps so need to go from 0-31. brainfudge.
-			//maybe worth having 32 bit step_led mask? Extra 68 bytes, but more bitshifting. 
+		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) { //need excep
 			flag.new_measure = 1;
 			sequencer.current_step = 0;
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-			sequencer.part_num = FIRST;
-			update_step_led_mask();
+			if (sequencer.step_num[SECOND] != 0) { //no toggling if second part has 0 steps - annoying exception
+				if (sequencer.part_playing == SECOND) {
+					turn_off(SECOND_PART_LED);
+					turn_on(FIRST_PART_LED);
+				} else {
+					turn_off(FIRST_PART_LED);
+					turn_on(SECOND_PART_LED);
+				}
+				sequencer.part_playing ^= 1 << 0;
+			}
 			//update step number
 			//uint8_t old_step_num = sequencer.step_num_first;
-			sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part, maybe just by addition?
+			//sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part, maybe just by addition?
 			//if (old_step_num != sequencer.step_num_first) update_step_led_mask();
-			
+			update_step_led_mask(); //only need to update if second part is >0 OR if there's a step num change for either part
 			//handle variation
-			if (flag.variation_change == 1) {
-				flag.variation_change = 0;
-				switch (sequencer.variation_mode) {
-				
-				case VAR_A: case VAR_AB:
-					sequencer.variation = VAR_A;
-					break;
-				case VAR_B:
-					sequencer.variation = VAR_B;
-					break;	
-				
-					
-				}
-				
-			} else if (sequencer.variation_mode == VAR_AB) {
-					
-				sequencer.variation ^= 1<<0; //toggle state
-			}
-			//sequencer.current_measure++;
-		} else if ((sequencer.current_step == sequencer.step_num_first +1) && sequencer.START) {
-			//sequencer.step_num_second = sequencer.step_num_new; //this just makes each part the same number of steps - need to change it so second part can have independent number of steps
-			turn_off(FIRST_PART_LED);
-			turn_on(SECOND_PART_LED);
-			sequencer.part_num = SECOND;
-			update_step_led_mask();
 			
+			//if (sequencer.part_playing == SECOND) {
+				if (flag.variation_change == 1) {
+					flag.variation_change = 0;
+					switch (sequencer.variation_mode) {
+				
+					case VAR_A: case VAR_AB:
+						sequencer.variation = VAR_A;
+						break;
+					case VAR_B:
+						sequencer.variation = VAR_B;
+						break;	
+				
+					
+					}
+				
+				} else if (sequencer.variation_mode == VAR_AB) {
+					
+					sequencer.variation ^= 1<<0; //toggle state
+				}
+			//}
+			//sequencer.current_measure++;
 		}
 		
 		//if (sequencer.START) {
@@ -89,11 +90,11 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			//if (sequencer.current_step == sequencer.step_num_first +1) {
 				//
 				//turn_on(SECOND_PART_LED); turn_off(FIRST_PART_LED);
-				//sequencer.part_num = SECOND;
+				//sequencer.part_playing = SECOND;
 				//update_step_led_mask();
 			//} else if (sequencer.current_step == 0) {
 				////turn_on(FIRST_PART_LED); turn_off(SECOND_);
-				//sequencer.part_num = FIRST;
+				//sequencer.part_playing = FIRST;
 				//update_step_led_mask();
 				//
 			//}
@@ -112,7 +113,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		if (sequencer.START) { 	
 			
 			//if/else here is temporary hack while trying to sort out 2nd part behaviour. step_led_mask will be updated depending on which part is selected by mode selector
-			//if ((sequencer.mode == SECOND_PART && sequencer.part_num == SECOND) || (sequencer.mode == FIRST_PART && sequencer.part_num == FIRST)) {
+			//if ((sequencer.mode == SECOND_PART && sequencer.part_playing == SECOND) || (sequencer.mode == FIRST_PART && sequencer.part_playing == FIRST)) {
 				spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 				spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 			//} else {

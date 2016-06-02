@@ -59,26 +59,31 @@ void process_step(void) {
 	
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
-			//if (sequencer.part_num == FIRST || sequencer.part_num == SECOND) {	
+			//if (sequencer.part_playing == FIRST || sequencer.part_playing == SECOND) {	
 				if (flag.next_step) {
 					flag.next_step = 0;
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
 					
-					if (sequencer.mode == FIRST_PART && sequencer.part_num == FIRST) { //only blink step LEDs if in current parts mode (ie. part_num == FIRST && mode == FIRST_PART
+					//if (sequencer.mode == FIRST_PART && sequencer.part_playing == FIRST) { //only blink step LEDs if in current parts mode (ie. part_playing == FIRST && mode == FIRST_PART
+					if (sequencer.part_editing == sequencer.part_playing) {	
 						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
 						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
 						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-					} else if (sequencer.mode == SECOND_PART && sequencer.part_num == SECOND) {
-						spi_data[1] = (1 << (sequencer.current_step - sequencer.step_num_first -1)) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<(sequencer.current_step - sequencer.step_num_first-1)));
-						spi_data[0] = ((1 << (sequencer.current_step - sequencer.step_num_first-1)) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<(sequencer.current_step - sequencer.step_num_first-1)) >>8));
-						//
+					} else {
+						
+						
 					}
+					//} else if (sequencer.mode == SECOND_PART && sequencer.part_playing == SECOND) {
+						//spi_data[1] = (1 << (sequencer.current_step - sequencer.step_num_first -1)) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+						//spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<(sequencer.current_step - sequencer.step_num_first-1)));
+						//spi_data[0] = ((1 << (sequencer.current_step - sequencer.step_num_first-1)) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+						//spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<(sequencer.current_step - sequencer.step_num_first-1)) >>8));
+						////
+					//}
 					
-					//if (sequencer.part_num == FIRST) {
+					//if (sequencer.part_playing == FIRST) {
 						//spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 						//spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
 						//spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
@@ -105,7 +110,7 @@ void process_step(void) {
 					} else {
 				
 				}
-			//} else {//if (sequencer.part_num == SECOND) {
+			//} else {//if (sequencer.part_playing == SECOND) {
 				
 				//handle patterns >16 steps here, or maybe not?
 
@@ -146,41 +151,41 @@ void update_step_board() {
 					break; //break or return? or is it needed?
 				}
 				
-				uint8_t step_num = 0;
-				uint8_t offset = 0;
+				//uint8_t step_num = 0;
+				//uint8_t offset = 0;
 				
-				if (sequencer.mode == FIRST_PART) {
-					
-					step_num = sequencer.step_num_first;
-					offset = 0;
-				} else if (sequencer.mode == SECOND_PART) {
-					
-					step_num = sequencer.step_num_second;
-					offset = 16; //offset for steps 16-31
-					
-				}
+				//if (sequencer.mode == FIRST_PART) {
+					//
+					//step_num = sequencer.step_num_first;
+					//offset = 0;
+				//} else if (sequencer.mode == SECOND_PART) {
+					//
+					//step_num = sequencer.step_num_second;
+					//offset = 16; //offset for steps 16-31
+					//
+				//}
 				
 				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 			
-					for (int i = 0; i <= step_num; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
+					for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
 				
 						if (button[i].state) {
 					
 							toggle(i);
 							button[i].state ^= button[i].state;
-							sequencer.pattern[sequencer.variation].accent ^= 1<<(i + offset); 
+							sequencer.pattern[sequencer.variation].accent ^= 1<<i; 
 							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 						}
 					}
 					return;
 				}
-				for (int i = 0; i <= step_num; i++) { //button and led indices match for 0-15. How convenient.
+				for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //button and led indices match for 0-15. How convenient.
 			
 					if (button[i].state) {
 						//toggle(SECOND_PART_LED);
 						toggle(i);
 						button[i].state ^= button[i].state;
-						sequencer.pattern[sequencer.variation].part[i + offset] ^= 1<<sequencer.current_inst;
+						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] ^= 1<<sequencer.current_inst;
 						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
 					}
 				}

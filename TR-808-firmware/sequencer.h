@@ -25,9 +25,12 @@ enum variation_mode {
 #define FIRST 0
 #define SECOND 1
 
-struct pattern { //current pattern is loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
+#define NUM_PARTS 2
+#define NUM_STEPS 16
+
+struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
-	uint16_t part[32]; 
+	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
 	uint32_t accent; //32 steps of accent data
 	uint16_t step_led_mask[17];
 	uint8_t pre_scale:2; //1-4 (0-3) //IS THIS GLOBAL OR IS IT PATTERN SPECIFIC?
@@ -48,6 +51,8 @@ struct flag {
 	
 	};
 
+//typedef STEP_NUM_BITS uint8_t:
+
 struct sequencer {
 	
 	enum global_mode mode;
@@ -57,11 +62,14 @@ struct sequencer {
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t variation:1; //variation A or variation B
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
-	uint8_t step_num_first:4; //number of steps for first part
-	uint8_t step_num_second:4; //number of steps for second part
+	
+	uint8_t step_num[NUM_PARTS];
+	//uint8_t step_num_first:4; //number of steps for first part
+	//uint8_t step_num_second:4; //number of steps for second part
 	uint8_t step_num_new:4; //holder to change step number at end of measure
-	uint8_t current_step:5; //max 32 steps
-	uint8_t part_num:1; //0 or 1 first part or second part - will toggle
+	uint8_t current_step:4; //max 16 steps per part
+	uint8_t part_playing:1; //0 or 1 first part or second part - will toggle
+	uint8_t part_editing:1;
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct

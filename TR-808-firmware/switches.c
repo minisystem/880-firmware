@@ -167,7 +167,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 	
 	if (button[BASIC_VAR_A_SW].state) {
 		
-		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle 
+		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle  - this is not toggling. need to ^= 1<<0 to toggle a single bit state. hmmm.
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
 		if (sequencer.START) {
 			

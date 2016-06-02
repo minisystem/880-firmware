@@ -38,6 +38,7 @@ void update_mode(void) {
 		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
 		spi_data[4] = (1<< mode_index) | data_mask; 
 		
+		sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
 		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
