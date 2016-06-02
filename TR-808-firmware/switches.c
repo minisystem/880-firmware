@@ -86,6 +86,7 @@ void check_start_stop_tap(void) {
 		sequencer.current_step = 0;
 		flag.next_step = 1;
 		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
+		
 		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
 			
@@ -98,6 +99,12 @@ void check_start_stop_tap(void) {
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
 		
+		if (sequencer.part_playing == SECOND) { //reset part playing
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on (FIRST_PART_LED);	
+			
+		}
 		turn_off_all_inst_leds();
 		turn_on(drum_hit[sequencer.current_inst].led_index);
 		
@@ -202,7 +209,9 @@ void check_clear_switch(void) {
 				toggle(MODE_1_PATTERN_CLEAR);			
 				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
 				memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));			
-				sequencer.pattern[sequencer.variation].accent = 0;				
+				sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
+				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
+				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps		
 				break;
 				
 			case FIRST_PART:

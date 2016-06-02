@@ -27,11 +27,12 @@ enum variation_mode {
 
 #define NUM_PARTS 2
 #define NUM_STEPS 16
+#define NO_STEPS 16 //null state of part 2 step number
 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	
 	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
-	uint32_t accent; //32 steps of accent data
+	uint16_t accent[NUM_PARTS]; // 2 parts of 16 steps of accent data, 2 parts
 	uint16_t step_led_mask[17];
 	uint8_t pre_scale:2; //1-4 (0-3) //IS THIS GLOBAL OR IS IT PATTERN SPECIFIC?
 	
@@ -66,7 +67,7 @@ struct sequencer {
 	uint8_t step_num[NUM_PARTS];
 	//uint8_t step_num_first:4; //number of steps for first part
 	//uint8_t step_num_second:4; //number of steps for second part
-	uint8_t step_num_new:4; //holder to change step number at end of measure
+	uint8_t step_num_new:5; //holder to change step number at end of measure - extra bit to hold NO_STEPS exception. harrumph.
 	uint8_t current_step:4; //max 16 steps per part
 	uint8_t part_playing:1; //0 or 1 first part or second part - will toggle
 	uint8_t part_editing:1;

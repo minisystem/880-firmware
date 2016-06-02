@@ -65,8 +65,8 @@ void process_step(void) {
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
 					PORTD |= (1<<TRIG);
 					
-					//if (sequencer.mode == FIRST_PART && sequencer.part_playing == FIRST) { //only blink step LEDs if in current parts mode (ie. part_playing == FIRST && mode == FIRST_PART
-					if (sequencer.part_editing == sequencer.part_playing) {	
+					
+					if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
 						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
 						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
 						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
@@ -75,31 +75,9 @@ void process_step(void) {
 						
 						
 					}
-					//} else if (sequencer.mode == SECOND_PART && sequencer.part_playing == SECOND) {
-						//spi_data[1] = (1 << (sequencer.current_step - sequencer.step_num_first -1)) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-						//spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<(sequencer.current_step - sequencer.step_num_first-1)));
-						//spi_data[0] = ((1 << (sequencer.current_step - sequencer.step_num_first-1)) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-						//spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<(sequencer.current_step - sequencer.step_num_first-1)) >>8));
-						////
-					//}
-					
-					//if (sequencer.part_playing == FIRST) {
-						//spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-						//spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-						//spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-						//spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-						//
-					//} else {
-						//spi_data[1] = (1 << (sequencer.current_step - sequencer.step_num_first -1)) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-						//spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<(sequencer.current_step - sequencer.step_num_first-1)));
-						//spi_data[0] = ((1 << (sequencer.current_step - sequencer.step_num_first-1)) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-						//spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<(sequencer.current_step - sequencer.step_num_first-1)) >>8));						
-						//
-					//}
-					
 
 					trigger_step();
-					if ((sequencer.pattern[sequencer.variation].accent >> sequencer.current_step) &1) {
+					if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
 						spi_data[8] |= 1<<ACCENT;
 						turn_on(ACCENT_1_LED);
 					}
@@ -137,7 +115,7 @@ void update_step_board() {
 				
 				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
 					
-					for (int i = 0; i < 16; i++) {
+					for (int i = 0; i < NUM_STEPS; i++) {
 						
 							if (button[i].state) {
 								
@@ -167,26 +145,32 @@ void update_step_board() {
 				
 				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 			
-					for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
+					for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
 				
 						if (button[i].state) {
 					
-							toggle(i);
+							
 							button[i].state ^= button[i].state;
-							sequencer.pattern[sequencer.variation].accent ^= 1<<i; 
-							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+							if (i <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
+								toggle(i);
+								sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<i; 
+								sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+							}
 						}
 					}
 					return;
 				}
-				for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //button and led indices match for 0-15. How convenient.
+				for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient.
 			
 					if (button[i].state) {
-						//toggle(SECOND_PART_LED);
-						toggle(i);
+						
+						
 						button[i].state ^= button[i].state;
-						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] ^= 1<<sequencer.current_inst;
-						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+						if (i <= sequencer.step_num[sequencer.part_editing]) {
+							toggle(i);
+							sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] ^= 1<<sequencer.current_inst;
+							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+						}
 					}
 				}
 				break;

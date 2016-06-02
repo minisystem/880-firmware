@@ -42,10 +42,11 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) { //need excep
+		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) { 
 			flag.new_measure = 1;
 			sequencer.current_step = 0;
-			if (sequencer.step_num[SECOND] != 0) { //no toggling if second part has 0 steps - annoying exception
+			if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying 
+				
 				if (sequencer.part_playing == SECOND) {
 					turn_off(SECOND_PART_LED);
 					turn_on(FIRST_PART_LED);
@@ -56,31 +57,31 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				sequencer.part_playing ^= 1 << 0;
 			}
 			//update step number
-			//uint8_t old_step_num = sequencer.step_num_first;
-			//sequencer.step_num_first = sequencer.step_num_new; //temp test, will need to accommodate first and second part, maybe just by addition?
+			//uint8_t old_step_num = sequencer.step_num[sequencer.part_editing];
+			 //temp test, will need to accommodate first and second part, maybe just by addition?
 			//if (old_step_num != sequencer.step_num_first) update_step_led_mask();
-			update_step_led_mask(); //only need to update if second part is >0 OR if there's a step num change for either part
-			//handle variation
+			sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+			update_step_led_mask();
 			
-			//if (sequencer.part_playing == SECOND) {
-				if (flag.variation_change == 1) {
-					flag.variation_change = 0;
-					switch (sequencer.variation_mode) {
+			//handle variation
+			if (flag.variation_change == 1) {
+				flag.variation_change = 0;
+				switch (sequencer.variation_mode) {
 				
-					case VAR_A: case VAR_AB:
-						sequencer.variation = VAR_A;
-						break;
-					case VAR_B:
-						sequencer.variation = VAR_B;
-						break;	
+				case VAR_A: case VAR_AB:
+					sequencer.variation = VAR_A;
+					break;
+				case VAR_B:
+					sequencer.variation = VAR_B;
+					break;	
 				
 					
-					}
-				
-				} else if (sequencer.variation_mode == VAR_AB) {
-					
-					sequencer.variation ^= 1<<0; //toggle state
 				}
+				
+			} else if (sequencer.variation_mode == VAR_AB) {
+					
+				sequencer.variation ^= 1<<0; //toggle state
+			}
 			//}
 			//sequencer.current_measure++;
 		}
