@@ -73,7 +73,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				
 			}
 			
-			//handle variation
+
 
 			//}
 			//sequencer.current_measure++;

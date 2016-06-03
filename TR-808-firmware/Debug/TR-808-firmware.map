@@ -71,8 +71,6 @@ Discarded input sections
  .bss           0x00000000        0x0 sequencer.o
  .text.update_variation
                 0x00000000       0x52 sequencer.o
- .text.check_tap
-                0x00000000        0x2 sequencer.o
  .text          0x00000000        0x0 spi.o
  .data          0x00000000        0x0 spi.o
  .bss           0x00000000        0x0 spi.o
@@ -427,7 +425,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x1dc4
+.text           0x00000000     0x1f04
  *(.vectors)
  .vectors       0x00000000       0xb4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.0.98/gcc/dev/atmega328pb/avr5/crtatmega328pb.o
                 0x00000000                __vector_default
@@ -600,113 +598,116 @@ END GROUP
  .text.update_tempo
                 0x00000d80       0x5c sequencer.o
                 0x00000d80                update_tempo
- .text.process_step
-                0x00000ddc      0x136 sequencer.o
-                0x00000ddc                process_step
  .text.update_step_board
-                0x00000f12      0x2aa sequencer.o
-                0x00000f12                update_step_board
+                0x00000ddc      0x2aa sequencer.o
+                0x00000ddc                update_step_board
  .text.update_prescale
-                0x000011bc       0x5c sequencer.o
-                0x000011bc                update_prescale
+                0x00001086       0x5c sequencer.o
+                0x00001086                update_prescale
+ .text.check_tap
+                0x000010e2      0x134 sequencer.o
+                0x000010e2                check_tap
+ .text.process_step
+                0x00001216      0x142 sequencer.o
+                0x00001216                process_step
  .text.toggle_variation
-                0x00001218       0x4e sequencer.o
-                0x00001218                toggle_variation
+                0x00001358       0x4e sequencer.o
+                0x00001358                toggle_variation
  .text.spi_shift_byte
-                0x00001266       0x14 spi.o
-                0x00001266                spi_shift_byte
+                0x000013a6       0x14 spi.o
+                0x000013a6                spi_shift_byte
  .text.update_spi
-                0x0000127a       0x48 spi.o
-                0x0000127a                update_spi
+                0x000013ba       0x48 spi.o
+                0x000013ba                update_spi
  .text.read_switches
-                0x000012c2       0x9c spi.o
-                0x000012c2                read_switches
+                0x00001402       0x9c spi.o
+                0x00001402                read_switches
  .text.parse_switch_data
-                0x0000135e       0x4e switches.o
-                0x0000135e                parse_switch_data
+                0x0000149e       0x4e switches.o
+                0x0000149e                parse_switch_data
  .text.check_start_stop_tap
-                0x000013ac       0xdc switches.o
-                0x000013ac                check_start_stop_tap
+                0x000014ec       0xdc switches.o
+                0x000014ec                check_start_stop_tap
  .text.check_inst_switches
-                0x00001488      0x14a switches.o
-                0x00001488                check_inst_switches
+                0x000015c8      0x14a switches.o
+                0x000015c8                check_inst_switches
  .text.check_variation_switches
-                0x000015d2       0x5c switches.o
-                0x000015d2                check_variation_switches
+                0x00001712       0x5c switches.o
+                0x00001712                check_variation_switches
  .text.check_clear_switch
-                0x0000162e       0xba switches.o
-                0x0000162e                check_clear_switch
+                0x0000176e       0xba switches.o
+                0x0000176e                check_clear_switch
  .text.bytequeue_init
-                0x000016e8        0xe xnormidi-develop/bytequeue/bytequeue.o
-                0x000016e8                bytequeue_init
+                0x00001828        0xe xnormidi-develop/bytequeue/bytequeue.o
+                0x00001828                bytequeue_init
  .text.bytequeue_enqueue
-                0x000016f6       0x6c xnormidi-develop/bytequeue/bytequeue.o
-                0x000016f6                bytequeue_enqueue
+                0x00001836       0x6c xnormidi-develop/bytequeue/bytequeue.o
+                0x00001836                bytequeue_enqueue
  .text.bytequeue_length
-                0x00001762       0x2c xnormidi-develop/bytequeue/bytequeue.o
-                0x00001762                bytequeue_length
+                0x000018a2       0x2c xnormidi-develop/bytequeue/bytequeue.o
+                0x000018a2                bytequeue_length
  .text.bytequeue_get
-                0x0000178e       0x24 xnormidi-develop/bytequeue/bytequeue.o
-                0x0000178e                bytequeue_get
+                0x000018ce       0x24 xnormidi-develop/bytequeue/bytequeue.o
+                0x000018ce                bytequeue_get
  .text.bytequeue_remove
-                0x000017b2       0x36 xnormidi-develop/bytequeue/bytequeue.o
-                0x000017b2                bytequeue_remove
+                0x000018f2       0x36 xnormidi-develop/bytequeue/bytequeue.o
+                0x000018f2                bytequeue_remove
  .text.store_and_clear_interrupt
-                0x000017e8        0x6 xnormidi-develop/bytequeue/interrupt_setting.o
-                0x000017e8                store_and_clear_interrupt
+                0x00001928        0x6 xnormidi-develop/bytequeue/interrupt_setting.o
+                0x00001928                store_and_clear_interrupt
  .text.restore_interrupt_setting
-                0x000017ee        0x4 xnormidi-develop/bytequeue/interrupt_setting.o
-                0x000017ee                restore_interrupt_setting
+                0x0000192e        0x4 xnormidi-develop/bytequeue/interrupt_setting.o
+                0x0000192e                restore_interrupt_setting
  .text.midi_is_statusbyte
-                0x000017f2        0x8 xnormidi-develop/midi.o
-                0x000017f2                midi_is_statusbyte
+                0x00001932        0x8 xnormidi-develop/midi.o
+                0x00001932                midi_is_statusbyte
  .text.midi_is_realtime
-                0x000017fa        0xc xnormidi-develop/midi.o
-                0x000017fa                midi_is_realtime
+                0x0000193a        0xc xnormidi-develop/midi.o
+                0x0000193a                midi_is_realtime
  .text.midi_packet_length
-                0x00001806       0x66 xnormidi-develop/midi.o
-                0x00001806                midi_packet_length
+                0x00001946       0x66 xnormidi-develop/midi.o
+                0x00001946                midi_packet_length
  .text.midi_register_noteon_callback
-                0x0000186c        0x8 xnormidi-develop/midi.o
-                0x0000186c                midi_register_noteon_callback
+                0x000019ac        0x8 xnormidi-develop/midi.o
+                0x000019ac                midi_register_noteon_callback
  .text.midi_register_noteoff_callback
-                0x00001874        0x8 xnormidi-develop/midi.o
-                0x00001874                midi_register_noteoff_callback
+                0x000019b4        0x8 xnormidi-develop/midi.o
+                0x000019b4                midi_register_noteoff_callback
  .text.midi_register_realtime_callback
-                0x0000187c        0x8 xnormidi-develop/midi.o
-                0x0000187c                midi_register_realtime_callback
+                0x000019bc        0x8 xnormidi-develop/midi.o
+                0x000019bc                midi_register_realtime_callback
  .text.midi_device_init
-                0x00001884       0x62 xnormidi-develop/midi_device.o
-                0x00001884                midi_device_init
+                0x000019c4       0x62 xnormidi-develop/midi_device.o
+                0x000019c4                midi_device_init
  .text.midi_device_input
-                0x000018e6       0x44 xnormidi-develop/midi_device.o
-                0x000018e6                midi_device_input
+                0x00001a26       0x44 xnormidi-develop/midi_device.o
+                0x00001a26                midi_device_input
  .text.midi_input_callbacks
-                0x0000192a      0x228 xnormidi-develop/midi_device.o
-                0x0000192a                midi_input_callbacks
+                0x00001a6a      0x228 xnormidi-develop/midi_device.o
+                0x00001a6a                midi_input_callbacks
  .text.midi_process_byte
-                0x00001b52      0x186 xnormidi-develop/midi_device.o
-                0x00001b52                midi_process_byte
+                0x00001c92      0x186 xnormidi-develop/midi_device.o
+                0x00001c92                midi_process_byte
  .text.midi_device_process
-                0x00001cd8       0x6e xnormidi-develop/midi_device.o
-                0x00001cd8                midi_device_process
+                0x00001e18       0x6e xnormidi-develop/midi_device.o
+                0x00001e18                midi_device_process
  .text.libgcc.div
-                0x00001d46       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_divmodhi4.o)
-                0x00001d46                _div
-                0x00001d46                __divmodhi4
- .text.libgcc   0x00001d6e        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_tablejump2.o)
-                0x00001d6e                __tablejump2__
+                0x00001e86       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_divmodhi4.o)
+                0x00001e86                _div
+                0x00001e86                __divmodhi4
+ .text.libgcc   0x00001eae        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_tablejump2.o)
+                0x00001eae                __tablejump2__
  .text.libgcc.mul
-                0x00001d7a       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_umulhisi3.o)
-                0x00001d7a                __umulhisi3
+                0x00001eba       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_umulhisi3.o)
+                0x00001eba                __umulhisi3
  .text.libgcc.div
-                0x00001d98       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_udivmodhi4.o)
-                0x00001d98                __udivmodhi4
-                0x00001dc0                . = ALIGN (0x2)
+                0x00001ed8       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_udivmodhi4.o)
+                0x00001ed8                __udivmodhi4
+                0x00001f00                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00001dc0        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_exit.o)
-                0x00001dc0                _exit
-                0x00001dc0                exit
+ .fini9         0x00001f00        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_exit.o)
+                0x00001f00                _exit
+                0x00001f00                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -725,11 +726,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00001dc0        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_exit.o)
+ .fini0         0x00001f00        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00001dc4                _etext = .
+                0x00001f04                _etext = .
 
-.data           0x00800100      0x15e load address 0x00001dc4
+.data           0x00800100      0x15e load address 0x00001f04
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -798,8 +799,8 @@ END GROUP
                 0x0080037a                flag
                 0x0080037b                sequencer
                 0x00800453                PROVIDE (__bss_end, .)
-                0x00001dc4                __data_load_start = LOADADDR (.data)
-                0x00001f22                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00001f04                __data_load_start = LOADADDR (.data)
+                0x00002062                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800453        0x0
                 0x00800453                PROVIDE (__noinit_start, .)
@@ -917,7 +918,7 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x5557
+.debug_info     0x00000000     0x555f
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0xae adc.o
  .debug_info    0x000000ae      0x14b clock.o
@@ -926,13 +927,13 @@ END GROUP
  .debug_info    0x00000ea1      0x4ea leds.o
  .debug_info    0x0000138b      0xbfc main.o
  .debug_info    0x00001f87      0x40c mode.o
- .debug_info    0x00002393      0x6b5 sequencer.o
- .debug_info    0x00002a48      0x486 spi.o
- .debug_info    0x00002ece      0x71a switches.o
- .debug_info    0x000035e8      0x2ba xnormidi-develop/bytequeue/bytequeue.o
- .debug_info    0x000038a2       0xc8 xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_info    0x0000396a     0x11ac xnormidi-develop/midi.o
- .debug_info    0x00004b16      0xa41 xnormidi-develop/midi_device.o
+ .debug_info    0x00002393      0x6bd sequencer.o
+ .debug_info    0x00002a50      0x486 spi.o
+ .debug_info    0x00002ed6      0x71a switches.o
+ .debug_info    0x000035f0      0x2ba xnormidi-develop/bytequeue/bytequeue.o
+ .debug_info    0x000038aa       0xc8 xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_info    0x00003972     0x11ac xnormidi-develop/midi.o
+ .debug_info    0x00004b1e      0xa41 xnormidi-develop/midi_device.o
 
 .debug_abbrev   0x00000000     0x14f2
  *(.debug_abbrev)
@@ -951,7 +952,7 @@ END GROUP
  .debug_abbrev  0x000010f7      0x1f6 xnormidi-develop/midi.o
  .debug_abbrev  0x000012ed      0x205 xnormidi-develop/midi_device.o
 
-.debug_line     0x00000000     0x15b3
+.debug_line     0x00000000     0x15be
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0xba adc.o
  .debug_line    0x000000ba       0xbf clock.o
@@ -960,15 +961,15 @@ END GROUP
  .debug_line    0x0000041e      0x186 leds.o
  .debug_line    0x000005a4      0x233 main.o
  .debug_line    0x000007d7       0xfa mode.o
- .debug_line    0x000008d1      0x1eb sequencer.o
- .debug_line    0x00000abc      0x10d spi.o
- .debug_line    0x00000bc9      0x1c8 switches.o
- .debug_line    0x00000d91      0x132 xnormidi-develop/bytequeue/bytequeue.o
- .debug_line    0x00000ec3       0xea xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_line    0x00000fad      0x3db xnormidi-develop/midi.o
- .debug_line    0x00001388      0x22b xnormidi-develop/midi_device.o
+ .debug_line    0x000008d1      0x1f6 sequencer.o
+ .debug_line    0x00000ac7      0x10d spi.o
+ .debug_line    0x00000bd4      0x1c8 switches.o
+ .debug_line    0x00000d9c      0x132 xnormidi-develop/bytequeue/bytequeue.o
+ .debug_line    0x00000ece       0xea xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_line    0x00000fb8      0x3db xnormidi-develop/midi.o
+ .debug_line    0x00001393      0x22b xnormidi-develop/midi_device.o
 
-.debug_frame    0x00000000      0xb78
+.debug_frame    0x00000000      0xb80
  *(.debug_frame)
  .debug_frame   0x00000000       0x34 adc.o
  .debug_frame   0x00000034       0x34 clock.o
@@ -977,13 +978,13 @@ END GROUP
  .debug_frame   0x000001c4       0xf8 leds.o
  .debug_frame   0x000002bc       0xf8 main.o
  .debug_frame   0x000003b4       0x24 mode.o
- .debug_frame   0x000003d8       0xec sequencer.o
- .debug_frame   0x000004c4       0x5c spi.o
- .debug_frame   0x00000520       0xdc switches.o
- .debug_frame   0x000005fc       0x9c xnormidi-develop/bytequeue/bytequeue.o
- .debug_frame   0x00000698       0x34 xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_frame   0x000006cc      0x380 xnormidi-develop/midi.o
- .debug_frame   0x00000a4c      0x12c xnormidi-develop/midi_device.o
+ .debug_frame   0x000003d8       0xf4 sequencer.o
+ .debug_frame   0x000004cc       0x5c spi.o
+ .debug_frame   0x00000528       0xdc switches.o
+ .debug_frame   0x00000604       0x9c xnormidi-develop/bytequeue/bytequeue.o
+ .debug_frame   0x000006a0       0x34 xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_frame   0x000006d4      0x380 xnormidi-develop/midi.o
+ .debug_frame   0x00000a54      0x12c xnormidi-develop/midi_device.o
 
 .debug_str      0x00000000     0x10c8
  *(.debug_str)
@@ -1016,19 +1017,19 @@ END GROUP
  .debug_str     0x00001021       0xa7 xnormidi-develop/midi_device.o
                                 0x628 (size before relaxing)
 
-.debug_loc      0x00000000     0x21f0
+.debug_loc      0x00000000     0x220a
  *(.debug_loc)
  .debug_loc     0x00000000       0x32 clock.o
  .debug_loc     0x00000032      0x190 drums.o
  .debug_loc     0x000001c2      0x155 interrupts.o
  .debug_loc     0x00000317      0x221 leds.o
  .debug_loc     0x00000538      0x1b6 main.o
- .debug_loc     0x000006ee      0x1e7 sequencer.o
- .debug_loc     0x000008d5       0x7d spi.o
- .debug_loc     0x00000952      0x1eb switches.o
- .debug_loc     0x00000b3d      0x292 xnormidi-develop/bytequeue/bytequeue.o
- .debug_loc     0x00000dcf      0xc4e xnormidi-develop/midi.o
- .debug_loc     0x00001a1d      0x7d3 xnormidi-develop/midi_device.o
+ .debug_loc     0x000006ee      0x201 sequencer.o
+ .debug_loc     0x000008ef       0x7d spi.o
+ .debug_loc     0x0000096c      0x1eb switches.o
+ .debug_loc     0x00000b57      0x292 xnormidi-develop/bytequeue/bytequeue.o
+ .debug_loc     0x00000de9      0xc4e xnormidi-develop/midi.o
+ .debug_loc     0x00001a37      0x7d3 xnormidi-develop/midi_device.o
 
 .debug_macinfo
  *(.debug_macinfo)

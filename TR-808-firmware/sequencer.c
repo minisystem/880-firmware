@@ -134,19 +134,6 @@ void update_step_board() {
 					break; //break or return? or is it needed?
 				}
 				
-				//uint8_t step_num = 0;
-				//uint8_t offset = 0;
-				
-				//if (sequencer.mode == FIRST_PART) {
-					//
-					//step_num = sequencer.step_num_first;
-					//offset = 0;
-				//} else if (sequencer.mode == SECOND_PART) {
-					//
-					//step_num = sequencer.step_num_second;
-					//offset = 16; //offset for steps 16-31
-					//
-				//}
 				
 				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
 			
@@ -196,9 +183,10 @@ void update_step_board() {
 			
 				break;		 			
 			}
+			
 	} else {
 		
-		//handle what here? changing selected pattern or rhythm? 
+		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
 		
 	}
 }
@@ -258,7 +246,17 @@ void update_prescale(void) {
 
 void check_tap(void) {
 	
-	
+	if (flag.tap) {
+		
+		flag.tap = 0;
+		if (sequencer.current_inst == AC) {
+			sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
+		} else {
+			sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+		}
+		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= 1<<sequencer.current_step;
+		
+	}
 	
 	
 }
