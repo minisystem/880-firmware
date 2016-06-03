@@ -13,7 +13,7 @@
 #include "sequencer.h"
 #include "spi.h"
 
-uint8_t mode_index = 0; 
+uint8_t mode_index = 1; //default mode is pattern edit 1st part
 
 enum global_mode current_mode[6] = {PATTERN_CLEAR, FIRST_PART, SECOND_PART, MANUAL_PLAY, PLAY_RHYTHM, COMPOSE_RHYTHM};
 
@@ -35,8 +35,9 @@ void update_mode(void) {
 		}
 		
 		sequencer.mode = current_mode[mode_index];
-		uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
-		spi_data[4] = (1<< mode_index) | data_mask; 
+		//uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
+		spi_data[4] &= MODE_LED_MASK;
+		spi_data[4] |= (1<< mode_index);
 		
 		
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.step_num_new = sequencer.step_num[sequencer.part_editing]; //another annoying except

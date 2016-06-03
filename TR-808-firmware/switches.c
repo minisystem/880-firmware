@@ -110,6 +110,13 @@ void check_start_stop_tap(void) {
 		
 	} 
 	
+	if ((sequencer.START && (current_start_stop_tap_state >> TAP) &1)) {
+		
+		current_start_stop_tap_state ^= (1<<TAP); //toggle tap switch bit
+		flag.tap = 1;
+		
+	}
+	
 }
 	
 void check_inst_switches(void) {

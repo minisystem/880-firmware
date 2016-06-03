@@ -45,16 +45,21 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) { 
 			flag.new_measure = 1;
 			sequencer.current_step = 0;
-			if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying 
+			if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 				
 				if (sequencer.part_playing == SECOND) {
 					turn_off(SECOND_PART_LED);
 					turn_on(FIRST_PART_LED);
+					toggle_variation(); //only toggle variation at the end of the 2nd part
 				} else {
-					turn_off(FIRST_PART_LED);
+					turn_off(FIRST_PART_LED); 
 					turn_on(SECOND_PART_LED);
 				}
 				sequencer.part_playing ^= 1 << 0;
+			} else { 
+	
+				toggle_variation(); //no second part, so toggle variation 
+				
 			}
 			//update step number
 			sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
@@ -69,24 +74,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}
 			
 			//handle variation
-			if (flag.variation_change == 1) {
-				flag.variation_change = 0;
-				switch (sequencer.variation_mode) {
-				
-				case VAR_A: case VAR_AB:
-					sequencer.variation = VAR_A;
-					break;
-				case VAR_B:
-					sequencer.variation = VAR_B;
-					break;	
-				
-					
-				}
-				
-			} else if (sequencer.variation_mode == VAR_AB) {
-					
-				sequencer.variation ^= 1<<0; //toggle state
-			}
+
 			//}
 			//sequencer.current_measure++;
 		}		

@@ -66,6 +66,8 @@ void process_step(void) {
 				if (flag.next_step) {
 					flag.next_step = 0;
 					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+					
+					check_tap();
 					PORTD |= (1<<TRIG);
 					
 					
@@ -252,4 +254,35 @@ void update_prescale(void) {
 		spi_data[5] |= (1<< (pre_scale_index +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)
 
 	}
+}
+
+void check_tap(void) {
+	
+	
+	
+	
+}
+
+void toggle_variation(void) {
+	
+	if (flag.variation_change == 1) {
+		flag.variation_change = 0;
+		switch (sequencer.variation_mode) {
+					
+			case VAR_A: case VAR_AB:
+			sequencer.variation = VAR_A;
+			break;
+			case VAR_B:
+			sequencer.variation = VAR_B;
+			break;
+					
+					
+		}
+				
+		} else if (sequencer.variation_mode == VAR_AB) {
+				
+		sequencer.variation ^= 1<<0; //toggle state
+	}	
+	
+	
 }

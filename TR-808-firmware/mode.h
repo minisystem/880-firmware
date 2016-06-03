@@ -8,6 +8,7 @@
 #define MODE_H
 
 #define NUM_MODES 6 //number of modes
+#define MODE_LED_MASK 0b11000000
 enum global_mode {
 	
 	PATTERN_CLEAR,
