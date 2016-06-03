@@ -13,15 +13,8 @@
 #include "mode.h"
 #include "drums.h"
 
-enum variation_mode {
-	 
-	 VAR_A,
-	 VAR_B,
-	 VAR_AB
-	
-	
-	};
 
+//define part indices
 #define FIRST 0
 #define SECOND 1
 
@@ -29,15 +22,33 @@ enum variation_mode {
 #define NUM_STEPS 16
 #define NO_STEPS 16 //null state of part 2 step number
 
-struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
+//define pre-scale ppqn dividers
+#define NUM_PRE_SCALES 4
+#define PRE_SCALE_LED_MASK 0b11000011
+
+#define PRE_SCALE_1 8
+#define PRE_SCALE_2 4
+#define	PRE_SCALE_3 6
+#define	PRE_SCALE_4 3
 	
-	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
-	uint16_t accent[NUM_PARTS]; // 2 parts of 16 steps of accent data, 2 parts
-	uint16_t step_led_mask[17];
-	uint8_t pre_scale:2; //1-4 (0-3) //IS THIS GLOBAL OR IS IT PATTERN SPECIFIC?
+
+extern uint8_t pre_scale[4];	
+
+enum variation_mode {
+	
+	VAR_A,
+	VAR_B,
+	VAR_AB
 	
 	
 };
+
+struct blewt {
+	
+	uint8_t mode:4;
+	uint8_t pre_scale:4;
+	
+	};
 
 struct flag {
 	
@@ -47,10 +58,20 @@ struct flag {
 	uint8_t trig_finished:1;
 	uint8_t step_num_change:1;
 	uint8_t new_measure:1;
+	uint8_t pre_scale_change:1;
+	
+}; 
+struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
+	
+	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
+	uint16_t accent[NUM_PARTS]; // 2 parts of 16 steps of accent data, 2 parts
+	uint16_t step_led_mask[17];
 	
 	
 	
-	};
+};
+
+
 
 //typedef STEP_NUM_BITS uint8_t:
 
@@ -71,6 +92,7 @@ struct sequencer {
 	uint8_t current_step:4; //max 16 steps per part
 	uint8_t part_playing:1; //0 or 1 first part or second part - will toggle
 	uint8_t part_editing:1;
+	uint8_t pre_scale:2;
 	uint8_t pattern_num:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
@@ -82,12 +104,13 @@ struct sequencer {
 
 extern struct sequencer sequencer;
 extern struct flag flag;
-
+extern uint8_t pre_scale_index;
 void update_tempo(void);
 void process_step(void);
 void update_step_board(void);
 //uint8_t step_mask(void);
 
 void update_variation(void);
+void update_prescale(void);
 
 #endif 

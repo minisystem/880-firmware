@@ -19,6 +19,9 @@
 struct sequencer sequencer;
 struct flag flag;
 
+uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
+uint8_t pre_scale[4] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};
+
 void update_tempo(void) {
 	static uint16_t new_tempo_adc = 0;
 	static uint16_t current_tempo_adc = 0;
@@ -231,4 +234,22 @@ void update_variation(void) { //not currently used
 			
 		}
 	
+}
+
+void update_prescale(void) {
+	
+	if (button[BASIC_VAR_A_SW].state && sequencer.SHIFT) {
+	
+		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle switch state
+		
+		if (pre_scale_index-- == 0) { //decrement to go from 3 to 4 to 1 to 2 to 3...
+			
+			pre_scale_index = NUM_PRE_SCALES -1;
+					
+		}
+		flag.pre_scale_change = 1;
+		spi_data[5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
+		spi_data[5] |= (1<< (pre_scale_index +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)
+
+	}
 }

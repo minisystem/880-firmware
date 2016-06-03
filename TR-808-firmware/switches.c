@@ -172,7 +172,7 @@ void check_inst_switches(void) {
 
 void check_variation_switches(void) { //at the moment, just check one switch and cycle through A, B and A/B
 	
-	if (button[BASIC_VAR_A_SW].state) {
+	if (button[BASIC_VAR_A_SW].state && !sequencer.SHIFT) {
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle  - this is not toggling. need to ^= 1<<0 to toggle a single bit state. hmmm.
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes

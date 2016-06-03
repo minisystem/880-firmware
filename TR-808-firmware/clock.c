@@ -19,7 +19,7 @@ struct clock internal_clock;
 void setup_internal_clock(void) {
 	
 	
-	TCCR1B = (1<<CS12) | (1<<CS10) | (1<<WGM12);//TIMER1_DIVIDE_1024, clear on output compare match
+	TCCR1B = (1<<CS12) | (1<<CS10) | (1<<WGM12);//TIMER1_DIVIDE_1024, clear on output compare match. Should probably reduce 
 	TIMSK1 = (1<<OCIE1A);
 	
 	

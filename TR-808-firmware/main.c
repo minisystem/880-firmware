@@ -40,6 +40,7 @@ void refresh(void) {
 	update_mode();
 	check_clear_switch();
 	check_variation_switches();
+	update_prescale();
 	//update_variation();
 	check_inst_switches();	
 	update_step_board();
@@ -158,12 +159,14 @@ int main(void)
 	setup_midi_usart();
 	
 	setup_internal_clock();
-	internal_clock.divider = 6; //6 pulses is 1/16th note - this is are default fundamental step
+	//sequencer.pre_scale = PRE_SCALE_3;
+	internal_clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
 	internal_clock.ppqn_counter = 1;
 	//internal_clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(internal_clock.rate);
 	setup_adc();
 	flag.trig_finished = 1;
+	flag.pre_scale_change = 0;
 	sequencer.START = 0;
 	//update_tempo();
 	
@@ -174,6 +177,7 @@ int main(void)
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = FIRST_PART;
+
 	sequencer.part_playing = FIRST;
 	sequencer.part_editing = FIRST;
 	turn_on(FIRST_PART_LED);
