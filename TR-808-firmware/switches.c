@@ -137,12 +137,12 @@ void check_inst_switches(void) {
 						case 0:
 							drum_hit[i - INST_BD_2_SW].muted = 1;
 							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+							//turn_on()
 						break;
 						
 						case 1:
 							drum_hit[i - INST_BD_2_SW].muted = 0;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 1;							
-						
+							drum_hit[i - INST_BD_2_SW + 9].muted = 1;									
 						break;
 						
 						case 2:
@@ -170,7 +170,7 @@ void check_inst_switches(void) {
 				
 			} else {	
 			
-				turn_off_all_inst_leds();
+				turn_off_all_inst_leds(); //this creates LED toggle sync problem because instrument LED states are not being handled here, just LED spi_data bytes
 			
 			
 				if(drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
@@ -178,12 +178,12 @@ void check_inst_switches(void) {
 				
 					if (sequencer.current_inst == i - INST_BD_2_SW) {
 						//alternative drum hits are offset by 9 places in drum_hit array
-						turn_on(drum_hit[i-INST_BD_2_SW + 9].led_index);
+						if (!drum_hit[i-INST_BD_2_SW +9].muted) turn_on(drum_hit[i-INST_BD_2_SW + 9].led_index); //don't really need to set
 						sequencer.current_inst = i - INST_BD_2_SW + 9;
 					
 					} else {
 					
-						turn_on(drum_hit[i-INST_BD_2_SW].led_index);
+						if (!drum_hit[i-INST_BD_2_SW].muted) turn_on(drum_hit[i-INST_BD_2_SW].led_index);
 						sequencer.current_inst = i - INST_BD_2_SW;
 					}
 				
@@ -192,12 +192,12 @@ void check_inst_switches(void) {
 				
 					if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
 					
-						turn_on(drum_hit[MA].led_index);
+						if (!drum_hit[MA].muted)turn_on(drum_hit[MA].led_index);
 						sequencer.current_inst = MA;
 					
 					} else {
 					
-						turn_on(drum_hit[i - INST_BD_2_SW].led_index);
+						if (!drum_hit[i-INST_BD_2_SW].muted) turn_on(drum_hit[i - INST_BD_2_SW].led_index);
 						sequencer.current_inst = i - INST_BD_2_SW; //inst index starts with BD = 0
 					}
 				

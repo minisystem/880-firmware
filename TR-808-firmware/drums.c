@@ -57,7 +57,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 			
 		if (velocity > 64) {
 			spi_data[8] |= (1<<ACCENT);
-			//toggle(ACCENT_1_LED);
+			
 		}
 		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
 			

@@ -60,6 +60,7 @@ struct flag {
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
+	uint8_t master_led_toggle:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
