@@ -4,6 +4,8 @@
 #include "hardware.h"
 #include "leds.h"
 
+#define NO_SWITCH 255 //null value for drums that don't need any switching done
+
 enum drum { //index for drum hits
 	
 	BD,
@@ -33,9 +35,9 @@ struct drum_hit {
 	uint8_t spi_byte_num:4; //SPI byte number
 	uint8_t trig_bit; //trigger bit for drum hit
 	uint8_t switch_bit; //bit for switching toms/congas and rs/cl - will be -1 for all other instruments
-	uint8_t switch_value :1; //is the switch one or 0?
+	uint8_t switch_value:1; //is the switch one or 0?
 	uint8_t led_index; //index for intrument LED
-	
+	uint8_t muted:1;
 };
 
 extern struct drum_hit drum_hit[17];

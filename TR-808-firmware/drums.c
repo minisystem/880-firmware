@@ -17,23 +17,23 @@ volatile uint8_t trigger_finished = 1;
 
 struct drum_hit drum_hit[17] = {
 	
-	{0,8, 1<<BD_TRIG,255, 0, BD_2_LED},
-	{1,8, 1<<SD_TRIG,255, 0, SD_3_LED},
+	{0,8, 1<<BD_TRIG,NO_SWITCH, 0, BD_2_LED},
+	{1,8, 1<<SD_TRIG,NO_SWITCH, 0, SD_3_LED},
 	{2,8, 1<<LT_TRIG, 1<<LT_LC_SW, 1, LT_4_LED},
 	{3,8, 1<<MT_TRIG, 1<<MT_MC_SW, 1, MT_5_LED},
 	{4,8, 1<<HT_TRIG, 1<<HT_HC_SW, 1, HT_6_LED},
 	{5,8, 1<<RS_TRIG, 1<<RS_CL_SW, 0, RS_7_LED},
-	{6,8, 1<<CP_TRIG,255, 0, CP_8_LED},
-	{7,6, 1<<CB_TRIG,255, 0, CB_9_LED},
-	{8,6, 1<<CY_TRIG,255, 0, CY_10_LED},
-	{9,6, 1<<OH_TRIG,255, 0, OH_11_LED},
-	{10,6, 1<<CH_TRIG,255, 0, CH_12_LED},
+	{6,8, 1<<CP_TRIG,NO_SWITCH, 0, CP_8_LED},
+	{7,6, 1<<CB_TRIG,NO_SWITCH, 0, CB_9_LED},
+	{8,6, 1<<CY_TRIG,NO_SWITCH, 0, CY_10_LED},
+	{9,6, 1<<OH_TRIG,NO_SWITCH, 0, OH_11_LED},
+	{10,6, 1<<CH_TRIG,NO_SWITCH, 0, CH_12_LED},
 	{11,8, 1<<LT_TRIG, 1<<LT_LC_SW, 0, LC_LED},
 	{12,8, 1<<MT_TRIG, 1<<MT_MC_SW, 0, MC_LED},
 	{13,8, 1<<HT_TRIG, 1<<HT_HC_SW, 0, HC_LED},
 	{14,8, 1<<RS_TRIG, 1<<RS_CL_SW, 1, CL_LED},
-	{15,7, 1<<MA_TRIG,255, 0, MA_LED},
-	{16,8, 1<<ACCENT, 255, 0, ACCENT_1_LED} //this last accent element is a bit of a hack - not currently used to access accent, but useful to turn on accent LED when accent it triggered by step sequencer (see interrupt.c)
+	{15,7, 1<<MA_TRIG,NO_SWITCH, 0, MA_LED},
+	{16,8, 1<<ACCENT,NO_SWITCH, 0, ACCENT_1_LED} //this last accent element is a bit of a hack - not currently used to access accent, but useful to turn on accent LED when accent it triggered by step sequencer (see interrupt.c)
 			
 };
 
@@ -48,7 +48,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		//toggle(drum_hit[note].led_index);
 		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
 			
-		if (drum_hit[note].switch_bit != 255) {//need to set instrument switch
+		if (drum_hit[note].switch_bit != NO_SWITCH) {//need to set instrument switch
 				
 			toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
 			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
@@ -86,10 +86,10 @@ void trigger_step(void) { //trigger all drums on current step
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
 		
-		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
+		if ((!drum_hit[i].muted) && (sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
 			turn_on(drum_hit[i].led_index);
 			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
-			if (drum_hit[i].switch_bit != 255) {//need to set instrument switch
+			if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 						
 				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 						
