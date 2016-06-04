@@ -35,9 +35,15 @@ ISR (TIMER0_COMPA_vect) {
 	
 }
 
+ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhead to do something simple like flash LEDs?
+	
+	update_inst_leds();
+	
+}
+
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
-	update_inst_leds();
+	//update_inst_leds();
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
 		flag.next_step = 1;
@@ -92,7 +98,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 
-			turn_off_all_inst_leds();
+			//turn_off_all_inst_leds();
 			turn_on(drum_hit[sequencer.current_inst].led_index);
 								
 			switch (sequencer.variation_mode) {

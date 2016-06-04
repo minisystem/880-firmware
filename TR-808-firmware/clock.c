@@ -26,6 +26,8 @@ void setup_internal_clock(void) {
 	
 }
 
+
+
 void update_clock_rate(uint16_t rate) {
 	
 	OCR1A = rate;

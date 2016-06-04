@@ -88,5 +88,7 @@ void update_inst_leds(void); //use for flashing
 void update_step_led_mask(void);
 
 void refresh_step_leds(void); //update step board spi bytes if step number changes
+
+void set_up_led_timer(void);
 	
 #endif

@@ -163,3 +163,11 @@ void refresh_step_leds(void) {
 	spi_data[0] = 0;//((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
 	
 }
+
+void set_up_led_timer(void) { 
+
+	TCCR3B = (1<<CS32) | (1<<CS30) | (1<<WGM12);//TIMER3_DIVIDE_1024, clear on output compare match.
+	TIMSK3 = (1<<OCIE3A);
+	OCR3A = 1500; //5 Hz flash
+	
+}

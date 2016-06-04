@@ -182,6 +182,7 @@ int main(void)
 	sequencer.part_editing = FIRST;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
+	set_up_led_timer();
 	sei(); //enable global interrupts	
 	
     while (1) 
