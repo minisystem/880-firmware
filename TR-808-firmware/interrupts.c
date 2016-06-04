@@ -37,6 +37,7 @@ ISR (TIMER0_COMPA_vect) {
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
+	update_inst_leds();
 	if (++internal_clock.ppqn_counter == internal_clock.divider)
 	{
 		flag.next_step = 1;

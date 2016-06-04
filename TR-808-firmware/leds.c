@@ -118,6 +118,22 @@ void turn_off_all_inst_leds(void) { //TODO: make masks constants
 	spi_data[6] &= spi_data[6] & 0b11001111; //turn off OH, CH	
 	
 }
+
+void update_inst_leds(void) {
+	
+
+	for (int i = BD; i <= MA; i++) {
+		
+		
+		if (drum_hit[i].muted) {
+			
+			toggle(drum_hit[i].led_index);
+			
+		}
+		
+	}	
+	
+}
 	
 void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
 	
