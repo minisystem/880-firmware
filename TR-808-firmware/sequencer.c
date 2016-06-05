@@ -84,7 +84,7 @@ void process_step(void) {
 					trigger_step();
 					if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
 						spi_data[8] |= 1<<ACCENT;
-						turn_on(ACCENT_1_LED);
+						if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 					}
 					TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 					TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer

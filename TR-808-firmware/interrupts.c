@@ -93,14 +93,16 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
 		flag.half_step = 1;
+		turn_off_all_inst_leds();
+		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) { 	
 	
 			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 
-			turn_off_all_inst_leds();
-			if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
+			//turn_off_all_inst_leds();
+			//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 								
 			switch (sequencer.variation_mode) {
 				
