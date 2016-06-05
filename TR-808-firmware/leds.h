@@ -83,7 +83,7 @@ void toggle(uint8_t led_index);
 
 void turn_off_all_inst_leds(void);
 
-void update_inst_leds(void); //use for flashing
+void update_inst_leds(void);
 
 void update_step_led_mask(void);
 

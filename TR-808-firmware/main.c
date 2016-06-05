@@ -42,7 +42,8 @@ void refresh(void) {
 	check_variation_switches();
 	update_prescale();
 	//update_variation();
-	check_inst_switches();	
+	check_inst_switches();
+	update_inst_leds();	
 	update_step_board();
 	//update_step_led_mask();
 	process_step();
@@ -182,7 +183,7 @@ int main(void)
 	sequencer.part_editing = FIRST;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
-	set_up_led_timer();
+	//set_up_led_timer();
 	sei(); //enable global interrupts	
 	
     while (1) 

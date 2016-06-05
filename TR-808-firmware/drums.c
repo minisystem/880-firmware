@@ -87,7 +87,7 @@ void trigger_step(void) { //trigger all drums on current step
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((!drum_hit[i].muted) && (sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
-			turn_on(drum_hit[i].led_index);
+			if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
 			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
 			if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 						

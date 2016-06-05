@@ -114,32 +114,40 @@ void turn_off_all_inst_leds(void) {
 	
 	//This is quick and dirty fast way to turn off all LEDs, but doesn't preserve their states for toggling 
 	//TODO: make masks constants
-	//spi_data[2] &= spi_data[2] & 0b00001111; //turn off AC, BD, SD, LT
-	//spi_data[7] &= spi_data[7] & 0b00100000; // turn off MT, HT, RS, CP, MA, CB, CY
-	//spi_data[3] &= spi_data[3] & 0b00001111; // turn off LC, MC, HC, CL
-	//spi_data[6] &= spi_data[6] & 0b11001111; //turn off OH, CH	
+	spi_data[2] &= spi_data[2] & 0b00001111; //turn off AC, BD, SD, LT
+	spi_data[7] &= spi_data[7] & 0b00100000; // turn off MT, HT, RS, CP, MA, CB, CY
+	spi_data[3] &= spi_data[3] & 0b00001111; // turn off LC, MC, HC, CL
+	spi_data[6] &= spi_data[6] & 0b11001111; //turn off OH, CH	
 	
-	for (int i = BD; i <= MA; i++) {
-		
-		if (!drum_hit[i].muted) turn_off(drum_hit[i].led_index);
-		
-	}
+	//for (int i = BD; i <= MA; i++) {
+		//
+		//if (!drum_hit[i].muted) turn_off(drum_hit[i].led_index);
+		//
+	//}
 	
 }
 
 void update_inst_leds(void) {
 	
-
+if (sequencer.SHIFT) {
+	
 	for (int i = BD; i <= MA; i++) {
 		
 		
 		if (drum_hit[i].muted) {
 			
-			toggle(drum_hit[i].led_index);
+			turn_on(drum_hit[i].led_index);
 			
+		} else {
+			
+			turn_off(drum_hit[i].led_index);
 		}
 		
-	}	
+	}
+} else {
+	
+	turn_on(drum_hit[sequencer.current_inst].led_index);	
+}
 	
 }
 	

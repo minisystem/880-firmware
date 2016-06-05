@@ -38,7 +38,7 @@ ISR (TIMER0_COMPA_vect) {
 ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhead to do something simple like flash LEDs?
 	
 	//turn_off_all_inst_leds();
-	update_inst_leds();
+	//update_inst_leds();
 	
 }
 
@@ -100,7 +100,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
 
 			turn_off_all_inst_leds();
-			turn_on(drum_hit[sequencer.current_inst].led_index);
+			if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 								
 			switch (sequencer.variation_mode) {
 				
