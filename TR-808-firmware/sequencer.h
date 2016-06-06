@@ -76,9 +76,11 @@ struct pattern { //current pattern will be loaded into ram from eeprom. changing
 struct sequencer {
 	
 	enum global_mode mode;
+	enum sync_mode sync_mode;
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
+	uint8_t SLAVE:1; //is the sequencer a tempo slave?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t variation:1; //variation A or variation B
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
@@ -86,7 +88,7 @@ struct sequencer {
 	uint8_t step_num_new:5; //holder to change step number at end of measure - extra bit to hold NO_STEPS exception. harrumph.
 	uint8_t current_step:4; //max 16 steps per part
 	uint8_t part_playing:1; //0 or 1 first part or second part - will toggle
-	uint8_t part_editing:1;
+	uint8_t part_editing:1; //part currently being edited. Determiend by mode
 	uint8_t pre_scale:2;
 	uint8_t pattern_num:4;
 	uint8_t current_measure;

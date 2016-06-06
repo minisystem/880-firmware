@@ -19,6 +19,15 @@ enum global_mode {
 	COMPOSE_RHYTHM
 		
 	};
+	
+enum sync_mode {
+	
+	MIDI_SLAVE,
+	MIDI_MASTER,
+	DIN_SYNC_SLAVE,
+	DIN_SYNC_MASTER
+	
+	};	
 
 extern uint8_t mode_index; 
 

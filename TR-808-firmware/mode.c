@@ -16,6 +16,8 @@
 uint8_t mode_index = 1; //default mode is pattern edit 1st part
 
 enum global_mode current_mode[6] = {PATTERN_CLEAR, FIRST_PART, SECOND_PART, MANUAL_PLAY, PLAY_RHYTHM, COMPOSE_RHYTHM};
+	
+enum sync_mode sync_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
 
 void update_mode(void) {
 	

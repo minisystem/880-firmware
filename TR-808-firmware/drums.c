@@ -13,6 +13,7 @@
 #include "switches.h"
 
 uint8_t current_drum_hit = 0;
+enum drum midi_note_queue[16] = {255};
 volatile uint8_t trigger_finished = 1;
 
 struct drum_hit drum_hit[17] = {
@@ -39,9 +40,13 @@ struct drum_hit drum_hit[17] = {
 
 void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be compatible with synchronized spi updating
 	
-		//while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
+		while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
 		//could implement a trigger queue instead of waiting but this is really more of a concern from simultaneous drum hits coming from MIDI or live play. Sequencer triggers won't have this problem unless 
 		//individual accents are implemented for sequencer
+		
+		//midi_note_queue[note_queue_index] = note;
+		//note_queue_index++;
+		
 		current_drum_hit = note;
 
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
@@ -59,11 +64,11 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 			spi_data[8] |= (1<<ACCENT);
 			
 		}
-		PORTD |= 1<<TRIG; //move all of this into one tidy function something like play_drum(drum_index) - this will then be applicable to sequencer as well
+		PORTD |= 1<<TRIG; 
 			
-		update_spi(); //can't do this here, not synchronized. duh.
-			
-		PORTD &= ~(1<<TRIG);
+		//update_spi(); //can't do this here, not synchronized. duh.
+			//
+		//PORTD &= ~(1<<TRIG);
 		
 		
 		//now need to set up interrupt for roughly 1 ms. 

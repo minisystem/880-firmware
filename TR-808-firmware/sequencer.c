@@ -65,7 +65,8 @@ void process_step(void) {
 			//if (sequencer.part_playing == FIRST || sequencer.part_playing == SECOND) {	
 				if (flag.next_step) {
 					flag.next_step = 0;
-					while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one
+					while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
+					//with allowing drums to be triggered by MIDI when sequencer is running?
 					
 					check_tap();
 					PORTD |= (1<<TRIG);
@@ -86,19 +87,13 @@ void process_step(void) {
 						spi_data[8] |= 1<<ACCENT;
 						if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 					}
-					TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-					TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-					flag.trig_finished = 0;
+					//TIMSK0 |= (1<<OCIE0A); //enable output compare match A
+					//TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
+					//flag.trig_finished = 0;
 				
 					} else {
 				
 				}
-			//} else {//if (sequencer.part_playing == SECOND) {
-				
-				//handle patterns >16 steps here, or maybe not?
-
-				
-			//}
 				
 		} else if (flag.next_step){
 			

@@ -42,8 +42,9 @@ struct drum_hit {
 
 extern struct drum_hit drum_hit[17];
 
+extern enum drum midi_note_queue[16]; //queue to hold incoming MIDI notes
 
-extern uint8_t current_drum_hit; //global to hold current drum hit
+extern uint8_t current_drum_hit; //global to hold index of current drum in MIDI note queue
 volatile uint8_t trigger_finished;
 
 void trigger_drum(uint8_t note, uint8_t velocity);

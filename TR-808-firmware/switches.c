@@ -78,6 +78,16 @@ void check_start_stop_tap(void) {
 	current_start_stop_tap_state ^= previous_start_stop_tap_state;
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
 	current_start_stop_tap_state &= previous_start_stop_tap_state;
+	
+	if ((sequencer.START && (current_start_stop_tap_state >> TAP) &1)) {
+			
+		current_start_stop_tap_state ^= (1<<TAP); //toggle tap switch bit
+		flag.tap = 1;
+			
+	}
+	
+	if (sequencer.SLAVE) return; //get out of here because when SLAVE you don't need to process start/stop button activity
+	
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
 	
@@ -85,7 +95,7 @@ void check_start_stop_tap(void) {
 		
 		sequencer.current_step = 0;
 		flag.next_step = 1;
-		internal_clock.ppqn_counter = 0;//internal_clock.divider - 1;
+		internal_clock.ppqn_counter = 0;
 		
 		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
@@ -110,12 +120,7 @@ void check_start_stop_tap(void) {
 		
 	} 
 	
-	if ((sequencer.START && (current_start_stop_tap_state >> TAP) &1)) {
-		
-		current_start_stop_tap_state ^= (1<<TAP); //toggle tap switch bit
-		flag.tap = 1;
-		
-	}
+
 	
 }
 	
