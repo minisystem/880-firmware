@@ -52,53 +52,13 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
-	if (++internal_clock.ppqn_counter == internal_clock.divider)
-	{
+	if (++internal_clock.ppqn_counter == internal_clock.divider) {
 		flag.next_step = 1;
 		internal_clock.beat_counter++; //overflows every 4 beats
 		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) { 
-			flag.new_measure = 1;
-			sequencer.current_step = 0;
-			if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
-				
-				if (sequencer.part_playing == SECOND) {
-					turn_off(SECOND_PART_LED);
-					turn_on(FIRST_PART_LED);
-					toggle_variation(); //only toggle variation at the end of the 2nd part
-				} else {
-					turn_off(FIRST_PART_LED); 
-					turn_on(SECOND_PART_LED);
-				}
-				sequencer.part_playing ^= 1 << 0;
-			} else { 
-	
-				toggle_variation(); //no second part, so toggle variation 
-				
-			}
-			//update step number
-			sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
-			update_step_led_mask();
-			
-			//handle pre-scale change
-			if (flag.pre_scale_change) {
-				
-				flag.pre_scale_change = 0;
-				internal_clock.divider = pre_scale[pre_scale_index];
-				
-			}
-			
+		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
 
-
-			//}
-			//sequencer.current_measure++;
-		}		
-	
-	} //should make the else if so second condition doesn't need to be tested
-	
-	
-	
-	if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+	} else if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
 		flag.half_step = 1;
 		turn_off_all_inst_leds();
 		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
@@ -107,9 +67,6 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
 			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
-
-			//turn_off_all_inst_leds();
-			//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 								
 			switch (sequencer.variation_mode) {
 				
@@ -201,7 +158,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		
 		spi_data[5] |= sequencer.var_led_mask;
 		
-	} 
+		} 
 	
 	
 

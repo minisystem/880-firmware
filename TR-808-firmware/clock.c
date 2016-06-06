@@ -13,7 +13,7 @@
 
 struct clock midi_clock;
 struct clock din_clock;
-struct clock internal_clock;
+volatile struct clock internal_clock;
 
 
 void setup_internal_clock(void) {

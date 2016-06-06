@@ -99,7 +99,7 @@ struct sequencer {
 		
 
 extern struct sequencer sequencer;
-extern struct flag flag;
+volatile struct flag flag;
 extern uint8_t pre_scale_index;
 void update_tempo(void);
 void process_step(void);

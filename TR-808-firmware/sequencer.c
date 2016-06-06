@@ -17,7 +17,7 @@
 #include "spi.h"
 
 struct sequencer sequencer;
-struct flag flag;
+volatile struct flag flag;
 
 uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
 uint8_t pre_scale[4] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};
@@ -62,46 +62,79 @@ void process_step(void) {
 	
 		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
-			//if (sequencer.part_playing == FIRST || sequencer.part_playing == SECOND) {	
-				if (flag.next_step) {
-					flag.next_step = 0;
-					while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
-					//with allowing drums to be triggered by MIDI when sequencer is running?
-					
-					check_tap();
-					//PORTD |= (1<<TRIG);
-					
-					
-					if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-						spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-						spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-						spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-					} else {
-						
-						
-					}
+			
+			if (flag.next_step) {
+				flag.next_step = 0;
 
-					trigger_step();
-					if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
-						spi_data[8] |= 1<<ACCENT;
-						if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
+				//*************************TAKEN FROM INTERRUPT*****************************//
+				if (flag.new_measure) {
+
+					flag.new_measure = 0;
+					sequencer.current_step = 0;
+					if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
+								
+						if (sequencer.part_playing == SECOND) {
+							turn_off(SECOND_PART_LED);
+							turn_on(FIRST_PART_LED);
+							toggle_variation(); //only toggle variation at the end of the 2nd part
+							} else {
+							turn_off(FIRST_PART_LED);
+							turn_on(SECOND_PART_LED);
+						}
+						sequencer.part_playing ^= 1 << 0;
+						} else {
+								
+						toggle_variation(); //no second part, so toggle variation
+								
 					}
-					//TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-					//TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-					//flag.trig_finished = 0;
-				
-					} else {
-				
+					//update step number
+					sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+					update_step_led_mask();
+							
+					//handle pre-scale change
+					if (flag.pre_scale_change) {
+						flag.pre_scale_change = 0;
+						internal_clock.divider = pre_scale[pre_scale_index];
+					}
+					//sequencer.current_measure++;
+				} //else if (flag.half_step) {
+					
+				//	flag.half_step = 0;
+					
+				//}				
+
+				//*************************************************************************//
+				while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
+				//with allowing drums to be triggered by MIDI when sequencer is running?
+					
+				check_tap();
+				//PORTD |= (1<<TRIG);
+					
+					
+				if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
+					spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+					spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+					spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+				} else {
+						
+						
 				}
+
+				trigger_step();
+				if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
+					spi_data[8] |= 1<<ACCENT;
+					if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
+				}
+				
+				} else {
+				
+			}
 				
 		} else if (flag.next_step){
 			
-			flag.next_step = 0;
-			//spi_data[1] = 0;
-			//spi_data[0] = 0;
-			//turn_on(STEP_1_LED);
-			
+			//flag.next_step = 0;
+		
 		}
 }
 

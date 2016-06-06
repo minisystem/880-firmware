@@ -26,7 +26,7 @@ struct clock {
 //maybe only need 1 clock? Not sure yet
 extern struct clock midi_clock;
 extern struct clock din_clock; 
-extern struct clock internal_clock;
+volatile struct clock internal_clock;
 
 
 void setup_internal_clock(void);
