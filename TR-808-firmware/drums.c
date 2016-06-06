@@ -50,18 +50,19 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		current_drum_hit = note;
 
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
-		//toggle(drum_hit[note].led_index);
+		turn_on(drum_hit[note].led_index);
 		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
 			
 		if (drum_hit[note].switch_bit != NO_SWITCH) {//need to set instrument switch
 				
-			toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
+			//toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
 			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 					
 		}
 			
 		if (velocity > 64) {
 			spi_data[8] |= (1<<ACCENT);
+			turn_on(ACCENT_1_LED);
 			
 		}
 		PORTD |= 1<<TRIG; 
@@ -87,7 +88,8 @@ void clear_all_trigs(void) {
 }
 
 void trigger_step(void) { //trigger all drums on current step
-
+	//while (trigger_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
+	PORTD |= (1<<TRIG);
 	clear_all_trigs();
 	for (int i = BD; i <= MA; i++) {
 		

@@ -69,7 +69,7 @@ void process_step(void) {
 					//with allowing drums to be triggered by MIDI when sequencer is running?
 					
 					check_tap();
-					PORTD |= (1<<TRIG);
+					//PORTD |= (1<<TRIG);
 					
 					
 					if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited

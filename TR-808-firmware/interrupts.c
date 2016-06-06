@@ -33,7 +33,9 @@ ISR (TIMER0_COMPA_vect) {
 	//uint8_t current_drum_hit  = midi_note_queue[note_queue_index];
 	//note_queue_index--;
 	spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
-	////toggle(drum_hit[current_drum_hit].led_index);
+	turn_off(ACCENT_1_LED);
+	spi_data[8] &= ~(1<<ACCENT);
+	turn_off(drum_hit[current_drum_hit].led_index);
 	////toggle(ACCENT_1_LED);
 	//update_spi(); //should set flag here and update SPI from main loop. SPI should take about 10 microseconds
 	trigger_finished = 1;

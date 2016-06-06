@@ -76,7 +76,27 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
 
-void real_time_event(MidiDevice * device, uint8_t real_time_byte) {}
+void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
+	
+	switch (real_time_byte) {
+		
+		case MIDI_CLOCK:
+			//could force an interrupt here or set a flag? 
+			break;
+		
+		case MIDI_START:
+		
+			break;
+			
+		case MIDI_STOP:
+		
+			break;		
+		
+		
+	}
+	
+	
+}
 
 void setup_midi_usart(void)
 {
