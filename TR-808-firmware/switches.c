@@ -96,7 +96,7 @@ void check_start_stop_tap(void) {
 		sequencer.current_step = 0;
 		flag.next_step = 1;
 		//flag.new_measure = 1;
-		internal_clock.ppqn_counter = 0;
+		clock.ppqn_counter = 0;
 		
 		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {

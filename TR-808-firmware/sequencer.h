@@ -43,12 +43,7 @@ enum variation_mode {
 	
 };
 
-struct blewt {
-	
-	uint8_t mode:4;
-	uint8_t pre_scale:4;
-	
-	};
+
 
 struct flag {
 	

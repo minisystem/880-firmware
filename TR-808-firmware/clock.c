@@ -11,19 +11,17 @@
 #include "clock.h"
 #include "hardware.h"
 
-struct clock midi_clock;
-struct clock din_clock;
-volatile struct clock internal_clock;
+//struct clock midi_clock;
+//struct clock din_clock;
+volatile struct clock clock;
 
 
-void setup_internal_clock(void) {
+void setup_clock(void) {
 	
 	
 	TCCR1B = (1<<CS12) | (1<<CS10) | (1<<WGM12);//TIMER1_DIVIDE_1024, clear on output compare match. Should probably reduce 
 	TIMSK1 = (1<<OCIE1A);
-	
-	
-	
+		
 }
 
 

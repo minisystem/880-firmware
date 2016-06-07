@@ -52,113 +52,20 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
-	if (++internal_clock.ppqn_counter == internal_clock.divider) {
-		flag.next_step = 1;
-		internal_clock.beat_counter++; //overflows every 4 beats
-		internal_clock.ppqn_counter = 0;
-		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+	if (clock.source == INTERNAL) {//could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
+		if (++clock.ppqn_counter == clock.divider) {
+			flag.next_step = 1;
+			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+			clock.beat_counter++; //overflows every 4 beats
+			clock.ppqn_counter = 0;
+		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+			
+			flag.half_step = 1;
 
-	} else if (internal_clock.ppqn_counter == internal_clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
-		flag.half_step = 1;
-		//turn_off_all_inst_leds();
-		//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
-		//spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
-		//if (sequencer.START) { 	
-	//
-			//spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
-			//spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
-								//
-			//switch (sequencer.variation_mode) {
-				//
-				//case VAR_A:
-					//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-					//break;					
-				//case VAR_B:
-					//if (flag.variation_change == 1) {
-						//
-						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-						//
-					//}else {
-						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-					//}
-					//break;			
-				//case VAR_AB:
-					//if (sequencer.variation == VAR_A) {
-						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;						
-					//} else {
-						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;						
-					//}
-					//break;
-			//}
-			//
-			//if (internal_clock.beat_counter <2) {
-				//
-				//if (flag.variation_change == 1) {
-					//
-					//switch (sequencer.variation_mode) {
-						//
-						//case VAR_A:
-							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							//break;
-						//case VAR_B:
-							//if (flag.variation_change == 1) {
-								//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							//} else {
-								//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;	
-							//}
-							//break;
-						//case VAR_AB:
-							//if (sequencer.variation == VAR_A) {
-								//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-								//} else {
-								//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-							//}
-							//break;
-					//}				
-	//
-				//
-				//}
-				//
-				//if (sequencer.variation_mode == VAR_AB) {
-						//if (sequencer.variation == VAR_A) {
-							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							//} else {
-							//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						//}			
-				//} 
-			//}
-			//
-		//} else {
-			//
-			//spi_data[1] = 0; 
-			//spi_data[0] = 0;
-	//
-			//switch (sequencer.variation_mode) {
-					//
-				//case VAR_A: case VAR_AB:
-				//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-				//break;
-					//
-				//case VAR_B:
-				//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-				//break;
-					//
-			//}
-		//
-			//if (internal_clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
-			//
-//
-				//if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode
-					//
-//
-			//
-				//turn_on(STEP_1_LED); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
-			//}
-		//}
-		//
-		//spi_data[5] |= sequencer.var_led_mask;
-		//
 		} 
+
+		
+	}
 	
 	
 

@@ -30,15 +30,15 @@ void update_tempo(void) {
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
 	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
 	
-	internal_clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
+	clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
-	if (internal_clock.rate != internal_clock.previous_rate) {
+	if (clock.rate != clock.previous_rate) {
 		
-		update_clock_rate(internal_clock.rate);
+		update_clock_rate(clock.rate);
 		
 	}
 	
-	internal_clock.previous_rate = internal_clock.rate;
+	clock.previous_rate = clock.rate;
 	
 }
 
@@ -78,7 +78,7 @@ void process_step(void) {
 				//handle pre-scale change
 				if (flag.pre_scale_change) {
 					flag.pre_scale_change = 0;
-					internal_clock.divider = pre_scale[pre_scale_index];
+					clock.divider = pre_scale[pre_scale_index];
 				}
 				//sequencer.current_measure++;
 
@@ -138,7 +138,7 @@ void process_step(void) {
 				break;
 			}
 					
-			if (internal_clock.beat_counter <2) {
+			if (clock.beat_counter <2) {
 						
 				if (flag.variation_change == 1) {
 							
@@ -192,7 +192,7 @@ void process_step(void) {
 						
 			}
 					
-			if (internal_clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+			if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 						
 
 				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode
@@ -203,10 +203,29 @@ void process_step(void) {
 			}
 		}
 				
-		spi_data[5] |= sequencer.var_led_mask;
+		//spi_data[5] |= sequencer.var_led_mask;
 				
+	} else if (clock.source == EXTERNAL && !sequencer.START) { //this handles variation LEDs when waiting for external clock signal
+		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+		switch (sequencer.variation_mode) {
+			
+			case VAR_A:
+				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+				break;
+				
+			case VAR_B:
+				sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				break;
+				
+			case VAR_AB:
+				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit;
+				break;		
+			
+		}
+		
 	}		
-	}
+	spi_data[5] |= sequencer.var_led_mask;
+}
 //} else if (flag.next_step) { //sequencer not running, but next_step flag has occurred
 	//flag.next_step = 0;
 		//

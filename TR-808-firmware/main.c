@@ -31,9 +31,12 @@ MidiDevice midi_device;
 
 void refresh(void) {
 	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
-	update_tempo(); //meh, doesn't seem to make a huge difference.
+	if (clock.source == INTERNAL) {
+		update_tempo(); //meh, doesn't seem to make a huge difference.
+		check_start_stop_tap();	
+	}
 	read_switches();
-	check_start_stop_tap();
+	
 	
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY) live_hits();
@@ -77,19 +80,54 @@ void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t ve
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
 
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
-	
+	if (clock.source == INTERNAL) return; //ignore incoming MIDI clock
 	switch (real_time_byte) {
 		
-		case MIDI_CLOCK:
-			//could force an interrupt here or set a flag? 
+		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
+			if (++clock.ppqn_counter == clock.divider) {
+				flag.next_step = 1;
+				if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+				clock.beat_counter++; //overflows every 4 beats
+				clock.ppqn_counter = 0;
+			} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+						
+				flag.half_step = 1;
+
+			}
 			break;
 		
 		case MIDI_START:
-		
+			sequencer.START = 1;
+			sequencer.current_step = 0;
+			flag.next_step = 1;
+			//flag.new_measure = 1;
+			clock.ppqn_counter = 0;
+				
+			flag.variation_change = 0;
+			if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
+					
+				sequencer.variation = VAR_A; //start on variation A
+				} else {
+					
+				sequencer.variation = VAR_B;
+			}
 			break;
 			
 		case MIDI_STOP:
-		
+			sequencer.START = 0;
+			if (sequencer.part_playing == SECOND) { //reset part playing
+				sequencer.part_playing = FIRST;
+				turn_off(SECOND_PART_LED);
+				turn_on (FIRST_PART_LED);
+					
+			}
+			turn_off_all_inst_leds();
+			turn_on(drum_hit[sequencer.current_inst].led_index);
+			
+			//blank all step leds and turn on current pattern LED
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+			turn_on(STEP_1_LED); 
 			break;		
 		
 		
@@ -179,12 +217,13 @@ int main(void)
 	//setup MIDI USART
 	setup_midi_usart();
 	
-	setup_internal_clock();
+	setup_clock();
 	//sequencer.pre_scale = PRE_SCALE_3;
-	internal_clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
-	internal_clock.ppqn_counter = 1;
-	//internal_clock.rate = 400; //use fixed rate to get clock working
-	//update_clock_rate(internal_clock.rate);
+	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
+	clock.ppqn_counter = 1;
+	clock.source = EXTERNAL;
+	//clock.rate = 400; //use fixed rate to get clock working
+	//update_clock_rate(clock.rate);
 	setup_adc();
 	trigger_finished = 1;
 	flag.pre_scale_change = 0;
