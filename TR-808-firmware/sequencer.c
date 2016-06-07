@@ -42,101 +42,177 @@ void update_tempo(void) {
 	
 }
 
-//uint8_t step_mask(void) {
-	//
-	//uint8_t step_mask = 255;
-		//
-	//if (sequencer.step_num_first < 8) {
-		//
-		//step_mask = step_mask >> (7-sequencer.step_num_first);
-//
-	//} else if (sequencer.step_num_first < 16) {
-		//
-		//
-	//}
-	//
-	//return step_mask;
-//}
 
 void process_step(void) {
 	
-		if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
+	//if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
-			
-			if (flag.next_step) {
-				flag.next_step = 0;
+	if (flag.next_step) {
+		flag.next_step = 0;
+		if (sequencer.START) {
+		//*************************TAKEN FROM INTERRUPT*****************************//
+			if (flag.new_measure) {
 
-				//*************************TAKEN FROM INTERRUPT*****************************//
-				if (flag.new_measure) {
-
-					flag.new_measure = 0;
-					sequencer.current_step = 0;
-					if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
+				flag.new_measure = 0;
+				sequencer.current_step = 0;
+				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 								
-						if (sequencer.part_playing == SECOND) {
-							turn_off(SECOND_PART_LED);
-							turn_on(FIRST_PART_LED);
-							toggle_variation(); //only toggle variation at the end of the 2nd part
-							} else {
-							turn_off(FIRST_PART_LED);
-							turn_on(SECOND_PART_LED);
-						}
-						sequencer.part_playing ^= 1 << 0;
+					if (sequencer.part_playing == SECOND) {
+						turn_off(SECOND_PART_LED);
+						turn_on(FIRST_PART_LED);
+						toggle_variation(); //only toggle variation at the end of the 2nd part
 						} else {
-								
-						toggle_variation(); //no second part, so toggle variation
-								
+						turn_off(FIRST_PART_LED);
+						turn_on(SECOND_PART_LED);
 					}
-					//update step number
-					sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
-					update_step_led_mask();
+					sequencer.part_playing ^= 1 << 0;
+					} else {
+								
+					toggle_variation(); //no second part, so toggle variation
+								
+				}
+				//update step number
+				sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+				update_step_led_mask();
 							
-					//handle pre-scale change
-					if (flag.pre_scale_change) {
-						flag.pre_scale_change = 0;
-						internal_clock.divider = pre_scale[pre_scale_index];
-					}
-					//sequencer.current_measure++;
-				} //else if (flag.half_step) {
-					
-				//	flag.half_step = 0;
-					
-				//}				
-
-				//*************************************************************************//
-				while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
-				//with allowing drums to be triggered by MIDI when sequencer is running?
-					
-				check_tap();
-				//PORTD |= (1<<TRIG);
-					
-					
-				if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-					spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-					spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-					spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-				} else {
-						
-						
+				//handle pre-scale change
+				if (flag.pre_scale_change) {
+					flag.pre_scale_change = 0;
+					internal_clock.divider = pre_scale[pre_scale_index];
 				}
+				//sequencer.current_measure++;
 
-				trigger_step();
-				if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
-					spi_data[8] |= 1<<ACCENT;
-					if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
-				}
-				
-				} else {
-				
+			}			
+
+			//*************************************************************************//
+			while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
+			//with allowing drums to be triggered by MIDI when sequencer is running?
+					
+			check_tap();
+			//PORTD |= (1<<TRIG);
+						
+			if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
+				spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+				spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
+				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+				spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			}
-				
-		} else if (flag.next_step){
-			
-			//flag.next_step = 0;
-		
+
+			trigger_step();
+			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
+				spi_data[8] |= 1<<ACCENT;
+				if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
+			}
 		}
-}
+	} else if (flag.half_step) {
+				
+		flag.half_step = 0;
+		turn_off_all_inst_leds();
+		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
+		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+		if (sequencer.START) {
+					
+			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
+			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
+					
+			switch (sequencer.variation_mode) {
+						
+				case VAR_A:
+				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+				break;
+				case VAR_B:
+				if (flag.variation_change == 1) {
+							
+					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+							
+					}else {
+					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				}
+				break;
+				case VAR_AB:
+				if (sequencer.variation == VAR_A) {
+					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+					} else {
+					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				}
+				break;
+			}
+					
+			if (internal_clock.beat_counter <2) {
+						
+				if (flag.variation_change == 1) {
+							
+					switch (sequencer.variation_mode) {
+								
+						case VAR_A:
+						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						break;
+						case VAR_B:
+						if (flag.variation_change == 1) {
+							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+							} else {
+							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						}
+						break;
+						case VAR_AB:
+						if (sequencer.variation == VAR_A) {
+							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+							} else {
+							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						}
+						break;
+					}
+							
+							
+				}
+						
+				if (sequencer.variation_mode == VAR_AB) {
+					if (sequencer.variation == VAR_A) {
+						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						} else {
+						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+					}
+				}
+			}
+					
+			} else {
+					
+			spi_data[1] = 0;
+			spi_data[0] = 0;
+					
+			switch (sequencer.variation_mode) {
+						
+				case VAR_A: case VAR_AB:
+				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+				break;
+						
+				case VAR_B:
+				sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				break;
+						
+			}
+					
+			if (internal_clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+						
+
+				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode
+						
+
+						
+				turn_on(STEP_1_LED); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
+			}
+		}
+				
+		spi_data[5] |= sequencer.var_led_mask;
+				
+	}		
+	}
+//} else if (flag.next_step) { //sequencer not running, but next_step flag has occurred
+	//flag.next_step = 0;
+		//
+//}
+		
+//}
 
 void update_step_board() {
 	
