@@ -86,38 +86,19 @@ void check_start_stop_tap(void) {
 			
 	}
 	
-	if (sequencer.SLAVE) return; //get out of here because when SLAVE you don't need to process start/stop button activity
+	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity
 	
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
 	
 	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
 		
-		sequencer.current_step = 0;
-		flag.next_step = 1;
-		//flag.new_measure = 1;
-		clock.ppqn_counter = 0;
-		
-		flag.variation_change = 0;
-		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-			
-			sequencer.variation = VAR_A; //start on variation A
-		} else {
-			
-			sequencer.variation = VAR_B;
-		}
+		process_start();
 	}
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 
 		
-		if (sequencer.part_playing == SECOND) { //reset part playing
-			sequencer.part_playing = FIRST;
-			turn_off(SECOND_PART_LED);
-			turn_on (FIRST_PART_LED);	
-			
-		}
-		turn_off_all_inst_leds();
-		turn_on(drum_hit[sequencer.current_inst].led_index);
+		process_stop();
 		
 	} 
 	

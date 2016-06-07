@@ -52,20 +52,21 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
-	if (clock.source == INTERNAL) {//could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
-		if (++clock.ppqn_counter == clock.divider) {
-			flag.next_step = 1;
-			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
-			clock.beat_counter++; //overflows every 4 beats
-			clock.ppqn_counter = 0;
-		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
-			
-			flag.half_step = 1;
-
-		} 
-
-		
-	}
+	if (clock.source == INTERNAL) process_tick(); //flag.tick = 1;
+	//if (clock.source == INTERNAL) {//could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
+		//if (++clock.ppqn_counter == clock.divider) {
+			//flag.next_step = 1;
+			//if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+			//clock.beat_counter++; //overflows every 4 beats
+			//clock.ppqn_counter = 0;
+		//} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+			//
+			//flag.half_step = 1;
+//
+		//} 
+//
+		//
+	//}
 	
 	
 

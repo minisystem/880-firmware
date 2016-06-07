@@ -49,6 +49,7 @@ struct flag {
 	
 	uint8_t next_step:1;
 	uint8_t half_step:1;
+	//uint8_t tick:1;
 	uint8_t variation_change:1;
 	uint8_t trig_finished:1;
 	uint8_t step_num_change:1;
@@ -97,10 +98,12 @@ extern struct sequencer sequencer;
 volatile struct flag flag;
 extern uint8_t pre_scale_index;
 void update_tempo(void);
+void process_tick(void);
 void process_step(void);
 void update_step_board(void);
-//uint8_t step_mask(void);
 
+void process_start(void);
+void process_stop(void);
 void update_variation(void);
 void update_prescale(void);
 void check_tap(void);

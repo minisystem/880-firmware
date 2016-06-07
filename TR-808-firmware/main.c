@@ -33,8 +33,9 @@ void refresh(void) {
 	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
 	if (clock.source == INTERNAL) {
 		update_tempo(); //meh, doesn't seem to make a huge difference.
-		check_start_stop_tap();	
+			
 	}
+	check_start_stop_tap();
 	read_switches();
 	
 	
@@ -49,6 +50,7 @@ void refresh(void) {
 	update_inst_leds();	
 	update_step_board();
 	//update_step_led_mask();
+	//if (flag.tick) process_tick();
 	process_step();
 	
 	//if (flag.trig_finished) { //hmmm. trigger width doesn't seem to matter. in this case, it's several 10s of milliseconds. Will still be needed for MIDI sequencing
@@ -84,50 +86,17 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
-			if (++clock.ppqn_counter == clock.divider) {
-				flag.next_step = 1;
-				if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
-				clock.beat_counter++; //overflows every 4 beats
-				clock.ppqn_counter = 0;
-			} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
-						
-				flag.half_step = 1;
-
-			}
+			process_tick(); //flag.tick = 1;
 			break;
 		
 		case MIDI_START:
 			sequencer.START = 1;
-			sequencer.current_step = 0;
-			flag.next_step = 1;
-			//flag.new_measure = 1;
-			clock.ppqn_counter = 0;
-				
-			flag.variation_change = 0;
-			if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-					
-				sequencer.variation = VAR_A; //start on variation A
-				} else {
-					
-				sequencer.variation = VAR_B;
-			}
+			process_start();
 			break;
 			
 		case MIDI_STOP:
 			sequencer.START = 0;
-			if (sequencer.part_playing == SECOND) { //reset part playing
-				sequencer.part_playing = FIRST;
-				turn_off(SECOND_PART_LED);
-				turn_on (FIRST_PART_LED);
-					
-			}
-			turn_off_all_inst_leds();
-			turn_on(drum_hit[sequencer.current_inst].led_index);
-			
-			//blank all step leds and turn on current pattern LED
-			spi_data[1] = 0;
-			spi_data[0] = 0;
-			turn_on(STEP_1_LED); 
+			process_stop();
 			break;		
 		
 		
@@ -221,7 +190,7 @@ int main(void)
 	//sequencer.pre_scale = PRE_SCALE_3;
 	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
 	clock.ppqn_counter = 1;
-	clock.source = EXTERNAL;
+	clock.source = INTERNAL;
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();

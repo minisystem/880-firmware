@@ -42,7 +42,56 @@ void update_tempo(void) {
 	
 }
 
+void process_tick(void) {
 
+		if (++clock.ppqn_counter == clock.divider) {
+			flag.next_step = 1;
+			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+			clock.beat_counter++; //overflows every 4 beats
+			clock.ppqn_counter = 0;
+		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+				
+			flag.half_step = 1;
+
+		}
+	
+}
+
+void process_start(void) {
+	
+		sequencer.current_step = 0;
+		flag.next_step = 1;
+		//flag.new_measure = 1;
+		clock.ppqn_counter = 0;
+			
+		flag.variation_change = 0;
+		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
+				
+			sequencer.variation = VAR_A; //start on variation A
+			} else {
+				
+			sequencer.variation = VAR_B;
+		}
+
+}
+
+void process_stop(void) {
+	
+		if (sequencer.part_playing == SECOND) { //reset part playing
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on (FIRST_PART_LED);
+				
+		}
+		turn_off_all_inst_leds();
+		turn_on(drum_hit[sequencer.current_inst].led_index);
+			
+		//blank all step leds and turn on current pattern LED
+		spi_data[1] = 0;
+		spi_data[0] = 0;
+		turn_on(STEP_1_LED);	
+	
+}
 void process_step(void) {
 	
 	//if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
