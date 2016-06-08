@@ -15,7 +15,10 @@
 #include "drums.h"
 #include "adc.h"
 #include "spi.h"
-
+#include "midi.h"
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
+#include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
 volatile struct flag flag;
@@ -75,6 +78,11 @@ void process_start(void) {
 				
 			sequencer.variation = VAR_B;
 		}
+		if (clock.source == INTERNAL) {
+			
+			midi_send_start(&midi_device);
+			midi_send_clock(&midi_device);
+		}
 
 }
 
@@ -93,6 +101,7 @@ void process_stop(void) {
 		spi_data[1] = 0;
 		spi_data[0] = 0;
 		turn_on(STEP_1_LED);	
+		if (clock.source == INTERNAL) midi_send_stop(&midi_device);
 	
 }
 void process_step(void) {

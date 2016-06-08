@@ -14,6 +14,10 @@
 #include "sequencer.h"
 #include "drums.h"
 #include "clock.h"
+#include "midi.h"
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
+#include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct button button[NUM_BUTTONS] = {
 	
