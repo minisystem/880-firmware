@@ -16,6 +16,7 @@
 #include "adc.h"
 #include "spi.h"
 
+
 struct sequencer sequencer;
 volatile struct flag flag;
 
@@ -54,6 +55,8 @@ void process_tick(void) {
 			flag.half_step = 1;
 
 		}
+		
+		
 	
 }
 

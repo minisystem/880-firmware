@@ -53,7 +53,11 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
-	if (clock.source == INTERNAL) process_tick(); //flag.tick = 1;
+	if (clock.source == INTERNAL) {
+		
+		process_tick();
+		if (sequencer.START) midi_send_clock(&midi_device); //send MIDI clock
+	}
 	//if (clock.source == INTERNAL) {//could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
 		//if (++clock.ppqn_counter == clock.divider) {
 			//flag.next_step = 1;
@@ -83,8 +87,27 @@ ISR (USART0_RX_vect) { // USART receive interrupt
 	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
 }
 
-ISR (USART0_TX_vect) {
+//ISR (USART0_TX_vect) {
+//
+//
+	//
+//}
+ISR(USART0_UDRE_vect) {
+	uint8_t val;
 
+	// check if bytes are available for transmission
 
-	
+	if (bytequeue_length(&midi_byte_queue) > 0) {
+		//first, grab a byte
+		val = bytequeue_get(&midi_byte_queue, 0);
+
+		//then transmit
+		//and remove from queue
+		UDR0 = val;
+		bytequeue_remove(&midi_byte_queue, 1);
+	}
+
+	// if queue is empty, stop!
+	if(bytequeue_length(&midi_byte_queue) == 0)
+	UCSR0B &= ~( 1 << UDRIE0 );
 }

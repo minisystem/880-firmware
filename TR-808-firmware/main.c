@@ -86,6 +86,7 @@ int main(void)
 	//setup MIDI
 	//initialize MIDI device
 	midi_device_init(&midi_device);
+	
 	//register callbacks
 	midi_register_noteon_callback(&midi_device, note_on_event);
 	midi_register_noteoff_callback(&midi_device, note_off_event);
@@ -98,7 +99,7 @@ int main(void)
 	//sequencer.pre_scale = PRE_SCALE_3;
 	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
 	clock.ppqn_counter = 1;
-	clock.source = EXTERNAL;
+	clock.source = INTERNAL;
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();
