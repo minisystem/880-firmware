@@ -14,6 +14,7 @@
 #include "sequencer.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
+#include "xnormidi-develop/bytequeue/bytequeue.h"
 #include "midi.h"
 
 
@@ -69,6 +70,21 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//}
 	
 	
+
+	
+}
+
+ISR (USART0_RX_vect) { // USART receive interrupt
+	//PORTB ^= (1<<ARP_SYNC_LED); //toggle arp VCO_SYNC_LATCH_BIT LED
+	uint8_t inByte = UDR0;
+	midi_device_input(&midi_device, 1, &inByte);
+	//calling a function in an interrupt is inefficient according to AVR C guidelines
+	// so this function should maybe be inlined in main loop if inByte is made volatile
+	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
+}
+
+ISR (USART0_TX_vect) {
+
 
 	
 }

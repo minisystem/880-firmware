@@ -8,6 +8,7 @@ extern MidiDevice midi_device;
 
 void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity);
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity);
+void real_time_event(MidiDevice * device, uint8_t real_time_byte);
 void setup_midi_usart(void);
 
 #endif
