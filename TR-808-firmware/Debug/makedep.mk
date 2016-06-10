@@ -8,6 +8,8 @@ clock.c
 
 drums.c
 
+eeprom.c
+
 interrupts.c
 
 leds.c

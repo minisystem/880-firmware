@@ -100,13 +100,11 @@ void process_stop(void) {
 		//blank all step leds and turn on current pattern LED
 		spi_data[1] = 0;
 		spi_data[0] = 0;
-		turn_on(STEP_1_LED);	
+		turn_on(sequencer.current_pattern);	
 		if (clock.source == INTERNAL) midi_send_stop(&midi_device);
 	
 }
 void process_step(void) {
-	
-	//if (sequencer.START) { //this is an effort to synchronize SPI update within main loop - basically manipulate SPI data bytes and then do one single update_spi() call per loop
 			
 	if (flag.next_step) {
 		flag.next_step = 0;
@@ -127,7 +125,7 @@ void process_step(void) {
 						turn_on(SECOND_PART_LED);
 					}
 					sequencer.part_playing ^= 1 << 0;
-					} else {
+				} else {
 								
 					toggle_variation(); //no second part, so toggle variation
 								
@@ -145,7 +143,7 @@ void process_step(void) {
 
 			}			
 
-			//*************************************************************************//
+		//*************************************************************************//
 			while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
 			//with allowing drums to be triggered by MIDI when sequencer is running?
 					
@@ -260,7 +258,7 @@ void process_step(void) {
 						
 
 						
-				turn_on(STEP_1_LED); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
+				turn_on(sequencer.current_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
 			}
 		}
 				
@@ -295,60 +293,76 @@ void process_step(void) {
 //}
 
 void update_step_board() {
-	
+	uint8_t press = EMPTY;
 	if (sequencer.START) {
 		
 			switch (sequencer.mode) {		
 			
 			case FIRST_PART: case SECOND_PART:
-				
+
 				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
-					
-					for (int i = 0; i < NUM_STEPS; i++) {
-						
-							if (button[i].state) {
-								
-								button[i].state ^= button[i].state;
-								sequencer.step_num_new = i;
-								break;// - should we break out of here? multiple presses will mess things up, right?
-							}
-						
-					}
+					press = check_step_press();
+					if (press != EMPTY) sequencer.step_num_new = press;
+					//for (int i = 0; i < NUM_STEPS; i++) {
+						//
+							//if (button[i].state) {
+								//
+								//button[i].state ^= button[i].state;
+								//sequencer.step_num_new = i;
+								////break;// - should we break out of here? multiple presses will mess things up, right?
+							//}
+						//
+					//}
 					
 					break; //break or return? or is it needed?
 				}
 				
 				
 				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
-			
-					for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
-				
-						if (button[i].state) {
-					
-							
-							button[i].state ^= button[i].state;
-							if (i <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
-								toggle(i);
-								sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<i; 
-								sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
-							}
+					press = check_step_press();
+					if (press != EMPTY)	{
+						if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
+							toggle(press);
+							sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
+							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
 						}
+						
 					}
+					//for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient. Will need to use offset of 16 for steps 17-32 of SECOND_PART
+				//
+						//if (button[i].state) {
+					//
+							//
+							//button[i].state ^= button[i].state;
+							//if (i <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
+								//toggle(i);
+								//sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<i; 
+								//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+							//}
+						//}
+					//}
 					return;
 				}
-				for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient.
-			
-					if (button[i].state) {
-						
-						
-						button[i].state ^= button[i].state;
-						if (i <= sequencer.step_num[sequencer.part_editing]) {
-							toggle(i);
-							sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] ^= 1<<sequencer.current_inst;
-							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
-						}
+				//for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient.
+					press = check_step_press();
+					if (press != EMPTY)	{
+						if (press <= sequencer.step_num[sequencer.part_editing]) {
+							toggle(press);
+							sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
+						}					
 					}
-				}
+					//if (button[i].state) {
+						//
+						//
+						//button[i].state ^= button[i].state;
+						//if (i <= sequencer.step_num[sequencer.part_editing]) {
+							//toggle(i);
+							//sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] ^= 1<<sequencer.current_inst;
+							//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<i;
+						//}
+					//}
+				//}
 				break;
 			
 			case MANUAL_PLAY:
@@ -371,6 +385,18 @@ void update_step_board() {
 	} else {
 		
 		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
+		press = check_step_press();
+		if (press != EMPTY) sequencer.current_pattern = press;
+		//for (int i = 0; i < NUM_STEPS; i++) {
+								//
+			//if (button[i].state) {
+									//
+				//button[i].state ^= button[i].state;
+				//sequencer.current_pattern = i;
+				//break;// - should we break out of here? multiple presses will mess things up, right?
+			//}
+								//
+		//}
 		
 	}
 }

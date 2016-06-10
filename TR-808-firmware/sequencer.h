@@ -49,10 +49,10 @@ struct flag {
 	
 	uint8_t next_step:1;
 	uint8_t half_step:1;
-	//uint8_t tick:1;
 	uint8_t variation_change:1;
 	uint8_t trig_finished:1;
 	uint8_t step_num_change:1;
+	uint8_t pattern_change:1;
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
@@ -84,9 +84,9 @@ struct sequencer {
 	uint8_t step_num_new:5; //holder to change step number at end of measure - extra bit to hold NO_STEPS exception. harrumph.
 	uint8_t current_step:4; //max 16 steps per part
 	uint8_t part_playing:1; //0 or 1 first part or second part - will toggle
-	uint8_t part_editing:1; //part currently being edited. Determiend by mode
+	uint8_t part_editing:1; //part currently being edited. Determined by mode
 	uint8_t pre_scale:2;
-	uint8_t pattern_num:4;
+	uint8_t current_pattern:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;

@@ -282,3 +282,21 @@ void check_clear_switch(void) {
 	}
 	
 }
+
+uint8_t check_step_press(void) {
+	
+	uint8_t switch_num = EMPTY;
+	
+	for (int i = 0; i < NUM_STEPS; i++) {
+				
+		if (button[i].state) {
+					
+			button[i].state ^= button[i].state;
+			switch_num = i;
+			//break;// - should we break out of here? multiple presses will mess things up, right?
+		}
+				
+	}
+	
+	return switch_num;	
+}

@@ -1,3 +1,10 @@
+/*
+ * midi.c
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "midi.h"
@@ -30,7 +37,7 @@ void setup_midi_usart(void)
 void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
 	
 
-	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits
+	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits, or maybe just have an offset that allows first note of 16 to be set
 		
 		trigger_drum(note, velocity);
 		

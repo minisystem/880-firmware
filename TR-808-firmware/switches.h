@@ -51,8 +51,10 @@ enum {
 	OMAR_NOT_HERE,
 	OMAR_FINAL
 	};
+	
+#define EMPTY 255 //quick and dirty null value	
 
-#define NUM_BUTTONS		35 //use sizeof of button array to increase flexibility
+#define NUM_BUTTONS	35 //use sizeof of button array to increase flexibility
 
 struct button {
 	
@@ -80,5 +82,7 @@ void check_inst_switches(void);
 void check_variation_switches(void);
 
 void check_clear_switch(void);
+
+uint8_t check_step_press(void); //return pressed step switch
 	
 #endif

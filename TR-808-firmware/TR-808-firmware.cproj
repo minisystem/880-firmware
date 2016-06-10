@@ -133,6 +133,12 @@
     <Compile Include="drums.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="eeprom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="eeprom.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hardware.h">
       <SubType>compile</SubType>
     </Compile>

@@ -71,8 +71,8 @@ int main(void)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
-	
-	turn_on(STEP_1_LED);
+	sequencer.current_pattern = 0;
+	turn_on(sequencer.current_pattern);
 	turn_on(MODE_2_FIRST_PART_PART);
 	turn_on(FILL_MANUAL);
 	
