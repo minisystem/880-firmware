@@ -118,6 +118,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="twi_eeprom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="twi_eeprom.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="adc.c">
       <SubType>compile</SubType>
     </Compile>
@@ -134,12 +140,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hardware.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="i2c_eeprom.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="i2c_eeprom.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interrupts.c">
@@ -170,6 +170,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="switches.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="twi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="twi.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="xnormidi-develop\bytequeue\bytequeue.c">
