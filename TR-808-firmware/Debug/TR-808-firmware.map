@@ -43,12 +43,35 @@ Discarded input sections
  .bss           0x00000000        0x0 drums.o
  .data.midi_note_queue
                 0x00000000       0x10 drums.o
- .text          0x00000000        0x0 eeprom.o
- .data          0x00000000        0x0 eeprom.o
- .bss           0x00000000        0x0 eeprom.o
- .debug_line    0x00000000        0x0 eeprom.o
- .debug_str     0x00000000       0xf7 eeprom.o
- .comment       0x00000000       0x31 eeprom.o
+ .text          0x00000000        0x0 i2c_eeprom.o
+ .data          0x00000000        0x0 i2c_eeprom.o
+ .bss           0x00000000        0x0 i2c_eeprom.o
+ .text.i2c_Setup
+                0x00000000        0x8 i2c_eeprom.o
+ .text.i2c_Start
+                0x00000000       0x4a i2c_eeprom.o
+ .text.i2c_Stop
+                0x00000000        0x8 i2c_eeprom.o
+ .text.i2c_Read_ACK
+                0x00000000       0x16 i2c_eeprom.o
+ .text.i2c_Read_NACK
+                0x00000000       0x16 i2c_eeprom.o
+ .text.i2c_Write
+                0x00000000       0x24 i2c_eeprom.o
+ .text.i2c_Transmit
+                0x00000000       0x6c i2c_eeprom.o
+ .text.i2c_Receive
+                0x00000000       0x6c i2c_eeprom.o
+ .debug_info    0x00000000      0x26c i2c_eeprom.o
+ .debug_abbrev  0x00000000      0x152 i2c_eeprom.o
+ .debug_loc     0x00000000      0x2ff i2c_eeprom.o
+ .debug_aranges
+                0x00000000       0x58 i2c_eeprom.o
+ .debug_ranges  0x00000000       0x48 i2c_eeprom.o
+ .debug_line    0x00000000      0x188 i2c_eeprom.o
+ .debug_str     0x00000000      0x1ec i2c_eeprom.o
+ .comment       0x00000000       0x31 i2c_eeprom.o
+ .debug_frame   0x00000000       0xf4 i2c_eeprom.o
  .text          0x00000000        0x0 interrupts.o
  .data          0x00000000        0x0 interrupts.o
  .bss           0x00000000        0x0 interrupts.o
@@ -310,7 +333,7 @@ LOAD C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.0.98/gcc/d
 LOAD adc.o
 LOAD clock.o
 LOAD drums.o
-LOAD eeprom.o
+LOAD i2c_eeprom.o
 LOAD interrupts.o
 LOAD leds.o
 LOAD main.o
@@ -991,7 +1014,7 @@ END GROUP
  .debug_abbrev  0x000013e5      0x1f6 xnormidi-develop/midi.o
  .debug_abbrev  0x000015db      0x205 xnormidi-develop/midi_device.o
 
-.debug_line     0x00000000     0x1912
+.debug_line     0x00000000     0x190d
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0xba adc.o
  .debug_line    0x000000ba       0xbf clock.o
@@ -1001,13 +1024,13 @@ END GROUP
  .debug_line    0x0000066b      0x1d6 main.o
  .debug_line    0x00000841      0x197 midi.o
  .debug_line    0x000009d8       0xfa mode.o
- .debug_line    0x00000ad2      0x317 sequencer.o
- .debug_line    0x00000de9      0x10d spi.o
- .debug_line    0x00000ef6      0x1fa switches.o
- .debug_line    0x000010f0      0x132 xnormidi-develop/bytequeue/bytequeue.o
- .debug_line    0x00001222       0xea xnormidi-develop/bytequeue/interrupt_setting.o
- .debug_line    0x0000130c      0x3db xnormidi-develop/midi.o
- .debug_line    0x000016e7      0x22b xnormidi-develop/midi_device.o
+ .debug_line    0x00000ad2      0x312 sequencer.o
+ .debug_line    0x00000de4      0x10d spi.o
+ .debug_line    0x00000ef1      0x1fa switches.o
+ .debug_line    0x000010eb      0x132 xnormidi-develop/bytequeue/bytequeue.o
+ .debug_line    0x0000121d       0xea xnormidi-develop/bytequeue/interrupt_setting.o
+ .debug_line    0x00001307      0x3db xnormidi-develop/midi.o
+ .debug_line    0x000016e2      0x22b xnormidi-develop/midi_device.o
 
 .debug_frame    0x00000000      0xcb8
  *(.debug_frame)

@@ -8,7 +8,7 @@ clock.c
 
 drums.c
 
-eeprom.c
+i2c_eeprom.c
 
 interrupts.c
 

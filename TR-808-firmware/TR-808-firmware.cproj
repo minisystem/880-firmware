@@ -133,13 +133,13 @@
     <Compile Include="drums.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="eeprom.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eeprom.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hardware.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c_eeprom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c_eeprom.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interrupts.c">

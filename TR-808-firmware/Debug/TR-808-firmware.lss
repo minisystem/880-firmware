@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 000017e0  00000000  00000000  00009a10  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00001912  00000000  00000000  0000b1f0  2**0
+  8 .debug_line   0000190d  00000000  00000000  0000b1f0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000cb8  00000000  00000000  0000cb04  2**2
+  9 .debug_frame  00000cb8  00000000  00000000  0000cb00  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000011fc  00000000  00000000  0000d7bc  2**0
+ 10 .debug_str    000011fc  00000000  00000000  0000d7b8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000025dd  00000000  00000000  0000e9b8  2**0
+ 11 .debug_loc    000025dd  00000000  00000000  0000e9b4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000003f8  00000000  00000000  00010f95  2**0
+ 12 .debug_ranges 000003f8  00000000  00000000  00010f91  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -2500,10 +2500,10 @@ void process_stop(void) {
      efc:	08 95       	ret
 
 00000efe <update_step_board>:
-		//
-//}
-		
-//}
+	}		
+	spi_data[5] |= sequencer.var_led_mask;
+}
+
 
 void update_step_board() {
      efe:	8f 92       	push	r8
@@ -2524,21 +2524,21 @@ void update_step_board() {
      f1a:	91 ff       	sbrs	r25, 1
      f1c:	c9 c0       	rjmp	.+402    	; 0x10b0 <update_step_board+0x1b2>
 		
-			switch (sequencer.mode) {		
+		switch (sequencer.mode) {		
      f1e:	80 91 46 04 	lds	r24, 0x0446
      f22:	81 50       	subi	r24, 0x01	; 1
      f24:	82 30       	cpi	r24, 0x02	; 2
      f26:	08 f0       	brcs	.+2      	; 0xf2a <update_step_board+0x2c>
      f28:	d8 c0       	rjmp	.+432    	; 0x10da <update_step_board+0x1dc>
 			
-			case FIRST_PART: case SECOND_PART:
+		case FIRST_PART: case SECOND_PART:
 
-				if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
+			if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
      f2a:	92 ff       	sbrs	r25, 2
      f2c:	0d c0       	rjmp	.+26     	; 0xf48 <update_step_board+0x4a>
-					press = check_step_press();
+				press = check_step_press();
      f2e:	0e 94 6b 0e 	call	0x1cd6	; 0x1cd6 <check_step_press>
-					if (press != EMPTY) sequencer.step_num_new = press;
+				if (press != EMPTY) sequencer.step_num_new = press;
      f32:	8f 3f       	cpi	r24, 0xFF	; 255
      f34:	09 f4       	brne	.+2      	; 0xf38 <update_step_board+0x3a>
      f36:	d1 c0       	rjmp	.+418    	; 0x10da <update_step_board+0x1dc>
@@ -2550,24 +2550,23 @@ void update_step_board() {
      f42:	89 2b       	or	r24, r25
      f44:	80 83       	st	Z, r24
      f46:	c9 c0       	rjmp	.+402    	; 0x10da <update_step_board+0x1dc>
-					
-					break; //break or return? or is it needed?
-				}
+				break;
+			}
 				
 				
-				if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
+			if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
      f48:	80 91 1d 05 	lds	r24, 0x051D
      f4c:	80 31       	cpi	r24, 0x10	; 16
      f4e:	09 f0       	breq	.+2      	; 0xf52 <update_step_board+0x54>
      f50:	51 c0       	rjmp	.+162    	; 0xff4 <update_step_board+0xf6>
-					press = check_step_press();
+				press = check_step_press();
      f52:	0e 94 6b 0e 	call	0x1cd6	; 0x1cd6 <check_step_press>
      f56:	c8 2f       	mov	r28, r24
-					if (press != EMPTY)	{
+				if (press != EMPTY)	{
      f58:	8f 3f       	cpi	r24, 0xFF	; 255
      f5a:	09 f4       	brne	.+2      	; 0xf5e <update_step_board+0x60>
      f5c:	be c0       	rjmp	.+380    	; 0x10da <update_step_board+0x1dc>
-						if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
+					if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
      f5e:	80 91 1a 05 	lds	r24, 0x051A
      f62:	82 fb       	bst	r24, 2
      f64:	00 27       	eor	r16, r16
@@ -2582,10 +2581,10 @@ void update_step_board() {
      f76:	8c 17       	cp	r24, r28
      f78:	08 f4       	brcc	.+2      	; 0xf7c <update_step_board+0x7e>
      f7a:	af c0       	rjmp	.+350    	; 0x10da <update_step_board+0x1dc>
-							toggle(press);
+						toggle(press);
      f7c:	8c 2f       	mov	r24, r28
      f7e:	0e 94 d5 03 	call	0x7aa	; 0x7aa <toggle>
-							sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
+						sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
      f82:	80 91 15 05 	lds	r24, 0x0515
      f86:	80 fb       	bst	r24, 0
      f88:	aa 24       	eor	r10, r10
@@ -2626,7 +2625,7 @@ void update_step_board() {
      fd0:	3c 93       	st	X, r19
      fd2:	2e 93       	st	-X, r18
      fd4:	13 97       	sbiw	r26, 0x03	; 3
-							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
+						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
      fd6:	20 91 1d 05 	lds	r18, 0x051D
      fda:	e2 0f       	add	r30, r18
      fdc:	f1 1d       	adc	r31, r1
@@ -2641,19 +2640,19 @@ void update_step_board() {
      fee:	94 83       	std	Z+4, r25	; 0x04
      ff0:	83 83       	std	Z+3, r24	; 0x03
      ff2:	73 c0       	rjmp	.+230    	; 0x10da <update_step_board+0x1dc>
-						//}
-					//}
-					return;
 				}
-				//for (int i = 0; i < NUM_STEPS; i++) { //button and led indices match for 0-15. How convenient.
-					press = check_step_press();
+
+				return;
+			}
+
+				press = check_step_press();
      ff4:	0e 94 6b 0e 	call	0x1cd6	; 0x1cd6 <check_step_press>
      ff8:	18 2f       	mov	r17, r24
-					if (press != EMPTY)	{
+				if (press != EMPTY)	{
      ffa:	8f 3f       	cpi	r24, 0xFF	; 255
      ffc:	09 f4       	brne	.+2      	; 0x1000 <update_step_board+0x102>
      ffe:	6d c0       	rjmp	.+218    	; 0x10da <update_step_board+0x1dc>
-						if (press <= sequencer.step_num[sequencer.part_editing]) {
+					if (press <= sequencer.step_num[sequencer.part_editing]) {
     1000:	80 91 1a 05 	lds	r24, 0x051A
     1004:	82 fb       	bst	r24, 2
     1006:	88 27       	eor	r24, r24
@@ -2669,10 +2668,10 @@ void update_step_board() {
     101a:	81 17       	cp	r24, r17
     101c:	08 f4       	brcc	.+2      	; 0x1020 <update_step_board+0x122>
     101e:	5d c0       	rjmp	.+186    	; 0x10da <update_step_board+0x1dc>
-							toggle(press);
+						toggle(press);
     1020:	81 2f       	mov	r24, r17
     1022:	0e 94 d5 03 	call	0x7aa	; 0x7aa <toggle>
-							sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
     1026:	80 91 15 05 	lds	r24, 0x0515
     102a:	80 fb       	bst	r24, 0
     102c:	cc 24       	eor	r12, r12
@@ -2720,7 +2719,7 @@ void update_step_board() {
     1084:	5b 27       	eor	r21, r27
     1086:	54 83       	std	Z+4, r21	; 0x04
     1088:	43 83       	std	Z+3, r20	; 0x03
-							sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
+						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
     108a:	fc 01       	movw	r30, r24
     108c:	e6 0f       	add	r30, r22
     108e:	f1 1d       	adc	r31, r1
@@ -2740,7 +2739,7 @@ void update_step_board() {
     10aa:	34 83       	std	Z+4, r19	; 0x04
     10ac:	23 83       	std	Z+3, r18	; 0x03
     10ae:	15 c0       	rjmp	.+42     	; 0x10da <update_step_board+0x1dc>
-			}
+		}
 			
 	} else {
 		
@@ -2767,9 +2766,7 @@ void update_step_board() {
     10d4:	8e 7f       	andi	r24, 0xFE	; 254
     10d6:	89 2b       	or	r24, r25
     10d8:	82 83       	std	Z+2, r24	; 0x02
-			//}
-								//
-		//}
+
 		
 	}
 }

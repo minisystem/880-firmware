@@ -43,7 +43,7 @@ C_SRCS +=  \
 ../adc.c \
 ../clock.c \
 ../drums.c \
-../eeprom.c \
+../i2c_eeprom.c \
 ../interrupts.c \
 ../leds.c \
 ../main.c \
@@ -69,7 +69,7 @@ OBJS +=  \
 adc.o \
 clock.o \
 drums.o \
-eeprom.o \
+i2c_eeprom.o \
 interrupts.o \
 leds.o \
 main.o \
@@ -88,7 +88,7 @@ OBJS_AS_ARGS +=  \
 adc.o \
 clock.o \
 drums.o \
-eeprom.o \
+i2c_eeprom.o \
 interrupts.o \
 leds.o \
 main.o \
@@ -107,7 +107,7 @@ C_DEPS +=  \
 adc.d \
 clock.d \
 drums.d \
-eeprom.d \
+i2c_eeprom.d \
 interrupts.d \
 leds.d \
 main.d \
@@ -126,7 +126,7 @@ C_DEPS_AS_ARGS +=  \
 adc.d \
 clock.d \
 drums.d \
-eeprom.d \
+i2c_eeprom.d \
 interrupts.d \
 leds.d \
 main.d \

@@ -1,3 +1,10 @@
+/*
+ * midi.h
+ * JR-808 firmware ATMEGA328PB
+ * minisystem
+ * system79.com
+ */
+
 #ifndef MIDI_H
 #define MIDI_H
 
