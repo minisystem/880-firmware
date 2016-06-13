@@ -151,10 +151,10 @@ void process_step(void) {
 			//PORTD |= (1<<TRIG);
 						
 			if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-				spi_data[1] = (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-				spi_data[1] &= ~(sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] & (1<<sequencer.current_step));
-				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
-				spi_data[0] &= ~((sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+				spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+				spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
+				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
+				spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 			}
 
 			trigger_step();
@@ -171,8 +171,8 @@ void process_step(void) {
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
 					
-			spi_data[1] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst]; //this keeps inst lights on while blinking step light
-			spi_data[0] = sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8;
+			spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+			spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
 					
 			switch (sequencer.variation_mode) {
 						
@@ -308,7 +308,7 @@ void update_step_board() {
 					if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
 						toggle(press);
 						sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
-						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
+						sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
 					}
 						
 				}
@@ -321,7 +321,7 @@ void update_step_board() {
 					if (press <= sequencer.step_num[sequencer.part_editing]) {
 						toggle(press);
 						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
-						sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] ^= 1<<press;
+						sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
 					}					
 				}
 
@@ -417,7 +417,7 @@ void check_tap(void) {
 		} else {
 			sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
 		}
-		sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= 1<<sequencer.current_step;
+		sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
 		
 	}
 	

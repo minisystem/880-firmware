@@ -62,7 +62,7 @@ struct flag {
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
 	uint16_t accent[NUM_PARTS]; // 2 parts of 16 steps of accent data, 2 parts
 	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
-	uint16_t step_led_mask[17];
+	//uint16_t step_led_mask[17];
 };
 
 
@@ -78,7 +78,7 @@ struct sequencer {
 	uint8_t CLEAR:1; //is the clear button being held?
 	uint8_t SLAVE:1; //is the sequencer a tempo slave?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
-	//uint16_t step_led_mask[2][17];
+	uint16_t step_led_mask[2][17];
 	uint8_t variation:1; //variation A or variation B
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
 	uint8_t step_num[NUM_PARTS];

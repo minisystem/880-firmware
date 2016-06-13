@@ -245,7 +245,7 @@ void check_clear_switch(void) {
 			
 				toggle(MODE_1_PATTERN_CLEAR);			
 				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
-				memset(sequencer.pattern[sequencer.variation].step_led_mask, 0, sizeof(sequencer.pattern[sequencer.variation].step_led_mask));			
+				memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));			
 				sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
 				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
 				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps		

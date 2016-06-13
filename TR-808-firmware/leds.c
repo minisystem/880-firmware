@@ -153,20 +153,25 @@ if (sequencer.SHIFT) {
 	
 void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
 	
-	memset(sequencer.pattern[VAR_A].step_led_mask, 0, sizeof(sequencer.pattern[VAR_A].step_led_mask));
-	memset(sequencer.pattern[VAR_B].step_led_mask, 0, sizeof(sequencer.pattern[VAR_B].step_led_mask));
+	//memset(sequencer.pattern[VAR_A].step_led_mask, 0, sizeof(sequencer.pattern[VAR_A].step_led_mask));
+	//memset(sequencer.pattern[VAR_B].step_led_mask, 0, sizeof(sequencer.pattern[VAR_B].step_led_mask));
+	
+	//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
+	//memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
+	
+	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17);
 
 	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
 		
 		for (int inst = BD; inst <= MA; inst++) {
 			//sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] |= ((sequencer.pattern[sequencer.variation].part[i]) & (1<<sequencer.current_inst)); //this doesn't work. not sure why not???
-			if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.pattern[VAR_A].step_led_mask[inst] |= 1<<i;
-			if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.pattern[VAR_B].step_led_mask[inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_A][inst] |= 1<<i;
+			if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_B][inst] |= 1<<i;
 		}
 		
 		//also need to rebuild accent led_mask here:
-		if ((sequencer.pattern[VAR_A].accent[sequencer.part_editing] >> i) &1) sequencer.pattern[VAR_A].step_led_mask[AC] |= 1<<i;
-		if ((sequencer.pattern[VAR_B].accent[sequencer.part_editing] >> i) &1) sequencer.pattern[VAR_B].step_led_mask[AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_A].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_A][AC] |= 1<<i;
+		if ((sequencer.pattern[VAR_B].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_B][AC] |= 1<<i;
 	}
 	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 	
