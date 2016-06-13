@@ -21,6 +21,7 @@
 #include "drums.h"
 #include "clock.h"
 #include "adc.h"
+#include "twi_eeprom.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 #include "xnormidi-develop/bytequeue/bytequeue.h" //this is required for MIDI sending
@@ -30,9 +31,9 @@ MidiDevice midi_device;
 
 
 void refresh(void) {
-	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed?
+	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed? //meh, doesn't seem to make a huge difference.	
 	if (clock.source == INTERNAL) {
-		update_tempo(); //meh, doesn't seem to make a huge difference.		
+		update_tempo(); 	
 	}
 	check_start_stop_tap();
 	read_switches();
@@ -40,6 +41,7 @@ void refresh(void) {
 	if (sequencer.mode == MANUAL_PLAY) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating
 	update_mode();
 	check_clear_switch();
+	check_intro_fill_variation_switch();
 	check_variation_switches();
 	update_prescale();
 	check_inst_switches();
@@ -122,8 +124,14 @@ int main(void)
 	sequencer.part_editing = FIRST;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
-	//set_up_led_timer();
+	
+	eeprom_init();
+	flag.twi_init_error = 0;
+	
+	
 	sei(); //enable global interrupts	
+	//sequencer.pattern[0] = read_pattern(0);
+	
 	
     while (1) 
     {

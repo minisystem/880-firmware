@@ -83,6 +83,8 @@ void check_variation_switches(void);
 
 void check_clear_switch(void);
 
+void check_intro_fill_variation_switch(void);
+
 uint8_t check_step_press(void); //return pressed step switch
 	
 #endif

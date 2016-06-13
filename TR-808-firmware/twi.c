@@ -4,7 +4,7 @@
  * Created: 2016-06-12 12:23:20 PM
  *  Author: jeff
  */ 
-// hacked from: http://www.nerdkits.com/forum/thread/1423/
+//
 #include <avr/interrupt.h>
 #include "twi.h"
 #include <avr/io.h>
@@ -82,8 +82,8 @@ void TWI_master_start_write_then_read(uint8_t slave_addr, uint16_t write_bytes, 
 // your application, be sure you return as quickly as possible. Remove significant
 // work from the callback and instead perform that work in your main execution loop.
 //
-// See pages 229, 232, 235, and 238 of the ATmega328 datasheet for detailed
-// explanation of the logic below.
+// See pages 229, 232, 235, and 238 of the ATmega328 datasheed for detailed
+// explaination of the logic below.
 SIGNAL(TWI0_vect){
 	TWI_status = TWSR & TWI_TWSR_status_mask;
 	switch(TWI_status){
@@ -117,7 +117,7 @@ SIGNAL(TWI0_vect){
 				while(TWCR & (1<<TWSTO)); // wait for it
 				TWI_busy=0;
 			}
-			}else{
+		}else{
 			TWDR = p_TWI_buffer[TWI_buffer_pos++]; // load data
 			TWCR = TWI_ENABLE; // transmit
 		}

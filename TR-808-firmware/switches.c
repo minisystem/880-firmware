@@ -15,6 +15,7 @@
 #include "drums.h"
 #include "clock.h"
 #include "midi.h"
+#include "twi_eeprom.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 #include "xnormidi-develop/bytequeue/bytequeue.h"
@@ -299,4 +300,31 @@ uint8_t check_step_press(void) {
 	}
 	
 	return switch_num;	
+}
+
+void check_intro_fill_variation_switch(void) {
+	
+	if (button[IF_VAR_SW].state) {
+		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
+		
+		if (sequencer.SHIFT) {
+			
+			sequencer.pattern[0] = read_pattern(894);
+			turn_on(IF_VAR_B_LED);
+			turn_off(IF_VAR_A_LED);
+			
+		} else {
+			
+			
+			
+			struct pattern *pattern_buffer = &sequencer.pattern[0];
+			
+			write_pattern(894, pattern_buffer);
+			turn_on(IF_VAR_A_LED);
+			turn_off(IF_VAR_B_LED);
+		}
+
+	}
+	
+	
 }

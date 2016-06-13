@@ -56,12 +56,12 @@ struct flag {
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
+	uint8_t twi_init_error:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
-	
-	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
 	uint16_t accent[NUM_PARTS]; // 2 parts of 16 steps of accent data, 2 parts
+	uint16_t part[NUM_PARTS][NUM_STEPS]; //2 parts, 16 steps each. thanks to Omar
 	uint16_t step_led_mask[17];
 };
 

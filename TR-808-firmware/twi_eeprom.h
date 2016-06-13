@@ -10,15 +10,16 @@
 #define TWI_EEPROM_H
 
 #include "sequencer.h"
+#define EEPROM_DEVICE_ID 0b1010000
 // Define format of eeprom data block.
-struct PATTERN_DATA {
-	uint16_t part[NUM_PARTS][NUM_STEPS];
-	uint16_t accent[NUM_PARTS];
-	uint8_t pre_scale:2;
-	uint8_t step_num[NUM_PARTS];
-};
+//struct PATTERN_DATA {
+	//uint16_t part[NUM_PARTS][NUM_STEPS];
+	//uint16_t accent[NUM_PARTS];
+	//uint8_t pre_scale:2;
+	//uint8_t step_num[NUM_PARTS];
+//};
 
-typedef struct PATTERN_DATA PATTERN;
+typedef struct pattern PATTERN;
 
 void eeprom_init();
 PATTERN read_pattern(uint16_t memory_address);

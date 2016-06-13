@@ -21,9 +21,9 @@
 	//uint8_t step_num[NUM_PARTS];
 //} PATTERN;
 
-// prototype local functions
-typedef struct PATTERN_DATA PATTERN;
-
+// prototype local functiosn
+typedef struct pattern PATTERN;
+//PATTERN PATTERN;
 // -----------------------------------------------------------------
 void eeprom_stuff() {
 	// Initialize the lcd
@@ -32,7 +32,7 @@ void eeprom_stuff() {
 	//lcd_clear_and_home();
 	
 	// initialize eeprom and TWI/I2C
-	eeprom_init();
+	//eeprom_init();
 	
 	// specify 7 bit device address of eeprom chip
 	#define EEPROM_DEVICE_ID 0b1010000
@@ -99,14 +99,11 @@ typedef struct {
 	uint8_t     low_byte;
 } SET_PATTERN_ADDRESS;
 
-typedef struct {
-	PATTERN pattern_data;
-} READ_PATTERN;
 
 // Create structure pointers for the TWI/I2C buffer
 WRITE_PATTERN            *p_write_pattern;
 SET_PATTERN_ADDRESS      *p_set_pattern_address;
-READ_PATTERN             *p_read_pattern;
+PATTERN             *p_read_pattern;
 
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
@@ -126,15 +123,15 @@ void eeprom_init(){
 	// Set our structure pointers to the TWI/I2C buffer
 	p_write_pattern = (WRITE_PATTERN *)TWI_buffer;
 	p_set_pattern_address = (SET_PATTERN_ADDRESS *)TWI_buffer;
-	p_read_pattern = (READ_PATTERN *)TWI_buffer;
+	p_read_pattern = (PATTERN *)TWI_buffer;
 	
 }
 
-PATTERN read_eeprom(uint16_t memory_address){
+PATTERN read_pattern(uint16_t memory_address){
 	// send 'set memory address' command to eeprom and then read data
 	while(TWI_busy);
-	p_set_pattern_address->high_byte = memory_address >> 8;
-	p_set_pattern_address->low_byte = memory_address & 0x0F;
+	p_set_pattern_address->high_byte = (memory_address >> 8);
+	p_set_pattern_address->low_byte = memory_address;
 	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
 	sizeof(SET_PATTERN_ADDRESS),     // number of bytes to write
 	sizeof(PATTERN)             // number of bytes to read
@@ -143,26 +140,34 @@ PATTERN read_eeprom(uint16_t memory_address){
 	// nothing else to do - wait for the data
 	while(TWI_busy);
 	// return the data
-	return(p_read_pattern->pattern_data);
+
+	return(*p_read_pattern);
 }
 
 // write eeprom - note: page boundaries are not considered in this example
-void write_eeprom(uint16_t memory_address, PATTERN *w_data){
+void write_pattern(uint16_t memory_address, PATTERN *w_data){
 	while(TWI_busy);
-	p_write_pattern->high_byte = EEPROM_DATA_ADDRESS >> 8;
-	p_write_pattern->low_byte = EEPROM_DATA_ADDRESS & 0x0F;
-	p_write_pattern->pattern_data = *w_data;
-	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
-	sizeof(WRITE_PATTERN)    // number of bytes to write
-	);
-	
+	for (int i = 0; i < sizeof(PATTERN); ++i) {	
+		// we can only write up to 32 bytes at a time, so to simplify the code, we simply write 1 byte at a time (plus the 2 address bytes at each write)
+		p_write_pattern->high_byte = (memory_address >> 8);
+		p_write_pattern->low_byte = memory_address;
+		// this is directly putting 1 byte of the input PATTERN w_data into the TWI_buffer *after* the address bytes (hence the +2)
+		// NOTE: p_write_pattern is a pointer to TWI_BUFFER
+		memcpy(TWI_buffer+2, (char *)w_data + i, 1);
+		TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
+		2 + 1
+		);
+		memory_address++;
+		while(TWI_busy);
+	}
 }
 
 // optional callback function for TWI/I2C driver
 void handle_TWI_result(uint8_t return_code){
+	flag.twi_init_error = 0;
 	if(return_code!=TWI_success){
-		//lcd_line_four();
-		//fprintf_P(&lcd_stream, PSTR("I2C ERROR - %02X"), return_code);
+		flag.twi_init_error = 1;
+		//turn_on(IF_VAR_B_LED);
 	}
 }
 
