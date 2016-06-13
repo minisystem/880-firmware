@@ -11,6 +11,8 @@
 
 #include "sequencer.h"
 #define EEPROM_DEVICE_ID 0b1010000
+
+#define PAGE_SIZE 32 //EEPROM page size (32 bytes for AT24CS64 EEPROM, 64 or 128 bytes for larger EEPROMS)
 // Define format of eeprom data block.
 //struct PATTERN_DATA {
 	//uint16_t part[NUM_PARTS][NUM_STEPS];
