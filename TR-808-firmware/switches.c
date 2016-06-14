@@ -317,7 +317,12 @@ void check_intro_fill_variation_switch(void) { //currently just some test code f
 		} else {
 			
 			
-			
+			struct pattern_data eeprom_pattern;
+			eeprom_pattern.variation_a = &sequencer.pattern[VAR_A];
+			eeprom_pattern.variation_b = &sequencer.pattern[VAR_B];
+			eeprom_pattern.step_num[FIRST] = sequencer.step_num[FIRST];
+			eeprom_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
+			eeprom_pattern.pre_scale = sequencer.pre_scale;
 			struct pattern *pattern_buffer = &sequencer.pattern[0];
 			PORTE |= (1<<PE0);
 			write_pattern(0, pattern_buffer);

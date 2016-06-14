@@ -17,6 +17,8 @@
 
 // prototype local functiosn
 typedef struct pattern PATTERN;
+//struct pattern_data eeprom_pattern;
+
 //PATTERN PATTERN;
 // -----------------------------------------------------------------
 
