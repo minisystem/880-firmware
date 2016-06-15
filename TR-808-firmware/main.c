@@ -113,9 +113,9 @@ int main(void)
 	//update_tempo();
 	
 	//set up default start up state. Eventually this should be recalled from EEPROM
-	sequencer.step_num[FIRST] = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
-	sequencer.step_num[SECOND] = NO_STEPS; //default is that second part is not active
-	sequencer.step_num_new = 15;
+	//sequencer.step_num[FIRST] = 15; //0-15 - default 16 step sequence - will change with pre-scale? and can by dynamically changed while programming pattern
+	//sequencer.step_num[SECOND] = NO_STEPS; //default is that second part is not active
+	//sequencer.step_num_new = 15;
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = FIRST_PART;
@@ -134,7 +134,7 @@ int main(void)
 	
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
-	//read_next_pattern(0); //load first pattern
+	read_next_pattern(0); //load first pattern
 	
     while (1) 
     {

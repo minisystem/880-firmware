@@ -51,7 +51,11 @@ void process_tick(void) {
 
 		if (++clock.ppqn_counter == clock.divider) {
 			flag.next_step = 1;
-			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) flag.new_measure = 1;
+			///toggle(IF_VAR_A_LED);
+			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
+				//toggle(IF_VAR_B_LED);	
+				flag.new_measure = 1;
+			}
 			clock.beat_counter++; //overflows every 4 beats
 			clock.ppqn_counter = 0;
 		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
@@ -116,20 +120,20 @@ void process_step(void) {
 				flag.new_measure = 0;
 				sequencer.current_step = 0;
 				toggle(IF_VAR_B_LED);
-				if (flag.pattern_edit == 1) {
-					
-					flag.pattern_edit = 0;
-					toggle(IF_VAR_B_LED);
-					write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
-					
-				}
+				//if (flag.pattern_edit == 1) {
+					//
+					//flag.pattern_edit = 0;
+					//toggle(IF_VAR_B_LED);
+					//write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+					//
+				//}
 				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 								
 					if (sequencer.part_playing == SECOND) {
 						turn_off(SECOND_PART_LED);
 						turn_on(FIRST_PART_LED);
 						toggle_variation(); //only toggle variation at the end of the 2nd part
-						} else {
+					} else {
 						turn_off(FIRST_PART_LED);
 						turn_on(SECOND_PART_LED);
 					}
@@ -474,7 +478,10 @@ void read_next_pattern(uint8_t pattern_num) {
 	sequencer.step_num[FIRST] = next_pattern.step_num[FIRST];
 	sequencer.step_num[SECOND] = next_pattern.step_num[SECOND];
 	sequencer.pre_scale = next_pattern.pre_scale;
+	//sequencer.part_playing = sequencer.step_num_new = FIRST;
+	
 	sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
+	//sequencer.part_playing = sequencer.part_editing;
 	
 }
 
