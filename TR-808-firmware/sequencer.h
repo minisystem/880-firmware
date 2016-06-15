@@ -51,12 +51,13 @@ struct flag {
 	uint8_t half_step:1;
 	uint8_t variation_change:1;
 	uint8_t trig_finished:1;
-	uint8_t step_num_change:1;
+	//uint8_t step_num_change:1;//not currently used
+	uint8_t pattern_edit:1; //flag if pattern is edited, need to write to eeprom at end of measure
 	uint8_t pattern_change:1;
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
-	uint8_t twi_init_error:1;
+	//uint8_t twi_init_error:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -88,6 +89,7 @@ struct sequencer {
 	uint8_t part_editing:1; //part currently being edited. Determined by mode
 	uint8_t pre_scale:2;
 	uint8_t current_pattern:4;
+	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
@@ -109,5 +111,8 @@ void update_variation(void);
 void update_prescale(void);
 void check_tap(void);
 void toggle_variation(void);
+
+void read_next_pattern(uint8_t pattern_num);
+void write_current_pattern(uint8_t pattern_num);
 
 #endif 

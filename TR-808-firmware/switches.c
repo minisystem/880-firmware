@@ -248,7 +248,9 @@ void check_clear_switch(void) {
 				memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));			
 				sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
 				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
-				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps		
+				sequencer.step_num[FIRST] = 15;
+				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
+				//write_current_pattern(sequencer.current_pattern); //clear it from eeprom too		
 				break;
 				
 			case FIRST_PART:
@@ -303,13 +305,20 @@ uint8_t check_step_press(void) {
 }
 
 void check_intro_fill_variation_switch(void) { //currently just some test code for testing EEPROM
-	
+	pattern_data eeprom_pattern;
 	if (button[IF_VAR_SW].state) {
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
 		
 		if (sequencer.SHIFT) {
 			PORTE |= (1<<PE0);
-			sequencer.pattern[0] = read_pattern(0);
+			eeprom_pattern = read_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE);
+			sequencer.pattern[VAR_A] = eeprom_pattern.variation_a;
+			sequencer.pattern[VAR_B] = eeprom_pattern.variation_b;
+			sequencer.step_num[FIRST] = eeprom_pattern.step_num[FIRST];
+			sequencer.step_num[SECOND] = eeprom_pattern.step_num[SECOND];
+			sequencer.pre_scale = eeprom_pattern.pre_scale;
+			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
+			update_step_led_mask();
 			PORTE &= ~(1<<PE0);
 			turn_on(IF_VAR_B_LED);
 			turn_off(IF_VAR_A_LED);
@@ -317,15 +326,16 @@ void check_intro_fill_variation_switch(void) { //currently just some test code f
 		} else {
 			
 			
-			struct pattern_data eeprom_pattern;
-			eeprom_pattern.variation_a = &sequencer.pattern[VAR_A];
-			eeprom_pattern.variation_b = &sequencer.pattern[VAR_B];
+			//pattern_data eeprom_pattern;
+			eeprom_pattern.variation_a = sequencer.pattern[VAR_A];
+			eeprom_pattern.variation_b = sequencer.pattern[VAR_B];
 			eeprom_pattern.step_num[FIRST] = sequencer.step_num[FIRST];
 			eeprom_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
 			eeprom_pattern.pre_scale = sequencer.pre_scale;
-			struct pattern *pattern_buffer = &sequencer.pattern[0];
+			//struct pattern *pattern_buffer = &sequencer.pattern[0];
 			PORTE |= (1<<PE0);
-			write_pattern(0, pattern_buffer);
+			write_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE, &eeprom_pattern);
+			//write_current_pattern(sequencer.current_pattern);
 			PORTE &= ~(1<<PE0);
 			turn_on(IF_VAR_A_LED);
 			turn_off(IF_VAR_B_LED);

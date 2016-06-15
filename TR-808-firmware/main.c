@@ -28,6 +28,8 @@
 
 MidiDevice midi_device;
 
+//pattern_data next_pattern;
+
 
 
 void refresh(void) {
@@ -126,13 +128,13 @@ int main(void)
 	turn_on(SCALE_3_LED);
 	
 	eeprom_init();
-	flag.twi_init_error = 0;
+	//flag.twi_init_error = 0;
 	
 	DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
 	
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
-	
+	//read_next_pattern(0); //load first pattern
 	
     while (1) 
     {

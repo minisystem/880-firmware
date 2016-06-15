@@ -16,7 +16,7 @@
 
 
 // prototype local functiosn
-typedef struct pattern PATTERN;
+//typedef struct pattern_data pattern_data;
 //struct pattern_data eeprom_pattern;
 
 //PATTERN PATTERN;
@@ -25,9 +25,9 @@ typedef struct pattern PATTERN;
 
 // Define eeprom commands according to 24CXXX datasheet
 typedef struct {
-	uint8_t     high_byte;
-	uint8_t     low_byte;
-	PATTERN		pattern_data;
+	uint8_t			high_byte;
+	uint8_t			low_byte;
+	pattern_data	pattern_data;
 } WRITE_PATTERN;
 
 typedef struct {
@@ -39,7 +39,7 @@ typedef struct {
 // Create structure pointers for the TWI/I2C buffer
 WRITE_PATTERN            *p_write_pattern;
 SET_PATTERN_ADDRESS      *p_set_pattern_address;
-PATTERN             *p_read_pattern;
+pattern_data             *p_read_pattern;
 
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
@@ -59,18 +59,18 @@ void eeprom_init(){
 	// Set our structure pointers to the TWI/I2C buffer
 	p_write_pattern = (WRITE_PATTERN *)TWI_buffer;
 	p_set_pattern_address = (SET_PATTERN_ADDRESS *)TWI_buffer;
-	p_read_pattern = (PATTERN *)TWI_buffer;
+	p_read_pattern = (pattern_data *)TWI_buffer;
 	
 }
 
-PATTERN read_pattern(uint16_t memory_address){
+pattern_data read_pattern(uint16_t memory_address){
 	// send 'set memory address' command to eeprom and then read data
 	while(TWI_busy);
 	p_set_pattern_address->high_byte = (memory_address >> 8);
 	p_set_pattern_address->low_byte = memory_address;
 	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
 	sizeof(SET_PATTERN_ADDRESS),     // number of bytes to write
-	sizeof(PATTERN)             // number of bytes to read
+	sizeof(pattern_data)             // number of bytes to read
 	);
 	
 	// nothing else to do - wait for the data
@@ -81,9 +81,9 @@ PATTERN read_pattern(uint16_t memory_address){
 }
 
 
-void write_pattern(uint16_t memory_address, PATTERN *w_data){
+void write_pattern(uint16_t memory_address, pattern_data *w_data){ //this writes whole pattern, including step number for each part and pre scale
 	while(TWI_busy);
-	int num_pages = sizeof(PATTERN) / PAGE_SIZE;
+	int num_pages = sizeof(pattern_data) / PAGE_SIZE;
 	for (int i = 0; i < num_pages; ++i) {
 		// we can only write up to 32 bytes at a time, so to simplify the code, we simply write 1 byte at a time (plus the 2 address bytes at each write)
 		p_write_pattern->high_byte = (memory_address >> 8);
@@ -98,7 +98,7 @@ void write_pattern(uint16_t memory_address, PATTERN *w_data){
 		while(TWI_busy);
 	}
 	
-	int remaining = sizeof(PATTERN) % PAGE_SIZE;
+	int remaining = sizeof(pattern_data) % PAGE_SIZE;
 	p_write_pattern->high_byte = (memory_address >> 8);
 	p_write_pattern->low_byte = memory_address;
 	memcpy(TWI_buffer+2, (char *)w_data + num_pages*PAGE_SIZE, remaining);
@@ -109,12 +109,18 @@ void write_pattern(uint16_t memory_address, PATTERN *w_data){
 	while(TWI_busy);
 }
 
+//void write_bytes(uint16_t memory_address, (char *)w_data, int num_bytes_to_write) {
+	//
+	//
+	//
+//}
+
 
 // optional callback function for TWI/I2C driver
 void handle_TWI_result(uint8_t return_code){
-	flag.twi_init_error = 0;
+	//flag.twi_init_error = 0;
 	if(return_code!=TWI_success){
-		flag.twi_init_error = 1;
+		//flag.twi_init_error = 1;
 		//turn_on(IF_VAR_B_LED);
 	}
 }

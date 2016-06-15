@@ -16,13 +16,14 @@
 #include "adc.h"
 #include "spi.h"
 #include "midi.h"
+#include "twi_eeprom.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
 volatile struct flag flag;
-
+//pattern_data next_pattern;
 uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
 uint8_t pre_scale[4] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};
 
@@ -110,10 +111,18 @@ void process_step(void) {
 		flag.next_step = 0;
 		if (sequencer.START) {
 		//*************************TAKEN FROM INTERRUPT*****************************//
-			if (flag.new_measure) {
-
+			if (flag.new_measure) { //this code is not getting called right now !!!!! What changes were made that stopped this. No prescale changes happening. fucked everything up. shit. is this from moving interrupt code and this is a bug that wasn't noticed before???? 
+			
 				flag.new_measure = 0;
 				sequencer.current_step = 0;
+				toggle(IF_VAR_B_LED);
+				if (flag.pattern_edit == 1) {
+					
+					flag.pattern_edit = 0;
+					toggle(IF_VAR_B_LED);
+					write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+					
+				}
 				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 								
 					if (sequencer.part_playing == SECOND) {
@@ -309,6 +318,7 @@ void update_step_board() {
 						toggle(press);
 						sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
 						sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
+						flag.pattern_edit = 1;
 					}
 						
 				}
@@ -316,14 +326,16 @@ void update_step_board() {
 				return;
 			}
 
-				press = check_step_press();
-				if (press != EMPTY)	{
-					if (press <= sequencer.step_num[sequencer.part_editing]) {
-						toggle(press);
-						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
-						sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
-					}					
-				}
+			press = check_step_press();
+			if (press != EMPTY)	{
+				if (press <= sequencer.step_num[sequencer.part_editing]) {
+					toggle(press);
+					sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+					sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
+					flag.pattern_edit = 1;
+					//toggle(IF_VAR_B_LED);
+				}					
+			}
 
 			break;
 			
@@ -348,7 +360,11 @@ void update_step_board() {
 		
 		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
 		press = check_step_press();
-		if (press != EMPTY) sequencer.current_pattern = press;
+		if (press != EMPTY) {
+			sequencer.current_pattern = press;
+			read_next_pattern(sequencer.current_pattern);
+			update_step_led_mask();
+		}
 
 		
 	}
@@ -446,4 +462,31 @@ void toggle_variation(void) {
 	}	
 	
 	
+}
+
+void read_next_pattern(uint8_t pattern_num) {
+	
+	pattern_data next_pattern;
+	
+	next_pattern = read_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE);
+	sequencer.pattern[VAR_A] = next_pattern.variation_a;
+	sequencer.pattern[VAR_B] = next_pattern.variation_b;
+	sequencer.step_num[FIRST] = next_pattern.step_num[FIRST];
+	sequencer.step_num[SECOND] = next_pattern.step_num[SECOND];
+	sequencer.pre_scale = next_pattern.pre_scale;
+	sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
+	
+}
+
+void write_current_pattern(uint8_t pattern_num) {
+	
+	pattern_data current_pattern;
+	
+	current_pattern.variation_a = sequencer.pattern[VAR_A];
+	current_pattern.variation_b = sequencer.pattern[VAR_B];
+	current_pattern.step_num[FIRST] = sequencer.step_num[FIRST];
+	current_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
+	current_pattern.pre_scale = sequencer.pre_scale;
+	
+	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, &current_pattern);
 }
