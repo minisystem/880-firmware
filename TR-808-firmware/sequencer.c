@@ -24,7 +24,7 @@
 struct sequencer sequencer;
 volatile struct flag flag;
 //pattern_data next_pattern;
-uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
+//uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
 uint8_t pre_scale[4] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};
 
 void update_tempo(void) {
@@ -110,7 +110,7 @@ void process_stop(void) {
 	
 }
 void process_step(void) {
-			
+	//uint8_t pre_scale[NUM_PRE_SCALES] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};		
 	if (flag.next_step) {
 		flag.next_step = 0;
 		if (sequencer.START) {
@@ -119,14 +119,14 @@ void process_step(void) {
 			
 				flag.new_measure = 0;
 				sequencer.current_step = 0;
-				toggle(IF_VAR_B_LED);
-				//if (flag.pattern_edit == 1) {
-					//
-					//flag.pattern_edit = 0;
-					//toggle(IF_VAR_B_LED);
-					//write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
-					//
-				//}
+				//toggle(IF_VAR_B_LED);
+				if (flag.pattern_edit == 1) {
+					
+					flag.pattern_edit = 0;
+					toggle(IF_VAR_B_LED);
+					write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+					
+				}
 				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 								
 					if (sequencer.part_playing == SECOND) {
@@ -150,7 +150,8 @@ void process_step(void) {
 				//handle pre-scale change
 				if (flag.pre_scale_change) {
 					flag.pre_scale_change = 0;
-					clock.divider = pre_scale[pre_scale_index];
+					
+					clock.divider = pre_scale[sequencer.pre_scale];
 				}
 				//sequencer.current_measure++;
 
@@ -367,7 +368,7 @@ void update_step_board() {
 		if (press != EMPTY) {
 			sequencer.current_pattern = press;
 			read_next_pattern(sequencer.current_pattern);
-			update_step_led_mask();
+
 		}
 
 		
@@ -415,14 +416,13 @@ void update_prescale(void) {
 	
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle switch state
 		
-		if (pre_scale_index-- == 0) { //decrement to go from 3 to 4 to 1 to 2 to 3...
+		if (sequencer.pre_scale-- == 0) { //decrement to go from 3 to 4 to 1 to 2 to 3...
 			
-			pre_scale_index = NUM_PRE_SCALES -1;
+			sequencer.pre_scale = NUM_PRE_SCALES -1;
 					
 		}
-		flag.pre_scale_change = 1;
-		spi_data[5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
-		spi_data[5] |= (1<< (pre_scale_index +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)
+		flag.pre_scale_change = flag.pattern_edit = 1;
+		update_prescale_leds();
 
 	}
 }
@@ -478,6 +478,9 @@ void read_next_pattern(uint8_t pattern_num) {
 	sequencer.step_num[FIRST] = next_pattern.step_num[FIRST];
 	sequencer.step_num[SECOND] = next_pattern.step_num[SECOND];
 	sequencer.pre_scale = next_pattern.pre_scale;
+	clock.divider = pre_scale[sequencer.pre_scale];
+	update_step_led_mask();
+	update_prescale_leds();
 	//sequencer.part_playing = sequencer.step_num_new = FIRST;
 	
 	sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];

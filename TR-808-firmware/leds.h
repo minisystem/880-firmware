@@ -67,7 +67,7 @@ struct led{
 	uint8_t spi_bit;
 	uint8_t spi_byte:4;
 	uint8_t state:1;
-	enum {NO_BLINK, SLOW_BLINK, FAST_BLINK} mode;
+	uint8_t blink:1;
 	
 	
 	};
@@ -86,6 +86,8 @@ void turn_off_all_inst_leds(void);
 void update_inst_leds(void);
 
 void update_step_led_mask(void);
+
+void update_prescale_leds(void);
 
 void refresh_step_leds(void); //update step board spi bytes if step number changes
 

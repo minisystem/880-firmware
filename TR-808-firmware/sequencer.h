@@ -32,7 +32,7 @@
 #define	PRE_SCALE_4 3
 	
 
-extern uint8_t pre_scale[4];	
+//extern uint8_t pre_scale[NUM_PRE_SCALES]; //does this need to be exturned? Just data. Could go in update_prescale() function?	
 
 enum variation_mode {
 	

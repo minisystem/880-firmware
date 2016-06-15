@@ -62,7 +62,7 @@ struct button {
 	uint8_t spi_bit:3;
 	uint8_t spi_byte:3;
 	uint8_t state:1;
-	uint8_t previous_state:1;
+	//uint8_t previous_state:1;
 	uint8_t held:1;
 	
 	

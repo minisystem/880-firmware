@@ -135,6 +135,7 @@ int main(void)
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
 	read_next_pattern(0); //load first pattern
+	//update_step_led_mask();
 	
     while (1) 
     {
