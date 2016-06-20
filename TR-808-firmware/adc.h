@@ -10,7 +10,7 @@
 #ifndef ADC_H
 #define ADC_H
 
-
+#define ADC_MAX 1023 //max value of ADC output
 
 void setup_adc(void);
 

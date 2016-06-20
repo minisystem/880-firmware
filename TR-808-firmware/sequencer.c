@@ -35,7 +35,7 @@ void update_tempo(void) {
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
 	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
 	
-	clock.rate = (1023 - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
+	clock.rate = (ADC_MAX - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
 	if (clock.rate != clock.previous_rate) {
 		
@@ -163,14 +163,18 @@ void process_step(void) {
 					
 			check_tap();
 			//PORTD |= (1<<TRIG);
-						
-			if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-				spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
-				spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
-				spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
-				spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+			if (sequencer.SHIFT) { //shift allows display of current pattern on step board while sequencer is running
+				spi_data[1] = 0;
+				spi_data[0] = 0;
+				turn_on(sequencer.current_pattern);
+			} else {
+				if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
+					spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+					spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
+					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
+					spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+				}
 			}
-
 			trigger_step();
 			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
 				spi_data[8] |= 1<<ACCENT;
@@ -184,10 +188,15 @@ void process_step(void) {
 		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
-					
-			spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-			spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
-					
+			
+			if (sequencer.SHIFT) {
+				spi_data[1] = 0;
+				spi_data[0] = 0;
+				turn_on(sequencer.current_pattern);	
+			} else {	
+				spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+				spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
+			}
 			switch (sequencer.variation_mode) {
 						
 				case VAR_A:
@@ -242,7 +251,7 @@ void process_step(void) {
 				if (sequencer.variation_mode == VAR_AB) {
 					if (sequencer.variation == VAR_A) {
 						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						} else {
+					} else {
 						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
 					}
 				}
@@ -267,11 +276,7 @@ void process_step(void) {
 					
 			if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 						
-
-				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode
-						
-
-						
+				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
 				turn_on(sequencer.current_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
 			}
 		}
@@ -305,41 +310,47 @@ void update_step_board() {
 	uint8_t press = EMPTY;
 	if (sequencer.START) {
 		
-		switch (sequencer.mode) {		
+		switch (sequencer.mode) { //this is jelly brained spaghetti code. just need a global if that if press == EMPTY, just break		
 			
 		case FIRST_PART: case SECOND_PART:
+			press = check_step_press();
+			if (press == EMPTY) break;
+			if (sequencer.SHIFT) {		
+				flag.pattern_change = 1;
+				sequencer.new_pattern = press;
+				break;			
+			}
 
 			if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
-				press = check_step_press();
-				if (press != EMPTY) sequencer.step_num_new = press;
-				break;
-			}
-				
+				//press = check_step_press();
+				sequencer.step_num_new = press;
+				break; //break or return?
+			}			
 				
 			if (sequencer.current_inst == AC) { //bah, inefficient duplicate code to handle ACCENT
-				press = check_step_press();
-				if (press != EMPTY)	{
-					if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
-						toggle(press);
-						sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
-						sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
-						flag.pattern_edit = 1;
-					}
-						
-				}
-
-				return;
-			}
-
-			press = check_step_press();
-			if (press != EMPTY)	{
-				if (press <= sequencer.step_num[sequencer.part_editing]) {
+				//press = check_step_press();
+				//if (press != EMPTY)	{
+				if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
 					toggle(press);
-					sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+					sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
 					sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
 					flag.pattern_edit = 1;
-					//toggle(IF_VAR_B_LED);
-				}					
+				}
+						
+				//}
+
+				return; //break or return?
+			}
+
+			//press = check_step_press();
+			//if (press != EMPTY)	{
+			if (press <= sequencer.step_num[sequencer.part_editing]) {
+				toggle(press);
+				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+				sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
+				flag.pattern_edit = 1;
+				//toggle(IF_VAR_B_LED);
+			//}					
 			}
 
 			break;
