@@ -112,12 +112,13 @@ void process_stop(void) {
 void process_step(void) {
 	//uint8_t pre_scale[NUM_PRE_SCALES] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};		
 	if (flag.next_step) {
+		
 		flag.next_step = 0;
 		//spi_data[1] = 0;
 		//spi_data[0] = 0;
 		if (sequencer.START) {
 		//*************************TAKEN FROM INTERRUPT*****************************//
-			if (flag.new_measure) { //this code is not getting called right now !!!!! What changes were made that stopped this. No prescale changes happening. fucked everything up. shit. is this from moving interrupt code and this is a bug that wasn't noticed before???? 
+			if (flag.new_measure) {
 			
 				flag.new_measure = 0;
 				sequencer.current_step = 0;
@@ -130,17 +131,8 @@ void process_step(void) {
 					
 				}
 				
-				if (flag.pattern_change) {
-					
-					flag.pattern_change = 0;
-					flag.pre_scale_change = 1; //need to handle any change in pre-scale
-					sequencer.current_pattern = sequencer.new_pattern;
-					read_next_pattern(sequencer.current_pattern);
-					sequencer.part_playing = FIRST;
-					turn_off(SECOND_PART_LED);
-					turn_on(FIRST_PART_LED);
-					
-				}
+
+				
 				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 								
 					if (sequencer.part_playing == SECOND) {
@@ -157,6 +149,20 @@ void process_step(void) {
 					toggle_variation(); //no second part, so toggle variation
 								
 				}
+				
+				if (flag.pattern_change) {
+					
+					flag.pattern_change = 0;
+					flag.pre_scale_change = 1; //need to handle any change in pre-scale
+					sequencer.current_pattern = sequencer.new_pattern;
+					read_next_pattern(sequencer.current_pattern);
+					sequencer.part_playing = FIRST;
+					turn_off(SECOND_PART_LED);
+					turn_on(FIRST_PART_LED);
+					
+				}				
+				
+				
 				//update step number
 				sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
 				update_step_led_mask();
@@ -196,7 +202,7 @@ void process_step(void) {
 			}
 		}
 	} else if (flag.half_step) {
-				
+			
 		flag.half_step = 0;
 		turn_off_all_inst_leds();
 		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
@@ -403,7 +409,10 @@ void update_step_board() {
 			read_next_pattern(sequencer.current_pattern);
 			sequencer.variation = VAR_A;
 			sequencer.part_playing = FIRST;
+			sequencer.current_step = 0;
+			clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
 			clock.beat_counter = 0;
+			
 
 		}
 
