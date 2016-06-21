@@ -84,11 +84,12 @@ pattern_data read_pattern(uint16_t memory_address){
 void write_pattern(uint16_t memory_address, pattern_data *w_data){ //this writes whole pattern, including step number for each part and pre scale
 	while(TWI_busy);
 	int num_pages = sizeof(pattern_data) / PAGE_SIZE;
+	//write 32 byte pages of data
 	for (int i = 0; i < num_pages; ++i) {
-		// we can only write up to 32 bytes at a time, so to simplify the code, we simply write 1 byte at a time (plus the 2 address bytes at each write)
+		
 		p_write_pattern->high_byte = (memory_address >> 8);
 		p_write_pattern->low_byte = memory_address;
-		// this is directly putting 1 byte of the input PATTERN w_data into the TWI_buffer *after* the address bytes (hence the +2)
+		// this is directly putting PAGE_SIZE bytes of the input PATTERN w_data into the TWI_buffer *after* the address bytes (hence the +2)
 		// NOTE: p_write_pattern is a pointer to TWI_BUFFER
 		memcpy(TWI_buffer+2, (char *)w_data + i*PAGE_SIZE, PAGE_SIZE);
 		TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
@@ -97,7 +98,7 @@ void write_pattern(uint16_t memory_address, pattern_data *w_data){ //this writes
 		memory_address+= PAGE_SIZE;
 		while(TWI_busy);
 	}
-	
+	//write remaining bytes (ie. remainder of sizeof(pattern_data)/PAGE_SIZE)
 	int remaining = sizeof(pattern_data) % PAGE_SIZE;
 	p_write_pattern->high_byte = (memory_address >> 8);
 	p_write_pattern->low_byte = memory_address;

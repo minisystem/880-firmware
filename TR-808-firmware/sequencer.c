@@ -156,6 +156,7 @@ void process_step(void) {
 					flag.pre_scale_change = 1; //need to handle any change in pre-scale
 					sequencer.current_pattern = sequencer.new_pattern;
 					read_next_pattern(sequencer.current_pattern);
+					sequencer.variation = VAR_A;
 					sequencer.part_playing = FIRST;
 					turn_off(SECOND_PART_LED);
 					turn_on(FIRST_PART_LED);
@@ -407,12 +408,12 @@ void update_step_board() {
 		if (press != EMPTY) {
 			sequencer.current_pattern = sequencer.new_pattern = press;
 			read_next_pattern(sequencer.current_pattern);
-			sequencer.variation = VAR_A;
+			//sequencer.variation = VAR_A;
 			sequencer.part_playing = FIRST;
 			sequencer.current_step = 0;
 			clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
 			clock.beat_counter = 0;
-			
+
 
 		}
 
