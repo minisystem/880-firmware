@@ -113,6 +113,8 @@ void process_step(void) {
 	//uint8_t pre_scale[NUM_PRE_SCALES] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};		
 	if (flag.next_step) {
 		flag.next_step = 0;
+		//spi_data[1] = 0;
+		//spi_data[0] = 0;
 		if (sequencer.START) {
 		//*************************TAKEN FROM INTERRUPT*****************************//
 			if (flag.new_measure) { //this code is not getting called right now !!!!! What changes were made that stopped this. No prescale changes happening. fucked everything up. shit. is this from moving interrupt code and this is a bug that wasn't noticed before???? 
@@ -125,6 +127,18 @@ void process_step(void) {
 					flag.pattern_edit = 0;
 					toggle(IF_VAR_B_LED);
 					write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+					
+				}
+				
+				if (flag.pattern_change) {
+					
+					flag.pattern_change = 0;
+					flag.pre_scale_change = 1; //need to handle any change in pre-scale
+					sequencer.current_pattern = sequencer.new_pattern;
+					read_next_pattern(sequencer.current_pattern);
+					sequencer.part_playing = FIRST;
+					turn_off(SECOND_PART_LED);
+					turn_on(FIRST_PART_LED);
 					
 				}
 				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
@@ -164,9 +178,9 @@ void process_step(void) {
 			check_tap();
 			//PORTD |= (1<<TRIG);
 			if (sequencer.SHIFT) { //shift allows display of current pattern on step board while sequencer is running
-				spi_data[1] = 0;
-				spi_data[0] = 0;
-				turn_on(sequencer.current_pattern);
+				//spi_data[1] = 0;
+				//spi_data[0] = 0;
+				//turn_on(sequencer.current_pattern);
 			} else {
 				if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
 					spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
@@ -188,11 +202,12 @@ void process_step(void) {
 		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
-			
+			spi_data[1] = 0;
+			spi_data[0] = 0;
 			if (sequencer.SHIFT) {
-				spi_data[1] = 0;
-				spi_data[0] = 0;
-				turn_on(sequencer.current_pattern);	
+				//spi_data[1] = 0;
+				//spi_data[0] = 0;
+				//turn_on(sequencer.new_pattern);	
 			} else {	
 				spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
 				spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
@@ -221,7 +236,11 @@ void process_step(void) {
 			}
 					
 			if (clock.beat_counter <2) {
+				if (sequencer.SHIFT) {
+					
+					turn_on(sequencer.new_pattern);
 						
+				}
 				if (flag.variation_change == 1) {
 							
 					switch (sequencer.variation_mode) {
@@ -259,26 +278,26 @@ void process_step(void) {
 					
 			} else {
 					
-			spi_data[1] = 0;
-			spi_data[0] = 0;
+				spi_data[1] = 0;
+				spi_data[0] = 0;
 					
-			switch (sequencer.variation_mode) {
+				switch (sequencer.variation_mode) {
 						
-				case VAR_A: case VAR_AB:
-				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-				break;
+					case VAR_A: case VAR_AB:
+					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+					break;
 						
-				case VAR_B:
-				sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-				break;
+					case VAR_B:
+					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					break;
 						
-			}
+				}
 					
-			if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+				if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 						
-				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
-				turn_on(sequencer.current_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
-			}
+					if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
+					turn_on(sequencer.new_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
+				}
 		}
 				
 		//spi_data[5] |= sequencer.var_led_mask;
@@ -310,14 +329,17 @@ void update_step_board() {
 	uint8_t press = EMPTY;
 	if (sequencer.START) {
 		
-		switch (sequencer.mode) { //this is jelly brained spaghetti code. just need a global if that if press == EMPTY, just break		
+		switch (sequencer.mode) { 
 			
 		case FIRST_PART: case SECOND_PART:
 			press = check_step_press();
 			if (press == EMPTY) break;
+			
 			if (sequencer.SHIFT) {		
 				flag.pattern_change = 1;
 				sequencer.new_pattern = press;
+				//turn_off(sequencer.current_pattern);
+				//turn_on(sequencer.new_pattern);
 				break;			
 			}
 
@@ -377,8 +399,11 @@ void update_step_board() {
 		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
 		press = check_step_press();
 		if (press != EMPTY) {
-			sequencer.current_pattern = press;
+			sequencer.current_pattern = sequencer.new_pattern = press;
 			read_next_pattern(sequencer.current_pattern);
+			sequencer.variation = VAR_A;
+			sequencer.part_playing = FIRST;
+			clock.beat_counter = 0;
 
 		}
 
@@ -495,6 +520,7 @@ void read_next_pattern(uint8_t pattern_num) {
 	//sequencer.part_playing = sequencer.step_num_new = FIRST;
 	
 	sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
+	
 	//sequencer.part_playing = sequencer.part_editing;
 	
 }

@@ -296,7 +296,7 @@ uint8_t check_step_press(void) {
 					
 			button[i].state ^= button[i].state;
 			switch_num = i;
-			//break;// - should we break out of here? multiple presses will mess things up, right?
+			break;// - should we break out of here? multiple presses will mess things up, right?
 		}
 				
 	}
@@ -310,7 +310,7 @@ void check_intro_fill_variation_switch(void) { //currently just some test code f
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
 		
 		if (sequencer.SHIFT) {
-			PORTE |= (1<<PE0);
+			//PORTE |= (1<<PE0);
 			eeprom_pattern = read_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE);
 			sequencer.pattern[VAR_A] = eeprom_pattern.variation_a;
 			sequencer.pattern[VAR_B] = eeprom_pattern.variation_b;
@@ -319,7 +319,7 @@ void check_intro_fill_variation_switch(void) { //currently just some test code f
 			sequencer.pre_scale = eeprom_pattern.pre_scale;
 			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
 			update_step_led_mask();
-			PORTE &= ~(1<<PE0);
+			//PORTE &= ~(1<<PE0);
 			turn_on(IF_VAR_B_LED);
 			turn_off(IF_VAR_A_LED);
 			
@@ -333,10 +333,10 @@ void check_intro_fill_variation_switch(void) { //currently just some test code f
 			eeprom_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
 			eeprom_pattern.pre_scale = sequencer.pre_scale;
 			//struct pattern *pattern_buffer = &sequencer.pattern[0];
-			PORTE |= (1<<PE0);
+			//PORTE |= (1<<PE0);
 			write_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE, &eeprom_pattern);
 			//write_current_pattern(sequencer.current_pattern);
-			PORTE &= ~(1<<PE0);
+			//PORTE &= ~(1<<PE0);
 			turn_on(IF_VAR_A_LED);
 			turn_off(IF_VAR_B_LED);
 		}
