@@ -484,6 +484,7 @@ void check_tap(void) {
 			sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
 		}
 		sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
+		flag.pattern_edit = 1; //set pattern edit flag
 		
 	}
 	

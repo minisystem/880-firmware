@@ -103,7 +103,7 @@ int main(void)
 	//sequencer.pre_scale = PRE_SCALE_3;
 	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
 	clock.ppqn_counter = 1;
-	clock.source = INTERNAL;
+	clock.source = EXTERNAL;
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();

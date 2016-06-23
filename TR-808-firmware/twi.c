@@ -84,7 +84,7 @@ void TWI_master_start_write_then_read(uint8_t slave_addr, uint16_t write_bytes, 
 //
 // See pages 229, 232, 235, and 238 of the ATmega328 datasheed for detailed
 // explaination of the logic below.
-SIGNAL(TWI0_vect){
+SIGNAL(TWI0_vect){ //should probably move this to interrupts.c and change 'SIGNAL' to 'ISR'
 	TWI_status = TWSR & TWI_TWSR_status_mask;
 	switch(TWI_status){
 		
