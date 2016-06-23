@@ -57,6 +57,7 @@ struct flag {
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
+	uint8_t intro:1; //flag for starting with selected intro pattern in manual play mode
 	//uint8_t twi_init_error:1;
 	
 }; 
@@ -77,7 +78,7 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	uint8_t SLAVE:1; //is the sequencer a tempo slave?
+	//uint8_t SLAVE:1; //is the sequencer a tempo slave?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint16_t step_led_mask[2][17];
 	uint8_t variation:1; //variation A or variation B
@@ -90,6 +91,7 @@ struct sequencer {
 	uint8_t pre_scale:2;
 	uint8_t current_pattern:4;
 	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
+	uint8_t current_intro_fill:4;
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
@@ -107,6 +109,7 @@ void update_step_board(void);
 
 void process_start(void);
 void process_stop(void);
+void process_new_measure(void);
 void update_variation(void);
 void update_prescale(void);
 void check_tap(void);

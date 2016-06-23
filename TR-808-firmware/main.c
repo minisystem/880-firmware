@@ -103,7 +103,7 @@ int main(void)
 	//sequencer.pre_scale = PRE_SCALE_3;
 	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step
 	clock.ppqn_counter = 1;
-	clock.source = EXTERNAL;
+	clock.source = INTERNAL;
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();
@@ -119,14 +119,14 @@ int main(void)
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
 	sequencer.mode = FIRST_PART;
-	sequencer.SLAVE = 0;
+	//sequencer.SLAVE = 0;
 	sequencer.sync_mode = MIDI_MASTER;
 
 	sequencer.part_playing = FIRST;
 	sequencer.part_editing = FIRST;
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
-	
+	sequencer.current_intro_fill = 12;//first of 4 intro/fill patterns
 	eeprom_init();
 	//flag.twi_init_error = 0;
 	

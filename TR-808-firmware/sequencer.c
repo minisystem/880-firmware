@@ -58,7 +58,7 @@ void process_tick(void) {
 			}
 			clock.beat_counter++; //overflows every 4 beats
 			clock.ppqn_counter = 0;
-		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - this is going to get long and complicated fast - need to set flag and handle in main loop refresh function
+		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
 				
 			flag.half_step = 1;
 
@@ -109,71 +109,76 @@ void process_stop(void) {
 		if (clock.source == INTERNAL) midi_send_stop(&midi_device);
 	
 }
-void process_step(void) {
-	//uint8_t pre_scale[NUM_PRE_SCALES] = {PRE_SCALE_4, PRE_SCALE_3, PRE_SCALE_2, PRE_SCALE_1};		
+
+void process_new_measure(void) {
+	sequencer.current_step = 0;
+	//toggle(IF_VAR_B_LED);
+	if (flag.pattern_edit == 1) {
+					
+		flag.pattern_edit = 0;
+		toggle(IF_VAR_B_LED);
+		write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+					
+	}
+				
+
+				
+	if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
+					
+		if (sequencer.part_playing == SECOND) {
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+			toggle_variation(); //only toggle variation at the end of the 2nd part
+			} else {
+			turn_off(FIRST_PART_LED);
+			turn_on(SECOND_PART_LED);
+		}
+		sequencer.part_playing ^= 1 << 0;
+		} else {
+					
+		toggle_variation(); //no second part, so toggle variation
+					
+	}
+				
+	if (flag.pattern_change) {
+					
+		flag.pattern_change = 0;
+		flag.pre_scale_change = 1; //need to handle any change in pre-scale
+		sequencer.current_pattern = sequencer.new_pattern;
+		read_next_pattern(sequencer.current_pattern);
+		sequencer.variation = VAR_A;
+		sequencer.part_playing = FIRST;
+		turn_off(SECOND_PART_LED);
+		turn_on(FIRST_PART_LED);
+					
+	}
+				
+				
+	//update step number
+	sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+	update_step_led_mask();
+				
+	//handle pre-scale change
+	if (flag.pre_scale_change) {
+		flag.pre_scale_change = 0;
+					
+		clock.divider = pre_scale[sequencer.pre_scale];
+	}	
+	
+	
+}
+void process_step(void){ 
+	
 	if (flag.next_step) {
 		
 		flag.next_step = 0;
-		//spi_data[1] = 0;
-		//spi_data[0] = 0;
+		
 		if (sequencer.START) {
 		//*************************TAKEN FROM INTERRUPT*****************************//
 			if (flag.new_measure) {
 			
 				flag.new_measure = 0;
-				sequencer.current_step = 0;
-				//toggle(IF_VAR_B_LED);
-				if (flag.pattern_edit == 1) {
-					
-					flag.pattern_edit = 0;
-					toggle(IF_VAR_B_LED);
-					write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
-					
-				}
-				
-
-				
-				if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
-								
-					if (sequencer.part_playing == SECOND) {
-						turn_off(SECOND_PART_LED);
-						turn_on(FIRST_PART_LED);
-						toggle_variation(); //only toggle variation at the end of the 2nd part
-					} else {
-						turn_off(FIRST_PART_LED);
-						turn_on(SECOND_PART_LED);
-					}
-					sequencer.part_playing ^= 1 << 0;
-				} else {
-								
-					toggle_variation(); //no second part, so toggle variation
-								
-				}
-				
-				if (flag.pattern_change) {
-					
-					flag.pattern_change = 0;
-					flag.pre_scale_change = 1; //need to handle any change in pre-scale
-					sequencer.current_pattern = sequencer.new_pattern;
-					read_next_pattern(sequencer.current_pattern);
-					sequencer.variation = VAR_A;
-					sequencer.part_playing = FIRST;
-					turn_off(SECOND_PART_LED);
-					turn_on(FIRST_PART_LED);
-					
-				}				
-				
-				
-				//update step number
-				sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
-				update_step_led_mask();
-							
-				//handle pre-scale change
-				if (flag.pre_scale_change) {
-					flag.pre_scale_change = 0;
-					
-					clock.divider = pre_scale[sequencer.pre_scale];
-				}
+				process_new_measure(); //moved all the new measure housekeeping into its own function.
 				//sequencer.current_measure++;
 
 			}			
@@ -184,18 +189,43 @@ void process_step(void) {
 					
 			check_tap();
 			//PORTD |= (1<<TRIG);
-			if (sequencer.SHIFT) { //shift allows display of current pattern on step board while sequencer is running
-				//spi_data[1] = 0;
-				//spi_data[0] = 0;
-				//turn_on(sequencer.current_pattern);
-			} else {
-				if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-					spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
-					spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
-					spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
-					spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-				}
+			switch (sequencer.mode) {
+				
+				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:				
+					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
+						spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+						spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
+						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
+						spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+						
+					}
+				
+				
+				break;
+				
+				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+					spi_data[1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
+					spi_data[1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
+					spi_data[0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
+					spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));				
+					
+				
+				break;
+				
+				
 			}
+			//if (sequencer.SHIFT) { //shift allows display of current pattern on step board while sequencer is running
+				////spi_data[1] = 0;
+				////spi_data[0] = 0;
+				////turn_on(sequencer.current_pattern);
+			//} else {
+				//if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
+					//spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+					//spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
+					//spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
+					//spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+				//}
+			//}
 			trigger_step();
 			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
 				spi_data[8] |= 1<<ACCENT;
@@ -211,14 +241,37 @@ void process_step(void) {
 		if (sequencer.START) {
 			spi_data[1] = 0;
 			spi_data[0] = 0;
-			if (sequencer.SHIFT) {
+			
+			switch (sequencer.mode) {
+				
+				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+				
+					if (!sequencer.SHIFT) {
+						spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+						spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;				
+					}
+				
+				break;
+				
+				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+				
+					spi_data[1] = (1<<sequencer.new_pattern);
+					spi_data[0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
+				
+				break;
+				
+				
+			}
+			//if (sequencer.SHIFT) {
 				//spi_data[1] = 0;
 				//spi_data[0] = 0;
 				//turn_on(sequencer.new_pattern);	
-			} else {	
-				spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-				spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
-			}
+			//} else {	
+				//spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+				//spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
+			//}
+			
+			
 			switch (sequencer.variation_mode) {
 						
 				case VAR_A:
@@ -283,7 +336,7 @@ void process_step(void) {
 				}
 			}
 					
-			} else {
+		}	 else {
 					
 				spi_data[1] = 0;
 				spi_data[0] = 0;
@@ -299,11 +352,19 @@ void process_step(void) {
 					break;
 						
 				}
+				if (sequencer.mode == MANUAL_PLAY) {
 					
+					if (flag.intro) {
+						turn_on(sequencer.new_pattern);
+					} else {
+						turn_on(sequencer.current_intro_fill);						
+					}
+				}
 				if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 						
 					if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
 					turn_on(sequencer.new_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
+					if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
 				}
 		}
 				
@@ -335,12 +396,14 @@ void process_step(void) {
 void update_step_board() {
 	uint8_t press = EMPTY;
 	if (sequencer.START) {
+		press = check_step_press();
+		if (press == EMPTY) return;
 		
 		switch (sequencer.mode) { 
 			
 		case FIRST_PART: case SECOND_PART:
-			press = check_step_press();
-			if (press == EMPTY) break;
+			//press = check_step_press();
+			//if (press == EMPTY) break;
 			
 			if (sequencer.SHIFT) {		
 				flag.pattern_change = 1;
@@ -386,6 +449,17 @@ void update_step_board() {
 			
 		case MANUAL_PLAY:
 			
+			if (press < 12) { //first 12 pattern places are for main patterns 
+				sequencer.new_pattern = press;
+				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
+				
+			} else { //remaining 4 patterns places are for intro/fills
+				
+				sequencer.current_intro_fill = press;
+				
+				
+			}
+			
 			break;
 				
 		case PLAY_RHYTHM:
@@ -406,14 +480,22 @@ void update_step_board() {
 		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
 		press = check_step_press();
 		if (press != EMPTY) {
-			sequencer.current_pattern = sequencer.new_pattern = press;
-			read_next_pattern(sequencer.current_pattern);
-			//sequencer.variation = VAR_A;
-			sequencer.part_playing = FIRST;
-			sequencer.current_step = 0;
-			clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
-			clock.beat_counter = 0;
-
+			if (sequencer.mode == MANUAL_PLAY) {
+				if (press < 12) {
+					sequencer.current_pattern = sequencer.new_pattern = press;
+				} else {
+					
+					sequencer.current_intro_fill = press;
+				}
+			} else {
+				sequencer.current_pattern = sequencer.new_pattern = press;
+				read_next_pattern(sequencer.current_pattern);
+				//sequencer.variation = VAR_A;
+				sequencer.part_playing = FIRST;
+				sequencer.current_step = 0;
+				clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+				clock.beat_counter = 0;
+			}
 
 		}
 
@@ -477,14 +559,21 @@ void check_tap(void) {
 	
 	if (flag.tap) {
 		
-		flag.tap = 0;
-		if (sequencer.current_inst == AC) {
-			sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
-		} else {
-			sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
+			flag.tap = 0;
+			if (sequencer.current_inst == AC) {
+				sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
+			} else {
+				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+			}
+			sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
+			flag.pattern_edit = 1; //set pattern edit flag
+		
+		} else if (sequencer.mode == MANUAL_PLAY) {
+			
+			//handle intro/fill in here	
+			
 		}
-		sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
-		flag.pattern_edit = 1; //set pattern edit flag
 		
 	}
 	
