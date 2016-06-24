@@ -88,10 +88,15 @@ void process_start(void) {
 			midi_send_start(&midi_device);
 			midi_send_clock(&midi_device);
 		}
-		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //not tested yet
+		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
 			read_next_pattern(sequencer.current_intro_fill);
+			sequencer.new_pattern = sequencer.current_pattern;
 			sequencer.current_pattern = sequencer.current_intro_fill;
+			flag.intro = 0;
+			sequencer.variation = sequencer.intro_fill_var;
+			//flag.variation_change = 1;
+			flag.pattern_change = 1;
 			
 		}
 
@@ -123,7 +128,7 @@ void process_new_measure(void) {
 	if (flag.pattern_edit == 1) {
 					
 		flag.pattern_edit = 0;
-		toggle(IF_VAR_B_LED);
+		//toggle(IF_VAR_B_LED);
 		write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
 					
 	}
@@ -153,7 +158,7 @@ void process_new_measure(void) {
 		flag.pre_scale_change = 1; //need to handle any change in pre-scale
 		sequencer.current_pattern = sequencer.new_pattern;
 		read_next_pattern(sequencer.current_pattern);
-		sequencer.variation = VAR_A;
+		//sequencer.variation = VAR_A;
 		sequencer.part_playing = FIRST;
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
@@ -573,7 +578,7 @@ void check_tap(void) {
 			
 			//handle intro/fill in here
 			flag.intro ^= 1<<0;
-			toggle(IF_VAR_A_LED);	
+			
 			
 		}
 		

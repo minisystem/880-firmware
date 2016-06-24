@@ -118,6 +118,8 @@ int main(void)
 	//sequencer.step_num_new = 15;
 	sequencer.variation_mode = VAR_A;
 	turn_on(BASIC_VAR_A_LED);
+	sequencer.intro_fill_var = VAR_A;
+	turn_on(IF_VAR_A_LED);
 	sequencer.mode = FIRST_PART;
 	//sequencer.SLAVE = 0;
 	sequencer.sync_mode = MIDI_MASTER;
