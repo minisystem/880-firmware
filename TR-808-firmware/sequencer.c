@@ -315,51 +315,55 @@ void process_step(void){
 						
 				}
 				
-				//if (sequencer.variation == sequencer.variation_mode) {
-					//if (sequencer.variation_mode == VAR_A && flag.variation_change) {
-						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						//
-					//}
-					//
-				//} else {
-					
-				//}
-				if (flag.variation_change == 1) { //this works but needs to be simplified
-							
-					switch (sequencer.variation_mode) {
-								
-						case VAR_A:
-						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						if (sequencer.variation == sequencer.variation_mode) {
-							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						} else {
-							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						}						
-						break;
-						case VAR_B:
-						//if (flag.variation_change == 1) {
-							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						//	} else {
-						//	sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						//}
-						break;
-						case VAR_AB:
-						if (sequencer.variation == VAR_A) {
-							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							} else {
-							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						}
-						break;
-					}
-							
-							
-				} else if (sequencer.variation_mode == VAR_AB) {
+				if (sequencer.variation != sequencer.variation_mode) {
 					if (sequencer.variation == VAR_A) {
 						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-					} else {
+						} else {
 						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
 					}
+					
+				} else if (sequencer.variation == VAR_A && flag.variation_change) {
+					
+					sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 				}
+				
+				
+				//if (flag.variation_change == 1) { //this works but needs to be simplified
+							//
+					//switch (sequencer.variation_mode) {
+								//
+						//case VAR_A:
+						////sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						//if (sequencer.variation == sequencer.variation_mode) {
+							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						//} else {
+							//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						//}						
+						//break;
+						//case VAR_B:
+						////if (flag.variation_change == 1) {
+							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						////	} else {
+						////	sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						////}
+						//break;
+						//case VAR_AB:
+						//if (sequencer.variation == VAR_A) {
+							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+							//} else {
+							//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						//}
+						//break;
+					//}
+							//
+							//
+				//} else if (sequencer.variation_mode == VAR_AB) {
+					//if (sequencer.variation == VAR_A) {
+						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+					//} else {
+						//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+					//}
+				//}
 			}
 					
 		}	 else {
