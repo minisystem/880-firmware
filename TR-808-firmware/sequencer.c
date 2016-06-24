@@ -318,7 +318,7 @@ void process_step(void){
 				if (sequencer.variation != sequencer.variation_mode) {
 					if (sequencer.variation == VAR_A) {
 						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						} else {
+					} else {
 						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
 					}
 					

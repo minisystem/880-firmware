@@ -42,6 +42,7 @@ void refresh(void) {
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating
 	update_mode();
+	update_fill_mode();
 	check_clear_switch();
 	check_intro_fill_variation_switch();
 	check_variation_switches();

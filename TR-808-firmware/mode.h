@@ -8,7 +8,11 @@
 #define MODE_H
 
 #define NUM_MODES 6 //number of modes
-#define MODE_LED_MASK 0b11000000
+#define MODE_LED_MASK 0b11000000 //mask for latch 4
+#define FILL_MODE_LATCH_4_LED_MASK 0b00111111
+#define FILL_MODE_LATCH_2_LED_MASK 0b11110000
+#define NUM_FILL_MODES 6
+#define MANUAL 0
 enum global_mode {
 	
 	PATTERN_CLEAR,
@@ -28,9 +32,13 @@ enum sync_mode {
 	DIN_SYNC_MASTER
 	
 	};	
+	
 
-extern uint8_t mode_index; 
+
+extern uint8_t mode_index;
+extern uint8_t fill_index; 
 
 void update_mode(void);
+void update_fill_mode(void);
 
 #endif

@@ -75,6 +75,7 @@ struct sequencer {
 	
 	enum global_mode mode;
 	enum sync_mode sync_mode;
+	uint8_t fill_mode:4;
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
