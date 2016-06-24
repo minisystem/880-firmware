@@ -81,6 +81,7 @@ struct sequencer {
 	//uint8_t SLAVE:1; //is the sequencer a tempo slave?
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint16_t step_led_mask[2][17];
+	uint8_t variation_toggle:1;
 	uint8_t variation:1; //variation A or variation B
 	uint8_t intro_fill_var:1; //intro/fill variation
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB

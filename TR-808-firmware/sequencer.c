@@ -158,7 +158,8 @@ void process_new_measure(void) {
 		flag.pre_scale_change = 1; //need to handle any change in pre-scale
 		sequencer.current_pattern = sequencer.new_pattern;
 		read_next_pattern(sequencer.current_pattern);
-		//sequencer.variation = VAR_A;
+		sequencer.variation = VAR_A;
+		if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
 		sequencer.part_playing = FIRST;
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
@@ -262,38 +263,50 @@ void process_step(void){
 				
 				
 			}
-			//if (sequencer.SHIFT) {
-				//spi_data[1] = 0;
-				//spi_data[0] = 0;
-				//turn_on(sequencer.new_pattern);	
-			//} else {	
-				//spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-				//spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;
-			//}
-			
-			
-			switch (sequencer.variation_mode) {
-						
-				case VAR_A:
-				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-				break;
-				case VAR_B:
-				if (flag.variation_change == 1) {
-							
-					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-							
-					}else {
-					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-				}
-				break;
-				case VAR_AB:
-				if (sequencer.variation == VAR_A) {
-					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-					} else {
-					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-				}
-				break;
+
+			sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+			if (sequencer.variation == sequencer.variation_mode) {
+				
+				//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+				if (sequencer.variation == VAR_B && !flag.variation_change) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+			} else {
+				
+				//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				if (sequencer.variation == VAR_B) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				
 			}
+			
+			
+			//switch (sequencer.variation_mode) {
+						//
+				//case VAR_A:
+					//if (sequencer.variation == sequencer.variation_mode) { 
+						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+					//} else {
+						//
+						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					//}
+				//break;
+				//case VAR_B:
+					//if (flag.variation_change == 1) {
+						//
+						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+						//
+						//}else {
+						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					//}
+				//break;
+				//case VAR_AB:
+				//
+					//if (sequencer.variation == VAR_A) {
+						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+					//} else {
+						//
+						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+					//}
+				//
+				//break;
+			//}
 					
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
@@ -301,19 +314,34 @@ void process_step(void){
 					turn_on(sequencer.new_pattern);
 						
 				}
-				if (flag.variation_change == 1) {
+				
+				//if (sequencer.variation == sequencer.variation_mode) {
+					//if (sequencer.variation_mode == VAR_A && flag.variation_change) {
+						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						//
+					//}
+					//
+				//} else {
+					
+				//}
+				if (flag.variation_change == 1) { //this works but needs to be simplified
 							
 					switch (sequencer.variation_mode) {
 								
 						case VAR_A:
-						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						if (sequencer.variation == sequencer.variation_mode) {
+							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
+						} else {
+							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						}						
 						break;
 						case VAR_B:
-						if (flag.variation_change == 1) {
+						//if (flag.variation_change == 1) {
 							sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							} else {
-							sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						}
+						//	} else {
+						//	sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
+						//}
 						break;
 						case VAR_AB:
 						if (sequencer.variation == VAR_A) {
@@ -325,9 +353,7 @@ void process_step(void){
 					}
 							
 							
-				}
-						
-				if (sequencer.variation_mode == VAR_AB) {
+				} else if (sequencer.variation_mode == VAR_AB) {
 					if (sequencer.variation == VAR_A) {
 						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 					} else {
