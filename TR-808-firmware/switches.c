@@ -84,11 +84,18 @@ void check_start_stop_tap(void) {
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
 	current_start_stop_tap_state &= previous_start_stop_tap_state;
 	
-	if ((sequencer.START && (current_start_stop_tap_state >> TAP) &1)) {
-			
+	//if ((sequencer.START && (current_start_stop_tap_state >> TAP) &1)) {
+			//
+		//current_start_stop_tap_state ^= (1<<TAP); //toggle tap switch bit
+		//flag.tap = 1;
+			//
+	//}
+	
+	if ((current_start_stop_tap_state >> TAP) & 1) {
+		
 		current_start_stop_tap_state ^= (1<<TAP); //toggle tap switch bit
 		flag.tap = 1;
-			
+		
 	}
 	
 	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity

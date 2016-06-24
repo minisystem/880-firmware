@@ -88,6 +88,12 @@ void process_start(void) {
 			midi_send_start(&midi_device);
 			midi_send_clock(&midi_device);
 		}
+		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //not tested yet
+			
+			read_next_pattern(sequencer.current_intro_fill);
+			sequencer.current_pattern = sequencer.current_intro_fill;
+			
+		}
 
 }
 
@@ -105,7 +111,8 @@ void process_stop(void) {
 		//blank all step leds and turn on current pattern LED
 		spi_data[1] = 0;
 		spi_data[0] = 0;
-		turn_on(sequencer.current_pattern);	
+		turn_on(sequencer.current_pattern);
+		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
 		if (clock.source == INTERNAL) midi_send_stop(&midi_device);
 	
 }
@@ -187,45 +194,33 @@ void process_step(void){
 			while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
 			//with allowing drums to be triggered by MIDI when sequencer is running?
 					
-			check_tap();
+			//check_tap();
 			//PORTD |= (1<<TRIG);
 			switch (sequencer.mode) {
 				
-				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:				
+				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+					check_tap();				
 					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
 						spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
 						spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
 						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
 						spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 						
-					}
-				
-				
+					}				
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					spi_data[1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
 					spi_data[1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
 					spi_data[0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
-					spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));				
-					
+					//spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));				
+					spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern | 1 << sequencer.current_intro_fill) >> 8)); //little tricky to get the correct mask here
 				
 				break;
 				
 				
 			}
-			//if (sequencer.SHIFT) { //shift allows display of current pattern on step board while sequencer is running
-				////spi_data[1] = 0;
-				////spi_data[0] = 0;
-				////turn_on(sequencer.current_pattern);
-			//} else {
-				//if (sequencer.part_editing == sequencer.part_playing) {	//only blink if the part playing is the same as the part being edited
-					//spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
-					//spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
-					//spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
-					//spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
-				//}
-			//}
+
 			trigger_step();
 			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
 				spi_data[8] |= 1<<ACCENT;
@@ -476,15 +471,20 @@ void update_step_board() {
 		}
 			
 	} else {
-		
-		//handle changing selected pattern and rhythm. Not currently handling switches presses now when sequencer is stopped, which means they get added once sequencer starts
+		if (sequencer.mode == MANUAL_PLAY) check_tap();
+		//handle changing selected pattern and rhythm.
 		press = check_step_press();
 		if (press != EMPTY) {
+		
 			if (sequencer.mode == MANUAL_PLAY) {
 				if (press < 12) {
 					sequencer.current_pattern = sequencer.new_pattern = press;
+					read_next_pattern(sequencer.current_pattern);
+					sequencer.part_playing = FIRST;
+					sequencer.current_step = 0;
+					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+					clock.beat_counter = 0;
 				} else {
-					
 					sequencer.current_intro_fill = press;
 				}
 			} else {
@@ -498,7 +498,7 @@ void update_step_board() {
 			}
 
 		}
-
+		
 		
 	}
 }
@@ -558,9 +558,9 @@ void update_prescale(void) {
 void check_tap(void) {
 	
 	if (flag.tap) {
-		
+		flag.tap = 0;
 		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
-			flag.tap = 0;
+			//flag.tap = 0;
 			if (sequencer.current_inst == AC) {
 				sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
 			} else {
@@ -571,7 +571,9 @@ void check_tap(void) {
 		
 		} else if (sequencer.mode == MANUAL_PLAY) {
 			
-			//handle intro/fill in here	
+			//handle intro/fill in here
+			flag.intro ^= 1<<0;
+			toggle(IF_VAR_A_LED);	
 			
 		}
 		
