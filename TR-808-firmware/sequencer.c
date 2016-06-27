@@ -151,12 +151,15 @@ void process_new_measure(void) {
 		toggle_variation(); //no second part, so toggle variation
 					
 	}
+	
+
 				
 	if (flag.pattern_change) {
 					
 		flag.pattern_change = 0;
 		flag.pre_scale_change = 1; //need to handle any change in pre-scale
 		sequencer.current_pattern = sequencer.new_pattern;
+
 		read_next_pattern(sequencer.current_pattern);
 		sequencer.variation = VAR_A;
 		if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
@@ -164,6 +167,19 @@ void process_new_measure(void) {
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
 					
+	} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+		sequencer.current_measure = 0;
+		flag.fill = 0;
+		flag.pre_scale_change = 1;
+		read_next_pattern(sequencer.current_intro_fill);
+		sequencer.new_pattern = sequencer.current_pattern;
+		sequencer.current_pattern = sequencer.current_intro_fill;
+		//flag.intro = 0;
+		sequencer.variation = sequencer.intro_fill_var;
+		//flag.variation_change = 1;
+		flag.pattern_change = 1;
+		
+		
 	}
 				
 				
@@ -216,6 +232,7 @@ void process_step(void){
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+					check_tap();
 					spi_data[1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
 					spi_data[1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
 					spi_data[0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
@@ -478,7 +495,18 @@ void update_step_board() {
 			break;
 			
 		case MANUAL_PLAY:
-			
+			//check_tap();
+			//if (flag.intro) {
+				//read_next_pattern(sequencer.current_intro_fill);
+				//sequencer.new_pattern = sequencer.current_pattern;
+				//sequencer.current_pattern = sequencer.current_intro_fill;
+				//flag.intro = 0;
+				//sequencer.variation = sequencer.intro_fill_var;
+				////flag.variation_change = 1;
+				//flag.pattern_change = 1;
+				//flag.fill = 1;
+					//
+			//}
 			if (press < 12) { //first 12 pattern places are for main patterns 
 				sequencer.new_pattern = press;
 				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
@@ -590,7 +618,7 @@ void update_prescale(void) {
 	}
 }
 
-void check_tap(void) {
+void check_tap(void) { //this is kind of inefficent - not generalized enough. maybe better to check flag.tap in different contexts?
 	
 	if (flag.tap) {
 		flag.tap = 0;
@@ -604,11 +632,17 @@ void check_tap(void) {
 			sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
 			flag.pattern_edit = 1; //set pattern edit flag
 		
-		} else if (sequencer.mode == MANUAL_PLAY) {
+		} else if (sequencer.mode == MANUAL_PLAY){ 
 			
 			//handle intro/fill in here
-			flag.intro ^= 1<<0;
-			
+			if (sequencer.START) {
+				if (sequencer.fill_mode == MANUAL) flag.fill = 1; //set fill flag
+				//flag.pattern_change = 1;
+				
+			} else {
+				
+				flag.intro ^= 1<<0;
+			}
 			
 		}
 		

@@ -63,7 +63,7 @@ void update_mode(void) {
 	}
 	
 void update_fill_mode(void) {
-	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 16, 12, 8, 4, 2};
+	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 15, 11, 7, 3, 1};
 	
 	if (button[FILL_SW].state) {
 		
@@ -78,7 +78,7 @@ void update_fill_mode(void) {
 		if (++fill_index == NUM_FILL_MODES) fill_index = 0;
 			
 		sequencer.fill_mode = fill_mode[fill_index];
-		
+		sequencer.current_measure = 0;
 		
 		spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK;
 		spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;
@@ -89,7 +89,7 @@ void update_fill_mode(void) {
 			
 		} else {
 			
-			spi_data[2] |= 1 << (fill_index -2); 
+			spi_data[2] |= 1 << (fill_index - 2); 
 		}
 		
 		

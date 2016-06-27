@@ -130,6 +130,7 @@ int main(void)
 	turn_on(FIRST_PART_LED);
 	turn_on(SCALE_3_LED);
 	sequencer.current_intro_fill = 12;//first of 4 intro/fill patterns
+	sequencer.fill_mode = MANUAL;
 	eeprom_init();
 	//flag.twi_init_error = 0;
 	
