@@ -112,7 +112,7 @@ void process_stop(void) {
 		}
 		turn_off_all_inst_leds();
 		turn_on(drum_hit[sequencer.current_inst].led_index);
-		
+		sequencer.current_pattern = sequencer.new_pattern;
 		flag.pattern_change = 0;
 		flag.fill = 0;	
 		//blank all step leds and turn on current pattern LED
@@ -134,8 +134,7 @@ void process_new_measure(void) {
 		write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
 					
 	}
-				
-	if (sequencer.current_measure == sequencer.fill_mode) flag.fill = 1;
+		
 				
 	if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 					
@@ -143,7 +142,7 @@ void process_new_measure(void) {
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
 			toggle_variation(); //only toggle variation at the end of the 2nd part
-			sequencer.current_measure++; //only increment measure at end of 2nd part
+			
 		} else {
 			turn_off(FIRST_PART_LED);
 			turn_on(SECOND_PART_LED);
@@ -152,7 +151,7 @@ void process_new_measure(void) {
 	} else {
 					
 		toggle_variation(); //no second part, so toggle variation
-		sequencer.current_measure++; // and increment measure			
+		
 	}
 	
 
@@ -170,7 +169,7 @@ void process_new_measure(void) {
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
 					
-	} else if (flag.fill) {
+	} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
 		sequencer.current_measure = 0;
 		flag.fill = 0;
 		flag.pre_scale_change = 1;
@@ -186,10 +185,14 @@ void process_new_measure(void) {
 		
 	}
 				
-				
-	//update step number
-	sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
-	update_step_led_mask();
+	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
+		
+		//update step number
+		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+		update_step_led_mask();
+		
+	}			
+
 				
 	//handle pre-scale change
 	if (flag.pre_scale_change) {
