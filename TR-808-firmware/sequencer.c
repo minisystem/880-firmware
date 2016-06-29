@@ -139,56 +139,116 @@ void process_new_measure(void) {
 	if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
 					
 		if (sequencer.part_playing == SECOND) {
+			sequencer.part_playing ^= 1 << 0; //toggle part playing
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
 			toggle_variation(); //only toggle variation at the end of the 2nd part
+			if (flag.pattern_change) {
+					
+				flag.pattern_change = 0;
+				flag.pre_scale_change = 1; //need to handle any change in pre-scale
+				sequencer.current_pattern = sequencer.new_pattern;
+
+				read_next_pattern(sequencer.current_pattern);
+				sequencer.variation = VAR_A;
+				if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+				sequencer.part_playing = FIRST;
+				turn_off(SECOND_PART_LED);
+				turn_on(FIRST_PART_LED);
+					
+			} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+				sequencer.current_measure = 0;
+				flag.fill = 0;
+				flag.pre_scale_change = 1;
+				read_next_pattern(sequencer.current_intro_fill);
+				sequencer.part_playing = FIRST;
+				turn_off(SECOND_PART_LED);
+				turn_on(FIRST_PART_LED);
+				sequencer.new_pattern = sequencer.current_pattern;
+				sequencer.current_pattern = sequencer.current_intro_fill;
+				//flag.intro = 0;
+				sequencer.variation = sequencer.intro_fill_var;
+				//flag.variation_change = 1;
+				flag.pattern_change = 1;
+					
+			}
 			
 		} else {
 			turn_off(FIRST_PART_LED);
 			turn_on(SECOND_PART_LED);
+			sequencer.part_playing ^= 1 << 0; //toggle part playing
 		}
-		sequencer.part_playing ^= 1 << 0; //toggle part playing
+		
 	} else {
 					
 		toggle_variation(); //no second part, so toggle variation
-		
+		if (flag.pattern_change) {
+				
+			flag.pattern_change = 0;
+			flag.pre_scale_change = 1; //need to handle any change in pre-scale
+			sequencer.current_pattern = sequencer.new_pattern;
+
+			read_next_pattern(sequencer.current_pattern);
+			sequencer.variation = VAR_A;
+			if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+				
+		} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+			sequencer.current_measure = 0;
+			flag.fill = 0;
+			flag.pre_scale_change = 1;
+			read_next_pattern(sequencer.current_intro_fill);
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+			sequencer.new_pattern = sequencer.current_pattern;
+			sequencer.current_pattern = sequencer.current_intro_fill;
+			//flag.intro = 0;
+			sequencer.variation = sequencer.intro_fill_var;
+			//flag.variation_change = 1;
+			flag.pattern_change = 1;
+				
+		}
 	}
 	
 
 				
-	if (flag.pattern_change) {
-					
-		flag.pattern_change = 0;
-		flag.pre_scale_change = 1; //need to handle any change in pre-scale
-		sequencer.current_pattern = sequencer.new_pattern;
-
-		read_next_pattern(sequencer.current_pattern);
-		sequencer.variation = VAR_A;
-		if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
-		sequencer.part_playing = FIRST;
-		turn_off(SECOND_PART_LED);
-		turn_on(FIRST_PART_LED);
-					
-	} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
-		sequencer.current_measure = 0;
-		flag.fill = 0;
-		flag.pre_scale_change = 1;
-		read_next_pattern(sequencer.current_intro_fill);
-		sequencer.part_playing = FIRST;
-		sequencer.new_pattern = sequencer.current_pattern;
-		sequencer.current_pattern = sequencer.current_intro_fill;
-		//flag.intro = 0;
-		sequencer.variation = sequencer.intro_fill_var;
-		//flag.variation_change = 1;
-		flag.pattern_change = 1;
-		
-		
-	}
+	//if (flag.pattern_change) {
+					//
+		//flag.pattern_change = 0;
+		//flag.pre_scale_change = 1; //need to handle any change in pre-scale
+		//sequencer.current_pattern = sequencer.new_pattern;
+//
+		//read_next_pattern(sequencer.current_pattern);
+		//sequencer.variation = VAR_A;
+		//if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+		//sequencer.part_playing = FIRST;
+		//turn_off(SECOND_PART_LED);
+		//turn_on(FIRST_PART_LED);
+					//
+	//} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+		//sequencer.current_measure = 0;
+		//flag.fill = 0;
+		//flag.pre_scale_change = 1;
+		//read_next_pattern(sequencer.current_intro_fill);
+		//sequencer.part_playing = FIRST;
+		//turn_off(SECOND_PART_LED);
+		//turn_on(FIRST_PART_LED);
+		//sequencer.new_pattern = sequencer.current_pattern;
+		//sequencer.current_pattern = sequencer.current_intro_fill;
+		////flag.intro = 0;
+		//sequencer.variation = sequencer.intro_fill_var;
+		////flag.variation_change = 1;
+		//flag.pattern_change = 1;
+		//
+	//}
 				
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 		
 		//update step number
-		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new;
+		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
 		update_step_led_mask();
 		
 	}			
