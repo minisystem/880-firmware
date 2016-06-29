@@ -294,36 +294,7 @@ void process_step(void){
 			}
 			
 			
-			//switch (sequencer.variation_mode) {
-						//
-				//case VAR_A:
-					//if (sequencer.variation == sequencer.variation_mode) { 
-						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-					//} else {
-						//
-						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-					//}
-				//break;
-				//case VAR_B:
-					//if (flag.variation_change == 1) {
-						//
-						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-						//
-						//}else {
-						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-					//}
-				//break;
-				//case VAR_AB:
-				//
-					//if (sequencer.variation == VAR_A) {
-						//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-					//} else {
-						//
-						//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-					//}
-				//
-				//break;
-			//}
+
 					
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
@@ -345,42 +316,7 @@ void process_step(void){
 				}
 				
 				
-				//if (flag.variation_change == 1) { //this works but needs to be simplified
-							//
-					//switch (sequencer.variation_mode) {
-								//
-						//case VAR_A:
-						////sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						//if (sequencer.variation == sequencer.variation_mode) {
-							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						//} else {
-							//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						//}						
-						//break;
-						//case VAR_B:
-						////if (flag.variation_change == 1) {
-							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-						////	} else {
-						////	sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						////}
-						//break;
-						//case VAR_AB:
-						//if (sequencer.variation == VAR_A) {
-							//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-							//} else {
-							//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-						//}
-						//break;
-					//}
-							//
-							//
-				//} else if (sequencer.variation_mode == VAR_AB) {
-					//if (sequencer.variation == VAR_A) {
-						//sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
-					//} else {
-						//sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
-					//}
-				//}
+
 			}
 					
 		}	 else {
