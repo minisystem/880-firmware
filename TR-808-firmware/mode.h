@@ -12,6 +12,7 @@
 #define FILL_MODE_LATCH_4_LED_MASK 0b00111111
 #define FILL_MODE_LATCH_2_LED_MASK 0b11110000
 #define NUM_FILL_MODES 6
+#define NUM_SYNC_MODES 4
 #define MANUAL 0
 enum global_mode {
 	

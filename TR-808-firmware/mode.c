@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include "mode.h"
+#include "clock.h"
 #include "leds.h"
 #include "switches.h"
 #include "sequencer.h"
@@ -15,11 +16,11 @@
 
 uint8_t mode_index = 1; //default mode is pattern edit 1st part
 uint8_t fill_index = 0;
-
+uint8_t sync_index = 0;
 
 
 	
-enum sync_mode sync_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
+
 	
 	
 
@@ -64,37 +65,127 @@ void update_mode(void) {
 	
 void update_fill_mode(void) {
 	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 15, 11, 7, 3, 1};
-	
-	if (button[FILL_SW].state) {
+	enum sync_mode sync_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
 		
-		button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
+	spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
+	spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;
+
 		
-		if (sequencer.SHIFT) {
+	if (sequencer.SHIFT) {
+
+		
+		if (button[FILL_SW].state) {
+			button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
+			//change sync mode
+			if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
+			sequencer.sync_mode = sync_mode[sync_index];
+						
+			//spi_data[2] |= (1 << fill_index);
+			switch (sequencer.sync_mode) {
+							
+				case MIDI_MASTER:
+				clock.source = INTERNAL;
+				break;
+							
+				case MIDI_SLAVE:
+				clock.source = EXTERNAL;
+				break;
+							
+				case DIN_SYNC_MASTER:
+				clock.source = INTERNAL;
+				break;
+							
+				case DIN_SYNC_SLAVE:
+				clock.source = EXTERNAL;
+				break;
+							
+							
+			}
 			
-			//handle whatever (SHIFT)FILL press does. Probably change sync modes?
-			return;
 		}
-			
-		if (++fill_index == NUM_FILL_MODES) fill_index = 0;
-			
-		sequencer.fill_mode = fill_mode[fill_index];
-		sequencer.current_measure = 0;
 		
-		spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK;
-		spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;
+		spi_data[2] |= (1 << sync_index);
 		
+	} else {
+		
+		if (button[FILL_SW].state) {
+
+			button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
+			spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
+			spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;	
+					
+			if (++fill_index == NUM_FILL_MODES) fill_index = 0;
+			
+			sequencer.fill_mode = fill_mode[fill_index];
+			sequencer.current_measure = 0;			
+		}
 		if (fill_index < 2) {
-			
-			spi_data[4] |= 1 << (fill_index + 6); 
-			
-		} else {
-			
-			spi_data[2] |= 1 << (fill_index - 2); 
+				
+			spi_data[4] |= 1 << (fill_index + 6);
+				
+			} else {
+				
+			spi_data[2] |= 1 << (fill_index - 2);
 		}
 		
 		
-	}	
-	
+	}
 }
+		
+	//if (button[FILL_SW].state) {
+//
+		//button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
+		//
+		//if (sequencer.SHIFT) {
+	//
+			////change sync mode
+			//if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
+			//sequencer.sync_mode = sync_mode[sync_index];
+			//
+			//spi_data[2] |= (1 << fill_index);
+			//switch (sequencer.sync_mode) {
+			//
+				//case MIDI_MASTER:
+					//clock.source = INTERNAL;
+					//break;
+				//
+				//case MIDI_SLAVE:
+					//clock.source = EXTERNAL;
+					//break;
+				//
+				//case DIN_SYNC_MASTER:
+					//clock.source = INTERNAL;
+					//break;
+				//
+				//case DIN_SYNC_SLAVE:
+					//clock.source = EXTERNAL;
+					//break;
+			//
+				//
+			//}
+					//
+	//
+		//} else {
+			//
+			//if (++fill_index == NUM_FILL_MODES) fill_index = 0;
+			//
+			//sequencer.fill_mode = fill_mode[fill_index];
+			//sequencer.current_measure = 0;
+			//
+//
+			//
+			//if (fill_index < 2) {
+				//
+				//spi_data[4] |= 1 << (fill_index + 6);
+				//
+				//} else {
+				//
+				//spi_data[2] |= 1 << (fill_index - 2);
+			//}
+		//}
+		//
+	//}	
+	
+//}
 	
 	

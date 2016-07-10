@@ -125,6 +125,32 @@ void process_stop(void) {
 	
 }
 
+void update_fill(void) {
+	
+	if (sequencer.fill_mode != MANUAL) {
+		if (++sequencer.current_measure == sequencer.fill_mode) {
+			flag.fill = 1;
+		}
+						
+	}
+	if (flag.fill) { //problem with current_measure overfow here - only need to increment measure if fill_mode != 0
+		sequencer.current_measure = 0;
+		flag.fill = 0;
+		flag.pre_scale_change = 1;
+		read_next_pattern(sequencer.current_intro_fill);
+		sequencer.part_playing = FIRST;
+		turn_off(SECOND_PART_LED);
+		turn_on(FIRST_PART_LED);
+		sequencer.new_pattern = sequencer.current_pattern;
+		sequencer.current_pattern = sequencer.current_intro_fill;
+		//flag.intro = 0;
+		sequencer.variation = sequencer.intro_fill_var;
+		//flag.variation_change = 1;
+		flag.pattern_change = 1;
+	}
+	
+}
+
 void process_new_measure(void) { //should break this up into switch/case statments based on mode?
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
@@ -157,21 +183,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 				turn_on(FIRST_PART_LED);
 					
 			} else if (sequencer.mode == MANUAL_PLAY) {
-				if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
-					sequencer.current_measure = 0;
-					flag.fill = 0;
-					flag.pre_scale_change = 1;
-					read_next_pattern(sequencer.current_intro_fill);
-					sequencer.part_playing = FIRST;
-					turn_off(SECOND_PART_LED);
-					turn_on(FIRST_PART_LED);
-					sequencer.new_pattern = sequencer.current_pattern;
-					sequencer.current_pattern = sequencer.current_intro_fill;
-					//flag.intro = 0;
-					sequencer.variation = sequencer.intro_fill_var;
-					//flag.variation_change = 1;
-					flag.pattern_change = 1;
-				}
+				update_fill();
 			}
 			
 		} else {
@@ -197,21 +209,8 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 			turn_on(FIRST_PART_LED);
 				
 		} else if (sequencer.mode == MANUAL_PLAY) {
-			if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
-				sequencer.current_measure = 0;
-				flag.fill = 0;
-				flag.pre_scale_change = 1;
-				read_next_pattern(sequencer.current_intro_fill);
-				sequencer.part_playing = FIRST;
-				turn_off(SECOND_PART_LED);
-				turn_on(FIRST_PART_LED);
-				sequencer.new_pattern = sequencer.current_pattern;
-				sequencer.current_pattern = sequencer.current_intro_fill;
-				//flag.intro = 0;
-				sequencer.variation = sequencer.intro_fill_var;
-				//flag.variation_change = 1;
-				flag.pattern_change = 1;
-			}
+			
+			update_fill();
 				
 		}
 	}
