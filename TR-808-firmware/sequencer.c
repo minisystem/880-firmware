@@ -113,6 +113,7 @@ void process_stop(void) {
 		turn_off_all_inst_leds();
 		turn_on(drum_hit[sequencer.current_inst].led_index);
 		sequencer.current_pattern = sequencer.new_pattern;
+		sequencer.current_measure = 0; //reset current measure
 		flag.pattern_change = 0;
 		flag.fill = 0;	
 		//blank all step leds and turn on current pattern LED
@@ -124,7 +125,7 @@ void process_stop(void) {
 	
 }
 
-void process_new_measure(void) {
+void process_new_measure(void) { //should break this up into switch/case statments based on mode?
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
 	if (flag.pattern_edit == 1) {
@@ -148,7 +149,6 @@ void process_new_measure(void) {
 				flag.pattern_change = 0;
 				flag.pre_scale_change = 1; //need to handle any change in pre-scale
 				sequencer.current_pattern = sequencer.new_pattern;
-
 				read_next_pattern(sequencer.current_pattern);
 				sequencer.variation = VAR_A;
 				if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
@@ -156,7 +156,48 @@ void process_new_measure(void) {
 				turn_off(SECOND_PART_LED);
 				turn_on(FIRST_PART_LED);
 					
-			} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+			} else if (sequencer.mode == MANUAL_PLAY) {
+				if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
+					sequencer.current_measure = 0;
+					flag.fill = 0;
+					flag.pre_scale_change = 1;
+					read_next_pattern(sequencer.current_intro_fill);
+					sequencer.part_playing = FIRST;
+					turn_off(SECOND_PART_LED);
+					turn_on(FIRST_PART_LED);
+					sequencer.new_pattern = sequencer.current_pattern;
+					sequencer.current_pattern = sequencer.current_intro_fill;
+					//flag.intro = 0;
+					sequencer.variation = sequencer.intro_fill_var;
+					//flag.variation_change = 1;
+					flag.pattern_change = 1;
+				}
+			}
+			
+		} else {
+			turn_off(FIRST_PART_LED);
+			turn_on(SECOND_PART_LED);
+			sequencer.part_playing ^= 1 << 0; //toggle part playing
+		}
+		
+	} else {
+					
+		toggle_variation(); //no second part, so toggle variation
+		
+		if (flag.pattern_change) {
+		
+			flag.pattern_change = 0;
+			flag.pre_scale_change = 1; //need to handle any change in pre-scale
+			sequencer.current_pattern = sequencer.new_pattern;
+			read_next_pattern(sequencer.current_pattern);
+			sequencer.variation = VAR_A;
+			if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+				
+		} else if (sequencer.mode == MANUAL_PLAY) {
+			if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
 				sequencer.current_measure = 0;
 				flag.fill = 0;
 				flag.pre_scale_change = 1;
@@ -170,45 +211,7 @@ void process_new_measure(void) {
 				sequencer.variation = sequencer.intro_fill_var;
 				//flag.variation_change = 1;
 				flag.pattern_change = 1;
-					
 			}
-			
-		} else {
-			turn_off(FIRST_PART_LED);
-			turn_on(SECOND_PART_LED);
-			sequencer.part_playing ^= 1 << 0; //toggle part playing
-		}
-		
-	} else {
-					
-		toggle_variation(); //no second part, so toggle variation
-		if (flag.pattern_change) {
-				
-			flag.pattern_change = 0;
-			flag.pre_scale_change = 1; //need to handle any change in pre-scale
-			sequencer.current_pattern = sequencer.new_pattern;
-
-			read_next_pattern(sequencer.current_pattern);
-			sequencer.variation = VAR_A;
-			if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
-			sequencer.part_playing = FIRST;
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-				
-		} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
-			sequencer.current_measure = 0;
-			flag.fill = 0;
-			flag.pre_scale_change = 1;
-			read_next_pattern(sequencer.current_intro_fill);
-			sequencer.part_playing = FIRST;
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-			sequencer.new_pattern = sequencer.current_pattern;
-			sequencer.current_pattern = sequencer.current_intro_fill;
-			//flag.intro = 0;
-			sequencer.variation = sequencer.intro_fill_var;
-			//flag.variation_change = 1;
-			flag.pattern_change = 1;
 				
 		}
 	}
