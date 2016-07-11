@@ -53,10 +53,31 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
+	
 	if (clock.source == INTERNAL) {
-		
+
 		process_tick();
-		if (sequencer.START) midi_send_clock(&midi_device); //send MIDI clock
+		if (sequencer.START) {
+			if (sequencer.sync_mode == MIDI_MASTER) {
+				midi_send_clock(&midi_device); //send MIDI clock
+				
+			} else { //send DIN Sync clock pulse
+								
+				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
+				TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
+				//now  set up Timer2 to automatically clear PD3 on compare match:
+				TCCR2A &= ~(1 << COM2B0);
+				TCNT2 = 0;	//reset timer
+				
+			}
+			
+		}
+		//if (sequencer.START && sequencer.sync_mode == MIDI_MASTER) {
+			//midi_send_clock(&midi_device); //send MIDI clock
+		//} else { //send DIN sync tick
+			//
+			//
+		//}
 	}
 	//if (clock.source == INTERNAL) {//could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
 		//if (++clock.ppqn_counter == clock.divider) {

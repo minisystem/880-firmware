@@ -79,25 +79,35 @@ void update_fill_mode(void) {
 			//change sync mode
 			if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
 			sequencer.sync_mode = sync_mode[sync_index];
-						
+			TCCR2B = 0; //turn off Timer2			
 			//spi_data[2] |= (1 << fill_index);
 			switch (sequencer.sync_mode) {
 							
 				case MIDI_MASTER:
-				clock.source = INTERNAL;
-				break;
+					clock.source = INTERNAL;
+					break;
 							
 				case MIDI_SLAVE:
-				clock.source = EXTERNAL;
-				break;
+					clock.source = EXTERNAL;
+					break;
 							
 				case DIN_SYNC_MASTER:
-				clock.source = INTERNAL;
-				break;
+					clock.source = INTERNAL;
+					//do something to set up Timer2 output compare interrupt
+					DDRD |= (1 << PD3); //set up PD3 as output
+					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
+					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
+					
+					//OCR2B = 75;//TIMER_OFFSET/2; //output compare happens 1/2 period of fastest tempo
+					//OCR2A = OCR2B = TIMER_OFFSET/2;
+					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
+					TCNT2 = 0;
+					
+					break;
 							
 				case DIN_SYNC_SLAVE:
-				clock.source = EXTERNAL;
-				break;
+					clock.source = EXTERNAL;
+					break;
 							
 							
 			}

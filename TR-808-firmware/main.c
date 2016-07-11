@@ -134,8 +134,10 @@ int main(void)
 	eeprom_init();
 	//flag.twi_init_error = 0;
 	
-	DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
+
 	
+	DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
+	//DDRD |= 1 << PD3; //set up PD3 as output 
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
 	read_next_pattern(0); //load first pattern
@@ -143,8 +145,10 @@ int main(void)
 	
     while (1) 
     {
+		//PORTD |= (1<< PD3);
 		midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-		refresh();		
+		refresh();
+		//PORTD &= ~(1<<PD3);
 
 	}
 }
