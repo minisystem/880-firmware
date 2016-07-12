@@ -71,7 +71,7 @@ void process_tick(void) {
 void process_start(void) {
 	
 		sequencer.current_step = 0;
-		if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1;
+		if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
 			
@@ -85,7 +85,7 @@ void process_start(void) {
 		}
 		if (clock.source == INTERNAL) {
 			if (sequencer.sync_mode == MIDI_MASTER) { //send MIDI start
-				midi_send_start(&midi_device);
+				midi_send_start(&midi_device); //should clock be sent before start?
 				midi_send_clock(&midi_device);				
 			} else {
 				

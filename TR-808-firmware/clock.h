@@ -10,7 +10,8 @@
 #define CLOCK_H
 
 
-#define TIMER_OFFSET 150
+#define TIMER_OFFSET 140 //~30 - 250 BPM
+//#define _9_MS	140 //output compare count for 9 ms delay for Timer2 with /1024 divider
 
 enum clock_source {
 	INTERNAL,

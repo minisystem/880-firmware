@@ -50,6 +50,17 @@ ISR (TIMER3_COMPA_vect) { //led flashing interrupt. Will this be too much overhe
 	
 }
 
+ISR (TIMER2_COMPB_vect) {
+	
+	TIMSK2 &= ~(1 << OCIE2B); //disable output compare B interrupt 
+	//clock.ppqn_counter = 0;
+	//flag.next_step = 1;
+	//now  set up Timer2 to automatically clear PD3 on compare match:
+	TCCR2A &= ~(1 << COM2B0);
+	//OCR2A = OCR2B = TIMER_OFFSET -25;
+	
+}
+
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
 	//update_inst_leds();
@@ -77,22 +88,34 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				midi_send_clock(&midi_device); //send MIDI clock
 				
 			} else { //send DIN Sync clock pulse
+				
+				
 				if (flag.din_master_start) {
 					
-					if (++clock.din_ppqn_pulses == 3) {
+					if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
 				
 						flag.din_master_start = 0;
-						//need to move this to an interrupt 9 ms from now
 						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						//now need to add 9 ms delay before next clock pulse
+						
+						//TIMSK2 |= (1<<OCIE2B); //activate output compare B interrupt
+						//OCR2A = OCR2B = 70;
 						clock.ppqn_counter = 0;
 						flag.next_step = 1;
 						
-					}				
-				}					
+					}// else {
+						//TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
+						////now  set up Timer2 to automatically clear PD3 on compare match:
+						//TCCR2A &= ~(1 << COM2B0);						
+					//}			
+				} else {
+			
+					
+				}
 				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
 				TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
 				//now  set up Timer2 to automatically clear PD3 on compare match:
-				TCCR2A &= ~(1 << COM2B0);
+				TCCR2A &= ~(1 << COM2B0);		
 				TCNT2 = 0;	//reset timer
 	
 			}
