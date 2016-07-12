@@ -50,18 +50,18 @@ ISR (TIMER0_COMPA_vect) {
 	
 //}
 
-ISR (TIMER1_COMPB_vect) {
-	
-	TIMSK1 &= ~(1 << OCIE1B); //disable output compare B interrupt 
-	PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
-						
-	//clock.ppqn_counter = 0;
-	//flag.next_step = 1;
-	//now  set up Timer2 to automatically clear PD3 on compare match:
-	//TCCR2A &= ~(1 << COM2B0);
-	//OCR2A = OCR2B = TIMER_OFFSET -25;
-	
-}
+//ISR (TIMER1_COMPB_vect) {
+	//
+	//TIMSK1 &= ~(1 << OCIE1B); //disable output compare B interrupt 
+	//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						//
+	////clock.ppqn_counter = 0;
+	////flag.next_step = 1;
+	////now  set up Timer2 to automatically clear PD3 on compare match:
+	////TCCR2A &= ~(1 << COM2B0);
+	////OCR2A = OCR2B = TIMER_OFFSET -25;
+	//
+//}
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
@@ -90,23 +90,26 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				midi_send_clock(&midi_device); //send MIDI clock
 				
 			} else { //send DIN Sync clock pulse
-				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
-				TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
+				//this set up counter-intuitively puts DIN clock out of phase with master timer. Not sure why this is the case, but it works. Really need to dig into this. Not sure what other horrors this will reveal
+				//For example, instrument LED timing is not correct on first step (very brief pulse, rather than a proper half step of being lighted)
+				//need to have a good long think about this and figure out what the problem is. 
+				TCCR2A &= ~(1 << COM2B0);			
+				TCCR2B |= (1 << FOC2B);// force output compare to CLEAR OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
 				//now  set up Timer2 to automatically clear PD3 on compare match:	
-						
-				TCCR2A &= ~(1 << COM2B0);	
+				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
+				
 				TCNT2 = 0;	//reset timer				
 				
 				if (flag.din_master_start) {
 					
-					if (++clock.din_ppqn_pulses == 2) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
+					if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
 				
 						flag.din_master_start = 0;
 						//OK - how about setting up Timer1 COMPB interrupt here to delay DIN Sync Start line. This wont' affect phase of DIN Sync clock
-						OCR1B = OCR1A >> 1;
-						TIFR1 |= (1 << OCF1B); //this is already set, triggering output compare interrupt immediately. Not sure why. Setting it to 1 here clears it and allows interrupt to execute with expected timing. Thorough read of datasheet should explain this quirk.
+						//OCR1B = OCR1A >> 1;
+						//TIFR1 |= (1 << OCF1B); //this is already set, triggering output compare interrupt immediately. Not sure why. Setting it to 1 here clears it and allows interrupt to execute with expected timing. Thorough read of datasheet should explain this quirk.
 						//if ((TIFR1 >> OCF1B) & 1) PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
-						TIMSK1 |= (1<<OCIE1B);
+						//TIMSK1 |= (1<<OCIE1B);
 						
 						
 						//now need to add 9 ms delay before next clock pulse
@@ -116,9 +119,10 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 						//TIMSK2 |= (1<<OCIE2B); //activate output compare A interrupt
 						//
 						//OCR2A = OCR2B = 70;
-						//clock.ppqn_counter = 0;
-						//flag.next_step = 1;
-						//TCNT1 = 0; //reset master timer
+						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						clock.ppqn_counter = 0;
+						flag.next_step = 1;
+						TCNT1 = 0; //reset master timer
 						
 					}// else {
 						//TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3

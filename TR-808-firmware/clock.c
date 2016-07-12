@@ -22,7 +22,7 @@ void setup_clock(void) {
 	TCCR1B = (1<<CS12) | (1<<CS10) | (1<<WGM12);//TIMER1_DIVIDE_1024, clear on output compare match. Should probably reduce? 
 	TIMSK1 = (1<<OCIE1A);
 	//set up DIN Sync timer output compare registers:
-	OCR2A = OCR2B = TIMER_OFFSET - 25; //need minimum 5 ms DIN sync clock pulse width	
+	OCR2A = OCR2B = 70;//TIMER_OFFSET - 25; //need minimum 5 ms DIN sync clock pulse width	
 }
 
 
