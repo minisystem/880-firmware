@@ -13,6 +13,11 @@
 
 #define START_STOP		PB1
 #define TAP				PB2
+
+#define DIN_CLOCK		PD3
+#define DIN_RUN_STOP	PD4
+#define DIN_RESET		PD2
+#define DIN_FILL		PD7
 	
 //define SPI pins
 #define SPI_MOSI		PE3

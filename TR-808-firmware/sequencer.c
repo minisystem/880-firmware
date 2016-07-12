@@ -71,7 +71,7 @@ void process_tick(void) {
 void process_start(void) {
 	
 		sequencer.current_step = 0;
-		flag.next_step = 1;
+		if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1;
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
 			
@@ -79,14 +79,21 @@ void process_start(void) {
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
 				
 			sequencer.variation = VAR_A; //start on variation A
-			} else {
+		} else {
 				
 			sequencer.variation = VAR_B;
 		}
 		if (clock.source == INTERNAL) {
-			
-			midi_send_start(&midi_device);
-			midi_send_clock(&midi_device);
+			if (sequencer.sync_mode == MIDI_MASTER) { //send MIDI start
+				midi_send_start(&midi_device);
+				midi_send_clock(&midi_device);				
+			} else {
+				
+				flag.din_master_start = 1;
+				clock.din_ppqn_pulses = 0;
+				//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+			}
+
 		}
 		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
@@ -121,8 +128,16 @@ void process_stop(void) {
 		spi_data[0] = 0;
 		turn_on(sequencer.current_pattern);
 		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
-		if (clock.source == INTERNAL) midi_send_stop(&midi_device);
-	
+		if (clock.source == INTERNAL) {
+			if (sequencer.sync_mode == MIDI_MASTER) {
+				
+				midi_send_stop(&midi_device);
+			} else {
+				
+				PORTD &= ~(1 << DIN_RUN_STOP);
+			}
+			
+		}
 }
 
 void update_fill(void) {

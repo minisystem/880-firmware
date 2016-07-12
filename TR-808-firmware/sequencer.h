@@ -59,6 +59,9 @@ struct flag {
 	uint8_t tap:1;
 	uint8_t intro:1; //flag for starting with selected intro pattern in manual play mode
 	uint8_t fill:1;
+	uint8_t din_master_start:1;
+	uint8_t din_slave_start:1;
+	uint8_t din_slave_stop:1;
 	//uint8_t twi_init_error:1;
 	
 }; 

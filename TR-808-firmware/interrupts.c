@@ -57,18 +57,44 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	if (clock.source == INTERNAL) {
 
 		process_tick();
+		
+		//if (sequencer.sync_mode == DIN_SYNC_MASTER) {
+			//if (flag.din_master_start) {
+				//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+				//flag.din_master_start = 0;
+					//
+			//}
+			//TCCR2A &= ~(1 << COM2B0);
+			//
+			//TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
+			////now  set up Timer2 to automatically clear PD3 on compare match:
+			//TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match
+			//TCNT2 = 0;	//reset timer
+			//return;
+		//}
 		if (sequencer.START) {
 			if (sequencer.sync_mode == MIDI_MASTER) {
 				midi_send_clock(&midi_device); //send MIDI clock
 				
 			} else { //send DIN Sync clock pulse
-								
+				if (flag.din_master_start) {
+					
+					if (++clock.din_ppqn_pulses == 3) {
+				
+						flag.din_master_start = 0;
+						//need to move this to an interrupt 9 ms from now
+						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						clock.ppqn_counter = 0;
+						flag.next_step = 1;
+						
+					}				
+				}					
 				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
 				TCCR2B |= (1 << FOC2B);// force output compare to set OCR2B (PD3) - normal PORTD functions are overridden, so need to use timer events to set or clear PD3
 				//now  set up Timer2 to automatically clear PD3 on compare match:
 				TCCR2A &= ~(1 << COM2B0);
 				TCNT2 = 0;	//reset timer
-				
+	
 			}
 			
 		}

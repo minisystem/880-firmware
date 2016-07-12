@@ -93,13 +93,10 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_MASTER:
 					clock.source = INTERNAL;
-					//do something to set up Timer2 output compare interrupt
-					DDRD |= (1 << PD3); //set up PD3 as output
+					
+					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
-					
-					//OCR2B = 75;//TIMER_OFFSET/2; //output compare happens 1/2 period of fastest tempo
-					//OCR2A = OCR2B = TIMER_OFFSET/2;
 					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 					TCNT2 = 0;
 					
@@ -107,6 +104,8 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_SLAVE:
 					clock.source = EXTERNAL;
+					//TCCR1B = 0; //stop master tempo timer - necessary?
+					
 					break;
 							
 							

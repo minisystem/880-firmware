@@ -10,7 +10,7 @@
 #define CLOCK_H
 
 
-#define TIMER_OFFSET 100
+#define TIMER_OFFSET 150
 
 enum clock_source {
 	INTERNAL,
@@ -21,6 +21,7 @@ struct clock {
 	
 	uint8_t divider:4;
 	uint8_t ppqn_counter;
+	uint8_t din_ppqn_pulses:3; //counter for din sync clock pulses sent before DIN master start event
 	uint8_t beat_counter:2; //counts quarter notes, may need to change it and handle it more when dealing with different time signatures
 	uint16_t rate; //output compare value for clock timer
 	uint16_t previous_rate;
