@@ -287,6 +287,7 @@ void process_step(void){
 		flag.next_step = 0;
 		
 		if (sequencer.START) {
+			//PORTD |= (1 << DIN_RUN_STOP);
 		//*************************TAKEN FROM INTERRUPT*****************************//
 			if (flag.new_measure) {
 			
