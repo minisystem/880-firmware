@@ -231,36 +231,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 	}
 	
 
-				
-	//if (flag.pattern_change) {
-					//
-		//flag.pattern_change = 0;
-		//flag.pre_scale_change = 1; //need to handle any change in pre-scale
-		//sequencer.current_pattern = sequencer.new_pattern;
-//
-		//read_next_pattern(sequencer.current_pattern);
-		//sequencer.variation = VAR_A;
-		//if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
-		//sequencer.part_playing = FIRST;
-		//turn_off(SECOND_PART_LED);
-		//turn_on(FIRST_PART_LED);
-					//
-	//} else if (flag.fill || ++sequencer.current_measure == sequencer.fill_mode) {
-		//sequencer.current_measure = 0;
-		//flag.fill = 0;
-		//flag.pre_scale_change = 1;
-		//read_next_pattern(sequencer.current_intro_fill);
-		//sequencer.part_playing = FIRST;
-		//turn_off(SECOND_PART_LED);
-		//turn_on(FIRST_PART_LED);
-		//sequencer.new_pattern = sequencer.current_pattern;
-		//sequencer.current_pattern = sequencer.current_intro_fill;
-		////flag.intro = 0;
-		//sequencer.variation = sequencer.intro_fill_var;
-		////flag.variation_change = 1;
-		//flag.pattern_change = 1;
-		//
-	//}
+ 
 				
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 		
@@ -287,7 +258,6 @@ void process_step(void){
 		flag.next_step = 0;
 		
 		if (sequencer.START) {
-			//PORTD |= (1 << DIN_RUN_STOP);
 		//*************************TAKEN FROM INTERRUPT*****************************//
 			if (flag.new_measure) {
 			
@@ -378,8 +348,6 @@ void process_step(void){
 				
 			}
 			
-			
-
 					
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
