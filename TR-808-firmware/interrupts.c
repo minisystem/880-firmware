@@ -17,6 +17,45 @@
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 #include "midi.h"
 
+ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
+	
+	process_tick();
+	
+		
+	if (flag.din_start) {
+							
+		if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps by a clock pulse or two. This adds a start delay when in DIN_SLAVE mode
+								
+			flag.din_start = 0;		
+			clock.ppqn_counter = 0;
+			flag.next_step = 1;		
+			flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
+								
+								
+		}
+	
+		
+	}
+	
+}
+
+ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
+	
+	toggle(IF_VAR_B_LED);
+	
+	if ((PIND >> DIN_RUN_STOP) & 1) {
+		
+		sequencer.START = 1;
+		process_start();
+
+		
+	} else {
+		
+		sequencer.START = 0;
+		process_stop();
+	}
+	
+}
 
 ISR (TIMER0_COMPA_vect) {
 	
@@ -57,15 +96,15 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				
 				TCNT2 = 0;	//reset timer				
 				
-				if (flag.din_master_start) {
+				if (flag.din_start) {
 					
 					if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
 				
-						flag.din_master_start = 0;
+						flag.din_start = 0;
 						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
 						clock.ppqn_counter = 0;
 						flag.next_step = 1;
-						TCNT1 = 0; //reset master timer
+						TCNT1 = 0; //reset master timer, doesn't seem necessary
 						flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
 						
 						

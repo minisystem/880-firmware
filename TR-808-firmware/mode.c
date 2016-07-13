@@ -79,7 +79,9 @@ void update_fill_mode(void) {
 			//change sync mode
 			if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
 			sequencer.sync_mode = sync_mode[sync_index];
-			TCCR2B = 0; //turn off Timer2			
+			TCCR2B = 0; //turn off Timer2
+			EIMSK = 0; //turn off external interrupts
+			PCICR = 0; //turn off pin change interrupts			
 			//spi_data[2] |= (1 << fill_index);
 			switch (sequencer.sync_mode) {
 							
@@ -104,6 +106,9 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_SLAVE:
 					clock.source = EXTERNAL;
+					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
+					EIMSK |= (1 << INT1); //turn on INT1 interrupt for DIN Sync clock
+					PCICR |= (1 << PCIE2);
 					//TCCR1B = 0; //stop master tempo timer - necessary?
 					
 					break;

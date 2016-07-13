@@ -76,6 +76,11 @@ int main(void)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
+	
+	//setup external interrupts
+	EICRA |= (1 << ISC11) | (1 << ISC10); //set up DIN sync to trigger on rising edge of DIN clock
+	PCMSK2 |= (1 << PCINT20); //set up DIN Run/Stop pin change interrupt
+	
 	sequencer.current_pattern = sequencer.new_pattern = 0;
 	turn_on(sequencer.current_pattern);
 	turn_on(MODE_2_FIRST_PART_PART);

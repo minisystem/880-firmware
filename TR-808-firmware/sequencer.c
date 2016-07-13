@@ -71,10 +71,11 @@ void process_tick(void) {
 void process_start(void) {
 	
 		sequencer.current_step = 0;
-		if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
+		//if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
-			
+		
+		//reset variation on start	
 		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
 				
@@ -83,18 +84,37 @@ void process_start(void) {
 				
 			sequencer.variation = VAR_B;
 		}
-		if (clock.source == INTERNAL) {
-			if (sequencer.sync_mode == MIDI_MASTER) { //send MIDI start
+		
+		//if (clock.source == INTERNAL) {
+		if (sequencer.sync_mode == DIN_SYNC_MASTER || sequencer.sync_mode == DIN_SYNC_SLAVE) {
+			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
+			flag.din_start = 1; 
+			clock.din_ppqn_pulses = 0;
+			
+		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER
+			
+			flag.next_step = 1;
+			if (sequencer.sync_mode == MIDI_MASTER) {
 				midi_send_start(&midi_device); //should clock be sent before start?
-				midi_send_clock(&midi_device);				
-			} else {
+				midi_send_clock(&midi_device);
 				
-				flag.din_master_start = 1;
-				clock.din_ppqn_pulses = 0;
-				//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
 			}
-
+			
+			
 		}
+		
+			
+			//if (sequencer.sync_mode == MIDI_MASTER) { //send MIDI start
+				//midi_send_start(&midi_device); //should clock be sent before start?
+				//midi_send_clock(&midi_device);				
+			//} else {
+				////
+				//flag.din_start = 1;
+				//clock.din_ppqn_pulses = 0;
+				//
+			//}
+
+		//}
 		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
 			read_next_pattern(sequencer.current_intro_fill);
