@@ -96,25 +96,10 @@ void process_start(void) {
 			flag.next_step = 1;
 			if (sequencer.sync_mode == MIDI_MASTER) {
 				midi_send_start(&midi_device); //should clock be sent before start?
-				midi_send_clock(&midi_device);
-				
-			}
-			
-			
+				midi_send_clock(&midi_device);				
+			}					
 		}
-		
-			
-			//if (sequencer.sync_mode == MIDI_MASTER) { //send MIDI start
-				//midi_send_start(&midi_device); //should clock be sent before start?
-				//midi_send_clock(&midi_device);				
-			//} else {
-				////
-				//flag.din_start = 1;
-				//clock.din_ppqn_pulses = 0;
-				//
-			//}
 
-		//}
 		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
 			read_next_pattern(sequencer.current_intro_fill);
@@ -144,8 +129,8 @@ void process_stop(void) {
 		flag.pattern_change = 0;
 		flag.fill = 0;	
 		//blank all step leds and turn on current pattern LED
-		spi_data[1] = 0;
-		spi_data[0] = 0;
+		spi_data[LATCH_1] = 0;
+		spi_data[LATCH_0] = 0;
 		turn_on(sequencer.current_pattern);
 		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
 		if (clock.source == INTERNAL) {
@@ -284,9 +269,7 @@ void process_step(void){
 				flag.new_measure = 0;
 				process_new_measure(); //moved all the new measure housekeeping into its own function.
 				//sequencer.current_measure++;
-
 			}			
-
 		//*************************************************************************//
 			while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
 			//with allowing drums to be triggered by MIDI when sequencer is running?
@@ -298,21 +281,21 @@ void process_step(void){
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 					check_tap();				
 					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
-						spi_data[1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
-						spi_data[1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
-						spi_data[0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
-						spi_data[0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+						spi_data[LATCH_1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+						spi_data[LATCH_1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
+						spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
+						spi_data[LATCH_0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
 						
 					}				
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					check_tap();
-					spi_data[1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
-					spi_data[1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
-					spi_data[0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
+					spi_data[LATCH_1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
+					spi_data[LATCH_1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
+					spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
 					//spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));				
-					spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern | 1 << sequencer.current_intro_fill) >> 8)); //little tricky to get the correct mask here
+					spi_data[LATCH_0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern | 1 << sequencer.current_intro_fill) >> 8)); //little tricky to get the correct mask here
 				
 				break;
 				
@@ -321,7 +304,7 @@ void process_step(void){
 
 			trigger_step();
 			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
-				spi_data[8] |= 1<<ACCENT;
+				spi_data[LATCH_8] |= 1<<ACCENT;
 				if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 			}
 		}
@@ -330,26 +313,26 @@ void process_step(void){
 		flag.half_step = 0;
 		turn_off_all_inst_leds();
 		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
-		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
-			spi_data[1] = 0;
-			spi_data[0] = 0;
+			spi_data[LATCH_1] = 0;
+			spi_data[LATCH_0] = 0;
 			
 			switch (sequencer.mode) {
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 				
 					if (!sequencer.SHIFT) {
-						spi_data[1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-						spi_data[0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;				
+						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;				
 					}
 				
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 				
-					spi_data[1] = (1<<sequencer.new_pattern);
-					spi_data[0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
+					spi_data[LATCH_1] = (1<<sequencer.new_pattern);
+					spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
 				
 				break;
 				
@@ -394,8 +377,8 @@ void process_step(void){
 					
 		}	 else {
 					
-				spi_data[1] = 0;
-				spi_data[0] = 0;
+				spi_data[LATCH_1] = 0;
+				spi_data[LATCH_0] = 0;
 					
 				switch (sequencer.variation_mode) {
 						
@@ -427,7 +410,7 @@ void process_step(void){
 		//spi_data[5] |= sequencer.var_led_mask;
 				
 	} else if (clock.source == EXTERNAL && !sequencer.START) { //this handles variation LEDs when waiting for external clock signal
-		spi_data[5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
+		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		switch (sequencer.variation_mode) {
 			
 			case VAR_A:
@@ -445,7 +428,7 @@ void process_step(void){
 		}
 		
 	}		
-	spi_data[5] |= sequencer.var_led_mask;
+	spi_data[LATCH_5] |= sequencer.var_led_mask;
 }
 
 
@@ -504,18 +487,7 @@ void update_step_board() {
 			break;
 			
 		case MANUAL_PLAY:
-			//check_tap();
-			//if (flag.intro) {
-				//read_next_pattern(sequencer.current_intro_fill);
-				//sequencer.new_pattern = sequencer.current_pattern;
-				//sequencer.current_pattern = sequencer.current_intro_fill;
-				//flag.intro = 0;
-				//sequencer.variation = sequencer.intro_fill_var;
-				////flag.variation_change = 1;
-				//flag.pattern_change = 1;
-				//flag.fill = 1;
-					//
-			//}
+
 			if (press < 12) { //first 12 pattern places are for main patterns 
 				sequencer.new_pattern = press;
 				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
@@ -523,8 +495,7 @@ void update_step_board() {
 			} else { //remaining 4 patterns places are for intro/fills
 				
 				sequencer.current_intro_fill = press;
-				
-				
+						
 			}
 			
 			break;
@@ -589,8 +560,7 @@ void update_variation(void) { //not currently used
 				case VAR_B:
 				sequencer.variation = VAR_B;
 				break;
-							
-							
+												
 			}
 						
 			} else if (sequencer.variation_mode == VAR_AB) {
@@ -600,11 +570,9 @@ void update_variation(void) { //not currently used
 		
 	}
 	
-	
 		if (flag.half_step) {
 			
-			
-			
+					
 			
 		}
 	

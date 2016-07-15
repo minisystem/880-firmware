@@ -43,8 +43,8 @@ void update_mode(void) {
 		
 		sequencer.mode = current_mode[mode_index];
 		//uint8_t data_mask = spi_data[4] & 0b11000000; //mask to preserve top two bits of SPI byte 4
-		spi_data[4] &= MODE_LED_MASK;
-		spi_data[4] |= (1<< mode_index);
+		spi_data[LATCH_4] &= MODE_LED_MASK;
+		spi_data[LATCH_4] |= (1<< mode_index);
 		
 		
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.step_num_new = sequencer.step_num[sequencer.part_editing]; //another annoying except
@@ -67,8 +67,8 @@ void update_fill_mode(void) {
 	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 15, 11, 7, 3, 1};
 	enum sync_mode sync_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
 		
-	spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
-	spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;
+	spi_data[LATCH_4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
+	spi_data[LATCH_2] &= FILL_MODE_LATCH_2_LED_MASK;
 
 		
 	if (sequencer.SHIFT) {
@@ -118,15 +118,15 @@ void update_fill_mode(void) {
 			
 		}
 		
-		spi_data[2] |= (1 << sync_index);
+		spi_data[LATCH_2] |= (1 << sync_index);
 		
 	} else {
 		
 		if (button[FILL_SW].state) {
 
 			button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
-			spi_data[4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
-			spi_data[2] &= FILL_MODE_LATCH_2_LED_MASK;	
+			spi_data[LATCH_4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
+			spi_data[LATCH_2] &= FILL_MODE_LATCH_2_LED_MASK;	
 					
 			if (++fill_index == NUM_FILL_MODES) fill_index = 0;
 			
@@ -135,11 +135,11 @@ void update_fill_mode(void) {
 		}
 		if (fill_index < 2) {
 				
-			spi_data[4] |= 1 << (fill_index + 6);
+			spi_data[LATCH_4] |= 1 << (fill_index + 6);
 				
 			} else {
 				
-			spi_data[2] |= 1 << (fill_index - 2);
+			spi_data[LATCH_2] |= 1 << (fill_index - 2);
 		}
 		
 		

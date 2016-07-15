@@ -114,10 +114,10 @@ void turn_off_all_inst_leds(void) {
 	
 	//This is quick and dirty fast way to turn off all LEDs, but doesn't preserve their states for toggling 
 	//TODO: make masks constants
-	spi_data[2] &= spi_data[2] & 0b00001111; //turn off AC, BD, SD, LT
-	spi_data[7] &= spi_data[7] & 0b00100000; // turn off MT, HT, RS, CP, MA, CB, CY
-	spi_data[3] &= spi_data[3] & 0b00001111; // turn off LC, MC, HC, CL
-	spi_data[6] &= spi_data[6] & 0b11001111; //turn off OH, CH	
+	spi_data[LATCH_2] &= spi_data[LATCH_2] & 0b00001111; //turn off AC, BD, SD, LT
+	spi_data[LATCH_7] &= spi_data[LATCH_7] & 0b00100000; // turn off MT, HT, RS, CP, MA, CB, CY
+	spi_data[LATCH_3] &= spi_data[LATCH_3] & 0b00001111; // turn off LC, MC, HC, CL
+	spi_data[LATCH_6] &= spi_data[LATCH_6] & 0b11001111; //turn off OH, CH	
 	
 	//for (int i = BD; i <= MA; i++) {
 		//
@@ -180,14 +180,14 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 
 void update_prescale_leds(void) {
 	
-	spi_data[5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
-	spi_data[5] |= (1<< (sequencer.pre_scale +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)	
+	spi_data[LATCH_5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
+	spi_data[LATCH_5] |= (1<< (sequencer.pre_scale +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)	
 }
 
 void refresh_step_leds(void) {
 	
-	spi_data[1] = 0;// (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
-	spi_data[0] = 0;//((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
+	spi_data[LATCH_1] = 0;// (1 << sequencer.current_step) | sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst];
+	spi_data[LATCH_0] = 0;//((1 << sequencer.current_step) >> 8) | (sequencer.pattern[sequencer.variation].step_led_mask[sequencer.current_inst] >> 8);
 	
 }
 

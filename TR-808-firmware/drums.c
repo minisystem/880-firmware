@@ -56,12 +56,12 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		if (drum_hit[note].switch_bit != NO_SWITCH) {//need to set instrument switch
 				
 			//toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
-			spi_data[3] ^= (-(drum_hit[note].switch_value) ^ spi_data[3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+			spi_data[LATCH_3] ^= (-(drum_hit[note].switch_value) ^ spi_data[LATCH_3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 					
 		}
 			
 		if (velocity > 64) {
-			spi_data[8] |= (1<<ACCENT);
+			spi_data[LATCH_8] |= (1<<ACCENT);
 			turn_on(ACCENT_1_LED);
 			
 		}
@@ -81,9 +81,9 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 
 void clear_all_trigs(void) {
 
-	spi_data[8] = 0;
-	spi_data[6] &= 0b11110000; //make these masks constants
-	spi_data[7] &= 0b11011111;	
+	spi_data[LATCH_8] = 0;
+	spi_data[LATCH_6] &= 0b11110000; //make these masks constants
+	spi_data[LATCH_7] &= 0b11011111;	
 	
 }
 
@@ -98,7 +98,7 @@ void trigger_step(void) { //trigger all drums on current step
 			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
 			if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 						
-				spi_data[3] ^= (-(drum_hit[i].switch_value) ^ spi_data[3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+				spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 						
 			}		
 		}

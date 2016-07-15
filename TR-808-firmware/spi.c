@@ -27,15 +27,15 @@ uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simult
 
 void update_spi(void) { //updates LEDs and triggers, doesn't read data back
 	
-		spi_shift_byte(spi_data[0]);
-		spi_shift_byte(spi_data[1]);
-		spi_shift_byte(spi_data[2]);
-		spi_shift_byte(spi_data[3]);
-		spi_shift_byte(spi_data[4]);
-		spi_shift_byte(spi_data[5]);
-		spi_shift_byte(spi_data[6]);
-		spi_shift_byte(spi_data[7]);
-		spi_shift_byte(spi_data[8]);
+		spi_shift_byte(spi_data[LATCH_0]);
+		spi_shift_byte(spi_data[LATCH_1]);
+		spi_shift_byte(spi_data[LATCH_2]);
+		spi_shift_byte(spi_data[LATCH_3]);
+		spi_shift_byte(spi_data[LATCH_4]);
+		spi_shift_byte(spi_data[LATCH_5]);
+		spi_shift_byte(spi_data[LATCH_6]);
+		spi_shift_byte(spi_data[LATCH_7]);
+		spi_shift_byte(spi_data[LATCH_8]);
 		
 		PORTC &= ~(1<<SPI_LED_LATCH);
 		PORTC |= (1<<SPI_LED_LATCH);

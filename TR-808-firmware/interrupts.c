@@ -24,7 +24,7 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 		
 	if (flag.din_start) {
 							
-		if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps by a clock pulse or two. This adds a start delay when in DIN_SLAVE mode
+		if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
 								
 			flag.din_start = 0;		
 			clock.ppqn_counter = 0;
@@ -41,7 +41,7 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 
 ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 	
-	toggle(IF_VAR_B_LED);
+	//toggle(IF_VAR_B_LED);
 	
 	if ((PIND >> DIN_RUN_STOP) & 1) {
 		
@@ -64,7 +64,7 @@ ISR (TIMER0_COMPA_vect) {
 
 	spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
 	turn_off(ACCENT_1_LED);
-	spi_data[8] &= ~(1<<ACCENT);
+	spi_data[LATCH_8] &= ~(1<<ACCENT);
 	turn_off(drum_hit[current_drum_hit].led_index);
 
 	trigger_finished = 1;
@@ -74,13 +74,10 @@ ISR (TIMER0_COMPA_vect) {
 
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
-	//midi_send_clock(&midi_device); //much more setup and overhead is required to send MIDI data
-	//update_inst_leds();
-	
+
 	if (clock.source == INTERNAL) {
 
-		process_tick();
-		
+		process_tick();	
 
 		if (sequencer.START) {
 			if (sequencer.sync_mode == MIDI_MASTER) {
@@ -124,11 +121,7 @@ ISR (USART0_RX_vect) { // USART receive interrupt
 	//***HOWEVER***, xnor-midi example code has this function being called from USART_RX_vect ISR
 }
 
-//ISR (USART0_TX_vect) {
-//
-//
-	//
-//}
+
 ISR(USART0_UDRE_vect) {
 	uint8_t val;
 

@@ -28,6 +28,17 @@
 #define SPI_SS			PE2 //this may conflict with Tempo pot!
 #define SPI_EN			PB0
 
+//define SPI latch numbers
+#define LATCH_0			0
+#define LATCH_1			1
+#define LATCH_2			2
+#define LATCH_3			3
+#define LATCH_4			4
+#define LATCH_5			5
+#define LATCH_6			6
+#define LATCH_7			7
+#define LATCH_8			8
+
 //define instrument triggers
 
 #define ACCENT			0
