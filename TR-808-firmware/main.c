@@ -148,8 +148,8 @@ int main(void)
 	read_next_pattern(0); //load first pattern
 	//update_step_led_mask();
 	
-	sequencer.SHUFFLE = 1;
-	sequencer.shuffle_amount = 1;
+	//sequencer.SHUFFLE = 1;
+	sequencer.shuffle_amount = 5;
 	
     while (1) 
     {

@@ -64,10 +64,10 @@ void process_tick(void) {
 	}
 	
 	//try setting delay_step flag and then use shuffle counter to count amount of shuffle pqqn before setting next step flag?
-		
+	uint8_t even_step = sequencer.current_step & 1;	
 	if (++clock.ppqn_counter == clock.divider) {
 		
-		if (sequencer.SHUFFLE && !(sequencer.current_step & 1)) { //need to figure out which step is even or odd -double check this is doing what it is supposed to!
+		if ((sequencer.shuffle_amount != 0) && !even_step) { //need to figure out which step is even or odd -double check this is doing what it is supposed to!
 			sequencer.shuffle_ppqn_count = 0;
 			flag.shuffle_step = 1;
 			
@@ -80,10 +80,13 @@ void process_tick(void) {
 		}
 		clock.beat_counter++; //overflows every 4 beats
 		clock.ppqn_counter = 0;
-	} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
+	} else if ((clock.ppqn_counter == clock.divider >> 1) && !even_step) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
 				
 		flag.half_step = 1;
 
+	} else if ((even_step && (clock.ppqn_counter == (clock.divider >> 1) + sequencer.shuffle_amount))) {
+		
+		flag.half_step = 1;
 	}
 	
 	

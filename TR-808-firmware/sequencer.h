@@ -94,7 +94,7 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	uint8_t SHUFFLE:1;
+	//uint8_t SHUFFLE:1;
 	uint8_t shuffle_amount:3;
 	uint8_t shuffle_ppqn_count:4;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
