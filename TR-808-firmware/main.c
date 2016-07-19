@@ -148,6 +148,9 @@ int main(void)
 	read_next_pattern(0); //load first pattern
 	//update_step_led_mask();
 	
+	sequencer.SHUFFLE = 1;
+	sequencer.shuffle_amount = 1;
+	
     while (1) 
     {
 		//PORTD |= (1<< PD3);

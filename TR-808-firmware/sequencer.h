@@ -22,6 +22,8 @@
 #define NUM_STEPS 16
 #define NO_STEPS 16 //null state of part 2 step number
 
+#define NUM_PATTERNS 64 //number of patterns per rhythm track
+
 //define pre-scale ppqn dividers
 #define NUM_PRE_SCALES 4
 #define PRE_SCALE_LED_MASK 0b11000011
@@ -60,9 +62,7 @@ struct flag {
 	uint8_t intro:1; //flag for starting with selected intro pattern in manual play mode
 	uint8_t fill:1;
 	uint8_t din_start:1;
-	//uint8_t din_slave_start:1;
-	//uint8_t din_slave_stop:1;
-	//uint8_t twi_init_error:1;
+	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -71,9 +71,20 @@ struct pattern { //current pattern will be loaded into ram from eeprom. changing
 	//uint16_t step_led_mask[17];
 };
 
-
-
-//typedef STEP_NUM_BITS uint8_t:
+struct rhythm_pattern {
+	
+	uint8_t pattern_num:5; //currently only 16 patterns available, but could have 32 patterns by implementing feature to access patterns 17-32: TODO
+	uint8_t variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
+	
+	};
+	
+//struct rhythm_track {
+//
+	//rhythm_pattern pattern[NUM_PATTERNS];	
+	//
+//}
+	
+extern struct rhythm_pattern rhythm_track[NUM_PATTERNS];
 
 struct sequencer {
 	
@@ -83,7 +94,9 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	//uint8_t SLAVE:1; //is the sequencer a tempo slave?
+	uint8_t SHUFFLE:1;
+	uint8_t shuffle_amount:3;
+	uint8_t shuffle_ppqn_count:4;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint16_t step_led_mask[2][17];
 	uint8_t variation_toggle:1;

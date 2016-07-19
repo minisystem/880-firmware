@@ -48,25 +48,63 @@ void update_tempo(void) {
 }
 
 void process_tick(void) {
+	
+		
+	if (flag.shuffle_step) { 
+		
 
-		if (++clock.ppqn_counter == clock.divider) {
-			flag.next_step = 1;
-			///toggle(IF_VAR_A_LED);
-			if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
-				//toggle(IF_VAR_B_LED);	
-				flag.new_measure = 1;
-			}
-			clock.beat_counter++; //overflows every 4 beats
-			clock.ppqn_counter = 0;
-		} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
+		if (++sequencer.shuffle_ppqn_count == sequencer.shuffle_amount) {
 				
-			flag.half_step = 1;
+			//sequencer.shuffle_ppqn_count = 0;
+			flag.next_step = 1;
+			flag.shuffle_step = 0;
+				
+		}
 
+	}
+	
+	//try setting delay_step flag and then use shuffle counter to count amount of shuffle pqqn before setting next step flag?
+		
+	if (++clock.ppqn_counter == clock.divider) {
+		
+		if (sequencer.SHUFFLE && !(sequencer.current_step & 1)) { //need to figure out which step is even or odd -double check this is doing what it is supposed to!
+			sequencer.shuffle_ppqn_count = 0;
+			flag.shuffle_step = 1;
+			
 		}
 		
-		
+		if (!flag.shuffle_step) flag.next_step = 1;
+			
+		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {	
+			flag.new_measure = 1;
+		}
+		clock.beat_counter++; //overflows every 4 beats
+		clock.ppqn_counter = 0;
+	} else if (clock.ppqn_counter == clock.divider >> 1) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
+				
+		flag.half_step = 1;
+
+	}
 	
+	
+	//++clock.ppqn_counter;
+	//
+	//if (sequencer.SHUFFLE) {
+	//
+			//
+		//
+	//} else {
+		//
+		//
+	//}
+	//
+	//if ((++clock.ppqn_counter == clock.divider) && (!sequencer.SHUFFLE)){
+		//
+	//} else if (clock.ppqn_counter == clock.divider)
+		
 }
+	
+
 
 void process_start(void) {
 	
@@ -102,9 +140,9 @@ void process_start(void) {
 
 		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
-			read_next_pattern(sequencer.current_intro_fill);
-			sequencer.new_pattern = sequencer.current_pattern;
-			sequencer.current_pattern = sequencer.current_intro_fill;
+			//read_next_pattern(sequencer.current_intro_fill);
+			//sequencer.new_pattern = sequencer.current_pattern;
+			//sequencer.current_pattern = sequencer.current_intro_fill;
 			flag.intro = 0;
 			sequencer.variation = sequencer.intro_fill_var;
 			//flag.variation_change = 1;
@@ -595,7 +633,7 @@ void update_prescale(void) {
 	}
 }
 
-void check_tap(void) { //this is kind of inefficent - not generalized enough. maybe better to check flag.tap in different contexts?
+void check_tap(void) { //this is kind of inefficient - not generalized enough. maybe better to check flag.tap in different contexts?
 	
 	if (flag.tap) {
 		flag.tap = 0;
@@ -619,6 +657,13 @@ void check_tap(void) { //this is kind of inefficent - not generalized enough. ma
 			} else {
 				
 				flag.intro ^= 1<<0;
+				if (flag.intro) { //sequencer isn't playing, so load intro now
+					read_next_pattern(sequencer.current_intro_fill);
+					sequencer.new_pattern = sequencer.current_pattern;
+					sequencer.current_pattern = sequencer.current_intro_fill;					
+					
+					
+				}
 			}
 			
 		}
