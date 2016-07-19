@@ -21,7 +21,7 @@ typedef struct {
 	struct pattern variation_b;
 	uint8_t pre_scale:2;
 	uint8_t step_num[NUM_PARTS];
-	//uint8_t step_num_second;
+	//uint8_t shuffle_amount:4;
 } pattern_data;
 
 //extern struct pattern_data eeprom_pattern;

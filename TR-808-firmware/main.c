@@ -149,7 +149,7 @@ int main(void)
 	//update_step_led_mask();
 	
 	//sequencer.SHUFFLE = 1;
-	sequencer.shuffle_amount = 5;
+	sequencer.shuffle_amount = 0;
 	
     while (1) 
     {

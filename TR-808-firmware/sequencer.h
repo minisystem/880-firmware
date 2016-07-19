@@ -133,6 +133,7 @@ void process_new_measure(void);
 void update_variation(void);
 void update_prescale(void);
 void update_fill(void);
+void update_shuffle(uint8_t shuffle_amount);
 void check_tap(void);
 void toggle_variation(void);
 

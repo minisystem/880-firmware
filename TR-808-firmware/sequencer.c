@@ -291,7 +291,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 	//handle pre-scale change
 	if (flag.pre_scale_change) {
 		flag.pre_scale_change = 0;
-					
+		sequencer.shuffle_amount = 0; //reset shuffle amount when pre-scale changes			
 		clock.divider = pre_scale[sequencer.pre_scale];
 	}	
 	
@@ -396,8 +396,8 @@ void process_step(void){
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
 					
-					turn_on(sequencer.new_pattern);
-						
+					//turn_on(sequencer.new_pattern);
+					turn_on(sequencer.shuffle_amount);		
 				}
 				
 				if (sequencer.variation != sequencer.variation_mode) {
@@ -420,7 +420,7 @@ void process_step(void){
 					
 				spi_data[LATCH_1] = 0;
 				spi_data[LATCH_0] = 0;
-					
+				
 				switch (sequencer.variation_mode) {
 						
 					case VAR_A: case VAR_AB:
@@ -486,8 +486,9 @@ void update_step_board() {
 			//if (press == EMPTY) break;
 			
 			if (sequencer.SHIFT) {		
-				flag.pattern_change = 1;
-				sequencer.new_pattern = press;
+				//flag.pattern_change = 1;
+				//sequencer.new_pattern = press;
+				update_shuffle(press);
 				//turn_off(sequencer.current_pattern);
 				//turn_on(sequencer.new_pattern);
 				break;			
@@ -585,6 +586,25 @@ void update_step_board() {
 		
 		
 	}
+}
+
+void update_shuffle(uint8_t shuffle_amount) {
+	
+	//if (sequencer.pre_scale == PRE_SCALE_1 || sequencer.pre_scale == PRE_SCALE_3) {
+	
+		//if (shuffle_amount > 3 && shuffle_amount < 10) { //ensure button press is within control range of shuffle selection
+		
+			sequencer.shuffle_amount = shuffle_amount;// - 4; //shuffle ranges from 0-5
+			
+		//}
+		
+	//} else {
+	//
+		//sequencer.shuffle_amount = 0;
+		//
+	//}
+ 	
+	
 }
 
 void update_variation(void) { //not currently used 
