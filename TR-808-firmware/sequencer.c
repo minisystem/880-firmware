@@ -397,7 +397,7 @@ void process_step(void){
 				if (sequencer.SHIFT) {
 					
 					//turn_on(sequencer.new_pattern);
-					turn_on(sequencer.shuffle_amount);		
+					turn_on(sequencer.shuffle_amount + 4);		
 				}
 				
 				if (sequencer.variation != sequencer.variation_mode) {
@@ -592,11 +592,11 @@ void update_shuffle(uint8_t shuffle_amount) {
 	
 	//if (sequencer.pre_scale == PRE_SCALE_1 || sequencer.pre_scale == PRE_SCALE_3) {
 	
-		//if (shuffle_amount > 3 && shuffle_amount < 10) { //ensure button press is within control range of shuffle selection
+		if (shuffle_amount > 3 && shuffle_amount < 10) { //ensure button press is within control range of shuffle selection
 		
-			sequencer.shuffle_amount = shuffle_amount;// - 4; //shuffle ranges from 0-5
+			sequencer.shuffle_amount = shuffle_amount - 4; //shuffle ranges from 0-5
 			
-		//}
+		}
 		
 	//} else {
 	//
