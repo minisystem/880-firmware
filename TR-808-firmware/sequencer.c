@@ -63,11 +63,13 @@ void process_tick(void) {
 
 	}
 	
-	//try setting delay_step flag and then use shuffle counter to count amount of shuffle pqqn before setting next step flag?
-	uint8_t even_step = sequencer.current_step & 1;	
+	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
+	
 	if (++clock.ppqn_counter == clock.divider) {
 		
-		if ((sequencer.shuffle_amount != 0) && !even_step) { //need to figure out which step is even or odd -double check this is doing what it is supposed to!
+		//handle shuffle
+		if ((sequencer.shuffle_amount != 0) && !even_step) { //confusing because step is incremented below, so it becomes even but is currently odd
+			//set shuffle_step flag and then use shuffle ppqn counter to count amount of shuffle pqqn before setting next step flag
 			sequencer.shuffle_ppqn_count = 0;
 			flag.shuffle_step = 1;
 			
@@ -80,30 +82,14 @@ void process_tick(void) {
 		}
 		clock.beat_counter++; //overflows every 4 beats
 		clock.ppqn_counter = 0;
-	} else if ((clock.ppqn_counter == clock.divider >> 1) && !even_step) { //50% step width, sort of - use for flashing step and variation LEDs to tempo
-				
+		 //50% step width, sort of - use for flashing step and variation LEDs to tempo
+	} else if (((clock.ppqn_counter == clock.divider >> 1) && !even_step) || ((even_step && (clock.ppqn_counter == (clock.divider >> 1) + sequencer.shuffle_amount)))  ){
+		//if it's an odd step then set half_step flag OR if it's an even step and the appropriate amount of shuffle has transpired then set half_step flag
+		//this is gobbledygook is so that LEDs flash with right timing and period
 		flag.half_step = 1;
 
-	} else if ((even_step && (clock.ppqn_counter == (clock.divider >> 1) + sequencer.shuffle_amount))) {
-		
-		flag.half_step = 1;
 	}
 	
-	
-	//++clock.ppqn_counter;
-	//
-	//if (sequencer.SHUFFLE) {
-	//
-			//
-		//
-	//} else {
-		//
-		//
-	//}
-	//
-	//if ((++clock.ppqn_counter == clock.divider) && (!sequencer.SHUFFLE)){
-		//
-	//} else if (clock.ppqn_counter == clock.divider)
 		
 }
 	
