@@ -66,9 +66,14 @@ void process_tick(void) {
 	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
 	
 	if (++clock.ppqn_counter == clock.divider) {
-		
+		if (flag.shuffle_change) {
+			
+			sequencer.shuffle_amount = sequencer.new_shuffle_amount;
+			flag.shuffle_change = 0;
+			
+		}
 		//handle shuffle
-		if ((sequencer.shuffle_amount != 0) && !even_step) { //confusing because step is incremented below, so it becomes even but is currently odd
+		if ((sequencer.shuffle_amount != 0) && !even_step && !flag.shuffle_change) { //confusing because step is incremented below, so it becomes even but is currently odd
 			//set shuffle_step flag and then use shuffle ppqn counter to count amount of shuffle pqqn before setting next step flag
 			sequencer.shuffle_ppqn_count = 0;
 			flag.shuffle_step = 1;
@@ -82,7 +87,7 @@ void process_tick(void) {
 		}
 		clock.beat_counter++; //overflows every 4 beats
 		clock.ppqn_counter = 0;
-		 //50% step width, sort of - use for flashing step and variation LEDs to tempo
+	//50% step width, sort of - use for flashing step and variation LEDs to tempo
 	} else if (((clock.ppqn_counter == clock.divider >> 1) && !even_step) || ((even_step && (clock.ppqn_counter == (clock.divider >> 1) + sequencer.shuffle_amount)))  ){
 		//if it's an odd step then set half_step flag OR if it's an even step and the appropriate amount of shuffle has transpired then set half_step flag
 		//this is gobbledygook is so that LEDs flash with right timing and period
@@ -579,9 +584,9 @@ void update_shuffle(uint8_t shuffle_amount) {
 	//if (sequencer.pre_scale == PRE_SCALE_1 || sequencer.pre_scale == PRE_SCALE_3) {
 	
 		if (shuffle_amount > 3 && shuffle_amount < 10) { //ensure button press is within control range of shuffle selection
-		
-			sequencer.shuffle_amount = shuffle_amount - 4; //shuffle ranges from 0-5
-			
+			//if shuffle changes need to change shuffle after step changes, otherwise next step flag may not be set on time
+			sequencer.new_shuffle_amount = shuffle_amount - 4; //shuffle ranges from 0-5
+			flag.shuffle_change = 1;
 		}
 		
 	//} else {

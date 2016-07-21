@@ -63,6 +63,7 @@ struct flag {
 	uint8_t fill:1;
 	uint8_t din_start:1;
 	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
+	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -96,6 +97,7 @@ struct sequencer {
 	uint8_t CLEAR:1; //is the clear button being held?
 	//uint8_t SHUFFLE:1;
 	uint8_t shuffle_amount:3;
+	uint8_t new_shuffle_amount:3;
 	uint8_t shuffle_ppqn_count:4;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint16_t step_led_mask[2][17];
