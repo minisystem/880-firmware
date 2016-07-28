@@ -354,18 +354,22 @@ void process_step(void){
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 				
-					if (!sequencer.SHIFT) {
+					if (sequencer.SHIFT) {
+						turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
+					} else {
 						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;				
+						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;												
 					}
 				
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
-				
-					spi_data[LATCH_1] = (1<<sequencer.new_pattern);
-					spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
-				
+					if (sequencer.SHIFT) {
+						//turn on roll amount LED						
+					} else {
+						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
+						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
+					}
 				break;
 				
 				
@@ -388,7 +392,7 @@ void process_step(void){
 				if (sequencer.SHIFT) {
 					
 					//turn_on(sequencer.new_pattern);
-					turn_on(sequencer.shuffle_amount + 4);		
+					turn_on(sequencer.new_shuffle_amount + 4);		
 				}
 				
 				if (sequencer.variation != sequencer.variation_mode) {
@@ -480,6 +484,8 @@ void update_step_board() {
 				//flag.pattern_change = 1;
 				//sequencer.new_pattern = press;
 				update_shuffle(press);
+				turn_off(sequencer.shuffle_amount + 4);
+				turn_on(sequencer.new_shuffle_amount + 4);
 				//turn_off(sequencer.current_pattern);
 				//turn_on(sequencer.new_pattern);
 				break;			
@@ -586,6 +592,7 @@ void update_shuffle(uint8_t shuffle_amount) {
 		if (shuffle_amount > 3 && shuffle_amount < 10) { //ensure button press is within control range of shuffle selection
 			//if shuffle changes need to change shuffle after step changes, otherwise next step flag may not be set on time
 			sequencer.new_shuffle_amount = shuffle_amount - 4; //shuffle ranges from 0-5
+			//turn_on(shuffle_amount);
 			flag.shuffle_change = 1;
 		}
 		
