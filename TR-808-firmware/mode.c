@@ -48,11 +48,20 @@ void update_mode(void) {
 		
 		
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.step_num_new = sequencer.step_num[sequencer.part_editing]; //another annoying except
+		
+		//should eventually implement a switch case statement here to handle rhyth write and play modes
 		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 			
 			sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
 			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
 			update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
+		} else if (sequencer.mode == MANUAL_PLAY) {
+			//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
+			if (sequencer.current_pattern > 11) {
+				sequencer.new_pattern = 11;
+				flag.pattern_change = 1;
+			}
+			
 		}
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
