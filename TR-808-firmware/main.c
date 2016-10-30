@@ -63,16 +63,16 @@ int main(void)
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
 	
 	//setup SPI
-	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
-	DDRC |= (1<<SPI_CLK) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH);
+	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI)
+	DDRC |= (1<<SPI_CLK);
 	DDRB |= (1<<SPI_EN);
 	//DDRB &= ~((1<<TAP) | (1<<START_STOP)); //set start/stop tap pins as inputs
 	
-	PORTE &= ~(1<<SPI_MOSI );
-	PORTC &= ~(1<<SPI_CLK | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH);
+	PORTE &= ~(1<<SPI_MOSI) | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH;
+	PORTC &= ~(1<<SPI_CLK);
 	PORTB &= ~(1<<SPI_EN); //active low
 	
-	PORTC |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
+	PORTE |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
@@ -141,7 +141,7 @@ int main(void)
 	
 
 	
-	DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
+	//DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
 	//DDRD |= 1 << PD3; //set up PD3 as output 
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);

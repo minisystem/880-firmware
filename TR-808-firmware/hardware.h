@@ -9,23 +9,26 @@
 
 #define TRIG PD5
 
-#define TEMPO_POT 0b00000110 //ADC6
+
+#define TEMPO_POT		ADC3D
 
 #define START_STOP		PB1
 #define TAP				PB2
 
 #define DIN_CLOCK		PD3
 #define DIN_RUN_STOP	PD4
-#define DIN_RESET		PD2
+#define DIN_RESET		PD6
 #define DIN_FILL		PD7
+
+#define SYNC_IN			PD2
 	
 //define SPI pins
 #define SPI_MOSI		PE3
 #define SPI_MISO		PC0
 #define SPI_CLK			PC1
-#define SPI_SW_LATCH	PC2
-#define SPI_LED_LATCH	PC3
-#define SPI_SS			PE2 //this may conflict with Tempo pot!
+#define SPI_SW_LATCH	PE0
+#define SPI_LED_LATCH	PE1
+#define SPI_SS			PE2
 #define SPI_EN			PB0
 
 //define SPI latch numbers

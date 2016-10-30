@@ -37,15 +37,15 @@ void update_spi(void) { //updates LEDs and triggers, doesn't read data back
 		spi_shift_byte(spi_data[LATCH_7]);
 		spi_shift_byte(spi_data[LATCH_8]);
 		
-		PORTC &= ~(1<<SPI_LED_LATCH);
-		PORTC |= (1<<SPI_LED_LATCH);
+		PORTE &= ~(1<<SPI_LED_LATCH);
+		PORTE |= (1<<SPI_LED_LATCH);
 	
 	
 };
 
 void read_switches(void) { //reads switch data
 	
-	PORTC |= (1<<SPI_SW_LATCH); //latch switch data
+	PORTE |= (1<<SPI_SW_LATCH); //latch switch data
 	
 	spi_current_switch_data[0] = spi_shift_byte(0x00); //not toggling LED latches so doesn't matter what we send out
 	spi_current_switch_data[1] = spi_shift_byte(0x00);
@@ -53,7 +53,7 @@ void read_switches(void) { //reads switch data
 	spi_current_switch_data[3] = spi_shift_byte(0x00);
 	spi_current_switch_data[4] = spi_shift_byte(0x00);
 	
-	PORTC &= ~(1<<SPI_SW_LATCH);
+	PORTE &= ~(1<<SPI_SW_LATCH);
 	
 	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
 	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
