@@ -117,7 +117,8 @@ struct sequencer {
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
-	
+	uint8_t trigger_1:4; //trigger assignments from AC, BD-CH - 16.
+	uint8_t trigger_2:4;
 	};
 		
 

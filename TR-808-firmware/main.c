@@ -53,6 +53,7 @@ void refresh(void) {
 	process_step();
 	update_spi();
 	PORTD &= ~(1<<TRIG);
+	TRIGGER_OUT &= TRIGGER_OFF;
 	
 }
 
@@ -76,6 +77,15 @@ int main(void)
 	
 	SPCR1 = (1<<SPE1) | (1<<MSTR1); //Start SPI as MASTER
 	SPSR1 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
+	
+	//setup SYNC LEDs as outputs
+	DDRE |= (1<<SYNC_LED_R);
+	DDRC |= (1<<SYNC_LED_Y);
+	
+	//setup TRIGGER 1 and 2 pins as outputs
+	DDRB |= (1<<TRIGGER_OUT_1);
+	DDRB |= (1<<TRIGGER_OUT_2);
+
 	
 	//setup external interrupts
 	EICRA |= (1 << ISC11) | (1 << ISC10); //set up DIN sync to trigger on rising edge of DIN clock
@@ -150,6 +160,10 @@ int main(void)
 	
 	//sequencer.SHUFFLE = 1;
 	sequencer.shuffle_amount = 0;
+	
+	//set default trigger assignments:
+	sequencer.trigger_1 = RS;
+	sequencer.trigger_2 = MA;
 	
     while (1) 
     {

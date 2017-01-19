@@ -167,7 +167,8 @@ void process_stop(void) {
 		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
 		if (clock.source == INTERNAL) {
 			if (sequencer.sync_mode == MIDI_MASTER) {
-				
+				PORTC &= ~(1<<SYNC_LED_R);
+				PORTE &= ~(1<<SYNC_LED_Y);
 				midi_send_stop(&midi_device);
 			} else {
 				

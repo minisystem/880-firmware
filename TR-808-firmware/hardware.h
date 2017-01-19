@@ -9,6 +9,10 @@
 
 #define TRIG PD5
 
+#define TRIGGER_OUT_1	PB3
+#define TRIGGER_OUT_2	PB4
+#define TRIGGER_OUT		PORTB
+#define TRIGGER_OFF		~((1<<PB3) | (1<<PB4)) //trigger off mask
 
 #define TEMPO_POT		ADC3D
 
@@ -21,6 +25,10 @@
 #define DIN_FILL		PD7
 
 #define SYNC_IN			PD2
+
+//define MIDI SYNC LED pins
+#define SYNC_LED_Y		PE2
+#define SYNC_LED_R		PC2
 	
 //define SPI pins
 #define SPI_MOSI		PE3

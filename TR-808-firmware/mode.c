@@ -96,15 +96,18 @@ void update_fill_mode(void) {
 							
 				case MIDI_MASTER:
 					clock.source = INTERNAL;
+					PORTC &= ~(1<<SYNC_LED_Y);
+					PORTE &= ~(1<<SYNC_LED_R);
 					break;
 							
 				case MIDI_SLAVE:
 					clock.source = EXTERNAL;
+					PORTE |= (1<<SYNC_LED_R);
 					break;
 							
 				case DIN_SYNC_MASTER:
 					clock.source = INTERNAL;
-					
+					PORTD |= (1<<SYNC_LED_R);
 					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
@@ -115,6 +118,7 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_SLAVE:
 					clock.source = EXTERNAL;
+					PORTE &= ~(1<<SYNC_LED_R);
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1 << INT1); //turn on INT1 interrupt for DIN Sync clock
 					PCICR |= (1 << PCIE2);

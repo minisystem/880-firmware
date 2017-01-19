@@ -95,7 +95,9 @@ void trigger_step(void) { //trigger all drums on current step
 		
 		if ((!drum_hit[i].muted) && (sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
 			if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
-			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
+			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit; //maybe AND with a drum mute table here instead of checking the .muted variable of the drum struct?
+			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 
 			if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 						
 				spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
@@ -146,7 +148,7 @@ void live_hits(void) { //use switch case here you twit
 	if (button[INST_CP_8_SW].state) {
 		
 		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
-		trigger_drum(CP, 0);
+		trigger_drum(MA, 0);
 	}
 	
 	if (button[INST_CB_9_SW].state) {
