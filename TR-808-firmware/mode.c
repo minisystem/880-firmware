@@ -1,8 +1,8 @@
 /*
  * mode.c
- * JR-808 firmware ATMEGA328PB
+ * Open808 firmware ATMEGA328PB
  * minisystem
- * system79.com
+ * system80.net
 */
 
 #include <stdio.h>
