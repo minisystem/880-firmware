@@ -143,6 +143,9 @@ void process_start(void) {
 			flag.pattern_change = 1;
 			
 		}
+		
+		//set trigger off timer
+		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
 
 }
 
@@ -176,6 +179,9 @@ void process_stop(void) {
 			}
 			
 		}
+		
+		//set trigger off timer for incoming MIDI, currently only applies to MIDI_SLAVE sync mode
+		TIMER0_OUTPUT_COMPARE = TIMER0_1_MS;
 }
 
 void update_fill(void) {

@@ -57,17 +57,22 @@ ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 	
 }
 
-ISR (TIMER0_COMPA_vect) {
+ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS trigger off for incoming MIDI note drum hits and also 20MS trigger off for triggers 1 and 2 while sequencer is running. At the moment, they are incompatible functions
 	
 	TCCR0B = 0; //turn off timer
 	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
+	TRIGGER_OUT &= TRIGGER_OFF;
+	
+	//eventually need to turn all triggers off here for 15 ms trigger width for trigger expander module, unless expander module just uses rising edge maybe?
+	
+	if (sequencer.sync_mode == MIDI_SLAVE) { //probably need to come up with a MIDI note off flag that is checked here 
+		spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
+		turn_off(ACCENT_1_LED);
+		spi_data[LATCH_8] &= ~(1<<ACCENT);
+		turn_off(drum_hit[current_drum_hit].led_index);
 
-	spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
-	turn_off(ACCENT_1_LED);
-	spi_data[LATCH_8] &= ~(1<<ACCENT);
-	turn_off(drum_hit[current_drum_hit].led_index);
-
-	trigger_finished = 1;
+		trigger_finished = 1;
+	}
 	
 }
 

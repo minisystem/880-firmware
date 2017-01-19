@@ -52,8 +52,8 @@ void refresh(void) {
 	update_step_board();
 	process_step();
 	update_spi();
-	PORTD &= ~(1<<TRIG);
-	TRIGGER_OUT &= TRIGGER_OFF;
+	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
+	//TRIGGER_OUT &= TRIGGER_OFF;
 	
 }
 
@@ -98,11 +98,10 @@ int main(void)
 	
 	update_spi();
 	
-	//setup Timer0 for drum triggering interrupt
-	
+	//setup Timer0 for drum triggering interrupt	
 	TCCR0A |= (1<<WGM01); //clear on compare match A
-	OCR0A = 225; //gives period of about 0.9ms
-	
+	//OCR0A = 225; //gives period of about 0.9ms
+	TIMER0_OUTPUT_COMPARE = TIMER0_1_MS; //gives period of about 1 ms with /1024 clock divider
 	//setup MIDI
 	//initialize MIDI device
 	midi_device_init(&midi_device);

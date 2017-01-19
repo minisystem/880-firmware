@@ -91,19 +91,28 @@ void trigger_step(void) { //trigger all drums on current step
 	//while (trigger_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
 	PORTD |= (1<<TRIG);
 	clear_all_trigs();
+	//TRIGGER_OUT &= TRIGGER_OFF;
+	TIMSK0 |= (1<<OCIE0A); //enable output compare match A
+	TCCR0B |= (1<<CS00) | (1<<CS02); //set Timer0 clock divide to /1024
 	for (int i = BD; i <= MA; i++) {
 		
-		if ((!drum_hit[i].muted) && (sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
-			if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
-			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit; //maybe AND with a drum mute table here instead of checking the .muted variable of the drum struct?
+		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
 			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
-			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 
-			if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
+			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
+			
+			if (!(drum_hit[i].muted)) {
+				if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
+				spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit; //maybe AND with a drum mute table here instead of checking the .muted variable of the drum struct?
+
+				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 						
-				spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+					spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 						
-			}		
+				}		
+			}
+				
 		}
+
 	}
 }
 

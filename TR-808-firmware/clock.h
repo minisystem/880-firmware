@@ -13,6 +13,10 @@
 #define TIMER_OFFSET 140 //~30 - 250 BPM
 //#define _9_MS	140 //output compare count for 9 ms delay for Timer2 with /1024 divider
 
+#define TIMER0_1_MS 16 //output compare count for 1 ms Timer0 with /1024 divider
+#define TIMER0_15_MS 235 //output compare count for 15 ms Timer0 with /1024 divider
+#define TIMER0_OUTPUT_COMPARE OCR0A
+
 enum clock_source {
 	INTERNAL,
 	EXTERNAL

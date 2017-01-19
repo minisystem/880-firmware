@@ -34,6 +34,14 @@ enum sync_mode {
 	
 	};	
 	
+enum shift_mode { //not yet implemented, but should be useful for set up
+	
+	TRIGGER_ASSIGN,
+	MIDI_ASSIGN,
+	SYNC_NUDGE, //nudge ppq for DIN sync tweaking
+	SYNC_DIVIDE //divide incoming MIDI clock
+	
+	};	
 
 
 extern uint8_t mode_index;
