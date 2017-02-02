@@ -691,6 +691,12 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 					sequencer.current_pattern = sequencer.current_intro_fill;					
 					
 					
+				} else { //toggle back to current pattern (not tested yet - need to ensure current pattern is restored when toggling intro/fill
+					sequencer.current_pattern = sequencer.new_pattern;
+					read_next_pattern(sequencer.current_pattern);
+					
+					
+					
 				}
 			}
 			
