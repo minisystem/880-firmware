@@ -644,11 +644,11 @@ void update_variation(void) { //not currently used
 	
 }
 
-void update_prescale(void) {
+void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1st/2nd pattern edit?
 	
-	if (button[BASIC_VAR_A_SW].state && sequencer.SHIFT) {
+	if (button[CLEAR_SW].state && sequencer.SHIFT) {
 	
-		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle switch state
+		button[CLEAR_SW].state ^= button[CLEAR_SW].state; //toggle switch state
 		
 		if (sequencer.pre_scale-- == 0) { //decrement to go from 3 to 4 to 1 to 2 to 3...
 			

@@ -244,7 +244,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 
 void check_clear_switch(void) {
 	
-	if (sequencer.CLEAR && sequencer.START == 0) {
+	if (sequencer.CLEAR) {// && sequencer.START == 0) {
 		
 		switch (sequencer.mode) {
 			
@@ -260,13 +260,10 @@ void check_clear_switch(void) {
 				write_current_pattern(sequencer.current_pattern); //clear it from eeprom too		
 				break;
 				
-			case FIRST_PART:
+			case FIRST_PART: case SECOND_PART:
 			
 				break;	
-			
-			case SECOND_PART:
-			
-				break;
+
 				
 			case MANUAL_PLAY:
 			
