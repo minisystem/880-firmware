@@ -101,7 +101,7 @@ int main(void)
 	//setup Timer0 for drum triggering interrupt	
 	TCCR0A |= (1<<WGM01); //clear on compare match A
 	//OCR0A = 225; //gives period of about 0.9ms
-	TIMER0_OUTPUT_COMPARE = TIMER0_1_MS; //gives period of about 1 ms with /1024 clock divider
+	TIMER0_OUTPUT_COMPARE = TIMER0_1_MS; //1 ms pulse width for trigger is for MIDI triggering. 15 ms pulsewidth is for internal sequencer. 15 ms is too long for MIDI, noticeable delay can be heard when triggering simultaneous MIDI notes.
 	//setup MIDI
 	//initialize MIDI device
 	midi_device_init(&midi_device);
@@ -122,7 +122,7 @@ int main(void)
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();
-	trigger_finished = 1;
+	flag.trig_finished = 1;
 	flag.pre_scale_change = 0;
 	sequencer.START = 0;
 	//update_tempo();

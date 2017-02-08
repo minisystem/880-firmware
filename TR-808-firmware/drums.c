@@ -14,7 +14,7 @@
 
 uint8_t current_drum_hit = 0;
 enum drum midi_note_queue[16] = {255};
-volatile uint8_t trigger_finished = 1;
+//volatile uint8_t trigger_finished = 1;
 
 struct drum_hit drum_hit[17] = {
 	
@@ -39,8 +39,8 @@ struct drum_hit drum_hit[17] = {
 };
 
 void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be compatible with synchronized spi updating
-	
-		while(trigger_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
+		clear_all_trigs();
+		while(flag.trig_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
 		//could implement a trigger queue instead of waiting but this is really more of a concern from simultaneous drum hits coming from MIDI or live play. Sequencer triggers won't have this problem unless 
 		//individual accents are implemented for sequencer
 		
@@ -75,8 +75,8 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		//now need to set up interrupt for roughly 1 ms. 
 		//start timer
 		TIMSK0 |= (1<<OCIE0A); //enable output compare match A
-		TCCR0B |= (1<<CS01) | (1<<CS00); //set to /64 of system clock start timer
-		trigger_finished = 0;
+		TCCR0B |= (1<<CS00) | (1<<CS02); //set to /1024 of system clock start timer
+		flag.trig_finished = 0;
 }
 
 void clear_all_trigs(void) {
@@ -88,7 +88,7 @@ void clear_all_trigs(void) {
 }
 
 void trigger_step(void) { //trigger all drums on current step
-	//while (trigger_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
+	//while (flag.trig_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
 	PORTD |= (1<<TRIG);
 	clear_all_trigs();
 	//TRIGGER_OUT &= TRIGGER_OFF;
@@ -116,7 +116,8 @@ void trigger_step(void) { //trigger all drums on current step
 	}
 }
 
-void live_hits(void) { //use switch case here you twit
+void live_hits(void) { //use switch case here you twit or for loop. duh.
+	
 	
 	if (button[INST_BD_2_SW].state) {
 		
@@ -157,7 +158,7 @@ void live_hits(void) { //use switch case here you twit
 	if (button[INST_CP_8_SW].state) {
 		
 		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
-		trigger_drum(MA, 0);
+		trigger_drum(CP, 0);
 	}
 	
 	if (button[INST_CB_9_SW].state) {

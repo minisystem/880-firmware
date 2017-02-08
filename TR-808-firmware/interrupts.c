@@ -62,8 +62,10 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	TCCR0B = 0; //turn off timer
 	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
 	TRIGGER_OUT &= TRIGGER_OFF;
-	
+	flag.trig_finished = 1;
 	//eventually need to turn all triggers off here for 15 ms trigger width for trigger expander module, unless expander module just uses rising edge maybe?
+	//toggle(ACCENT_1_LED);
+	//if (sequencer.mode == MANUAL_PLAY && !sequencer.START) turn_off()
 	
 	if (sequencer.sync_mode == MIDI_SLAVE) { //probably need to come up with a MIDI note off flag that is checked here 
 		spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
@@ -71,7 +73,7 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 		spi_data[LATCH_8] &= ~(1<<ACCENT);
 		turn_off(drum_hit[current_drum_hit].led_index);
 
-		trigger_finished = 1;
+		//flag.trig_finished = 1;
 	}
 	
 }

@@ -310,7 +310,8 @@ void process_step(void){
 				//sequencer.current_measure++;
 			}			
 		//*************************************************************************//
-			while(trigger_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
+			//or what about (if !flag.trig_finished) return; ?
+			//while(flag.trig_finished == 0); //make sure previous instrument trigger is finished before initiating next one - this really only applies when there is incoming MIDI data. May have to do away
 			//with allowing drums to be triggered by MIDI when sequencer is running?
 					
 			//check_tap();
