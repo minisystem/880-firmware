@@ -95,6 +95,7 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
+	uint8_t FUNC:1; //alternative function mode
 	//uint8_t SHUFFLE:1;
 	uint8_t shuffle_amount:3;
 	uint8_t new_shuffle_amount:3;
@@ -117,8 +118,8 @@ struct sequencer {
 	uint8_t current_measure;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
-	uint8_t trigger_1:4; //trigger assignments from AC, BD-CH - 16.
-	uint8_t trigger_2:4;
+	uint8_t trigger_1:5; //trigger assignments from AC, BD-CH - 17
+	uint8_t trigger_2:5;
 	};
 		
 

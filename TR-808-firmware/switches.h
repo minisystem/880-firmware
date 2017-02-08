@@ -43,8 +43,9 @@
 #define	STEP_7_SW	6
 #define	STEP_8_SW	7
 
-#define SHIFT_BIT 1 //bit in spi data byte
+#define SHIFT_BIT 1 //bit position in spi data byte
 #define CLEAR_BIT 4 
+#define FUNC_BIT  2
 
 enum {
 	OMAR_WAS_HERE = 0,

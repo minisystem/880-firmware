@@ -120,6 +120,7 @@ void check_start_stop_tap(void) {
 	
 void check_inst_switches(void) {
 	
+	
 	if (button[INST_AC_1_SW].state) {
 		button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
 		if (!sequencer.SHIFT) {
@@ -127,7 +128,7 @@ void check_inst_switches(void) {
 			turn_on(ACCENT_1_LED);
 			sequencer.current_inst = AC;
 		}
-		return;
+		return; //no multiple presses currently supported - if it's the accent button, then get the heck out of here?
 	}
 	
 	for (int i = INST_BD_2_SW; i <= INST_CH_12_SW; i++) { //scan BD to CH
@@ -136,43 +137,8 @@ void check_inst_switches(void) {
 			
 			button[i].state ^= button[i].state; //toggle state
 			
-			if (sequencer.SHIFT) {
+			if (!sequencer.SHIFT) {
 				
-				if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
-					//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
-					uint8_t mute_state = (drum_hit[i - INST_BD_2_SW].muted) | (drum_hit[i - INST_BD_2_SW + 9].muted << 1);
-					switch (mute_state) {
-						
-						case 0:
-							drum_hit[i - INST_BD_2_SW].muted = 1;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
-						break;
-						
-						case 1:
-							drum_hit[i - INST_BD_2_SW].muted = 0;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 1;									
-						break;
-						
-						case 2:
-							drum_hit[i - INST_BD_2_SW].muted = 1;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 1;						
-						break;
-						
-						case 3:
-							drum_hit[i - INST_BD_2_SW].muted = 0;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 0;						
-						break;
-						
-					}
-					
-				} else {
-					
-						drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
-					
-				}
-				
-			} else {	
-			
 				turn_off_all_inst_leds(); 
 			
 			
@@ -201,6 +167,42 @@ void check_inst_switches(void) {
 				
 		
 				
+				}				
+
+				
+			} else {	
+			
+				if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
+					//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
+					uint8_t mute_state = (drum_hit[i - INST_BD_2_SW].muted) | (drum_hit[i - INST_BD_2_SW + 9].muted << 1);
+					switch (mute_state) {
+						
+						case 0:
+						drum_hit[i - INST_BD_2_SW].muted = 1;
+						drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+						break;
+						
+						case 1:
+						drum_hit[i - INST_BD_2_SW].muted = 0;
+						drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+						break;
+						
+						case 2:
+						drum_hit[i - INST_BD_2_SW].muted = 1;
+						drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+						break;
+						
+						case 3:
+						drum_hit[i - INST_BD_2_SW].muted = 0;
+						drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+						break;
+						
+					}
+					
+					} else {
+					
+					drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
+					
 				}
 			
 			}
