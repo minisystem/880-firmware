@@ -137,7 +137,7 @@ void check_inst_switches(void) {
 			
 			button[i].state ^= button[i].state; //toggle state
 			
-			if (!sequencer.SHIFT) {
+			if (!sequencer.SHIFT) { //no SHIFT, so just toggle between different instruments
 				
 				turn_off_all_inst_leds(); 
 			
@@ -163,46 +163,78 @@ void check_inst_switches(void) {
 					} else {
 					
 						sequencer.current_inst = i - INST_BD_2_SW; //inst index starts with BD = 0
-					}
-				
-		
+					}	
 				
 				}				
 
 				
-			} else {	
-			
-				if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
-					//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
-					uint8_t mute_state = (drum_hit[i - INST_BD_2_SW].muted) | (drum_hit[i - INST_BD_2_SW + 9].muted << 1);
-					switch (mute_state) {
-						
-						case 0:
-						drum_hit[i - INST_BD_2_SW].muted = 1;
-						drum_hit[i - INST_BD_2_SW + 9].muted = 0;
-						break;
-						
-						case 1:
-						drum_hit[i - INST_BD_2_SW].muted = 0;
-						drum_hit[i - INST_BD_2_SW + 9].muted = 1;
-						break;
-						
-						case 2:
-						drum_hit[i - INST_BD_2_SW].muted = 1;
-						drum_hit[i - INST_BD_2_SW + 9].muted = 1;
-						break;
-						
-						case 3:
-						drum_hit[i - INST_BD_2_SW].muted = 0;
-						drum_hit[i - INST_BD_2_SW + 9].muted = 0;
-						break;
-						
+			} else { //SHIFT pressed so handle it. 
+				
+				if (sequencer.FUNC) { //function mode - change trigger - not sure how this is handled - LEDs won't be properly updated
+					
+					turn_off_all_inst_leds();
+									
+									
+					if(drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+										
+										
+						if (sequencer.trigger_1 == i - INST_BD_2_SW) {
+							//alternative drum hits are offset by 9 places in drum_hit array
+							sequencer.trigger_1 = i - INST_BD_2_SW + 9;
+											
+							} else {
+							sequencer.trigger_1 = i - INST_BD_2_SW;
+						}
+										
+										
+						} else {
+										
+						if ((sequencer.trigger_1 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+
+							sequencer.trigger_1 = MA;
+											
+							} else {
+											
+							sequencer.trigger_1 = i - INST_BD_2_SW; //inst index starts with BD = 0
+						}
+										
 					}
 					
-					} else {
 					
-					drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
+				} else {
+			
+					if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
+						//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
+						uint8_t mute_state = (drum_hit[i - INST_BD_2_SW].muted) | (drum_hit[i - INST_BD_2_SW + 9].muted << 1);
+						switch (mute_state) {
+						
+							case 0:
+							drum_hit[i - INST_BD_2_SW].muted = 1;
+							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+							break;
+						
+							case 1:
+							drum_hit[i - INST_BD_2_SW].muted = 0;
+							drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+							break;
+						
+							case 2:
+							drum_hit[i - INST_BD_2_SW].muted = 1;
+							drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+							break;
+						
+							case 3:
+							drum_hit[i - INST_BD_2_SW].muted = 0;
+							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+							break;
+						
+						}
 					
+						} else {
+					
+						drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
+					
+					}
 				}
 			
 			}

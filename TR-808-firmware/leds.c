@@ -131,19 +131,29 @@ void update_inst_leds(void) {
 	
 if (sequencer.SHIFT) {
 	
-	for (int i = BD; i <= MA; i++) {
+	if (sequencer.FUNC) {
 		
+		turn_off_all_inst_leds();
+		turn_on(drum_hit[sequencer.trigger_1].led_index);
 		
-		if (drum_hit[i].muted) {
+	} else {
+	
+		for (int i = BD; i <= MA; i++) {
 			
-			turn_on(drum_hit[i].led_index);
 			
-		} else {
+			if (drum_hit[i].muted) {
+				
+				turn_on(drum_hit[i].led_index);
+				
+				} else {
+				
+				turn_off(drum_hit[i].led_index);
+			}
 			
-			turn_off(drum_hit[i].led_index);
 		}
-		
 	}
+	
+
 } else {
 	
 	turn_on(drum_hit[sequencer.current_inst].led_index);	
