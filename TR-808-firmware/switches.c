@@ -127,6 +127,11 @@ void check_inst_switches(void) {
 			turn_off_all_inst_leds();
 			turn_on(ACCENT_1_LED);
 			sequencer.current_inst = AC;
+		} else if (sequencer.FUNC) {
+			
+			turn_off_all_inst_leds();
+			turn_on(ACCENT_1_LED);
+			(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 =AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
 		}
 		return; //no multiple presses currently supported - if it's the accent button, then get the heck out of here?
 	}
@@ -174,32 +179,56 @@ void check_inst_switches(void) {
 					
 					turn_off_all_inst_leds();
 									
-									
-					if(drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+					if (sequencer.intro_fill_var == 0) { //edit trigger 1				
+						if (drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
 										
 										
-						if (sequencer.trigger_1 == i - INST_BD_2_SW) {
-							//alternative drum hits are offset by 9 places in drum_hit array
-							sequencer.trigger_1 = i - INST_BD_2_SW + 9;
+							if (sequencer.trigger_1 == i - INST_BD_2_SW) {
+								//alternative drum hits are offset by 9 places in drum_hit array
+								sequencer.trigger_1 = i - INST_BD_2_SW + 9;
 											
 							} else {
-							sequencer.trigger_1 = i - INST_BD_2_SW;
-						}
+								sequencer.trigger_1 = i - INST_BD_2_SW;
+							}
 										
 										
 						} else {
 										
-						if ((sequencer.trigger_1 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+							if ((sequencer.trigger_1 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
 
-							sequencer.trigger_1 = MA;
+								sequencer.trigger_1 = MA;
 											
-							} else {
-											
-							sequencer.trigger_1 = i - INST_BD_2_SW; //inst index starts with BD = 0
+							} else {								
+								sequencer.trigger_1 = i - INST_BD_2_SW; //inst index starts with BD = 0
+							}
+							
 						}
-										
+					} else { //edit trigger 2. annoying duplication of code here, but use of bitfields prevent assigning pointer to whichever trigger is currently being edited.
+						
+						if (drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+							
+							
+							if (sequencer.trigger_2 == i - INST_BD_2_SW) {
+								//alternative drum hits are offset by 9 places in drum_hit array
+								sequencer.trigger_2 = i - INST_BD_2_SW + 9;
+								
+								} else {
+								sequencer.trigger_2 = i - INST_BD_2_SW;
+							}
+							
+							
+							} else {
+							
+							if ((sequencer.trigger_2 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+
+								sequencer.trigger_2 = MA;
+								
+								} else {
+								sequencer.trigger_2 = i - INST_BD_2_SW; //inst index starts with BD = 0
+							}
+							
+						}						
 					}
-					
 					
 				} else {
 			
@@ -347,9 +376,15 @@ void check_intro_fill_variation_switch(void) {
 	if (button[IF_VAR_SW].state) {
 		
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
-		toggle(IF_VAR_A_LED);
-		toggle(IF_VAR_B_LED);
-		sequencer.intro_fill_var ^= 1<<0;
+		if (sequencer.SHIFT) {
+			
+			return;
+			
+		} else {
+			toggle(IF_VAR_A_LED);
+			toggle(IF_VAR_B_LED);
+			sequencer.intro_fill_var ^= 1<<0;
+		}
 		
 	}
 	

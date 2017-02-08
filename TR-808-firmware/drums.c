@@ -114,6 +114,13 @@ void trigger_step(void) { //trigger all drums on current step
 		}
 
 	}
+	//handle accent
+	if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
+		spi_data[LATCH_8] |= 1<<ACCENT;
+		if (sequencer.trigger_1 == AC) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+		if (sequencer.trigger_2 == AC) TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+		if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
+	}
 }
 
 void live_hits(void) { //use switch case here you twit or for loop. duh.

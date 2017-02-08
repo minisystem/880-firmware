@@ -134,7 +134,7 @@ if (sequencer.SHIFT) {
 	if (sequencer.FUNC) {
 		
 		turn_off_all_inst_leds();
-		turn_on(drum_hit[sequencer.trigger_1].led_index);
+		(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
 		
 	} else {
 	

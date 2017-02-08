@@ -343,10 +343,7 @@ void process_step(void){
 			}
 
 			trigger_step();
-			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
-				spi_data[LATCH_8] |= 1<<ACCENT;
-				if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
-			}
+
 		}
 	} else if (flag.half_step) {
 			
