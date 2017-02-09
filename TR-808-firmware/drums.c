@@ -87,6 +87,11 @@ void clear_all_trigs(void) {
 	
 }
 
+void trigger_roll(void) {
+	
+	
+}
+
 void trigger_step(void) { //trigger all drums on current step
 	//while (flag.trig_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
 	PORTD |= (1<<TRIG);
@@ -94,6 +99,7 @@ void trigger_step(void) { //trigger all drums on current step
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 	TCCR0B |= (1<<CS00) | (1<<CS02); //set Timer0 clock divide to /1024
+	if (sequencer.roll_mode != 0) trigger_roll();
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {

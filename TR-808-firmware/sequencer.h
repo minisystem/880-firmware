@@ -100,6 +100,8 @@ struct sequencer {
 	uint8_t shuffle_amount:3;
 	uint8_t new_shuffle_amount:3;
 	uint8_t shuffle_ppqn_count:4;
+	uint8_t roll_mode:3;
+	uint8_t roll_instrument:4;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint16_t step_led_mask[2][17];
 	uint8_t variation_toggle:1;
