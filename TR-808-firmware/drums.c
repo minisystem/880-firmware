@@ -89,7 +89,19 @@ void clear_all_trigs(void) {
 
 void trigger_roll(void) {
 	
+	uint16_t roll_modes[5] = { //these currently only apply to 4/4 timing. 
+			
+		0b0000000100000001,
+		0b0001000100010001,
+		0b0101010101010101,
+		0b1111111111111111,
+		0b1111111111111111		
+		
+	};
 	
+	if (((roll_modes[sequencer.roll_mode - 1]) & (1 << sequencer.current_step)) != 0) {
+		spi_data[drum_hit[sequencer.current_inst].spi_byte_num]  |= drum_hit[sequencer.current_inst].trig_bit;
+	}
 }
 
 void trigger_step(void) { //trigger all drums on current step

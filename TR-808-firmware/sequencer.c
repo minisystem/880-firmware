@@ -354,13 +354,16 @@ void process_step(void){
 		if (sequencer.START) {
 			spi_data[LATCH_1] = 0;
 			spi_data[LATCH_0] = 0;
-			
+			if (sequencer.roll_mode == 5) {
+				trigger_drum(sequencer.current_inst, 0);	
+			}
 			switch (sequencer.mode) {
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 				
 					if (sequencer.SHIFT) {
 						turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
+						turn_on(sequencer.roll_mode + 10);
 					} else {
 						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
 						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;												
@@ -473,7 +476,7 @@ void process_step(void){
 }
 
 
-void update_step_board() {
+void update_step_board() { //should this be in switches.c ?
 	uint8_t press = EMPTY;
 	if (sequencer.START) {
 		press = check_step_press();
@@ -489,8 +492,11 @@ void update_step_board() {
 				//flag.pattern_change = 1;
 				//sequencer.new_pattern = press;
 				update_shuffle(press);
-				turn_off(sequencer.shuffle_amount + 4);
+				//turn off step LEDs 5 to 16:
+				refresh_step_leds();
+				//turn_off(sequencer.shuffle_amount + 4);
 				turn_on(sequencer.new_shuffle_amount + 4);
+				turn_on(sequencer.roll_mode + 10);
 				//turn_off(sequencer.current_pattern);
 				//turn_on(sequencer.new_pattern);
 				break;			
@@ -599,7 +605,13 @@ void update_shuffle(uint8_t shuffle_amount) {
 			sequencer.new_shuffle_amount = shuffle_amount - 4; //shuffle ranges from 0-5
 			//turn_on(shuffle_amount);
 			flag.shuffle_change = 1;
+		} else if (shuffle_amount > 9) {
+		
+			sequencer.roll_mode = shuffle_amount - 10;
+		
 		}
+		
+		
 		
 	//} else {
 	//
