@@ -355,15 +355,21 @@ void process_step(void){
 			spi_data[LATCH_1] = 0;
 			spi_data[LATCH_0] = 0;
 			if (sequencer.roll_mode == 5) {
-				trigger_drum(sequencer.current_inst, 0);	
+				trigger_drum(sequencer.current_inst, 0);	//default 15ms timer interrupt used in this function is going to cause problems at high tempos - consider making this 1 ms
 			}
 			switch (sequencer.mode) {
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 				
 					if (sequencer.SHIFT) {
-						turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
-						turn_on(sequencer.roll_mode + 10);
+						
+						if (sequencer.FUNC) { //show current pattern
+							//can't remember how I did this before SHIFT was used for shuffle/roll
+							
+						} else {
+							turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
+							turn_on(sequencer.roll_mode + 10);
+						}
 					} else {
 						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
 						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;												
@@ -398,9 +404,12 @@ void process_step(void){
 					
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
-					
-					//turn_on(sequencer.new_pattern);
-					turn_on(sequencer.new_shuffle_amount + 4);		
+					if (sequencer.FUNC) {
+						turn_on(sequencer.new_pattern);
+					} else {
+					//
+						turn_on(sequencer.new_shuffle_amount + 4);
+					}
 				}
 				
 				if (sequencer.variation != sequencer.variation_mode) {
@@ -488,15 +497,31 @@ void update_step_board() { //should this be in switches.c ?
 			//press = check_step_press();
 			//if (press == EMPTY) break;
 			
-			if (sequencer.SHIFT) {		
+			if (sequencer.SHIFT) {
+				
+				refresh_step_leds();
+				if (sequencer.FUNC) {
+					if (sequencer.current_pattern != press) { //is this step necessary or is current/new pattern checked somewhere else?
+						flag.pattern_change = 1;
+						sequencer.new_pattern = press;
+						turn_off(sequencer.current_pattern);
+						turn_on(sequencer.new_pattern);
+					}
+					
+					
+				} else {
+					update_shuffle(press);
+					turn_on(sequencer.new_shuffle_amount + 4);
+					turn_on(sequencer.roll_mode + 10);					
+				}
 				//flag.pattern_change = 1;
 				//sequencer.new_pattern = press;
-				update_shuffle(press);
+				//update_shuffle(press);
 				//turn off step LEDs 5 to 16:
-				refresh_step_leds();
+				//refresh_step_leds();
 				//turn_off(sequencer.shuffle_amount + 4);
-				turn_on(sequencer.new_shuffle_amount + 4);
-				turn_on(sequencer.roll_mode + 10);
+				//turn_on(sequencer.new_shuffle_amount + 4);
+				//turn_on(sequencer.roll_mode + 10);
 				//turn_off(sequencer.current_pattern);
 				//turn_on(sequencer.new_pattern);
 				break;			
@@ -564,7 +589,7 @@ void update_step_board() { //should this be in switches.c ?
 		}
 			
 	} else {
-		if (sequencer.mode == MANUAL_PLAY) check_tap();
+		if (sequencer.mode == MANUAL_PLAY) check_tap(); //check toggling between intro and basic rhythm
 		//handle changing selected pattern and rhythm.
 		press = check_step_press();
 		if (press != EMPTY) {
