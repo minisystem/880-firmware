@@ -114,6 +114,8 @@ int main(void)
 	//setup MIDI USART
 	setup_midi_usart();
 	
+	sequencer.midi_channel = 0;
+	
 	setup_clock();
 	//sequencer.pre_scale = PRE_SCALE_3;
 	clock.divider = PRE_SCALE_3;//.pre_scale;; //6 pulses is 1/16th note - this is are default fundamental step

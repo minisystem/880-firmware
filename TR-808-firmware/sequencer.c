@@ -522,7 +522,7 @@ void update_step_board() { //should this be in switches.c ?
 			}
 
 			if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
-				//press = check_step_press();
+				button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here, otherwise it gets handled elsewhere when we don't want it to
 				sequencer.step_num_new = press;
 				break; //break or return?
 			}			

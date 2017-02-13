@@ -123,6 +123,7 @@ struct sequencer {
 	uint8_t var_led_mask;
 	uint8_t trigger_1:5; //trigger assignments from AC, BD-CH - 17
 	uint8_t trigger_2:5;
+	uint8_t midi_channel:4;
 	};
 		
 

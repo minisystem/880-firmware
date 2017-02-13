@@ -34,7 +34,10 @@ void setup_midi_usart(void)
 	midi_device_set_send_func(&midi_device, midi_send);
 }
 
-void note_on_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
+void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity) {
+	
+	//filter MIDI channel
+	if (sequencer.midi_channel != (channel & MIDI_CHANMASK)) return;
 	
 	if ((sequencer.sync_mode != MIDI_SLAVE) || sequencer.START) return; //at the moment, only allow MIDI triggering of notes in MIDI SLAVE mode. Might be possible to get MIDI to work with sequencer, but at the moment the sequencer and incoming MIDI notes are incompatibily
 	

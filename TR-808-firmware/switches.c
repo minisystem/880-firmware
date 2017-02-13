@@ -308,7 +308,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 void check_clear_switch(void) {
 	
 	if (sequencer.CLEAR) {// && sequencer.START == 0) {
-		
+		button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here otherwise it gets handled elsewhere when we don't want it to.
 		switch (sequencer.mode) {
 			
 			case PATTERN_CLEAR:
