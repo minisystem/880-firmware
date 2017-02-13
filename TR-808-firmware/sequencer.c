@@ -22,6 +22,7 @@
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
+struct rhythm_pattern rhythm_track[NUM_PATTERNS];
 volatile struct flag flag;
 //pattern_data next_pattern;
 //uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
@@ -331,6 +332,7 @@ void process_step(void){
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					check_tap();
+					if (sequencer.SHIFT) break;
 					spi_data[LATCH_1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
 					spi_data[LATCH_1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
 					spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
@@ -379,7 +381,8 @@ void process_step(void){
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					if (sequencer.SHIFT) {
-						//turn on roll amount LED						
+						turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
+						turn_on(sequencer.roll_mode + 10);					
 					} else {
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
 						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
@@ -510,20 +513,11 @@ void update_step_board() { //should this be in switches.c ?
 					
 					
 				} else {
+					
 					update_shuffle(press);
-					turn_on(sequencer.new_shuffle_amount + 4);
-					turn_on(sequencer.roll_mode + 10);					
+					
 				}
-				//flag.pattern_change = 1;
-				//sequencer.new_pattern = press;
-				//update_shuffle(press);
-				//turn off step LEDs 5 to 16:
-				//refresh_step_leds();
-				//turn_off(sequencer.shuffle_amount + 4);
-				//turn_on(sequencer.new_shuffle_amount + 4);
-				//turn_on(sequencer.roll_mode + 10);
-				//turn_off(sequencer.current_pattern);
-				//turn_on(sequencer.new_pattern);
+
 				break;			
 			}
 
@@ -562,15 +556,21 @@ void update_step_board() { //should this be in switches.c ?
 			break;
 			
 		case MANUAL_PLAY:
+		
+			if (sequencer.SHIFT) {
+				
+				update_shuffle(press);
+			} else {
 
-			if (press < 12) { //first 12 pattern places are for main patterns 
-				sequencer.new_pattern = press;
-				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
+				if (press < 12) { //first 12 pattern places are for main patterns 
+					sequencer.new_pattern = press;
+					if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 				
-			} else { //remaining 4 patterns places are for intro/fills
+				} else { //remaining 4 patterns places are for intro/fills
 				
-				sequencer.current_intro_fill = press;
+					sequencer.current_intro_fill = press;
 						
+				}
 			}
 			
 			break;
@@ -636,7 +636,8 @@ void update_shuffle(uint8_t shuffle_amount) {
 		
 		}
 		
-		
+	turn_on(sequencer.new_shuffle_amount + 4); //immediately update LEDs
+	turn_on(sequencer.roll_mode + 10);
 		
 	//} else {
 	//
