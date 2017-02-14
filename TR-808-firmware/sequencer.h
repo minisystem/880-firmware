@@ -22,6 +22,8 @@
 #define NUM_STEPS 16
 #define NO_STEPS 16 //null state of part 2 step number
 
+#define BASIC_RHYTHM 12 //number of basic rhythms
+
 #define NUM_PATTERNS 64 //number of patterns per rhythm track
 
 //define pre-scale ppqn dividers

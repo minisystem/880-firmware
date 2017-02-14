@@ -321,6 +321,7 @@ void check_clear_switch(void) {
 				sequencer.step_num[FIRST] = 15;
 				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
 				sequencer.pre_scale = 1; //default PRE_SCALE_3
+				update_prescale_leds();
 				write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
 				break;
 				

@@ -639,7 +639,7 @@ void update_step_board() { //should this be in switches.c ?
 						}
 						sequencer.pattern_bank = press;
 						turn_on(sequencer.pattern_bank);
-						flag.pattern_change = 1;
+						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					
 					}
 				
@@ -656,7 +656,7 @@ void update_step_board() { //should this be in switches.c ?
 				break;
 		
 			case MANUAL_PLAY: //change pattern bank here too? Probably
-				if (press < 12) {
+				if (press < BASIC_RHYTHM) {
 					sequencer.current_pattern = sequencer.new_pattern = press;
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					sequencer.part_playing = FIRST;
