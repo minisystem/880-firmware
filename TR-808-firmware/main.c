@@ -158,7 +158,7 @@ int main(void)
 	//DDRD |= 1 << PD3; //set up PD3 as output 
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
-	read_next_pattern(0); //load first pattern
+	read_next_pattern(0, 0); //load first pattern
 	//update_step_led_mask();
 	
 	//sequencer.SHUFFLE = 1;

@@ -22,7 +22,7 @@
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
-struct rhythm_pattern rhythm_track;//[NUM_PATTERNS];
+//struct rhythm_track rhythm_track;//[NUM_PATTERNS];
 volatile struct flag flag;
 //pattern_data next_pattern;
 //uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
@@ -197,7 +197,7 @@ void update_fill(void) {
 		sequencer.current_measure = 0;
 		flag.fill = 0;
 		flag.pre_scale_change = 1;
-		read_next_pattern(sequencer.current_intro_fill);
+		read_next_pattern(sequencer.current_intro_fill, sequencer.pattern_bank);
 		sequencer.part_playing = FIRST;
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
@@ -218,7 +218,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 					
 		flag.pattern_edit = 0;
 		//toggle(IF_VAR_B_LED);
-		write_current_pattern(sequencer.current_pattern); //save changed pattern at end of measure
+		write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
 					
 	}
 		
@@ -235,7 +235,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 				flag.pattern_change = 0;
 				flag.pre_scale_change = 1; //need to handle any change in pre-scale
 				sequencer.current_pattern = sequencer.new_pattern;
-				read_next_pattern(sequencer.current_pattern);
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 				sequencer.variation = VAR_A;
 				if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
 				sequencer.part_playing = FIRST;
@@ -261,7 +261,7 @@ void process_new_measure(void) { //should break this up into switch/case statmen
 			flag.pattern_change = 0;
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			sequencer.current_pattern = sequencer.new_pattern;
-			read_next_pattern(sequencer.current_pattern);
+			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 			sequencer.variation = VAR_A;
 			if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
 			sequencer.part_playing = FIRST;
@@ -616,62 +616,63 @@ void update_step_board() { //should this be in switches.c ?
 		press = check_step_press();
 		if (press != EMPTY) {
 		
-		switch (sequencer.mode) {
+			switch (sequencer.mode) {
 		
-		case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+			case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 			
-			if (sequencer.SHIFT) {
+				if (sequencer.SHIFT) {
 				
-				if (sequencer.FUNC) { //change MIDI channel
-					turn_off(sequencer.midi_channel);
-					sequencer.midi_channel = press;
-					turn_on(sequencer.midi_channel);					
+					if (sequencer.FUNC) { //change MIDI channel
+						turn_off(sequencer.midi_channel);
+						sequencer.midi_channel = press;
+						turn_on(sequencer.midi_channel);					
 					
-				} else { //change pattern bank
-					turn_off(sequencer.pattern_bank);
-					sequencer.pattern_bank = press;
-					turn_on(sequencer.pattern_bank);
+					} else { //change pattern bank
+						turn_off(sequencer.pattern_bank);
+						//if current pattern has been edited need to write it to current back before changing bank, otherwise edited pattern will be written to new bank!
+						if (flag.pattern_edit == 1) {
+							
+							flag.pattern_edit = 0;
+						
+							write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
+							
+						}
+						sequencer.pattern_bank = press;
+						turn_on(sequencer.pattern_bank);
+						flag.pattern_change = 1;
 					
+					}
+				
+				} else { //will need to handle copy/paste here
+					sequencer.current_pattern = sequencer.new_pattern = press;
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+					//sequencer.variation = VAR_A;
+					sequencer.part_playing = FIRST;
+					sequencer.current_step = 0;
+					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+					clock.beat_counter = 0;
+			
 				}
-				
-			} else { //will need to handle copy/paste here
-				sequencer.current_pattern = sequencer.new_pattern = press;
-				read_next_pattern(sequencer.current_pattern);
-				//sequencer.variation = VAR_A;
-				sequencer.part_playing = FIRST;
-				sequencer.current_step = 0;
-				clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
-				clock.beat_counter = 0;
-			
-			}
-			break;
+				break;
 		
-		case MANUAL_PLAY: //change pattern bank here too? Probably
-			if (press < 12) {
-				sequencer.current_pattern = sequencer.new_pattern = press;
-				read_next_pattern(sequencer.current_pattern);
-				sequencer.part_playing = FIRST;
-				sequencer.current_step = 0;
-				clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
-				clock.beat_counter = 0;
-			} else {
-				sequencer.current_intro_fill = press;
-			}		
-			break;
+			case MANUAL_PLAY: //change pattern bank here too? Probably
+				if (press < 12) {
+					sequencer.current_pattern = sequencer.new_pattern = press;
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+					sequencer.part_playing = FIRST;
+					sequencer.current_step = 0;
+					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+					clock.beat_counter = 0;
+				} else {
+					sequencer.current_intro_fill = press;
+				}		
+				break;
 		
-		case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
 		
-			break;	
-		}
-		
-		
-		
-
-			
-
-			}
-		
-		
+				break;	
+			}				
+		}			
 	}
 }
 
@@ -776,14 +777,14 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 				
 				flag.intro ^= 1<<0;
 				if (flag.intro) { //sequencer isn't playing, so load intro now
-					read_next_pattern(sequencer.current_intro_fill);
+					read_next_pattern(sequencer.current_intro_fill, sequencer.pattern_bank);
 					sequencer.new_pattern = sequencer.current_pattern;
 					sequencer.current_pattern = sequencer.current_intro_fill;					
 					
 					
 				} else { //toggle back to current pattern (not tested yet - need to ensure current pattern is restored when toggling intro/fill
 					sequencer.current_pattern = sequencer.new_pattern;
-					read_next_pattern(sequencer.current_pattern);
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					
 					
 					
@@ -821,11 +822,11 @@ void toggle_variation(void) {
 	
 }
 
-void read_next_pattern(uint8_t pattern_num) {
+void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	
 	pattern_data next_pattern;
 	
-	next_pattern = read_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE);
+	next_pattern = read_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank);
 	sequencer.pattern[VAR_A] = next_pattern.variation_a;
 	sequencer.pattern[VAR_B] = next_pattern.variation_b;
 	sequencer.step_num[FIRST] = next_pattern.step_num[FIRST];
@@ -842,7 +843,7 @@ void read_next_pattern(uint8_t pattern_num) {
 	
 }
 
-void write_current_pattern(uint8_t pattern_num) {
+void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	
 	pattern_data current_pattern;
 	
@@ -852,5 +853,5 @@ void write_current_pattern(uint8_t pattern_num) {
 	current_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
 	current_pattern.pre_scale = sequencer.pre_scale;
 	
-	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, &current_pattern);
+	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank, &current_pattern);
 }

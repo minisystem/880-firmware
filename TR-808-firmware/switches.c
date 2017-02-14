@@ -306,7 +306,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 }	
 
 void check_clear_switch(void) {
-	
+	if (sequencer.SHIFT) return; 
 	if (sequencer.CLEAR) {// && sequencer.START == 0) {
 		button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here otherwise it gets handled elsewhere when we don't want it to.
 		switch (sequencer.mode) {
@@ -320,7 +320,8 @@ void check_clear_switch(void) {
 				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
 				sequencer.step_num[FIRST] = 15;
 				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
-				write_current_pattern(sequencer.current_pattern); //clear it from eeprom too		
+				sequencer.pre_scale = 1; //default PRE_SCALE_3
+				write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
 				break;
 				
 			case FIRST_PART: case SECOND_PART:
