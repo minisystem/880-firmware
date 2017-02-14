@@ -147,7 +147,7 @@ int main(void)
 	turn_on(SCALE_3_LED);
 	sequencer.current_intro_fill = 12;//first of 4 intro/fill patterns
 	sequencer.fill_mode = MANUAL;
-	
+	sequencer.pattern_bank = 0;
 	sequencer.roll_mode = 0; 
 	eeprom_init();
 	//flag.twi_init_error = 0;

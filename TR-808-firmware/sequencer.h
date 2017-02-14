@@ -72,10 +72,11 @@ struct pattern { //current pattern will be loaded into ram from eeprom. changing
 	//uint16_t step_led_mask[17];
 };
 
-struct rhythm_pattern {
+struct rhythm_pattern { //maybe don't need 64 patterns in RAM, just current pattern and address of next pattern? Just have pattern_position to tell it where to get the next pattern in memory: pattern_position + 1 up to NUM_PATTERNS
 	
-	uint8_t pattern_num:5; //currently only 16 patterns available, but could have 32 patterns by implementing feature to access patterns 17-32: TODO
-	uint8_t variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
+	uint8_t pattern_num:4;
+	uint8_t pattern_bank:4;
+	//uint8_t variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
 	
 	};
 	
@@ -85,7 +86,7 @@ struct rhythm_pattern {
 	//
 //}
 	
-extern struct rhythm_pattern rhythm_track[NUM_PATTERNS];
+extern struct rhythm_pattern rhythm_track;//[NUM_PATTERNS];
 
 struct sequencer {
 	

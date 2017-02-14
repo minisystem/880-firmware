@@ -22,7 +22,7 @@
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
-struct rhythm_pattern rhythm_track[NUM_PATTERNS];
+struct rhythm_pattern rhythm_track;//[NUM_PATTERNS];
 volatile struct flag flag;
 //pattern_data next_pattern;
 //uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
@@ -365,8 +365,8 @@ void process_step(void){
 				
 					if (sequencer.SHIFT) {
 						
-						if (sequencer.FUNC) { //show current pattern
-							//can't remember how I did this before SHIFT was used for shuffle/roll
+						if (sequencer.FUNC) { //show current current bank
+							//turn_on(sequencer.pattern_bank);
 							
 						} else {
 							turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
@@ -380,7 +380,7 @@ void process_step(void){
 				break;
 				
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
-					if (sequencer.SHIFT) {
+					if (sequencer.SHIFT) { 
 						turn_on(sequencer.new_shuffle_amount + 4); //turn on shuffle amount LED
 						turn_on(sequencer.roll_mode + 10);					
 					} else {
@@ -431,36 +431,58 @@ void process_step(void){
 
 			}
 					
-		}	 else {
+		} else { //LED behaviour when sequencer is not running
 					
-				spi_data[LATCH_1] = 0;
-				spi_data[LATCH_0] = 0;
+			spi_data[LATCH_1] = 0;
+			spi_data[LATCH_0] = 0;
 				
-				switch (sequencer.variation_mode) {
+			switch (sequencer.variation_mode) { //more efficient to use if/else here
 						
-					case VAR_A: case VAR_AB:
-					sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-					break;
+				case VAR_A: case VAR_AB:
+				sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
+				break;
 						
-					case VAR_B:
-					sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-					break;
+				case VAR_B:
+				sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				break;
 						
-				}
-				if (sequencer.mode == MANUAL_PLAY) {
+			}
+			switch (sequencer.mode) {
+			case MANUAL_PLAY:	
+				//if (sequencer.mode == MANUAL_PLAY) {
 					
-					if (flag.intro) {
-						turn_on(sequencer.new_pattern);
-					} else {
-						turn_on(sequencer.current_intro_fill);						
-					}
+				if (flag.intro) {
+					turn_on(sequencer.new_pattern);
+				} else {
+					turn_on(sequencer.current_intro_fill);						
 				}
-				if (clock.beat_counter <2) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+				break;
+			
+			case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+				if (sequencer.SHIFT) {
+					
+					if (sequencer.FUNC) {
+						turn_on(sequencer.midi_channel);
 						
-					if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
-					turn_on(sequencer.new_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
-					if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
+					} else {
+						
+						turn_on(sequencer.pattern_bank);
+						
+					}
+					
 				}
+				break;
+			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+				break;		
+			//}
+			}
+			
+			if ((clock.beat_counter <2) && (!sequencer.SHIFT)) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+						
+				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
+				turn_on(sequencer.new_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
+				if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
+			}
 		}
 				
 		//spi_data[5] |= sequencer.var_led_mask;
@@ -594,18 +616,25 @@ void update_step_board() { //should this be in switches.c ?
 		press = check_step_press();
 		if (press != EMPTY) {
 		
-			if (sequencer.mode == MANUAL_PLAY) {
-				if (press < 12) {
-					sequencer.current_pattern = sequencer.new_pattern = press;
-					read_next_pattern(sequencer.current_pattern);
-					sequencer.part_playing = FIRST;
-					sequencer.current_step = 0;
-					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
-					clock.beat_counter = 0;
-				} else {
-					sequencer.current_intro_fill = press;
+		switch (sequencer.mode) {
+		
+		case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+			
+			if (sequencer.SHIFT) {
+				
+				if (sequencer.FUNC) { //change MIDI channel
+					turn_off(sequencer.midi_channel);
+					sequencer.midi_channel = press;
+					turn_on(sequencer.midi_channel);					
+					
+				} else { //change pattern bank
+					turn_off(sequencer.pattern_bank);
+					sequencer.pattern_bank = press;
+					turn_on(sequencer.pattern_bank);
+					
 				}
-			} else {
+				
+			} else { //will need to handle copy/paste here
 				sequencer.current_pattern = sequencer.new_pattern = press;
 				read_next_pattern(sequencer.current_pattern);
 				//sequencer.variation = VAR_A;
@@ -613,9 +642,34 @@ void update_step_board() { //should this be in switches.c ?
 				sequencer.current_step = 0;
 				clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
 				clock.beat_counter = 0;
+			
 			}
-
+			break;
+		
+		case MANUAL_PLAY: //change pattern bank here too? Probably
+			if (press < 12) {
+				sequencer.current_pattern = sequencer.new_pattern = press;
+				read_next_pattern(sequencer.current_pattern);
+				sequencer.part_playing = FIRST;
+				sequencer.current_step = 0;
+				clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+				clock.beat_counter = 0;
+			} else {
+				sequencer.current_intro_fill = press;
+			}		
+			break;
+		
+		case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+		
+			break;	
 		}
+		
+		
+		
+
+			
+
+			}
 		
 		
 	}
