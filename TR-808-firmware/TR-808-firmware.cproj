@@ -233,13 +233,13 @@
     <None Include="xnormidi-develop\doc\mainpage.dox">
       <SubType>compile</SubType>
     </None>
+    <None Include="xnormidi-develop\doc\TODO">
+      <SubType>compile</SubType>
+    </None>
     <None Include="xnormidi-develop\Makefile">
       <SubType>compile</SubType>
     </None>
     <None Include="xnormidi-develop\README">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="xnormidi-develop\TODO">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>

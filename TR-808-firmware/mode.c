@@ -111,7 +111,7 @@ void update_fill_mode(void) {
 					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
-					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
+					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); 
 					TCNT2 = 0;
 					
 					break;

@@ -66,6 +66,7 @@ struct flag {
 	uint8_t din_start:1;
 	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
 	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed
+	uint8_t blink:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -151,5 +152,6 @@ void toggle_variation(void);
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
+
 
 #endif 

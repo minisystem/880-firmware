@@ -87,5 +87,8 @@ void check_clear_switch(void);
 void check_intro_fill_variation_switch(void);
 
 uint8_t check_step_press(void); //return pressed step switch
+
+void clear_all_patterns(void); //reset utility to clear eeprom
+void clear_pattern_bank(uint8_t bank);
 	
 #endif

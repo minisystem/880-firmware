@@ -57,7 +57,7 @@ ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 	
 }
 
-ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS trigger off for incoming MIDI note drum hits and also 20MS trigger off for triggers 1 and 2 while sequencer is running. At the moment, they are incompatible functions
+ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS trigger off for incoming MIDI note drum hits and also 15MS trigger off for triggers 1 and 2 while sequencer is running. At the moment, they are incompatible functions
 	
 	TCCR0B = 0; //turn off timer
 	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
@@ -78,10 +78,16 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	
 }
 
+ISR (TIMER2_COMPA_vect) {
+	
+	flag.blink = 1;
+}
+
 
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
-
+	
+	
 	if (clock.source == INTERNAL) {
 
 		process_tick();	

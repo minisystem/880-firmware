@@ -24,6 +24,7 @@ typedef struct {
 	uint8_t step_num[NUM_PARTS];
 	//uint8_t trigger_1:5;
 	//uint8_t trigger_2:5;
+	//uint_t shuffle:3;
 	
 } pattern_data;
 

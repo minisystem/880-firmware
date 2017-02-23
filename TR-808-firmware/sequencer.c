@@ -630,13 +630,14 @@ void update_step_board() { //should this be in switches.c ?
 					} else { //change pattern bank
 						turn_off(sequencer.pattern_bank);
 						//if current pattern has been edited need to write it to current back before changing bank, otherwise edited pattern will be written to new bank!
-						if (flag.pattern_edit == 1) {
-							
-							flag.pattern_edit = 0;
-						
-							write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
-							
-						}
+						//BUT, can't edit patterns when sequencer isn't running except for changing pre-scale.
+						//if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here.
+							//
+							//flag.pattern_edit = 0;
+						//
+							//write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
+							//
+						//}
 						sequencer.pattern_bank = press;
 						turn_on(sequencer.pattern_bank);
 						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
@@ -747,6 +748,7 @@ void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1
 					
 		}
 		flag.pre_scale_change = flag.pattern_edit = 1;
+		clock.divider = pre_scale[sequencer.pre_scale];
 		update_prescale_leds();
 
 	}
@@ -821,6 +823,8 @@ void toggle_variation(void) {
 	
 	
 }
+
+
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	

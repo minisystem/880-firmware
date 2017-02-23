@@ -158,6 +158,11 @@ int main(void)
 	//DDRD |= 1 << PD3; //set up PD3 as output 
 	sei(); //enable global interrupts	
 	//sequencer.pattern[0] = read_pattern(0);
+	//clear_all_patterns(); //run just to clean out eeprom
+	//clear_pattern_bank(0);
+	//clear_pattern_bank(1);
+	//clear_pattern_bank(2);
+	//clear_pattern_bank(3);
 	read_next_pattern(0, 0); //load first pattern
 	//update_step_led_mask();
 	
