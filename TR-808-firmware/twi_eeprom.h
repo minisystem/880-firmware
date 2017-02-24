@@ -20,7 +20,7 @@
 typedef struct {
 	struct pattern variation_a;
 	struct pattern variation_b;
-	uint8_t pre_scale:2;
+	uint8_t pre_scale;
 	uint8_t step_num[NUM_PARTS];
 	//uint8_t trigger_1:5;
 	//uint8_t trigger_2:5;

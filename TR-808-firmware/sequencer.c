@@ -848,7 +848,7 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 }
 
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
-	
+	 TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 
 	pattern_data current_pattern;
 	
 	current_pattern.variation_a = sequencer.pattern[VAR_A];
@@ -858,4 +858,5 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	current_pattern.pre_scale = sequencer.pre_scale;
 	
 	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank, &current_pattern);
+	TRIGGER_OUT &= TRIGGER_OFF;
 }
