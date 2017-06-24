@@ -67,6 +67,11 @@ void process_tick(void) {
 	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
 	
 	if (++clock.ppqn_counter == clock.divider) {
+		
+		if (flag.pre_scale_change) {
+			
+			clock.divider = pre_scale[sequencer.pre_scale];
+		}
 		if (flag.shuffle_change) {
 			
 			sequencer.shuffle_amount = sequencer.new_shuffle_amount;
@@ -211,7 +216,7 @@ void update_fill(void) {
 	
 }
 
-void process_new_measure(void) { //should break this up into switch/case statments based on mode?
+void process_new_measure(void) { //should break this up into switch/case statements based on mode?
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
 	if (flag.pattern_edit == 1) {
@@ -579,7 +584,7 @@ void update_step_board() { //should this be in switches.c ?
 			
 		case MANUAL_PLAY:
 		
-			if (sequencer.SHIFT) {
+			if (sequencer.SHIFT) { //need to handle bank changes here too.
 				
 				update_shuffle(press);
 			} else {
@@ -628,19 +633,22 @@ void update_step_board() { //should this be in switches.c ?
 						turn_on(sequencer.midi_channel);					
 					
 					} else { //change pattern bank
-						turn_off(sequencer.pattern_bank);
-						//if current pattern has been edited need to write it to current back before changing bank, otherwise edited pattern will be written to new bank!
+						
+						//if current pattern has been edited need to write it to current bank before changing bank, otherwise edited pattern will be written to new bank!
 						//BUT, can't edit patterns when sequencer isn't running except for changing pre-scale.
-						//if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here.
-							//
-							//flag.pattern_edit = 0;
-						//
-							//write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
-							//
-						//}
-						sequencer.pattern_bank = press;
-						turn_on(sequencer.pattern_bank);
-						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+						if (press < NUM_BANKS) {
+							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilobits and kilobytes, you nitwit.
+							
+								flag.pattern_edit = 0;
+						
+								write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
+							
+							}
+							turn_off(sequencer.pattern_bank);
+							sequencer.pattern_bank = press;
+							turn_on(sequencer.pattern_bank);
+							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+						}
 					
 					}
 				
@@ -736,7 +744,7 @@ void update_variation(void) { //not currently used
 	
 }
 
-void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1st/2nd pattern edit?
+void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1st/2nd pattern edit? - NO
 	
 	if (button[CLEAR_SW].state && sequencer.SHIFT) {
 	
@@ -748,7 +756,8 @@ void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1
 					
 		}
 		flag.pre_scale_change = flag.pattern_edit = 1;
-		clock.divider = pre_scale[sequencer.pre_scale];
+		//don't change clock divider here - can cause ppqn overflow, so only change divider on ppqn match event
+		//clock.divider = pre_scale[sequencer.pre_scale];
 		update_prescale_leds();
 
 	}
