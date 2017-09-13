@@ -12,7 +12,7 @@
 #include "sequencer.h"
 #define EEPROM_DEVICE_ID 0b1010000
 
-#define PAGE_SIZE 128//32 //EEPROM page size (32 bytes for AT24CS64 EEPROM, 64 or 128 bytes for larger EEPROMS)
+#define PAGE_SIZE 128//32 //EEPROM page size (32 bytes for AT24CS64 EEPROM, 64 or 128 bytes for larger EEPROMS) - using 128 page 512 kilobit EEPROM now
 #define PAGES_PER_PATTERN (int)((sizeof(pattern_data)/PAGE_SIZE) + 1)//need to know how many pages there are per pattern for addressing EEPROM memory
 #define BANK_SIZE PAGES_PER_PATTERN*PAGE_SIZE*16 //16 patterns in a bank
 
