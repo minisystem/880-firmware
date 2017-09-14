@@ -361,7 +361,7 @@ void process_step(void){
 		if (sequencer.START) {
 			spi_data[LATCH_1] = 0;
 			spi_data[LATCH_0] = 0;
-			if (sequencer.roll_mode == 5) {
+			if (sequencer.roll_mode == ROLL_32) {
 				trigger_drum(sequencer.current_inst, 0);	//default 15ms timer interrupt used in this function is going to cause problems at high tempos - consider making this 1 ms
 			}
 			switch (sequencer.mode) {
@@ -375,7 +375,7 @@ void process_step(void){
 							
 						} else {
 							turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
-							turn_on(sequencer.roll_mode + 8);
+							turn_on(sequencer.roll_mode + ROLL_MIN);
 						}
 					} else {
 						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
@@ -387,7 +387,7 @@ void process_step(void){
 				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					if (sequencer.SHIFT) { 
 						turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
-						turn_on(sequencer.roll_mode + 8);					
+						turn_on(sequencer.roll_mode + ROLL_MIN);					
 					} else {
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
 						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
@@ -689,19 +689,19 @@ void update_shuffle(uint8_t shuffle_amount) {
 	
 	//if (sequencer.pre_scale == PRE_SCALE_1 || sequencer.pre_scale == PRE_SCALE_3) {
 	
-		if (shuffle_amount < 6) { //ensure button press is within control range of shuffle selection
+		if (shuffle_amount < SHUFFLE_MAX) { //ensure button press is within control range of shuffle selection
 			//if shuffle changes need to change shuffle after step changes, otherwise next step flag may not be set on time
 			sequencer.new_shuffle_amount = shuffle_amount; //shuffle ranges from 0-5
 			//turn_on(shuffle_amount);
 			flag.shuffle_change = 1;
-		} else if (shuffle_amount > 7 && shuffle_amount < 14) {
+		} else if (shuffle_amount >= ROLL_MIN && shuffle_amount < ROLL_MAX) {
 		
-			sequencer.roll_mode = shuffle_amount - 8;
+			sequencer.roll_mode = shuffle_amount - ROLL_MIN;
 		
 		}
 		
 	turn_on(sequencer.new_shuffle_amount); //immediately update LEDs
-	turn_on(sequencer.roll_mode + 8);
+	turn_on(sequencer.roll_mode + ROLL_MIN);
 		
 	//} else {
 	//

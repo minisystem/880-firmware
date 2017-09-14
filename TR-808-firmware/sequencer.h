@@ -32,10 +32,18 @@
 #define NUM_PRE_SCALES 4
 #define PRE_SCALE_LED_MASK 0b11000011
 
+//pulses per qarter note for different pre-scales
+//8/4/6/3 for 24 ppqn, 32/16/24/12 for 96 ppqn
 #define PRE_SCALE_1 8
 #define PRE_SCALE_2 4
 #define	PRE_SCALE_3 6
 #define	PRE_SCALE_4 3
+
+#define SHUFFLE_MIN 0
+#define SHUFFLE_MAX 6
+#define ROLL_MIN	8 //ROLL_MIN/MAX refer to absolute switch positions - used as offsets for setting ROLL LEDs and reading step switches
+#define ROLL_MAX	14
+#define ROLL_32		5 //max roll mode
 	
 
 //extern uint8_t pre_scale[NUM_PRE_SCALES]; //does this need to be exturned? Just data. Could go in update_prescale() function?	
