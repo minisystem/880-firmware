@@ -34,10 +34,10 @@
 
 //pulses per qarter note for different pre-scales
 //8/4/6/3 for 24 ppqn, 32/16/24/12 for 96 ppqn
-#define PRE_SCALE_1 8
-#define PRE_SCALE_2 4
-#define	PRE_SCALE_3 6
-#define	PRE_SCALE_4 3
+#define PRE_SCALE_1 32
+#define PRE_SCALE_2 16
+#define	PRE_SCALE_3 24
+#define	PRE_SCALE_4 12
 
 #define SHUFFLE_MIN 0
 #define SHUFFLE_MAX 6
@@ -113,7 +113,7 @@ struct sequencer {
 	uint8_t FUNC:1; //alternative function mode
 	uint8_t shuffle_amount:3;
 	uint8_t new_shuffle_amount:3;
-	uint8_t shuffle_ppqn_count:4;
+	uint8_t shuffle_ppqn_count:4;//may need to up bit depth for 96ppqn
 	uint8_t roll_mode:3;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t pattern_bank:4;

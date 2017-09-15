@@ -112,6 +112,7 @@ void process_start(void) {
 		//if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
+		clock.ppqn_divider_tick = 0;
 		
 		//reset variation on start	
 		flag.variation_change = 0;

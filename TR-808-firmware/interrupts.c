@@ -19,6 +19,7 @@
 
 ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
+	clock.ppqn_counter+= PPQN_SKIP_VALUE;
 	process_tick();
 	
 		
@@ -92,10 +93,11 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 
 		process_tick();	
 
-		if (sequencer.START) {
-			if (sequencer.sync_mode == MIDI_MASTER) {
+		if (sequencer.START && (clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
+			clock.ppqn_divider_tick = 0;
+			if (sequencer.sync_mode == MIDI_MASTER) { 
 				midi_send_clock(&midi_device); //send MIDI clock
-				PINC |= (1<<SYNC_LED_R);
+				PINC |= (1<<SYNC_LED_Y);
 			} else { //send DIN Sync clock pulse
 				//this set up counter-intuitively puts DIN clock out of phase with master timer. Not sure why this is the case, but it works. Really need to dig into this. Not sure what other horrors this will reveal
 				//need to have a good long think about this and figure out what the problem is. 
@@ -105,7 +107,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
 				
 				TCNT2 = 0;	//reset timer				
-				PINC = (1<<SYNC_LED_Y); //toggle SYNC LED
+				PINC |= (1<<SYNC_LED_R); //toggle SYNC LED
 				if (flag.din_start) {
 					
 					if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
