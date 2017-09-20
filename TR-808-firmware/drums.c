@@ -50,7 +50,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		current_drum_hit = note;
 
 		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
-		turn_on(drum_hit[note].led_index);
+		turn_on(drum_hit[note].led_index); 
 		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
 			
 		if (drum_hit[note].switch_bit != NO_SWITCH) {//need to set instrument switch
@@ -83,7 +83,11 @@ void clear_all_trigs(void) {
 
 	spi_data[LATCH_8] = 0;
 	spi_data[LATCH_6] &= 0b11110000; //make these masks constants
-	spi_data[LATCH_7] &= 0b11011111;	
+	spi_data[LATCH_7] &= 0b11011111;
+	
+	//clear trigger lines
+	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);	
 	
 }
 

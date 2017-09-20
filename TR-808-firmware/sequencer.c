@@ -53,8 +53,8 @@ void process_tick(void) {
 		
 	if (flag.shuffle_step) { 
 		
-
-		if (++sequencer.shuffle_ppqn_count == sequencer.shuffle_amount) {
+		//ok, maybe use shuffle_amount to index an array of the best sounding shuffle ppqn counts
+		if (++sequencer.shuffle_ppqn_count == (sequencer.shuffle_amount*2)) { //X2 to increase shuffle time. 1-5 ppqn @ new 96 ppqn internal resolution was a bit too subtle. X2 is compatible with all shuffle levels for all pre-scales whereas X3 was not
 				
 			//sequencer.shuffle_ppqn_count = 0;
 			flag.next_step = 1;
