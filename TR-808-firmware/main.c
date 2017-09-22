@@ -88,7 +88,7 @@ int main(void)
 
 	
 	//setup external interrupts
-	EICRA |= (1 << ISC11) | (1 << ISC10); //set up DIN sync to trigger on rising edge of DIN clock
+	EICRA |= (1 << ISC11) | (1 << ISC10) | (1 << ISC01); //set up DIN sync to trigger on rising edge of DIN clock, falling edge for INT0, external SYNC in jack
 	PCMSK2 |= (1 << PCINT20); //set up DIN Run/Stop pin change interrupt
 	
 	sequencer.current_pattern = sequencer.new_pattern = 0;
@@ -139,7 +139,7 @@ int main(void)
 	turn_on(IF_VAR_A_LED);
 	sequencer.mode = FIRST_PART;
 	//sequencer.SLAVE = 0;
-	sequencer.sync_mode = MIDI_MASTER;
+	sequencer.clock_mode = MIDI_MASTER;
 
 	sequencer.part_playing = FIRST;
 	sequencer.part_editing = FIRST;

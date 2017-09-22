@@ -89,10 +89,13 @@ struct rhythm_track { //maybe don't need 64 patterns in RAM, just current patter
 	
 	uint8_t current_pattern:4;
 	uint8_t current_bank:4;
-	uint8_t length:6; //need to know when we've hit last measure of rhythm track
 	uint8_t current_variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
+	uint8_t length:7; //need to know when we've hit last measure of rhythm track
+	
 	
 	};
+
+	
 	
 //struct rhythm_track {
 //
@@ -105,12 +108,12 @@ struct rhythm_track { //maybe don't need 64 patterns in RAM, just current patter
 struct sequencer {
 	
 	enum global_mode mode;
-	enum sync_mode sync_mode;
+	enum clock_mode clock_mode;
 	uint8_t fill_mode:4;
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	uint8_t FUNC:1; //alternative function mode
+	uint8_t ALT:1; //alternative function mode
 	uint8_t shuffle_amount:3;
 	uint8_t new_shuffle_amount:3;
 	uint8_t shuffle_ppqn_count:4;//may need to up bit depth for 96ppqn
@@ -162,6 +165,9 @@ void toggle_variation(void);
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
+
+void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
+void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
 
 
 #endif 

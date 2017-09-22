@@ -57,7 +57,7 @@ void update_mode(void) {
 			update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
 		} else if (sequencer.mode == MANUAL_PLAY) {
 			//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
-			if (sequencer.current_pattern > 11) {
+			if (sequencer.current_pattern > 11) { //make 11 a constant here
 				sequencer.new_pattern = 11;
 				flag.pattern_change = 1;
 			}
@@ -74,7 +74,7 @@ void update_mode(void) {
 	
 void update_fill_mode(void) {
 	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 15, 11, 7, 3, 1};
-	enum sync_mode sync_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
+	enum clock_mode clock_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
 		
 	spi_data[LATCH_4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
 	spi_data[LATCH_2] &= FILL_MODE_LATCH_2_LED_MASK;
@@ -86,13 +86,13 @@ void update_fill_mode(void) {
 		if (button[FILL_SW].state) {
 			button[FILL_SW].state ^= button[FILL_SW].state; //toggle switch state
 			//change sync mode
-			if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
-			sequencer.sync_mode = sync_mode[sync_index];
+			if (++sync_index == NUM_CLOCK_MODES) sync_index = 0;
+			sequencer.clock_mode = clock_mode[sync_index];
 			TCCR2B = 0; //turn off Timer2
 			EIMSK = 0; //turn off external interrupts
 			PCICR = 0; //turn off pin change interrupts			
 			//spi_data[2] |= (1 << fill_index);
-			switch (sequencer.sync_mode) {
+			switch (sequencer.clock_mode) {
 							
 				case MIDI_MASTER:
 					clock.source = INTERNAL;
@@ -120,8 +120,11 @@ void update_fill_mode(void) {
 					clock.source = EXTERNAL;
 					PORTE &= ~(1<<SYNC_LED_R);
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
-					EIMSK |= (1 << INT1); //turn on INT1 interrupt for DIN Sync clock
-					PCICR |= (1 << PCIE2);
+					EIMSK |= (1 << INT1) | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
+					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?
+					
+					
+					
 					//TCCR1B = 0; //stop master tempo timer - necessary?
 					
 					break;
@@ -166,11 +169,11 @@ void update_fill_mode(void) {
 		//if (sequencer.SHIFT) {
 	//
 			////change sync mode
-			//if (++sync_index == NUM_SYNC_MODES) sync_index = 0;
-			//sequencer.sync_mode = sync_mode[sync_index];
+			//if (++sync_index == NUM_CLOCK_MODES) sync_index = 0;
+			//sequencer.clock_mode = clock_mode[sync_index];
 			//
 			//spi_data[2] |= (1 << fill_index);
-			//switch (sequencer.sync_mode) {
+			//switch (sequencer.clock_mode) {
 			//
 				//case MIDI_MASTER:
 					//clock.source = INTERNAL;

@@ -109,7 +109,7 @@ void process_tick(void) {
 void process_start(void) {
 	
 		sequencer.current_step = 0;
-		//if (sequencer.sync_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
+		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
 		clock.ppqn_divider_tick = 0;
@@ -125,7 +125,7 @@ void process_start(void) {
 		}
 		
 		//if (clock.source == INTERNAL) {
-		if (sequencer.sync_mode == DIN_SYNC_MASTER || sequencer.sync_mode == DIN_SYNC_SLAVE) {
+		if (sequencer.clock_mode == DIN_SYNC_MASTER || sequencer.clock_mode == DIN_SYNC_SLAVE) {
 			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
 			flag.din_start = 1; 
 			clock.din_ppqn_pulses = 0;
@@ -133,7 +133,7 @@ void process_start(void) {
 		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER
 			
 			flag.next_step = 1;
-			if (sequencer.sync_mode == MIDI_MASTER) {
+			if (sequencer.clock_mode == MIDI_MASTER) {
 				midi_send_start(&midi_device); //should clock be sent before start?
 				midi_send_clock(&midi_device);				
 			}					
@@ -176,7 +176,7 @@ void process_stop(void) {
 		turn_on(sequencer.current_pattern);
 		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
 		if (clock.source == INTERNAL) {
-			if (sequencer.sync_mode == MIDI_MASTER) {
+			if (sequencer.clock_mode == MIDI_MASTER) {
 				PORTC &= ~(1<<SYNC_LED_R);
 				PORTE &= ~(1<<SYNC_LED_Y);
 				midi_send_stop(&midi_device);
@@ -371,7 +371,7 @@ void process_step(void){
 				
 					if (sequencer.SHIFT) {
 						
-						if (sequencer.FUNC) { //show current current bank
+						if (sequencer.ALT) { //show current current bank
 							//turn_on(sequencer.pattern_bank);
 							
 						} else {
@@ -413,7 +413,7 @@ void process_step(void){
 					
 			if (clock.beat_counter <2) {
 				if (sequencer.SHIFT) {
-					if (sequencer.FUNC) {
+					if (sequencer.ALT) {
 						turn_on(sequencer.new_pattern);
 					} else {
 					//
@@ -467,7 +467,7 @@ void process_step(void){
 			case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 				if (sequencer.SHIFT) {
 					
-					if (sequencer.FUNC) {
+					if (sequencer.ALT) {
 						turn_on(sequencer.midi_channel);
 						
 					} else {
@@ -531,7 +531,7 @@ void update_step_board() { //should this be in switches.c ?
 			if (sequencer.SHIFT) {
 				
 				refresh_step_leds();
-				if (sequencer.FUNC) {
+				if (sequencer.ALT) {
 					if (sequencer.current_pattern != press) { //is this step necessary or is current/new pattern checked somewhere else?
 						flag.pattern_change = 1;
 						sequencer.new_pattern = press;
@@ -628,7 +628,7 @@ void update_step_board() { //should this be in switches.c ?
 			
 				if (sequencer.SHIFT) {
 				
-					if (sequencer.FUNC) { //change MIDI channel
+					if (sequencer.ALT) { //change MIDI channel
 						turn_off(sequencer.midi_channel);
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
@@ -858,7 +858,7 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 }
 
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
-	 TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2); //holy jeeze, I think I left this here just to measure pattern write times. good golly
 	pattern_data current_pattern;
 	
 	current_pattern.variation_a = sequencer.pattern[VAR_A];
@@ -868,5 +868,12 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	current_pattern.pre_scale = sequencer.pre_scale;
 	
 	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank, &current_pattern);
-	TRIGGER_OUT &= TRIGGER_OFF;
+	//TRIGGER_OUT &= TRIGGER_OFF;
+}
+
+void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num) {
+	
+}
+void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num) {
+	
 }

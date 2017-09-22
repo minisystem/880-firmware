@@ -98,7 +98,7 @@ void check_start_stop_tap(void) {
 		
 	}
 	
-	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity
+	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should!
 	
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
@@ -127,7 +127,7 @@ void check_inst_switches(void) {
 			turn_off_all_inst_leds();
 			turn_on(ACCENT_1_LED);
 			sequencer.current_inst = AC;
-		} else if (sequencer.FUNC) {
+		} else if (sequencer.ALT) {
 			
 			turn_off_all_inst_leds();
 			turn_on(ACCENT_1_LED);
@@ -175,7 +175,7 @@ void check_inst_switches(void) {
 				
 			} else { //SHIFT pressed so handle it. 
 				
-				if (sequencer.FUNC) { //function mode - change trigger - not sure how this is handled - LEDs won't be properly updated
+				if (sequencer.ALT) { //function mode - change trigger - not sure how this is handled - LEDs won't be properly updated
 					
 					turn_off_all_inst_leds();
 									

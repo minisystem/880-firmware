@@ -41,6 +41,8 @@ WRITE_PATTERN            *p_write_pattern;
 SET_PATTERN_ADDRESS      *p_set_pattern_address;
 pattern_data             *p_read_pattern;
 
+rhythm_track_data		 *p_read_rhythm_track;
+
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
 
@@ -117,6 +119,16 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 	//
 	//
 //}
+
+rhythm_track_data read_rhythm_track(uint16_t memory_address) {
+	
+	return(*p_read_rhythm_track);
+}
+
+void write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) {
+	
+	
+}
 
 
 // optional callback function for TWI/I2C driver

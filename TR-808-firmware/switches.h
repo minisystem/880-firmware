@@ -45,7 +45,7 @@
 
 #define SHIFT_BIT 1 //bit position in spi data byte
 #define CLEAR_BIT 4 
-#define FUNC_BIT  2
+#define ALT_BIT  2
 
 enum {
 	OMAR_WAS_HERE = 0,

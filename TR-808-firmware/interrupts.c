@@ -19,7 +19,7 @@
 
 ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
-	clock.ppqn_counter+= PPQN_SKIP_VALUE;
+	clock.ppqn_counter+= PPQN_SKIP_VALUE; //add skip value to ppqn counter for 24 ppqn 
 	process_tick();
 	
 		
@@ -37,6 +37,15 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
 		
 	}
+	
+}
+
+ISR (INT0_vect) {
+	
+	//clock.ppqn_counter+= PPQN_SKIP_VALUE;
+	clock.ppqn_counter = clock.divider - 1;
+	process_tick(); 
+	PINC |= (1<<SYNC_LED_Y);
 	
 }
 
@@ -68,7 +77,7 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	//toggle(ACCENT_1_LED);
 	//if (sequencer.mode == MANUAL_PLAY && !sequencer.START) turn_off()
 	
-	if (sequencer.sync_mode == MIDI_SLAVE) { //probably need to come up with a MIDI note off flag that is checked here 
+	if (sequencer.clock_mode == MIDI_SLAVE) { //probably need to come up with a MIDI note off flag that is checked here 
 		spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
 		turn_off(ACCENT_1_LED);
 		spi_data[LATCH_8] &= ~(1<<ACCENT);
@@ -95,7 +104,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 
 		if (sequencer.START && (clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
 			clock.ppqn_divider_tick = 0;
-			if (sequencer.sync_mode == MIDI_MASTER) { 
+			if (sequencer.clock_mode == MIDI_MASTER) { 
 				midi_send_clock(&midi_device); //send MIDI clock
 				PINC |= (1<<SYNC_LED_Y);
 			} else { //send DIN Sync clock pulse

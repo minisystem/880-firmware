@@ -22,9 +22,8 @@ typedef struct {
 	struct pattern variation_b;
 	uint8_t pre_scale;
 	uint8_t step_num[NUM_PARTS];
-	//uint8_t trigger_1:5;
-	//uint8_t trigger_2:5;
-	//uint_t shuffle:3;
+
+	//uint8_t shuffle:3;
 	
 } pattern_data;
 
@@ -32,9 +31,10 @@ typedef struct {
 
 typedef struct {
 	
-	uint8_t pattern:4;
+	uint8_t pattern_num:4;
 	uint8_t bank:4;
 	uint8_t variation:1;
+	uint8_t length:7; //this is only required once per rhythm track, but 
 	
 	
 } rhythm_track_data;
@@ -48,6 +48,10 @@ void eeprom_init();
 pattern_data read_pattern(uint16_t memory_address, uint8_t bank);
 void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data);
 //void write_bytes(uint16_t memory_address, (char *)w_data, int num_bytes_to_write);
+
+rhythm_track_data read_rhythm_track(uint16_t memory_address);
+void write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
+
 void handle_TWI_result(uint8_t return_code);
 
 

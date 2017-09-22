@@ -14,7 +14,7 @@
 #include "sequencer.h"
 
 
-struct led led[NUM_LEDS] = {
+struct led led[NUM_LEDS] = { //any way to put this in PROGMEM?
 	
 	{	1<<0	,	1	,	0	,	0},
 	{	1<<1	,	1	,	0	,	0},
@@ -131,7 +131,7 @@ void update_inst_leds(void) {
 	
 if (sequencer.SHIFT) {
 	
-	if (sequencer.FUNC) {
+	if (sequencer.ALT) {
 		
 		turn_off_all_inst_leds();
 		(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);

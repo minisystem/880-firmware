@@ -146,6 +146,8 @@ void trigger_step(void) { //trigger all drums on current step
 }
 
 void live_hits(void) { //use switch case here you twit or for loop. duh.
+	//also what about SHIFT to trigger alternative instruments?
+	//also, how to avoid double triggering?
 	
 	
 	if (button[INST_BD_2_SW].state) {
