@@ -40,7 +40,7 @@ void refresh(void) {
 	check_start_stop_tap();
 	read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating
+	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -48,7 +48,7 @@ void refresh(void) {
 	check_variation_switches();
 	update_prescale();
 	check_inst_switches();
-	update_inst_leds();	
+	update_inst_leds();	//updating too frequently? Not a functional problem yet, but unecessary overhead?
 	update_step_board();
 	process_step();
 	update_spi();

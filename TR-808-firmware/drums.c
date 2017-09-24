@@ -16,7 +16,7 @@ uint8_t current_drum_hit = 0;
 enum drum midi_note_queue[16] = {255};
 //volatile uint8_t trigger_finished = 1;
 
-struct drum_hit drum_hit[17] = {
+struct drum_hit drum_hit[17] = { //progmem? 
 	
 	{0,8, 1<<BD_TRIG,NO_SWITCH, 0, BD_2_LED},
 	{1,8, 1<<SD_TRIG,NO_SWITCH, 0, SD_3_LED},
@@ -34,7 +34,9 @@ struct drum_hit drum_hit[17] = {
 	{13,8, 1<<HT_TRIG, 1<<HT_HC_SW, 0, HC_LED},
 	{14,8, 1<<RS_TRIG, 1<<RS_CL_SW, 1, CL_LED},
 	{15,7, 1<<MA_TRIG,NO_SWITCH, 0, MA_LED},
-	{16,8, 1<<ACCENT,NO_SWITCH, 0, ACCENT_1_LED} //this last accent element is a bit of a hack - not currently used to access accent, but useful to turn on accent LED when accent it triggered by step sequencer (see interrupt.c)
+	{16,8, 1<<ACCENT,NO_SWITCH, 0, ACCENT_1_LED}, //this first accent element is a bit of a hack - not currently used to access accent, but useful to turn on accent LED when accent it triggered by step sequencer (see interrupt.c)
+
+	
 			
 };
 

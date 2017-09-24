@@ -27,6 +27,7 @@ enum drum { //index for drum hits
 	AC
 	
 	
+	
 };
 
 struct drum_hit {

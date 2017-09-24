@@ -354,10 +354,10 @@ void process_step(void){
 
 		}
 	} else if (flag.half_step) {
-			
+		//uint8_t rhythm_track_led[12] = {ACCENT_1_LED, BD_2_LED, SD_3_LED, LT_4_LED, MT_5_LED, HT_6_LED, RS_7_LED, CP_8_LED, CB_9_LED, CY_10_LED, OH_11_LED, CH_12_LED};
 		flag.half_step = 0;
 		turn_off_all_inst_leds();
-		if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
+		//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
 			spi_data[LATCH_1] = 0;
@@ -379,6 +379,7 @@ void process_step(void){
 							turn_on(sequencer.roll_mode + ROLL_MIN);
 						}
 					} else {
+						turn_on(drum_hit[sequencer.current_inst].led_index);
 						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
 						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;												
 					}
@@ -390,6 +391,7 @@ void process_step(void){
 						turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
 						turn_on(sequencer.roll_mode + ROLL_MIN);					
 					} else {
+						turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
 						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
 					}
@@ -590,7 +592,7 @@ void update_step_board() { //should this be in switches.c ?
 				update_shuffle(press);
 			} else {
 
-				if (press < 12) { //first 12 pattern places are for main patterns 
+				if (press < NUM_BANKS) { //first 12 pattern places are for main patterns 
 					sequencer.new_pattern = press;
 					if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 				
@@ -608,7 +610,9 @@ void update_step_board() { //should this be in switches.c ?
 			break;
 				
 		case COMPOSE_RHYTHM:
-			
+		
+			sequencer.new_pattern = press;
+			if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 			break;
 				
 		case PATTERN_CLEAR:
@@ -616,7 +620,7 @@ void update_step_board() { //should this be in switches.c ?
 			break;		 			
 		}
 			
-	} else {
+	} else { //SEQUENCER.STOP
 		if (sequencer.mode == MANUAL_PLAY) check_tap(); //check toggling between intro and basic rhythm
 		//handle changing selected pattern and rhythm.
 		press = check_step_press();
@@ -653,9 +657,17 @@ void update_step_board() { //should this be in switches.c ?
 					
 					}
 				
-				} else { //will need to handle copy/paste here
+				} else {
+					
+					if (sequencer.CLEAR) { //when the sequencer isn't running pressing clear will copy current pattern into new slot
+						
+						if (sequencer.current_pattern != press) write_current_pattern(press, sequencer.pattern_bank); //write current pattern to new pattern slot
+						
+					} else {
+						
+						read_next_pattern(press, sequencer.pattern_bank);	
+					}
 					sequencer.current_pattern = sequencer.new_pattern = press;
-					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					//sequencer.variation = VAR_A;
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;

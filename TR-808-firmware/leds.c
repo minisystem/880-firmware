@@ -131,12 +131,12 @@ void update_inst_leds(void) {
 	
 if (sequencer.SHIFT) {
 	
-	if (sequencer.ALT) {
+	if (sequencer.ALT) { //show trigger assignment
 		
 		turn_off_all_inst_leds();
 		(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
 		
-	} else {
+	} else { //show muted instruments
 	
 		for (int i = BD; i <= MA; i++) {
 			
@@ -153,7 +153,10 @@ if (sequencer.SHIFT) {
 		}
 	}
 	
-
+} else if (sequencer.mode == MANUAL_PLAY) {
+	
+	
+	
 } else {
 	
 	turn_on(drum_hit[sequencer.current_inst].led_index);	
