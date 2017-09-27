@@ -128,41 +128,90 @@ void turn_off_all_inst_leds(void) {
 }
 
 void update_inst_leds(void) {
-	
-if (sequencer.SHIFT) {
-	
-	if (sequencer.ALT) { //show trigger assignment
-		
-		turn_off_all_inst_leds();
-		(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
-		
-	} else { //show muted instruments
-	
-		for (int i = BD; i <= MA; i++) {
-			
-			
-			if (drum_hit[i].muted) {
-				
-				turn_on(drum_hit[i].led_index);
-				
-				} else {
-				
-				turn_off(drum_hit[i].led_index);
-			}
-			
-		}
-	}
-	
-} else if (sequencer.mode == MANUAL_PLAY) {
-	
-	
-	
-} else {
-	
-	turn_on(drum_hit[sequencer.current_inst].led_index);	
+  
+switch (sequencer.mode) {
+ 
+ case PATTERN_CLEAR: case FIRST_PART: case SECOND_PART:
+ 
+	 if (sequencer.SHIFT) {
+   
+	   if (sequencer.ALT) { //show trigger assignment
+     
+		 turn_off_all_inst_leds();
+		 (sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
+     
+		} else { //show muted instruments
+     
+		 for (int i = BD; i <= MA; i++) {
+       
+       
+		   if (drum_hit[i].muted) {
+         
+			 turn_on(drum_hit[i].led_index);
+         
+			 } else {
+         
+			 turn_off(drum_hit[i].led_index);
+			 }
+       
+		 }
+	  }} else {
+     
+		 turn_on(drum_hit[sequencer.current_inst].led_index);
+	  }
+     
+ break;
+ 
+ case MANUAL_PLAY:
+ 
+ break;
+ 
+ 
+ case PLAY_RHYTHM:
+	turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
+ break;
+ 
+ case COMPOSE_RHYTHM:
+	turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
+ break;
+  
+} 
 }
 	
-}
+//if (sequencer.SHIFT) {
+	//
+	//if (sequencer.ALT) { //show trigger assignment
+		//
+		//turn_off_all_inst_leds();
+		//(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
+		//
+	//} else { //show muted instruments
+	//
+		//for (int i = BD; i <= MA; i++) {
+			//
+			//
+			//if (drum_hit[i].muted) {
+				//
+				//turn_on(drum_hit[i].led_index);
+				//
+			//} else {
+				//
+				//turn_off(drum_hit[i].led_index);
+			//}
+			//
+		//}
+	//}
+	//
+//} else if (sequencer.mode == MANUAL_PLAY) {
+	//
+	//
+	//
+//} else {
+	//
+	//turn_on(drum_hit[sequencer.current_inst].led_index);	
+//}
+	
+//}
 	
 void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
 	

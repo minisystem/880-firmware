@@ -12,6 +12,7 @@
 #include "sequencer.h"
 #include "switches.h"
 
+
 uint8_t spi_data[9] = {0};
 uint8_t spi_current_switch_data[5] = {0};
 uint8_t spi_previous_switch_data[5] = {0};

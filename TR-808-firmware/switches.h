@@ -23,7 +23,7 @@
 #define	MODE_SW	32
 #define	FILL_SW	33
 #define	CLEAR_SW	34
-#define	INST_AC_1_SW	16
+#define	INST_AC_1_SW	16 //subtract NUM_INST to get 0 index for AC (1/0) to OH (16/15)
 #define	INST_BD_2_SW	17
 #define	INST_SD_3_SW	18
 #define	STEP_9_SW	8
@@ -56,6 +56,7 @@ enum {
 #define EMPTY 255 //quick and dirty null value	
 
 #define NUM_BUTTONS	35 //use sizeof of button array to increase flexibility
+#define NUM_INST 16 //handily the number of instruments and also the offset from 0 of the INST_AC_1_SW
 
 struct button {
 	
@@ -77,6 +78,9 @@ extern uint8_t previous_start_stop_tap_state;
 void parse_switch_data(void);
 
 void check_start_stop_tap(void);
+
+uint8_t read_track_switches(void);
+void test_update_track_leds(void);
 
 void check_inst_switches(void);	
 

@@ -117,7 +117,47 @@ void check_start_stop_tap(void) {
 
 	
 }
-	
+
+uint8_t read_track_switches(void) {
+ 
+	//if (button[INST_AC_1_SW].state) {
+  		//button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
+		//return AC;
+    //}
+    
+    for (int i = INST_AC_1_SW; i <= INST_CH_12_SW; i++) { //scan AC to CH
+      	
+      	if (button[i].state) {
+        	
+        	button[i].state ^= button[i].state;
+			return i - NUM_INST;  
+        }
+    } 
+    
+    return 255;                     
+  
+}  
+
+void test_update_track_leds(void) {
+ 
+	uint8_t track_inst = read_track_switches();
+  
+	if (track_inst != 255) {
+		turn_off_all_inst_leds();
+		sequencer.current_rhythm_track = track_inst;
+		if (track_inst == 0) {
+			turn_on(ACCENT_1_LED);
+			
+		} else {
+			
+			turn_on(drum_hit[track_inst-1].led_index);
+      
+		}            
+    
+	}    
+  
+}  
+	 
 void check_inst_switches(void) {
 	
 	
@@ -212,25 +252,25 @@ void check_inst_switches(void) {
 								//alternative drum hits are offset by 9 places in drum_hit array
 								sequencer.trigger_2 = i - INST_BD_2_SW + 9;
 								
-								} else {
+							} else {
 								sequencer.trigger_2 = i - INST_BD_2_SW;
 							}
 							
 							
 							} else {
 							
-							if ((sequencer.trigger_2 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+								if ((sequencer.trigger_2 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
 
-								sequencer.trigger_2 = MA;
+									sequencer.trigger_2 = MA;
 								
 								} else {
-								sequencer.trigger_2 = i - INST_BD_2_SW; //inst index starts with BD = 0
-							}
+									sequencer.trigger_2 = i - INST_BD_2_SW; //inst index starts with BD = 0
+								}
 							
 						}						
 					}
 					
-				} else {
+				} else { //no SHIFT, no ALT
 			
 					if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
 						//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
@@ -259,7 +299,7 @@ void check_inst_switches(void) {
 						
 						}
 					
-						} else {
+					} else {
 					
 						drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
 					

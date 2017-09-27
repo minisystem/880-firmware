@@ -93,6 +93,15 @@ ISR (TIMER2_COMPA_vect) {
 	flag.blink = 1;
 }
 
+ISR (TIMER3_COMPA_vect) {
+  
+  
+}
+
+ISR (TIMER4_COMPA_vect) {
+  
+  
+}
 
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
