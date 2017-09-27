@@ -145,17 +145,18 @@ switch (sequencer.mode) {
 		 for (int i = BD; i <= MA; i++) {
        
        
-		   if (drum_hit[i].muted) {
+			if (drum_hit[i].muted) {
          
 			 turn_on(drum_hit[i].led_index);
          
-			 } else {
+			} else {
          
-			 turn_off(drum_hit[i].led_index);
-			 }
-       
+				turn_off(drum_hit[i].led_index);
+			}
 		 }
-	  }} else {
+	  }
+    
+    } else {
      
 		 turn_on(drum_hit[sequencer.current_inst].led_index);
 	  }

@@ -336,17 +336,26 @@ void process_step(void){
 					}				
 				break;
 				
-				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+				case MANUAL_PLAY:
 					check_tap();
 					if (sequencer.SHIFT) break;
 					spi_data[LATCH_1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
 					spi_data[LATCH_1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
-					spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);
-					//spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));				
+			
+					spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8) | ((1<<sequencer.current_intro_fill) >> 8);								
 					spi_data[LATCH_0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern | 1 << sequencer.current_intro_fill) >> 8)); //little tricky to get the correct mask here
-				
+					
+					//spi_data[0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8) & ((1<<sequencer.current_intro_fill) >>8));// & ((1<<sequencer.current_intro_fill) >> 8));	
 				break;
 				
+				case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+					if (sequencer.SHIFT) break;
+					spi_data[LATCH_1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
+					spi_data[LATCH_1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
+										
+					spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | ((1 << sequencer.new_pattern) >> 8);
+					spi_data[LATCH_0] &= ~(((1<<sequencer.current_step) >> 8) & ((1 << sequencer.new_pattern) >> 8)); //little tricky to get the correct mask here
+				break;	
 				
 			}
 
@@ -386,17 +395,27 @@ void process_step(void){
 				
 				break;
 				
-				case MANUAL_PLAY: case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+				case MANUAL_PLAY:
 					if (sequencer.SHIFT) { 
 						turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
 						turn_on(sequencer.roll_mode + ROLL_MIN);					
 					} else {
-						turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
+						//turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
 						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
 					}
 				break;
+				case COMPOSE_RHYTHM: case PLAY_RHYTHM:
+					if (sequencer.SHIFT) {
+						
+						
+					} else {
+						
+						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
+						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8;
+					}
 				
+				break;
 				
 			}
 
