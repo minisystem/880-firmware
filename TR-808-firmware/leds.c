@@ -222,7 +222,7 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
 	//memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
 	
-	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17);
+	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17); //2*17 - use constant here that actually means something
 
 	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
 		

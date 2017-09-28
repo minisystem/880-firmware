@@ -413,9 +413,13 @@ void process_step(void){
 				break;
 				case COMPOSE_RHYTHM: case PLAY_RHYTHM:
 					if (sequencer.SHIFT) {
-						
-						//turn on current measure here using step leds and pre-scale leds
-						
+						if (sequencer.ALT) {
+							
+							turn_on(sequencer.pattern_bank);
+							
+						} else {
+							//turn on current measure here using step leds and pre-scale leds
+						}
 					} else {
 						
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
@@ -538,6 +542,18 @@ void process_step(void){
 				}
 				break;
 			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+			
+				if (sequencer.SHIFT) {
+					
+					if (sequencer.ALT) {
+						
+						turn_on(sequencer.pattern_bank);
+						
+					} else {
+						
+						
+					}
+				}
 				break;		
 			//}
 			}
@@ -680,9 +696,24 @@ void update_step_board() { //should this be in switches.c ?
 			break;
 				
 		case COMPOSE_RHYTHM:
-		
-			sequencer.new_pattern = press;
-			if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
+			if (sequencer.SHIFT) { //need to handle bank changes here too.
+						
+				if (sequencer.ALT) {
+					if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
+
+						turn_off(sequencer.pattern_bank);
+						sequencer.pattern_bank = press;
+						turn_on(sequencer.pattern_bank);
+						flag.pattern_change = 1;
+					}	
+				} else {
+					
+					//update track measure LEDs
+				}
+			} else {
+				sequencer.new_pattern = press;
+				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
+			}
 			break;
 				
 		case PATTERN_CLEAR:
@@ -779,13 +810,29 @@ void update_step_board() { //should this be in switches.c ?
 			
 				break;
 			case COMPOSE_RHYTHM:
+			
+				if (sequencer.SHIFT) {
+					if (sequencer.ALT) { //change pattenr bank
+						if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
+
+							turn_off(sequencer.pattern_bank);
+							sequencer.pattern_bank = press;
+							turn_on(sequencer.pattern_bank);
+							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+						}
+					} else {
+						
+						//update track measure LEDs
+					}
+				
+				} else {
 					sequencer.current_pattern = sequencer.new_pattern = press;
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;
 					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
 					clock.beat_counter = 0;
-		
+				}
 				break;	
 			}				
 		}			
