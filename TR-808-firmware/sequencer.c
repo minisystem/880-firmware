@@ -458,7 +458,7 @@ void process_step(void){
 
 			}
 					
-		} else { //LED behaviour when sequencer is not running
+		} else { //STOP LED behaviour when sequencer is not running
 					
 			spi_data[LATCH_1] = 0;
 			spi_data[LATCH_0] = 0;
@@ -476,12 +476,22 @@ void process_step(void){
 			}
 			switch (sequencer.mode) {
 			case MANUAL_PLAY:	
-				//if (sequencer.mode == MANUAL_PLAY) {
+				
+				if (sequencer.SHIFT) {	
 					
-				if (flag.intro) {
-					turn_on(sequencer.new_pattern);
+					if (sequencer.ALT) {
+						
+						turn_on(sequencer.pattern_bank);
+					}
+
 				} else {
-					turn_on(sequencer.current_intro_fill);						
+					
+					if (flag.intro) {
+						turn_on(sequencer.new_pattern);
+					} else {
+						turn_on(sequencer.current_intro_fill);						
+					}					
+					
 				}
 				break;
 			
@@ -709,7 +719,16 @@ void update_step_board() { //should this be in switches.c ?
 				}		
 				break;
 		
-			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+			case PLAY_RHYTHM:
+			
+				break;
+			case COMPOSE_RHYTHM:
+					sequencer.current_pattern = sequencer.new_pattern = press;
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+					sequencer.part_playing = FIRST;
+					sequencer.current_step = 0;
+					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
+					clock.beat_counter = 0;
 		
 				break;	
 			}				

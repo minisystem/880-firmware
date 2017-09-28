@@ -171,13 +171,13 @@ void check_inst_switches(void) {
 			
 			turn_off_all_inst_leds();
 			turn_on(ACCENT_1_LED);
-			(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 =AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
+			(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
 		}
 		return; //no multiple presses currently supported - if it's the accent button, then get the heck out of here?
 	}
 	
 	for (int i = INST_BD_2_SW; i <= INST_CH_12_SW; i++) { //scan BD to CH
-		
+		int drum_index = i - INST_BD_2_SW; //BD is 0, need to subtract INST_BD_2_SW offset so that drum_hit index is 0
 		if (button[i].state) {
 			
 			button[i].state ^= button[i].state; //toggle state
@@ -187,27 +187,27 @@ void check_inst_switches(void) {
 				turn_off_all_inst_leds(); 
 			
 			
-				if(drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+				if(drum_hit[drum_index].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
 				
 				
-					if (sequencer.current_inst == i - INST_BD_2_SW) {
+					if (sequencer.current_inst == drum_index) {
 						//alternative drum hits are offset by 9 places in drum_hit array
-						sequencer.current_inst = i - INST_BD_2_SW + 9;
+						sequencer.current_inst = drum_index + 9;
 					
 					} else {			
-						sequencer.current_inst = i - INST_BD_2_SW;
+						sequencer.current_inst = drum_index;
 					}
 				
 				
 				} else {
 				
-					if ((sequencer.current_inst == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+					if ((sequencer.current_inst == CP) && (drum_index == CP)) { //exception to handle CP/MA as they don't use a switch bit
 
 						sequencer.current_inst = MA;
 					
 					} else {
 					
-						sequencer.current_inst = i - INST_BD_2_SW; //inst index starts with BD = 0
+						sequencer.current_inst = drum_index; //inst index starts with BD = 0
 					}	
 				
 				}				
@@ -220,51 +220,51 @@ void check_inst_switches(void) {
 					turn_off_all_inst_leds();
 									
 					if (sequencer.intro_fill_var == 0) { //edit trigger 1				
-						if (drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+						if (drum_hit[drum_index].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
 										
 										
-							if (sequencer.trigger_1 == i - INST_BD_2_SW) {
+							if (sequencer.trigger_1 == drum_index) {
 								//alternative drum hits are offset by 9 places in drum_hit array
-								sequencer.trigger_1 = i - INST_BD_2_SW + 9;
+								sequencer.trigger_1 = drum_index + 9;
 											
 							} else {
-								sequencer.trigger_1 = i - INST_BD_2_SW;
+								sequencer.trigger_1 = drum_index;
 							}
 										
 										
 						} else {
 										
-							if ((sequencer.trigger_1 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+							if ((sequencer.trigger_1 == CP) && (drum_index == CP)) { //exception to handle CP/MA as they don't use a switch bit
 
 								sequencer.trigger_1 = MA;
 											
 							} else {								
-								sequencer.trigger_1 = i - INST_BD_2_SW; //inst index starts with BD = 0
+								sequencer.trigger_1 = drum_index; //inst index starts with BD = 0
 							}
 							
 						}
 					} else { //edit trigger 2. annoying duplication of code here, but use of bitfields prevent assigning pointer to whichever trigger is currently being edited.
 						
-						if (drum_hit[i - INST_BD_2_SW].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
+						if (drum_hit[drum_index].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
 							
 							
-							if (sequencer.trigger_2 == i - INST_BD_2_SW) {
+							if (sequencer.trigger_2 == drum_index) {
 								//alternative drum hits are offset by 9 places in drum_hit array
-								sequencer.trigger_2 = i - INST_BD_2_SW + 9;
+								sequencer.trigger_2 = drum_index + 9;
 								
 							} else {
-								sequencer.trigger_2 = i - INST_BD_2_SW;
+								sequencer.trigger_2 = drum_index;
 							}
 							
 							
 							} else {
 							
-								if ((sequencer.trigger_2 == CP) && (i - INST_BD_2_SW == CP)) { //exception to handle CP/MA as they don't use a switch bit
+								if ((sequencer.trigger_2 == CP) && (drum_index == CP)) { //exception to handle CP/MA as they don't use a switch bit
 
 									sequencer.trigger_2 = MA;
 								
 								} else {
-									sequencer.trigger_2 = i - INST_BD_2_SW; //inst index starts with BD = 0
+									sequencer.trigger_2 = drum_index; //inst index starts with BD = 0
 								}
 							
 						}						
@@ -272,43 +272,43 @@ void check_inst_switches(void) {
 					
 				} else { //no SHIFT, no ALT
 			
-					if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (i - INST_BD_2_SW == CP)) { //need to handle toggling between instrument
+					if (drum_hit[i-INST_BD_2_SW].switch_bit != NO_SWITCH || (drum_index == CP)) { //need to handle toggling between instrument
 						//maybe evaluate the two drum states as 00, 01, 10, 11 and then use switch case
-						uint8_t mute_state = (drum_hit[i - INST_BD_2_SW].muted) | (drum_hit[i - INST_BD_2_SW + 9].muted << 1);
+						uint8_t mute_state = (drum_hit[drum_index].muted) | (drum_hit[drum_index + 9].muted << 1);
 						switch (mute_state) {
 						
 							case 0:
-							drum_hit[i - INST_BD_2_SW].muted = 1;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+							drum_hit[drum_index].muted = 1;
+							drum_hit[drum_index + 9].muted = 0;
 							break;
 						
 							case 1:
-							drum_hit[i - INST_BD_2_SW].muted = 0;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+							drum_hit[drum_index].muted = 0;
+							drum_hit[drum_index + 9].muted = 1;
 							break;
 						
 							case 2:
-							drum_hit[i - INST_BD_2_SW].muted = 1;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 1;
+							drum_hit[drum_index].muted = 1;
+							drum_hit[drum_index + 9].muted = 1;
 							break;
 						
 							case 3:
-							drum_hit[i - INST_BD_2_SW].muted = 0;
-							drum_hit[i - INST_BD_2_SW + 9].muted = 0;
+							drum_hit[drum_index].muted = 0;
+							drum_hit[drum_index + 9].muted = 0;
 							break;
 						
 						}
 					
 					} else {
 					
-						drum_hit[i - INST_BD_2_SW].muted ^= 1<<0; //toggle drum mute
+						drum_hit[drum_index].muted ^= 1<<0; //toggle drum mute
 					
 					}
 				}
 			
 			}
 						
-				//return; //could break out here and not bother scanning everything - means only one button press can be detected
+				return; //could break out here and not bother scanning everything - means only one button press can be detected
 		}
 		
 	}
@@ -358,7 +358,7 @@ void check_clear_switch(void) {
 				TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
 				TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
 				TCCR2B |=  (1<<WGM22);
-				OCR2A = 140;
+				OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
 				
 				if (flag.blink) {
 					flag.blink = 0;

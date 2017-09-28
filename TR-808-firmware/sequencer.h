@@ -89,7 +89,6 @@ struct rhythm_track { //maybe don't need 64 patterns in RAM, just current patter
 	
 	uint8_t current_pattern:4;
 	uint8_t current_bank:4;
-	uint8_t current_variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
 	uint8_t length:7; //need to know when we've hit last measure of rhythm track
 	
 	

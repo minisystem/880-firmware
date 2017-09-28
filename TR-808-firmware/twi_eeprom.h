@@ -33,7 +33,6 @@ typedef struct {
 	
 	uint8_t pattern_num:4;
 	uint8_t bank:4;
-	uint8_t variation:1;
 	uint8_t length:7; //this is only required once per rhythm track, but 
 	
 	
