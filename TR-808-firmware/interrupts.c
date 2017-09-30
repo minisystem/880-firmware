@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 
 #include "drums.h"
+#include "leds.h"
 #include "spi.h"
 #include "clock.h"
 #include "sequencer.h"

@@ -74,6 +74,8 @@ struct led led[NUM_LEDS] = { //any way to put this in PROGMEM?
 	
 };
 
+uint8_t track_led[NUM_TRACKS] = {ACCENT_1_LED, BD_2_LED, SD_3_LED, LT_4_LED, MT_5_LED, HT_6_LED, RS_7_LED, CP_8_LED, CB_9_LED, CY_10_LED, OH_11_LED, CH_12_LED};
+
 void turn_on(uint8_t led_index) {
 	
 	spi_data[led[led_index].spi_byte] |= led[led_index].spi_bit;
@@ -144,57 +146,68 @@ void show_mutes(void) {
 }
 
 void update_inst_leds(void) {
+	
+	
   
-switch (sequencer.mode) {
+	switch (sequencer.mode) {
  
- case PATTERN_CLEAR: case FIRST_PART: case SECOND_PART:
+	 case PATTERN_CLEAR: case FIRST_PART: case SECOND_PART:
  
-	 if (sequencer.SHIFT) {
+		 if (sequencer.SHIFT) {
    
-		if (sequencer.ALT) { //show trigger assignment
+			if (sequencer.ALT) { //show trigger assignment
      
-			 turn_off_all_inst_leds();
-			 (sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
+				 turn_off_all_inst_leds();
+				 (sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
      
-		} else { //show muted instruments
+			} else { //show muted instruments
+				show_mutes();
+		
+		  }
+    
+		} else {
+     
+			 turn_on(drum_hit[sequencer.current_inst].led_index);
+		  }
+     
+	 break;
+ 
+	 case MANUAL_PLAY:
+		if (sequencer.SHIFT) {
+		
 			show_mutes();
 		
-	  }
-    
-    } else {
-     
-		 turn_on(drum_hit[sequencer.current_inst].led_index);
-	  }
-     
- break;
+		} else {
+			
+			turn_on(drum_hit[sequencer.current_inst].led_index);
+		}
  
- case MANUAL_PLAY:
-	if (sequencer.SHIFT) {
+	 break;
+ 
+ 
+	 case PLAY_RHYTHM:
+		if (sequencer.SHIFT) {
 		
-		show_mutes();
+			show_mutes();
+		} else {
+			
+			turn_on(track_led[sequencer.current_rhythm_track]);
+		}
 		
-	}
+	 break;
  
- break;
- 
- 
- case PLAY_RHYTHM:
-	if (sequencer.SHIFT) {
+	 case COMPOSE_RHYTHM:
+		if (sequencer.SHIFT) {
 		
-		show_mutes();
-	}
-	//turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
- break;
- 
- case COMPOSE_RHYTHM:
-	if (sequencer.SHIFT) {
+			show_mutes();
+		} else {
+			
+		turn_on(track_led[sequencer.current_rhythm_track]);
+		}
 		
-		show_mutes();
-	}
-	//turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
- break;
+	 break;
   
-} 
+	} 
 }
 	
 //if (sequencer.SHIFT) {

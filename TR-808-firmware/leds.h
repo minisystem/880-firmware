@@ -2,6 +2,7 @@
 #define LEDS_H
 
 #include "hardware.h"
+#include "sequencer.h"
 //define LED indices
 #define	STEP_9_LED	8
 #define	STEP_10_LED	9
@@ -61,7 +62,6 @@
 
 #define NUM_LEDS 55
 
-
 struct led{
 	
 	uint8_t spi_bit;
@@ -73,6 +73,7 @@ struct led{
 	};
 
 extern struct led led[NUM_LEDS];
+extern uint8_t track_led[NUM_TRACKS];
 	
 void turn_on(uint8_t led_index);
 void turn_off(uint8_t led_index);

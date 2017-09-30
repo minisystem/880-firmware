@@ -14,8 +14,8 @@ switches.d switches.o: .././switches.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
- .././hardware.h .././switches.h .././spi.h .././sequencer.h .././mode.h \
- .././drums.h .././leds.h .././clock.h .././midi.h \
+ .././hardware.h .././leds.h .././sequencer.h .././mode.h .././drums.h \
+ .././switches.h .././spi.h .././clock.h .././midi.h \
  .././xnormidi-develop/midi_device.h \
  .././xnormidi-develop/midi_function_types.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\4.9.2\include\stdbool.h \
@@ -55,9 +55,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 .././hardware.h:
 
-.././switches.h:
-
-.././spi.h:
+.././leds.h:
 
 .././sequencer.h:
 
@@ -65,7 +63,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 .././drums.h:
 
-.././leds.h:
+.././switches.h:
+
+.././spi.h:
 
 .././clock.h:
 

@@ -15,8 +15,7 @@ twi_eeprom.d twi_eeprom.o: .././twi_eeprom.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\4.9.2\include\stddef.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
- .././twi_eeprom.h .././sequencer.h .././mode.h .././drums.h \
- .././hardware.h .././leds.h .././twi.h
+ .././twi_eeprom.h .././sequencer.h .././mode.h .././drums.h .././twi.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
 
@@ -57,9 +56,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././mode.h:
 
 .././drums.h:
-
-.././hardware.h:
-
-.././leds.h:
 
 .././twi.h:

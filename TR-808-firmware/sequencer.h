@@ -28,6 +28,8 @@
 
 #define NUM_PATTERNS 64 //number of patterns per rhythm track
 
+#define NUM_TRACKS 12 //12 rhythm tracks
+
 //define pre-scale ppqn dividers
 #define NUM_PRE_SCALES 4
 #define PRE_SCALE_LED_MASK 0b11000011

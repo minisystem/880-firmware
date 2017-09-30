@@ -1,9 +1,6 @@
 #ifndef DRUMS_H
 #define DRUMS_H
 
-#include "hardware.h"
-#include "leds.h"
-
 #define NO_SWITCH 255 //null value for drums that don't need any switching done
 
 enum drum { //index for drum hits

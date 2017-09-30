@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <string.h>
 #include "hardware.h"
+#include "leds.h"
 #include "switches.h"
 #include "spi.h"
 #include "sequencer.h"
@@ -163,16 +164,36 @@ void check_inst_switches(void) {
 	
 	if (button[INST_AC_1_SW].state) {
 		button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
-		if (!sequencer.SHIFT) {
-			turn_off_all_inst_leds();
-			turn_on(ACCENT_1_LED);
-			sequencer.current_inst = AC;
-		} else if (sequencer.ALT) {
+		
+		switch(sequencer.mode) {
+		
+		case FIRST_PART: case SECOND_PART:	
 			
-			turn_off_all_inst_leds();
+			if (!sequencer.SHIFT) {
+				turn_off_all_inst_leds();
+				turn_on(ACCENT_1_LED);
+				sequencer.current_inst = AC;
+			} else if (sequencer.ALT) {
+			
+				turn_off_all_inst_leds();
+				turn_on(ACCENT_1_LED);
+				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
+			}
+		break;
+		
+		case PLAY_RHYTHM: case COMPOSE_RHYTHM:
+			
+			if (sequencer.current_rhythm_track != 0) {
+				//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
+				
+			}
+			sequencer.current_rhythm_track = 0;
 			turn_on(ACCENT_1_LED);
-			(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
+			
+		
+		break;			
 		}
+
 		return; //no multiple presses currently supported - if it's the accent button, then get the heck out of here?
 	}
 	
@@ -198,7 +219,13 @@ void check_inst_switches(void) {
 					
 				} else {
 					
-					
+					if (sequencer.current_rhythm_track != (drum_index + 1)) {
+						
+						//do some stuff to swtich track change - like update current measure based on track change and set new pattern flag
+					}
+					turn_off(track_led[sequencer.current_rhythm_track]); //want to immediately refresh LEDs, rather than rely on sequencer to turn them off
+					sequencer.current_rhythm_track = drum_index + 1;//+1 because AC is 0 and BD is 1 in track_led array
+					turn_on(track_led[sequencer.current_rhythm_track]); 
 				}
 			
 			default:
@@ -344,47 +371,6 @@ void check_intro_fill_variation_switch(void) {
 		}
 		
 	}
-	
-	
-	//currently just some test code for testing EEPROM
-	//pattern_data eeprom_pattern;
-	//if (button[IF_VAR_SW].state) {
-		//button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
-		//
-		//if (sequencer.SHIFT) {
-			////PORTE |= (1<<PE0);
-			//eeprom_pattern = read_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE);
-			//sequencer.pattern[VAR_A] = eeprom_pattern.variation_a;
-			//sequencer.pattern[VAR_B] = eeprom_pattern.variation_b;
-			//sequencer.step_num[FIRST] = eeprom_pattern.step_num[FIRST];
-			//sequencer.step_num[SECOND] = eeprom_pattern.step_num[SECOND];
-			//sequencer.pre_scale = eeprom_pattern.pre_scale;
-			//sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
-			//update_step_led_mask();
-			////PORTE &= ~(1<<PE0);
-			//turn_on(IF_VAR_B_LED);
-			//turn_off(IF_VAR_A_LED);
-			//
-		//} else {
-			//
-			//
-			////pattern_data eeprom_pattern;
-			//eeprom_pattern.variation_a = sequencer.pattern[VAR_A];
-			//eeprom_pattern.variation_b = sequencer.pattern[VAR_B];
-			//eeprom_pattern.step_num[FIRST] = sequencer.step_num[FIRST];
-			//eeprom_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
-			//eeprom_pattern.pre_scale = sequencer.pre_scale;
-			////struct pattern *pattern_buffer = &sequencer.pattern[0];
-			////PORTE |= (1<<PE0);
-			//write_pattern(sequencer.current_pattern*PAGES_PER_PATTERN*PAGE_SIZE, &eeprom_pattern);
-			////write_current_pattern(sequencer.current_pattern);
-			////PORTE &= ~(1<<PE0);
-			//turn_on(IF_VAR_A_LED);
-			//turn_off(IF_VAR_B_LED);
-		//}
-//
-	//}
-	
 	
 }
 
