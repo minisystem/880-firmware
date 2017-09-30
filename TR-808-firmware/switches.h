@@ -43,6 +43,8 @@
 #define	STEP_7_SW	6
 #define	STEP_8_SW	7
 
+#define SW_DRUM_OFFSET 9 //switched drums are offset by 9 in drum_hits array
+
 #define SHIFT_BIT 1 //bit position in spi data byte
 #define CLEAR_BIT 4 
 #define ALT_BIT  2
@@ -83,6 +85,14 @@ uint8_t read_track_switches(void);
 void test_update_track_leds(void);
 
 void check_inst_switches(void);	
+
+void assign_triggers(uint8_t drum_index);
+
+void assign_mutes(uint8_t drum_index);
+
+void process_inst_press(uint8_t drum_index);
+
+void process_track_press(void);
 
 void check_variation_switches(void);
 
