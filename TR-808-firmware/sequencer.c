@@ -22,7 +22,7 @@
 #include "xnormidi-develop/bytequeue/bytequeue.h"
 
 struct sequencer sequencer;
-//struct rhythm_track rhythm_track;//[NUM_PATTERNS];
+struct rhythm_track rhythm_track;//[NUM_PATTERNS];
 volatile struct flag flag;
 //pattern_data next_pattern;
 //uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
@@ -1024,7 +1024,15 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	//TRIGGER_OUT &= TRIGGER_OFF;
 }
 
-void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num) {
+void read_rhythm_track(void) {
+	
+	rhythm_track_data current_track;
+	
+	current_track = eeprom_get_rhythm_track(sequencer.current_rhythm_track);
+	
+	//memcpy(rhythm_track.patterns, current_track.patterns, sizeof(rhythm_track.patterns));
+	
+	//current_track.patterns = rhythm_track.patterns;
 	
 }
 void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num) {

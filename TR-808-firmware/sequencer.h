@@ -87,16 +87,24 @@ struct pattern { //current pattern will be loaded into ram from eeprom. changing
 	//uint16_t step_led_mask[17];
 };
 
-struct rhythm_track { //maybe don't need 64 patterns in RAM, just current pattern and address of next pattern? Just have pattern_position to tell it where to get the next pattern in memory: pattern_position + 1 up to NUM_PATTERNS
+struct track_pattern { //maybe don't need 64 patterns in RAM, just current pattern and address of next pattern? Just have pattern_position to tell it where to get the next pattern in memory: pattern_position + 1 up to NUM_PATTERNS
 	
 	uint8_t current_pattern:4;
 	uint8_t current_bank:4;
-	uint8_t length:7; //need to know when we've hit last measure of rhythm track
+	//uint8_t length:7; //need to know when we've hit last measure of rhythm track
 	
 	
 	};
-
 	
+struct rhythm_track {
+	
+	struct track_pattern patterns[NUM_PATTERNS];
+	uint8_t	length;
+	uint8_t current_measure;
+	
+	};	
+
+extern struct rhythm_track rhythm_track;	
 	
 //struct rhythm_track {
 //
@@ -135,9 +143,9 @@ struct sequencer {
 	uint8_t current_pattern:4;
 	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
 	uint8_t current_intro_fill:4;
-	uint8_t current_measure; //master measure counter used for counting measures for AUTO FILL ins as well as rhythm track measures
+	uint8_t current_measure:6; //counter used for counting measures for AUTO FILL INs
 	uint8_t current_rhythm_track:4;
-	struct rhythm_track rhythm_track;
+	//struct rhythm_track rhythm_track;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
 	uint8_t trigger_1:5; //trigger assignments from AC, BD-CH - 17
@@ -167,8 +175,8 @@ void toggle_variation(void);
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 
-void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
+//void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
 void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
-
+void read_rhythm_track(void);
 
 #endif 

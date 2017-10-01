@@ -88,7 +88,7 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 	while(TWI_busy);
 	int num_pages = sizeof(pattern_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
 	memory_address = memory_address + (bank*BANK_SIZE);
-	//write 32 byte pages of data
+	//write 128 byte pages of data
 	for (int i = 0; i < num_pages; ++i) {
 		
 		p_write_pattern->high_byte = (memory_address >> 8);
@@ -120,7 +120,7 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 	//
 //}
 
-rhythm_track_data read_rhythm_track(uint16_t memory_address) {
+rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	
 	return(*p_read_rhythm_track);
 }
