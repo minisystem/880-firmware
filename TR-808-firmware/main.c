@@ -46,7 +46,7 @@ void refresh(void) {
 	check_clear_switch();
 	check_intro_fill_variation_switch();
 	check_variation_switches();
-	update_prescale();
+	update_prescale(); //why does this need to be called constantly?
 //	if (sequencer.mode == PLAY_RHYTHM || sequencer.mode == COMPOSE_RHYTHM ) {
     
 //    test_update_track_leds();
@@ -55,6 +55,7 @@ void refresh(void) {
 	check_inst_switches();
 	update_inst_leds();	//updating too frequently? Not a functional problem yet, but unecessary overhead?
 //  }  
+	check_write_sw();
 	update_step_board();
 	process_step();
 	update_spi();

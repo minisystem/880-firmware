@@ -125,7 +125,7 @@ rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	return(*p_read_rhythm_track);
 }
 
-void write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) {
+void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) {
 	
 	
 }

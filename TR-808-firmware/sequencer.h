@@ -122,6 +122,7 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
+	uint8_t TAP_HELD:1; //is the TAP button beign held?
 	uint8_t ALT:1; //alternative function mode
 	uint8_t shuffle_amount:3;
 	uint8_t new_shuffle_amount:3;
@@ -172,11 +173,13 @@ void update_shuffle(uint8_t shuffle_amount);
 void check_tap(void);
 void toggle_variation(void);
 
+void show_current_measure(void);
+
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 
 //void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
-void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
+void write_rhythm_track(void);
 void read_rhythm_track(void);
 
 #endif 

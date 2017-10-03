@@ -78,9 +78,34 @@ void parse_switch_data(void) {
 	
 }	
 
+void check_write_sw(void) {
+	
+	if (button[WRITE_SW].state && sequencer.mode == COMPOSE_RHYTHM) {
+		button[WRITE_SW].state ^= button[WRITE_SW].state;
+		if (sequencer.ALT) {
+			//return;
+			//if (rhythm_track.current_measure > 0) rhythm_track.current_measure--; //decrement current measure 
+			//flag.pattern_change = 1; //
+			
+		} else {
+			
+			rhythm_track.current_measure++; //advance measure
+			write_rhythm_track(); //write current pattern to eeprom
+			
+		}
+
+		
+	}
+	
+	
+}
+
 void check_start_stop_tap(void) {
 	//if (sequencer.mode == PATTERN_CLEAR) return; //do nothing
 	current_start_stop_tap_state = PINB;
+	
+	sequencer.TAP_HELD = (current_start_stop_tap_state >> TAP) & 1;
+	
 	current_start_stop_tap_state ^= previous_start_stop_tap_state;
 	previous_start_stop_tap_state ^= current_start_stop_tap_state;
 	current_start_stop_tap_state &= previous_start_stop_tap_state;
@@ -360,9 +385,10 @@ void check_intro_fill_variation_switch(void) {
 	if (button[IF_VAR_SW].state) {
 		
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
-		if (sequencer.SHIFT) {
-			
-			return;
+		if (sequencer.SHIFT && (sequencer.mode == COMPOSE_RHYTHM)) {
+			if (rhythm_track.current_measure > 0) rhythm_track.current_measure--; //decrement current measure
+			flag.pattern_change = 1; //
+			//return;
 			
 		} else {
 			toggle(IF_VAR_A_LED);

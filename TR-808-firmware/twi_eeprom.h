@@ -29,8 +29,7 @@ typedef struct {
 	
 } pattern_data;
 
-//define format of eeprom rhythm track data block:
-
+//Define format of eeprom rhythm track data block:
 typedef struct {
 	
 	struct track_pattern patterns[NUM_PATTERNS];
@@ -49,8 +48,8 @@ pattern_data read_pattern(uint16_t memory_address, uint8_t bank);
 void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data);
 //void write_bytes(uint16_t memory_address, (char *)w_data, int num_bytes_to_write);
 
-rhythm_track_data eeprom_get_rhythm_track(uint16_t memory_address);
-void write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
+rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address);
+void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
 
 void handle_TWI_result(uint8_t return_code);
 

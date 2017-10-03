@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include <avr/io.h>
+#include "string.h"
 #include "sequencer.h"
 #include "mode.h"
 #include "leds.h"
@@ -45,6 +46,12 @@ void update_tempo(void) {
 	}
 	
 	clock.previous_rate = clock.rate;
+	
+}
+
+void show_current_measure(void) {
+	
+	turn_on(rhythm_track.current_measure);
 	
 }
 
@@ -266,6 +273,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		
 			flag.pattern_change = 0;
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
+			//if (sequencer.mode == PLAY_RHYTHM) {
+				//sequencer.pattern_bank = rhythm_track.patterns[rhythm_track.current_measure].current_bank;
+				//sequencer.new_pattern = rhythm_track.patterns[rhythm_track.current_measure].current_pattern;
+				//rhythm_track.current_measure++; //advance current measure	
+			//}
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 			sequencer.variation = VAR_A;
@@ -273,6 +285,8 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
+			
+
 				
 		} else if (sequencer.mode == MANUAL_PLAY) {
 			
@@ -349,7 +363,7 @@ void process_step(void){
 				break;
 				
 				case COMPOSE_RHYTHM: case PLAY_RHYTHM:
-					if (sequencer.SHIFT) break;
+					if (sequencer.ALT || sequencer.TAP_HELD) break;
 					spi_data[LATCH_1] = (1 << sequencer.current_step) | (1<<sequencer.new_pattern);
 					spi_data[LATCH_1] &= ~(1<< sequencer.current_step & (1<<sequencer.new_pattern));
 										
@@ -412,14 +426,16 @@ void process_step(void){
 					}
 				break;
 				case COMPOSE_RHYTHM: case PLAY_RHYTHM:
-					if (sequencer.SHIFT) {
-						if (sequencer.ALT) {
+					if (sequencer.ALT && (!sequencer.SHIFT)) {
+						//if (sequencer.ALT) {
 							
-							turn_on(sequencer.pattern_bank);
+						turn_on(sequencer.pattern_bank);
 							
-						} else {
-							//turn on current measure here using step leds and pre-scale leds
-						}
+						//} else {
+							
+						//}
+					} else if (sequencer.TAP_HELD) {
+						show_current_measure();
 					} else {
 						//turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
@@ -543,22 +559,21 @@ void process_step(void){
 				break;
 			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
 			
-				if (sequencer.SHIFT) {
+				if (sequencer.ALT && (!sequencer.SHIFT)) {
 					
-					if (sequencer.ALT) {
+					turn_on(sequencer.pattern_bank);						
 						
-						turn_on(sequencer.pattern_bank);
-						
-					} else {
-						
-						
-					}
+				} else if (sequencer.TAP_HELD) {
+					show_current_measure();
+				} else {
+					
+					
 				}
 				break;		
 			//}
 			}
 			
-			if ((clock.beat_counter <2) && (!sequencer.SHIFT)) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
+			if ((clock.beat_counter <2) && ((!sequencer.SHIFT) && (!sequencer.TAP_HELD) && (!sequencer.ALT))) { //1/8 note, regardless of scale (based on original 808 behavior) - don't take this as gospel. may need to adjust with different pre-scales
 						
 				if (sequencer.variation_mode == VAR_AB) sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;	//turn on VAR_B LED for flashing to indicate A/B mode			
 				turn_on(sequencer.new_pattern); //eventually need to turn on current pattern LED in pattern mode - other modes will require different behavior to be coded
@@ -696,20 +711,20 @@ void update_step_board() { //should this be in switches.c ?
 			break;
 				
 		case COMPOSE_RHYTHM:
-			if (sequencer.SHIFT) { //need to handle bank changes here too.
+			if (sequencer.ALT && (!sequencer.SHIFT)) { //need to handle bank changes here too.
 						
-				if (sequencer.ALT) {
-					if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
+	
+				if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
-						turn_off(sequencer.pattern_bank);
-						sequencer.pattern_bank = press;
-						turn_on(sequencer.pattern_bank);
-						flag.pattern_change = 1;
-					}	
-				} else {
-					
-					//update track measure LEDs
-				}
+					turn_off(sequencer.pattern_bank);
+					sequencer.pattern_bank = press;
+					turn_on(sequencer.pattern_bank);
+					flag.pattern_change = 1;
+				}	
+ 
+			} else if (sequencer.TAP_HELD) {
+				show_current_measure();
+			
 			} else {
 				sequencer.new_pattern = press;
 				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
@@ -811,20 +826,18 @@ void update_step_board() { //should this be in switches.c ?
 				break;
 			case COMPOSE_RHYTHM:
 			
-				if (sequencer.SHIFT) {
-					if (sequencer.ALT) { //change pattenr bank
-						if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
+				if (sequencer.ALT && (!sequencer.SHIFT)) { //change pattern bank
+					
+					if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
-							turn_off(sequencer.pattern_bank);
-							sequencer.pattern_bank = press;
-							turn_on(sequencer.pattern_bank);
-							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-						}
-					} else {
-						
-						//update track measure LEDs
+						turn_off(sequencer.pattern_bank);
+						sequencer.pattern_bank = press;
+						turn_on(sequencer.pattern_bank);
+						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					}
-				
+
+				} else if (sequencer.TAP_HELD) {
+					show_current_measure();
 				} else {
 					sequencer.current_pattern = sequencer.new_pattern = press;
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
@@ -1026,15 +1039,16 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 
 void read_rhythm_track(void) {
 	
-	rhythm_track_data current_track;
+	rhythm_track_data new_track;
 	
-	current_track = eeprom_get_rhythm_track(sequencer.current_rhythm_track);
+	new_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
-	//memcpy(rhythm_track.patterns, current_track.patterns, sizeof(rhythm_track.patterns));
+	memcpy(rhythm_track.patterns, new_track.patterns, sizeof(rhythm_track.patterns));
+	rhythm_track.length = new_track.length;
 	
-	//current_track.patterns = rhythm_track.patterns;
+	flag.pattern_change = 1; //but do we immediately read new pattern? Only when stopped. If running, then wait for current measure to finish?
 	
 }
-void write_current_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num) {
+void write_rhythm_track(void) {
 	
 }

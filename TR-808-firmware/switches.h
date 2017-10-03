@@ -8,7 +8,7 @@
 #define SWITCHES_H
 
 #define	INST_CH_12_SW	27
-#define	SHIFT_SW	28
+#define	WRITE_SW	28 //write/next switch - same as SHIFT switch, but read as a single press
 #define	IF_VAR_SW	29
 #define	INST_LT_4_SW	19
 #define	INST_MT_5_SW	20
@@ -80,6 +80,8 @@ extern uint8_t previous_start_stop_tap_state;
 void parse_switch_data(void);
 
 void check_start_stop_tap(void);
+
+void check_write_sw(void);
 
 uint8_t read_track_switches(void);
 void test_update_track_leds(void);
