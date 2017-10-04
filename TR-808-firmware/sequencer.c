@@ -711,7 +711,7 @@ void update_step_board() { //should this be in switches.c ?
 			break;
 				
 		case COMPOSE_RHYTHM:
-			if (sequencer.ALT && (!sequencer.SHIFT)) { //need to handle bank changes here too.
+			if (sequencer.ALT && (!sequencer.SHIFT)) {
 						
 	
 				if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
@@ -722,8 +722,6 @@ void update_step_board() { //should this be in switches.c ?
 					flag.pattern_change = 1;
 				}	
  
-			} else if (sequencer.TAP_HELD) {
-				show_current_measure();
 			
 			} else {
 				sequencer.new_pattern = press;
@@ -836,8 +834,7 @@ void update_step_board() { //should this be in switches.c ?
 						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					}
 
-				} else if (sequencer.TAP_HELD) {
-					show_current_measure();
+
 				} else {
 					sequencer.current_pattern = sequencer.new_pattern = press;
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
@@ -925,9 +922,10 @@ void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1
 		flag.pre_scale_change = flag.pattern_edit = 1;
 		//don't change clock divider here - can cause ppqn overflow, so only change divider on ppqn match event
 		//clock.divider = pre_scale[sequencer.pre_scale];
-		update_prescale_leds();
+		//update_prescale_leds();
 
 	}
+	update_prescale_leds(); //this is not efficient - need to reconcile updating pre_scale and updating pre_scale LEDs with TAP_HELD displyaing current rhythm track pattern
 }
 
 void check_tap(void) { //this is kind of inefficient - not generalized enough. maybe better to check flag.tap in different contexts?

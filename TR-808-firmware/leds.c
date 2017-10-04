@@ -277,7 +277,27 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 void update_prescale_leds(void) {
 	
 	spi_data[LATCH_5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
-	spi_data[LATCH_5] |= (1<< (sequencer.pre_scale +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)	
+	if (sequencer.TAP_HELD && ((sequencer.mode == COMPOSE_RHYTHM) || (sequencer.mode == PLAY_RHYTHM))) {
+		
+		if (rhythm_track.current_measure < 16) {
+			
+			spi_data[LATCH_5] |= (1<<2);
+			
+		} else if (rhythm_track.current_measure < 32) {
+			spi_data[LATCH_5] |= (1<<3);
+			
+		} else if (rhythm_track.current_measure < 48) {
+			spi_data[LATCH_5] |= (1<<4);
+		} else {
+			
+			spi_data[LATCH_5] |= (1<<5);
+		}
+		
+		
+	} else {
+		spi_data[LATCH_5] |= (1<< (sequencer.pre_scale +2)); //need 2 bit offset on latch 5 (pre-scale leds are bit 2-5)	
+	
+	}
 }
 
 void refresh_step_leds(void) {

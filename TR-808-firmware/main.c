@@ -46,7 +46,7 @@ void refresh(void) {
 	check_clear_switch();
 	check_intro_fill_variation_switch();
 	check_variation_switches();
-	update_prescale(); //why does this need to be called constantly?
+	update_prescale(); //why does this need to be called constantly? At the moment, yes. But could just call when pre-scale is changed?
 //	if (sequencer.mode == PLAY_RHYTHM || sequencer.mode == COMPOSE_RHYTHM ) {
     
 //    test_update_track_leds();
