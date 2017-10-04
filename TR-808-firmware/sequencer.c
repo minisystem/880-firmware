@@ -51,7 +51,25 @@ void update_tempo(void) {
 
 void show_current_measure(void) {
 	
-	turn_on(rhythm_track.current_measure);
+	
+	
+	if (rhythm_track.current_measure < 16) {
+		
+			turn_on(rhythm_track.current_measure);
+		
+		} else if (rhythm_track.current_measure < 32) {
+		
+			turn_on(rhythm_track.current_measure - 16);
+		
+		} else if (rhythm_track.current_measure < 48) {
+			
+			turn_on(rhythm_track.current_measure - 32);
+		} else {
+		
+			turn_on(rhythm_track.current_measure - 48);
+	}
+	
+	
 	
 }
 
@@ -925,7 +943,7 @@ void update_prescale(void) { //should PRE_SCALE be updated in modes other than 1
 		//update_prescale_leds();
 
 	}
-	update_prescale_leds(); //this is not efficient - need to reconcile updating pre_scale and updating pre_scale LEDs with TAP_HELD displyaing current rhythm track pattern
+	update_prescale_leds(); //this is not efficient - need to reconcile updating pre_scale and updating pre_scale LEDs with TAP_HELD displaying current rhythm track pattern
 }
 
 void check_tap(void) { //this is kind of inefficient - not generalized enough. maybe better to check flag.tap in different contexts?
@@ -1041,6 +1059,8 @@ void read_rhythm_track(void) {
 	
 	new_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
+	//*rhythm_track.patterns = *new_track.patterns;
+	
 	memcpy(rhythm_track.patterns, new_track.patterns, sizeof(rhythm_track.patterns));
 	rhythm_track.length = new_track.length;
 	
@@ -1048,5 +1068,9 @@ void read_rhythm_track(void) {
 	
 }
 void write_rhythm_track(void) {
+	
+	rhythm_track_data track;
+	
+	
 	
 }

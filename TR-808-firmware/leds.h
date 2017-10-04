@@ -60,6 +60,11 @@
 #define	CB_9_LED	53
 #define	CY_10_LED	54
 
+#define PRE_SCALE_BIT_1		(1<<5) //facilites direct manipulation of spi latch 5 for setting pre-scale LEDs
+#define PRE_SCALE_BIT_2		(1<<4)
+#define PRE_SCALE_BIT_3		(1<<3)
+#define PRE_SCALE_BIT_4		(1<<2)
+#define PRE_SCALE_LED_MASK	0b11000011
 #define NUM_LEDS 55
 
 struct led{

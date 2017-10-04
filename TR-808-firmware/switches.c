@@ -89,7 +89,7 @@ void check_write_sw(void) {
 			
 		} else {
 			
-			rhythm_track.current_measure++; //advance measure
+			if ((++rhythm_track.current_measure) == NUM_PATTERNS) rhythm_track.current_measure = NUM_PATTERNS -1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
 			write_rhythm_track(); //write current pattern to eeprom
 			
 		}

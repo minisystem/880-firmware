@@ -281,16 +281,16 @@ void update_prescale_leds(void) {
 		
 		if (rhythm_track.current_measure < 16) {
 			
-			spi_data[LATCH_5] |= (1<<2);
+			spi_data[LATCH_5] |= PRE_SCALE_BIT_1;
 			
 		} else if (rhythm_track.current_measure < 32) {
-			spi_data[LATCH_5] |= (1<<3);
+			spi_data[LATCH_5] |= PRE_SCALE_BIT_2;
 			
 		} else if (rhythm_track.current_measure < 48) {
-			spi_data[LATCH_5] |= (1<<4);
+			spi_data[LATCH_5] |= PRE_SCALE_BIT_3;
 		} else {
 			
-			spi_data[LATCH_5] |= (1<<5);
+			spi_data[LATCH_5] |= PRE_SCALE_BIT_4;
 		}
 		
 		

@@ -31,16 +31,22 @@ typedef struct {
 } WRITE_PATTERN;
 
 typedef struct {
+	uint8_t				high_byte;
+	uint8_t				low_byte;
+	rhythm_track_data	rhythm_track_data;
+	} WRITE_TRACK;
+
+typedef struct {
 	uint8_t     high_byte;
 	uint8_t     low_byte;
-} SET_PATTERN_ADDRESS;
+} SET_EEPROM_ADDRESS;
 
 
 // Create structure pointers for the TWI/I2C buffer
 WRITE_PATTERN            *p_write_pattern;
-SET_PATTERN_ADDRESS      *p_set_pattern_address;
+WRITE_TRACK				*p_write_track;
+SET_EEPROM_ADDRESS      *p_set_eeprom_address;
 pattern_data             *p_read_pattern;
-
 rhythm_track_data		 *p_read_rhythm_track;
 
 // Create TWI/I2C buffer, size to largest command
@@ -59,9 +65,13 @@ void eeprom_init(){
 	//sei();
 	
 	// Set our structure pointers to the TWI/I2C buffer
+	p_set_eeprom_address = (SET_EEPROM_ADDRESS *)TWI_buffer;
+	
 	p_write_pattern = (WRITE_PATTERN *)TWI_buffer;
-	p_set_pattern_address = (SET_PATTERN_ADDRESS *)TWI_buffer;
 	p_read_pattern = (pattern_data *)TWI_buffer;
+	
+	p_write_track = (WRITE_TRACK *)TWI_buffer;
+	p_read_rhythm_track = (rhythm_track_data *)TWI_buffer;
 	
 }
 
@@ -69,10 +79,10 @@ pattern_data read_pattern(uint16_t memory_address, uint8_t bank){
 	// send 'set memory address' command to eeprom and then read data
 	while(TWI_busy);
 	memory_address = memory_address + (bank*BANK_SIZE);
-	p_set_pattern_address->high_byte = (memory_address >> 8);
-	p_set_pattern_address->low_byte = memory_address;
+	p_set_eeprom_address->high_byte = (memory_address >> 8);
+	p_set_eeprom_address->low_byte = memory_address;
 	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
-	sizeof(SET_PATTERN_ADDRESS),     // number of bytes to write
+	sizeof(SET_EEPROM_ADDRESS),     // number of bytes to write
 	sizeof(pattern_data)             // number of bytes to read
 	);
 	
@@ -122,6 +132,21 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 
 rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	
+
+	// send 'set memory address' command to eeprom and then read data
+	while(TWI_busy);
+	memory_address = (memory_address*TRACK_SIZE) + RHYTHM_TRACK_MEMORY_OFFSET;
+	p_set_eeprom_address->high_byte = (memory_address >> 8);
+	p_set_eeprom_address->low_byte = memory_address;
+	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
+	sizeof(SET_EEPROM_ADDRESS),     // number of bytes to write
+	sizeof(rhythm_track_data)             // number of bytes to read
+	);
+		
+	// nothing else to do - wait for the data
+	while(TWI_busy);
+	// return the data
+		
 	return(*p_read_rhythm_track);
 }
 
