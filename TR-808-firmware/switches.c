@@ -90,6 +90,9 @@ void check_write_sw(void) {
 		} else {
 			
 			if ((++rhythm_track.current_measure) == NUM_PATTERNS) rhythm_track.current_measure = NUM_PATTERNS -1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
+			rhythm_track.patterns[rhythm_track.current_measure].current_bank = sequencer.pattern_bank;
+			rhythm_track.patterns[rhythm_track.current_measure].current_pattern = sequencer.current_pattern;
+			rhythm_track.length = rhythm_track.current_measure;
 			write_rhythm_track(); //write current pattern to eeprom
 			
 		}
@@ -209,7 +212,7 @@ void check_inst_switches(void) {
 		case PLAY_RHYTHM: case COMPOSE_RHYTHM:
 			
 			if (sequencer.current_rhythm_track != 0) {
-				//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
+				flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
 				
 			}
 			sequencer.current_rhythm_track = 0;
@@ -246,7 +249,7 @@ void check_inst_switches(void) {
 					
 					if (sequencer.current_rhythm_track != (drum_index + 1)) {//+1 because AC is 0 and BD is 1 in track_led array
 						
-						//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
+						flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
 					}
 					turn_off(track_led[sequencer.current_rhythm_track]); //want to immediately refresh LEDs, rather than rely on sequencer to turn them off
 					sequencer.current_rhythm_track = drum_index + 1;//+1 because AC is 0 and BD is 1 in track_led array

@@ -135,7 +135,7 @@ rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 
 	// send 'set memory address' command to eeprom and then read data
 	while(TWI_busy);
-	memory_address = (memory_address*TRACK_SIZE) + RHYTHM_TRACK_MEMORY_OFFSET;
+	memory_address = (memory_address*TRACK_SIZE) + RHYTHM_TRACK_ADDR_OFFSET;
 	p_set_eeprom_address->high_byte = (memory_address >> 8);
 	p_set_eeprom_address->low_byte = memory_address;
 	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
@@ -150,8 +150,34 @@ rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	return(*p_read_rhythm_track);
 }
 
-void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) {
+void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) { //for the sake of speed, make this less generalized knowing that 
+	while(TWI_busy);
+	int num_pages = sizeof(rhythm_track_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
+	memory_address = memory_address*TRACK_SIZE + RHYTHM_TRACK_ADDR_OFFSET;
+	//write 128 byte pages of data
+	for (int i = 0; i < num_pages; ++i) {
+		
+		p_write_pattern->high_byte = (memory_address >> 8);
+		p_write_pattern->low_byte = memory_address;
+		// this is directly putting PAGE_SIZE bytes of the input PATTERN w_data into the TWI_buffer *after* the address bytes (hence the +2)
+		// NOTE: p_write_pattern is a pointer to TWI_BUFFER
+		memcpy(TWI_buffer+2, (char *)w_data + i*PAGE_SIZE, PAGE_SIZE);
+		TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
+		2 + PAGE_SIZE
+		);
+		memory_address+= PAGE_SIZE;
+		while(TWI_busy);
+	}
+	//write remaining bytes (ie. remainder of sizeof(pattern_data)/PAGE_SIZE)
+	int remaining = sizeof(rhythm_track_data) % PAGE_SIZE; //same thing here? Shouldn't this be defined as sizeof(pattern_data)%PAGE_SIZE?
+	p_write_pattern->high_byte = (memory_address >> 8);
+	p_write_pattern->low_byte = memory_address;
+	memcpy(TWI_buffer+2, (char *)w_data + num_pages*PAGE_SIZE, remaining);
+	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
+	2 + remaining
+	);
 	
+	while(TWI_busy);	
 	
 }
 

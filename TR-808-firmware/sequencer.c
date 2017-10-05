@@ -1071,6 +1071,9 @@ void write_rhythm_track(void) {
 	
 	rhythm_track_data track;
 	
+	memcpy(track.patterns, rhythm_track.patterns, sizeof(track.patterns));
+	track.length = rhythm_track.length;
 	
+	eeprom_write_rhythm_track(rhythm_track.current_measure, &track);
 	
 }

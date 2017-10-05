@@ -70,6 +70,7 @@ struct flag {
 	//uint8_t step_num_change:1;//not currently used
 	uint8_t pattern_edit:1; //flag if pattern is edited, need to write to eeprom at end of measure
 	uint8_t pattern_change:1;
+	uint8_t track_change;
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;

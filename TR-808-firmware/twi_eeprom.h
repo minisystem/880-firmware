@@ -13,14 +13,14 @@
 #define EEPROM_DEVICE_ID 0b1010000
 
 #define PAGE_SIZE 128//32 //EEPROM page size (32 bytes for AT24CS64 EEPROM, 64 or 128 bytes for larger EEPROMS) - using 128 page 512 kilobit EEPROM now
-#define PAGES_PER_PATTERN (int)((sizeof(pattern_data)/PAGE_SIZE) + 1)//need to know how many pages there are per pattern for addressing EEPROM memory
+#define PAGES_PER_PATTERN (uint16_t)((sizeof(pattern_data)/PAGE_SIZE) + 1)//need to know how many pages there are per pattern for addressing EEPROM memory
 #define BANK_SIZE PAGES_PER_PATTERN*PAGE_SIZE*16 //16 patterns in a bank
 
 #define PAGES_PER_TRACK (int)((sizeof(rhythm_track_data)/PAGE_SIZE) + 1) //this must be one page, right? 128 bytes?
 #define TRACK_SIZE PAGES_PER_TRACK*PAGE_SIZE
 
 
-#define RHYTHM_TRACK_MEMORY_OFFSET ((NUM_BANKS*16) + 1)*PAGE_SIZE*PAGES_PER_PATTERN //base EEPROM address for rhythm tracks 
+#define RHYTHM_TRACK_ADDR_OFFSET ((NUM_BANKS*16) + 1)*PAGE_SIZE*PAGES_PER_PATTERN //base EEPROM address for rhythm tracks 
 
 //Define format of eeprom pattern data block:
 typedef struct {
@@ -37,8 +37,7 @@ typedef struct {
 typedef struct {
 	
 	struct track_pattern patterns[NUM_PATTERNS];
-	uint8_t length:7; //this is only required once per rhythm track, but it seems easiest to include it here.
-	
+	uint8_t length;
 	
 } rhythm_track_data;
 
