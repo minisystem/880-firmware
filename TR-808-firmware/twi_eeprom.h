@@ -16,7 +16,7 @@
 #define PAGES_PER_PATTERN (uint16_t)((sizeof(pattern_data)/PAGE_SIZE) + 1)//need to know how many pages there are per pattern for addressing EEPROM memory
 #define BANK_SIZE PAGES_PER_PATTERN*PAGE_SIZE*16 //16 patterns in a bank
 
-#define PAGES_PER_TRACK (int)((sizeof(rhythm_track_data)/PAGE_SIZE) + 1) //this must be one page, right? 128 bytes?
+#define PAGES_PER_TRACK (uint16_t)((sizeof(rhythm_track_data)/PAGE_SIZE) + 1) //this must be one page, right? 128 bytes?
 #define TRACK_SIZE PAGES_PER_TRACK*PAGE_SIZE
 
 

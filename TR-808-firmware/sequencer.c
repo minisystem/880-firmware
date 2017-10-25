@@ -51,22 +51,22 @@ void update_tempo(void) {
 
 void show_current_measure(void) {
 	
+	//turn_on(sequencer.current_rhythm_track);
 	
-	
-	if (rhythm_track.current_measure < 16) {
+	if (sequencer.track_measure < 16) {
 		
-			turn_on(rhythm_track.current_measure);
+			turn_on(sequencer.track_measure);
 		
-		} else if (rhythm_track.current_measure < 32) {
+		} else if (sequencer.track_measure < 32) {
 		
-			turn_on(rhythm_track.current_measure - 16);
+			turn_on(sequencer.track_measure - 16);
 		
-		} else if (rhythm_track.current_measure < 48) {
+		} else if (sequencer.track_measure < 48) {
 			
-			turn_on(rhythm_track.current_measure - 32);
+			turn_on(sequencer.track_measure - 32);
 		} else {
 		
-			turn_on(rhythm_track.current_measure - 48);
+			turn_on(sequencer.track_measure - 48);
 	}
 	
 	
@@ -192,7 +192,7 @@ void process_stop(void) {
 		turn_off_all_inst_leds();
 		turn_on(drum_hit[sequencer.current_inst].led_index);
 		sequencer.current_pattern = sequencer.new_pattern;
-		sequencer.current_measure = 0; //reset current measure
+		sequencer.current_measure_auto_fill = 0; //reset current measure
 		flag.pattern_change = 0;
 		flag.fill = 0;	
 		//blank all step leds and turn on current pattern LED
@@ -219,13 +219,13 @@ void process_stop(void) {
 void update_fill(void) {
 	
 	if (sequencer.fill_mode != MANUAL) {
-		if (++sequencer.current_measure == sequencer.fill_mode) {
+		if (++sequencer.current_measure_auto_fill == sequencer.fill_mode) {
 			flag.fill = 1;
 		}
 						
 	}
 	if (flag.fill) { //problem with current_measure overfow here - only need to increment measure if fill_mode != 0
-		sequencer.current_measure = 0;
+		sequencer.current_measure_auto_fill = 0;
 		flag.fill = 0;
 		flag.pre_scale_change = 1;
 		read_next_pattern(sequencer.current_intro_fill, sequencer.pattern_bank);
@@ -251,6 +251,24 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		//toggle(IF_VAR_B_LED);
 		write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
 					
+	}
+	
+	if (sequencer.mode == PLAY_RHYTHM) {
+		
+		if (sequencer.track_measure++ <= rhythm_track.length) {
+			
+		} else {
+			
+			//rhythym track is finished, so stop or loop
+			//stop for now
+			process_stop();
+			//maybe need to do some LED housekeeping before leaving?
+			return;
+		}
+		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+		flag.pattern_change = 1;
+		
 	}
 		
 				
@@ -292,9 +310,9 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			flag.pattern_change = 0;
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			//if (sequencer.mode == PLAY_RHYTHM) {
-				//sequencer.pattern_bank = rhythm_track.patterns[rhythm_track.current_measure].current_bank;
-				//sequencer.new_pattern = rhythm_track.patterns[rhythm_track.current_measure].current_pattern;
-				//rhythm_track.current_measure++; //advance current measure	
+				//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+				//sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+				//sequencer.track_measure++; //advance current measure	
 			//}
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
@@ -1060,8 +1078,15 @@ void read_rhythm_track(void) {
 	new_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
 	//*rhythm_track.patterns = *new_track.patterns;
+	//rhythm_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
-	memcpy(rhythm_track.patterns, new_track.patterns, sizeof(rhythm_track.patterns));
+	//memcpy(&rhythm_track.patterns, &new_track.patterns, sizeof(rhythm_track.patterns));
+	for (int i = 0; i <= new_track.length; i++) {
+			
+		rhythm_track.patterns[i].current_bank = new_track.patterns[i].current_bank;
+		rhythm_track.patterns[i].current_pattern = new_track.patterns[i].current_pattern;
+	}
+			
 	rhythm_track.length = new_track.length;
 	
 	flag.pattern_change = 1; //but do we immediately read new pattern? Only when stopped. If running, then wait for current measure to finish?
@@ -1071,9 +1096,15 @@ void write_rhythm_track(void) {
 	
 	rhythm_track_data track;
 	
-	memcpy(track.patterns, rhythm_track.patterns, sizeof(track.patterns));
+	//memcpy(&track.patterns, &rhythm_track.patterns, sizeof(track.patterns));
+	for (int i = 0; i <= sequencer.track_measure; i++) {
+		
+		track.patterns[i].current_bank = rhythm_track.patterns[i].current_bank;
+		track.patterns[i].current_pattern = rhythm_track.patterns[i].current_pattern;
+		
+	}
 	track.length = rhythm_track.length;
 	
-	eeprom_write_rhythm_track(rhythm_track.current_measure, &track);
+	eeprom_write_rhythm_track(sequencer.current_rhythm_track, &track);
 	
 }

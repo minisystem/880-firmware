@@ -10,9 +10,10 @@
 #include <stdbool.h>
 #include <avr/pgmspace.h>
 #include <string.h>
+#include "sequencer.h"
 #include "twi_eeprom.h"
 #include "twi.h"
-#include "sequencer.h"
+
 
 
 // prototype local functiosn
@@ -47,7 +48,7 @@ WRITE_PATTERN            *p_write_pattern;
 WRITE_TRACK				*p_write_track;
 SET_EEPROM_ADDRESS      *p_set_eeprom_address;
 pattern_data             *p_read_pattern;
-rhythm_track_data		 *p_read_rhythm_track;
+rhythm_track_data		 *p_read_rhythm_track_data;
 
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
@@ -71,7 +72,7 @@ void eeprom_init(){
 	p_read_pattern = (pattern_data *)TWI_buffer;
 	
 	p_write_track = (WRITE_TRACK *)TWI_buffer;
-	p_read_rhythm_track = (rhythm_track_data *)TWI_buffer;
+	p_read_rhythm_track_data = (rhythm_track_data *)TWI_buffer;
 	
 }
 
@@ -147,13 +148,13 @@ rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	while(TWI_busy);
 	// return the data
 		
-	return(*p_read_rhythm_track);
+	return(*p_read_rhythm_track_data);
 }
 
-void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) { //for the sake of speed, make this less generalized knowing that 
+void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) { //for the sake of speed, make this less generalized knowing that a rhythm track only takes up 1 page of eeprom data
 	while(TWI_busy);
 	int num_pages = sizeof(rhythm_track_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
-	memory_address = memory_address*TRACK_SIZE + RHYTHM_TRACK_ADDR_OFFSET;
+	memory_address = (memory_address*TRACK_SIZE) + RHYTHM_TRACK_ADDR_OFFSET;
 	//write 128 byte pages of data
 	for (int i = 0; i < num_pages; ++i) {
 		

@@ -84,15 +84,15 @@ void check_write_sw(void) {
 		button[WRITE_SW].state ^= button[WRITE_SW].state;
 		if (sequencer.ALT) {
 			//return;
-			//if (rhythm_track.current_measure > 0) rhythm_track.current_measure--; //decrement current measure 
+			//if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure 
 			//flag.pattern_change = 1; //
 			
 		} else {
 			
-			if ((++rhythm_track.current_measure) == NUM_PATTERNS) rhythm_track.current_measure = NUM_PATTERNS -1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
-			rhythm_track.patterns[rhythm_track.current_measure].current_bank = sequencer.pattern_bank;
-			rhythm_track.patterns[rhythm_track.current_measure].current_pattern = sequencer.current_pattern;
-			rhythm_track.length = rhythm_track.current_measure;
+			if ((++sequencer.track_measure) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS -1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
+			rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
+			rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.current_pattern;
+			rhythm_track.length = sequencer.track_measure;
 			write_rhythm_track(); //write current pattern to eeprom
 			
 		}
@@ -213,6 +213,8 @@ void check_inst_switches(void) {
 			
 			if (sequencer.current_rhythm_track != 0) {
 				flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
+				//read_rhythm_track();
+				sequencer.track_measure = 0; //when changing rhythm tracks, reset track measure to 0
 				
 			}
 			sequencer.current_rhythm_track = 0;
@@ -250,6 +252,7 @@ void check_inst_switches(void) {
 					if (sequencer.current_rhythm_track != (drum_index + 1)) {//+1 because AC is 0 and BD is 1 in track_led array
 						
 						flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
+						sequencer.track_measure = 0; //when changing rhythm tracks, reset track measure to 0
 					}
 					turn_off(track_led[sequencer.current_rhythm_track]); //want to immediately refresh LEDs, rather than rely on sequencer to turn them off
 					sequencer.current_rhythm_track = drum_index + 1;//+1 because AC is 0 and BD is 1 in track_led array
@@ -346,6 +349,22 @@ void check_clear_switch(void) {
 				break;
 				
 			case COMPOSE_RHYTHM: //clear selected rhythm track here
+				//turn on timer2 interrupt for blinking clear LED
+				TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
+				TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
+				TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
+				TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
+				TCCR2B |=  (1<<WGM22);
+				OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
+								
+				if (flag.blink) {
+					flag.blink = 0;
+					toggle(MODE_6_RHYTHM_COMPOSE);
+				}
+				
+				memset(&rhythm_track.patterns, 0, sizeof(rhythm_track.patterns));
+				rhythm_track.length = 0;
+				write_rhythm_track();
 			
 				break;			
 			
@@ -354,11 +373,17 @@ void check_clear_switch(void) {
 	} else {
 		
 		if (sequencer.mode == PATTERN_CLEAR) { //need to ensure LED is on after toggling while CLEAR button is held
-			//turn off timer2 interupt
+			//turn off timer2 interrupt
 			TCCR2A = 0; //turn off timer2
 			TIMSK2 &= ~(1<<OCIE2A);
 			OCR2A = 70;
 			turn_on(MODE_1_PATTERN_CLEAR);
+		} else if (sequencer.mode == COMPOSE_RHYTHM) { //same for clearing rhythm track in compose mode
+			TCCR2A = 0; //turn off timer2
+			TIMSK2 &= ~(1<<OCIE2A);
+			OCR2A = 70;
+			turn_on(MODE_6_RHYTHM_COMPOSE);
+			
 		}
 		
 	}
@@ -389,7 +414,7 @@ void check_intro_fill_variation_switch(void) {
 		
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
 		if (sequencer.SHIFT && (sequencer.mode == COMPOSE_RHYTHM)) {
-			if (rhythm_track.current_measure > 0) rhythm_track.current_measure--; //decrement current measure
+			if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure
 			flag.pattern_change = 1; //
 			//return;
 			
@@ -583,7 +608,7 @@ void clear_all_patterns(void) {
 	sequencer.pre_scale = 1; //default PRE_SCALE_3
 	clock.divider = PRE_SCALE_3;
 	
-	for (int bank = 1; bank < 16; bank++) {
+	for (int bank = 0; bank < NUM_BANKS; bank++) {
 		for (int pattern = 0; pattern < 16; pattern++) {
 			
 			write_current_pattern(pattern, bank);

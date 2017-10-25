@@ -101,7 +101,7 @@ struct rhythm_track {
 	
 	struct track_pattern patterns[NUM_PATTERNS];
 	uint8_t	length;
-	uint8_t current_measure;
+	//uint8_t current_measure;
 	
 	};	
 
@@ -145,7 +145,8 @@ struct sequencer {
 	uint8_t current_pattern:4;
 	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
 	uint8_t current_intro_fill:4;
-	uint8_t current_measure:6; //counter used for counting measures for AUTO FILL INs
+	uint8_t current_measure_auto_fill:6; //counter used for counting measures for AUTO FILL INs
+	uint8_t track_measure:7; //counter used to count measures during rhythm track play/compose
 	uint8_t current_rhythm_track:4;
 	//struct rhythm_track rhythm_track;
 	enum drum current_inst; //this is index of drum_hit struct

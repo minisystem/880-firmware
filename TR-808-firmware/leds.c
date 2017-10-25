@@ -279,14 +279,14 @@ void update_prescale_leds(void) {
 	spi_data[LATCH_5] &= PRE_SCALE_LED_MASK; //clear pre-scale LED bits
 	if (sequencer.TAP_HELD && ((sequencer.mode == COMPOSE_RHYTHM) || (sequencer.mode == PLAY_RHYTHM))) {
 		
-		if (rhythm_track.current_measure < 16) {
+		if (sequencer.track_measure < 16) {
 			
 			spi_data[LATCH_5] |= PRE_SCALE_BIT_1;
 			
-		} else if (rhythm_track.current_measure < 32) {
+		} else if (sequencer.track_measure < 32) {
 			spi_data[LATCH_5] |= PRE_SCALE_BIT_2;
 			
-		} else if (rhythm_track.current_measure < 48) {
+		} else if (sequencer.track_measure < 48) {
 			spi_data[LATCH_5] |= PRE_SCALE_BIT_3;
 		} else {
 			

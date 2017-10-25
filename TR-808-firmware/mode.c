@@ -62,6 +62,11 @@ void update_mode(void) {
 				flag.pattern_change = 1;
 			}
 			
+		} else if (sequencer.mode == PLAY_RHYTHM) {
+			//will need to update inst/track leds to current rhythm track, rather than resetting to 0
+			read_rhythm_track();
+			//flag.pattern_change = 1;
+			sequencer.track_measure = 0;
 		}
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
@@ -147,7 +152,7 @@ void update_fill_mode(void) {
 			if (++fill_index == NUM_FILL_MODES) fill_index = 0;
 			
 			sequencer.fill_mode = fill_mode[fill_index];
-			sequencer.current_measure = 0;			
+			sequencer.current_measure_auto_fill = 0;			
 		}
 		if (fill_index < 2) {
 				
