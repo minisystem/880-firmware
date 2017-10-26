@@ -64,7 +64,7 @@ void update_mode(void) {
 			
 		} else if (sequencer.mode == PLAY_RHYTHM) {
 			//will need to update inst/track leds to current rhythm track, rather than resetting to 0
-			read_rhythm_track();
+			//read_rhythm_track();
 			//flag.pattern_change = 1;
 			sequencer.track_measure = 0;
 		}

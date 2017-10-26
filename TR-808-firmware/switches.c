@@ -89,9 +89,9 @@ void check_write_sw(void) {
 			
 		} else {
 			
-			if ((++sequencer.track_measure) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS -1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
+			if ((sequencer.track_measure++) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS - 1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement - NOPE, think it needs to be POST-INCREMENT
 			rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
-			rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.current_pattern;
+			rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; //using new pattern allows WRITE/NEXT to be pressed before measure finishes. Should allow for faster rhythm track programming?
 			rhythm_track.length = sequencer.track_measure;
 			write_rhythm_track(); //write current pattern to eeprom
 			
@@ -215,10 +215,18 @@ void check_inst_switches(void) {
 				flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
 				//read_rhythm_track();
 				sequencer.track_measure = 0; //when changing rhythm tracks, reset track measure to 0
-				
+				sequencer.current_rhythm_track = 0;
+				turn_on(ACCENT_1_LED);
+				read_rhythm_track();
+				sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+				sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+				if (sequencer.START) {
+					flag.pattern_change = 1;
+					} else {
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				}		
 			}
-			sequencer.current_rhythm_track = 0;
-			turn_on(ACCENT_1_LED);
+
 			
 		
 		break;			
@@ -241,7 +249,7 @@ void check_inst_switches(void) {
 			
 			break;
 			
-			case PLAY_RHYTHM: case COMPOSE_RHYTHM: case MANUAL_PLAY:
+			case PLAY_RHYTHM: case COMPOSE_RHYTHM: case MANUAL_PLAY: //need to make separte case for MANUAL PLAY
 			
 				if (sequencer.SHIFT) {
 					
@@ -253,10 +261,19 @@ void check_inst_switches(void) {
 						
 						flag.track_change = 1;//do some stuff to switch track change - like update current measure based on track change and set new pattern flag
 						sequencer.track_measure = 0; //when changing rhythm tracks, reset track measure to 0
+						turn_off(track_led[sequencer.current_rhythm_track]); //want to immediately refresh LEDs, rather than rely on sequencer to turn them off
+						sequencer.current_rhythm_track = drum_index + 1;//+1 because AC is 0 and BD is 1 in track_led array
+						turn_on(track_led[sequencer.current_rhythm_track]);
+						read_rhythm_track();
+						sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+						sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+						if (sequencer.START) {
+							flag.pattern_change = 1;
+						} else { //if stopped, then read new pattern immediately
+							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+						}
 					}
-					turn_off(track_led[sequencer.current_rhythm_track]); //want to immediately refresh LEDs, rather than rely on sequencer to turn them off
-					sequencer.current_rhythm_track = drum_index + 1;//+1 because AC is 0 and BD is 1 in track_led array
-					turn_on(track_led[sequencer.current_rhythm_track]); 
+
 				}
 			
 			default:

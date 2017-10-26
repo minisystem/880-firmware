@@ -134,6 +134,7 @@ void process_tick(void) {
 void process_start(void) {
 	
 		sequencer.current_step = 0;
+		sequencer.track_measure = 0;
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		clock.ppqn_counter = 0;
@@ -261,9 +262,9 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			
 			//rhythym track is finished, so stop or loop
 			//stop for now
-			process_stop();
+			//process_stop();
 			//maybe need to do some LED housekeeping before leaving?
-			return;
+			//return;
 		}
 		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
