@@ -64,9 +64,16 @@ void update_mode(void) {
 			
 		} else if (sequencer.mode == PLAY_RHYTHM) {
 			//will need to update inst/track leds to current rhythm track, rather than resetting to 0
-			//read_rhythm_track();
+			read_rhythm_track();
 			//flag.pattern_change = 1;
 			sequencer.track_measure = 0;
+			sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+			if (sequencer.START) {
+				flag.pattern_change = 1;
+				} else {
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+			}		
 		}
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated

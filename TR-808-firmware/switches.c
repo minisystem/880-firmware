@@ -89,10 +89,10 @@ void check_write_sw(void) {
 			
 		} else {
 			
-			if ((sequencer.track_measure++) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS - 1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement - NOPE, think it needs to be POST-INCREMENT
 			rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
 			rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; //using new pattern allows WRITE/NEXT to be pressed before measure finishes. Should allow for faster rhythm track programming?
 			rhythm_track.length = sequencer.track_measure;
+			if ((++sequencer.track_measure) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS - 1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
 			write_rhythm_track(); //write current pattern to eeprom
 			
 		}
@@ -222,7 +222,7 @@ void check_inst_switches(void) {
 				sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 				if (sequencer.START) {
 					flag.pattern_change = 1;
-					} else {
+				} else {
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 				}		
 			}
