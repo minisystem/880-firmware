@@ -15,6 +15,8 @@
 #define PAGE_SIZE 128//32 //EEPROM page size (32 bytes for AT24CS64 EEPROM, 64 or 128 bytes for larger EEPROMS) - using 128 page 512 kilobit EEPROM now
 #define PAGES_PER_PATTERN (uint16_t)((sizeof(pattern_data)/PAGE_SIZE) + 1)//need to know how many pages there are per pattern for addressing EEPROM memory
 #define BANK_SIZE PAGES_PER_PATTERN*PAGE_SIZE*16 //16 patterns in a bank
+#define NUM_PAGES_PATTERN (int)(sizeof(pattern_data) / PAGE_SIZE)
+#define REMAINING_PATTERN (int)(sizeof(pattern_data) % PAGE_SIZE)
 
 #define PAGES_PER_TRACK (uint16_t)((sizeof(rhythm_track_data)/PAGE_SIZE) + 1) //this must be one page, right? 128 bytes?
 #define TRACK_SIZE PAGES_PER_TRACK*PAGE_SIZE
@@ -51,7 +53,7 @@ pattern_data read_pattern(uint16_t memory_address, uint8_t bank);
 void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data);
 //void write_bytes(uint16_t memory_address, (char *)w_data, int num_bytes_to_write);
 
-rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address);
+struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address);
 void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
 
 void handle_TWI_result(uint8_t return_code);

@@ -94,13 +94,12 @@ pattern_data read_pattern(uint16_t memory_address, uint8_t bank){
 	return(*p_read_pattern);
 }
 
-
 void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){ //this writes whole pattern, including step number for each part and pre scale
 	while(TWI_busy);
-	int num_pages = sizeof(pattern_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
+	//int num_pages = sizeof(pattern_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
 	memory_address = memory_address + (bank*BANK_SIZE);
 	//write 128 byte pages of data
-	for (int i = 0; i < num_pages; ++i) {
+	for (int i = 0; i < NUM_PAGES_PATTERN; ++i) {
 		
 		p_write_pattern->high_byte = (memory_address >> 8);
 		p_write_pattern->low_byte = memory_address;
@@ -114,12 +113,12 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 		while(TWI_busy);
 	}
 	//write remaining bytes (ie. remainder of sizeof(pattern_data)/PAGE_SIZE)
-	int remaining = sizeof(pattern_data) % PAGE_SIZE; //same thing here? Shouldn't this be defined as sizeof(pattern_data)%PAGE_SIZE?
+	//int remaining = sizeof(pattern_data) % PAGE_SIZE; //same thing here? Shouldn't this be defined as sizeof(pattern_data)%PAGE_SIZE?
 	p_write_pattern->high_byte = (memory_address >> 8);
 	p_write_pattern->low_byte = memory_address;
-	memcpy(TWI_buffer+2, (char *)w_data + num_pages*PAGE_SIZE, remaining);
+	memcpy(TWI_buffer+2, (char *)w_data + NUM_PAGES_PATTERN*PAGE_SIZE, REMAINING_PATTERN);
 	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
-	2 + remaining
+	2 + REMAINING_PATTERN
 	);
 	
 	while(TWI_busy);
@@ -131,7 +130,7 @@ void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){
 	//
 //}
 
-rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
+struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address) {
 	
 
 	// send 'set memory address' command to eeprom and then read data
@@ -147,12 +146,15 @@ rhythm_track_data eeprom_read_rhythm_track(uint16_t memory_address) {
 	// nothing else to do - wait for the data
 	while(TWI_busy);
 	// return the data
-		
-	return(*p_read_rhythm_track_data);
+	
+	struct rhythm_track* t = (struct rhythm_track*)p_read_rhythm_track_data;
+	
+	return(*t);
 }
 
 void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data) { //for the sake of speed, make this less generalized knowing that a rhythm track only takes up 1 page of eeprom data
 	while(TWI_busy);
+	// assert(sizeof(rhythm_track_data) <= PAGE_SIZE);
 	int num_pages = sizeof(rhythm_track_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
 	memory_address = (memory_address*TRACK_SIZE) + RHYTHM_TRACK_ADDR_OFFSET;
 	//write 128 byte pages of data

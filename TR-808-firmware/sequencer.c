@@ -184,6 +184,11 @@ void process_start(void) {
 
 void process_stop(void) {
 	
+		//sequencer.current_step = 0;
+		//sequencer.track_measure = 0;
+		//clock.ppqn_counter = 0;
+		//clock.ppqn_divider_tick = 0;
+	
 		if (sequencer.part_playing == SECOND) { //reset part playing
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
@@ -256,13 +261,16 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	
 	if (sequencer.mode == PLAY_RHYTHM) {
 		
-		if (sequencer.track_measure++ <= rhythm_track.length) {
+		if (sequencer.track_measure++ < rhythm_track.length) {
 			
 		} else {
 			
 			//rhythym track is finished, so stop or loop
 			//stop for now
-			//process_stop();
+			sequencer.START = 0;
+			process_stop();
+			//flag.next_step
+			return;
 			//maybe need to do some LED housekeeping before leaving?
 			//return;
 		}
@@ -365,6 +373,7 @@ void process_step(void){
 			
 				flag.new_measure = 0;
 				process_new_measure(); //moved all the new measure housekeeping into its own function.
+				if (!sequencer.START) return; //in RHYTHM PLAY mode, process_new_measure() will stop play at end of rhythm track and first step of next pattern will play unless we get out of here. Klunky junk.
 				//sequencer.current_measure++;
 			}			
 		//*************************************************************************//
@@ -1074,22 +1083,20 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 
 void read_rhythm_track(void) {
 	
-	rhythm_track_data new_track;
-	
-	new_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
+	rhythm_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
 	//*rhythm_track.patterns = *new_track.patterns;
 	//rhythm_track = eeprom_read_rhythm_track(sequencer.current_rhythm_track);
 	
 	//memcpy(&rhythm_track.patterns, &new_track.patterns, sizeof(rhythm_track.patterns));
-	for (int i = 0; i <= new_track.length; i++) {
+	/*for (int i = 0; i <= new_track.length; i++) {
 			
 		rhythm_track.patterns[i].current_bank = new_track.patterns[i].current_bank;
 		rhythm_track.patterns[i].current_pattern = new_track.patterns[i].current_pattern;
 	}
 			
 	rhythm_track.length = new_track.length;
-	
+	*/
 	flag.pattern_change = 1; //but do we immediately read new pattern? Only when stopped. If running, then wait for current measure to finish?
 	
 }
