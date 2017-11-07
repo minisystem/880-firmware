@@ -57,8 +57,13 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
-		clock.ppqn_counter+= PPQN_SKIP_VALUE;
-		process_tick(); //flag.tick = 1;
+		//clock.ppqn_counter+= PPQN_SKIP_VALUE;
+		//process_tick(); //flag.tick = 1;
+		clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
+		clock.external_rate = TCNT3;
+		TCNT3 = 0; //reset timer3
+		update_clock_rate(clock.external_rate);
+		
 		break;
 		
 		case MIDI_START:

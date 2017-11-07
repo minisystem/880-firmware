@@ -175,6 +175,7 @@ int main(void)
 	
 	//sequencer.SHUFFLE = 1;
 	sequencer.shuffle_amount = 0;
+	sequencer.shuffle_multplier = 2;
 	
 	//set default trigger assignments:
 	sequencer.trigger_1 = RS;

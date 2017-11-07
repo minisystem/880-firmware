@@ -108,17 +108,24 @@ void update_fill_mode(void) {
 							
 				case MIDI_MASTER:
 					clock.source = INTERNAL;
+					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
+					//sequencer.shuffle_multplier = 4;
 					PORTC &= ~(1<<SYNC_LED_Y);
 					PORTE &= ~(1<<SYNC_LED_R);
 					break;
 							
 				case MIDI_SLAVE:
 					clock.source = EXTERNAL;
+					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
+					TCNT3 = 0; //reset timer3
+					//sequencer.shuffle_multplier = 1;
 					PORTE |= (1<<SYNC_LED_R);
 					break;
 							
 				case DIN_SYNC_MASTER:
 					clock.source = INTERNAL;
+					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
+					//sequencer.shuffle_multplier = 4;
 					PORTD |= (1<<SYNC_LED_R);
 					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
@@ -130,6 +137,9 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_SLAVE:
 					clock.source = EXTERNAL;
+					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
+					TCNT3 = 0; //rest timer3
+					//sequencer.shuffle_multplier = 1;
 					PORTE &= ~(1<<SYNC_LED_R);
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1 << INT1) | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack

@@ -34,6 +34,8 @@ struct clock {
 	uint8_t beat_counter:2; //counts quarter notes, may need to change it and handle it more when dealing with different time signatures
 	uint16_t rate; //output compare value for clock timer
 	uint16_t previous_rate;
+	uint16_t external_rate;
+	uint16_t previous_external_rate;
 	uint8_t tick_counter; //counter for blinking LEDs independent of sequencer clock rate
 	enum clock_source source;
 	

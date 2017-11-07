@@ -20,8 +20,12 @@
 
 ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
-	clock.ppqn_counter+= PPQN_SKIP_VALUE; //add skip value to ppqn counter for 24 ppqn 
-	process_tick();
+	//clock.ppqn_counter+= PPQN_SKIP_VALUE; //add skip value to ppqn counter for 24 ppqn 
+	//process_tick();
+	clock.previous_external_rate = clock.external_rate;
+	clock.external_rate = TCNT3;
+	TCNT3 = 0; //reset timer3
+	update_clock_rate(clock.external_rate);
 	
 		
 	if (flag.din_start) {
@@ -41,10 +45,10 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
 }
 
-ISR (INT0_vect) {
+ISR (INT0_vect) { //external SYNC IN. By default this is for advancing a step, Volca style
 	
 	//clock.ppqn_counter+= PPQN_SKIP_VALUE;
-	clock.ppqn_counter = clock.divider - 1;
+	clock.ppqn_counter = clock.divider - 1; //need to finesse this and maybe get it to work with master clock? This is effectively 1 ppqn, so need to get it to work accordingly? In fact, this could be customizable - 1, 2, 4, 6, ... 24, ... 48, ppqn
 	process_tick(); 
 	PINC |= (1<<SYNC_LED_Y);
 	

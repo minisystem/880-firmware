@@ -126,6 +126,7 @@ struct sequencer {
 	uint8_t TAP_HELD:1; //is the TAP button beign held?
 	uint8_t ALT:1; //alternative function mode
 	uint8_t shuffle_amount:3;
+	uint8_t shuffle_multplier:3; //1 for MIDI and DIN SYNC slave modes, 4 for master modes @ 96 ppqn
 	uint8_t new_shuffle_amount:3;
 	uint8_t shuffle_ppqn_count:4;//may need to up bit depth for 96ppqn
 	uint8_t roll_mode:3;
