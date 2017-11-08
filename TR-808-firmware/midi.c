@@ -61,8 +61,14 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		//process_tick(); //flag.tick = 1;
 		clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
 		clock.external_rate = TCNT3;
-		TCNT3 = 0; //reset timer3
 		update_clock_rate(clock.external_rate);
+		TCNT3 = 0; //reset timer3
+		//TCNT1 = 0;
+		//process_tick();
+		
+		//need a way to use this to reset internal sequencer -
+		//force output compare or process tick?
+		
 		
 		break;
 		
