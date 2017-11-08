@@ -113,7 +113,7 @@ ISR (TIMER4_COMPA_vect) {
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	
-	//if (clock.source == INTERNAL) {
+	if (clock.source == INTERNAL) {
 
 		process_tick();	
 
@@ -148,7 +148,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				}	
 			}			
 		}
-	//}	
+	}	
 }
 
 ISR (USART0_RX_vect) { // USART receive interrupt

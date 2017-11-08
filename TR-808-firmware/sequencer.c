@@ -179,6 +179,10 @@ void process_start(void) {
 		
 		//set trigger off timer
 		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
+		
+		//reset timeres:
+		//TCNT1 = 0;
+		//TCNT3 = 0;
 
 }
 

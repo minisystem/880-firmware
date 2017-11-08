@@ -57,11 +57,12 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
-		//clock.ppqn_counter+= PPQN_SKIP_VALUE;
-		//process_tick(); //flag.tick = 1;
+		clock.ppqn_counter+= PPQN_SKIP_VALUE;
+		process_tick(); //flag.tick = 1;
 		clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
-		clock.external_rate = TCNT3;
-		update_clock_rate(clock.external_rate);
+		//BUT, what about on first pulse? there is no reference before the first pulse, so TCNT could by anywhere in its cycle? But a start event should reset TCNT1 and TCNT3 maybe?
+		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interupt
+		//update_clock_rate(clock.external_rate);
 		TCNT3 = 0; //reset timer3
 		//TCNT1 = 0;
 		//process_tick();
@@ -75,6 +76,8 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		case MIDI_START:
 		sequencer.START = 1;
 		process_start();
+		//process_tick();
+		//TCNT3 = 0;
 		break;
 		
 		case MIDI_STOP:
