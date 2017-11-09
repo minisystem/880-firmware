@@ -67,8 +67,9 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		//TCNT1 = 0;
 		//process_tick();
 		
-		//need a way to use this to reset internal sequencer -
-		//force output compare or process tick?
+		//need a way to use this to reset internal sequencer - keep track of ppqn pulses and on every pre_scale divider (ie. if external_ppqn = clock.divider -1) then process  at tick? - problem is timer1 
+		//output compare match might occur before this or after this and if it happens before then it will throw things off - so maybe need to turn off OCR1A interrupt after (divider - 1) external ppqn pulse
+		
 		
 		
 		break;

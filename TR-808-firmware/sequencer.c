@@ -133,12 +133,21 @@ void process_tick(void) {
 
 void process_start(void) {
 	
-		sequencer.current_step = 0;
+		//sequencer.current_step = 0;
 		sequencer.track_measure = 0;
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
-		clock.ppqn_counter = 0;
-		clock.ppqn_divider_tick = 0;
+		//clock.ppqn_counter = 0;
+		clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
+		if (clock.source == EXTERNAL) { //need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
+			
+			sequencer.current_step = -1;
+			
+			clock.ppqn_counter = clock.divider - PPQN_SKIP_VALUE - 1;
+		} else {
+			sequencer.current_step = 0;
+			clock.ppqn_counter = 0;
+		}		
 		
 		//reset variation on start	
 		flag.variation_change = 0;
