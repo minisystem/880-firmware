@@ -22,7 +22,7 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
 	clock.ppqn_counter+= PPQN_SKIP_VALUE; //add skip value to ppqn counter for 24 ppqn 
 	process_tick();
-	clock.previous_external_rate = clock.external_rate;
+	//clock.previous_external_rate = clock.external_rate;
 	clock.external_rate = TCNT3;
 	TCNT3 = 0; //reset timer3
 	//update_clock_rate(clock.external_rate);
@@ -112,8 +112,8 @@ ISR (TIMER4_COMPA_vect) {
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
-	
-	if (clock.source == INTERNAL) {
+	//if (flag.wait_for_master_tick == 1) return;
+	//if (clock.source == INTERNAL) {
 
 		process_tick();	
 
@@ -132,23 +132,23 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				
 				TCNT2 = 0;	//reset timer				
 				PINC |= (1<<SYNC_LED_R); //toggle SYNC LED
-				if (flag.din_start) {
-					
-					if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
-				
-						flag.din_start = 0;
-						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
-						clock.ppqn_counter = 0;
-						flag.next_step = 1;
-						TCNT1 = 0; //reset master timer, doesn't seem necessary
-						flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
-						
-						
-					}	
-				}	
+				//if (flag.slave_start) {
+					//
+					//if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
+				//
+						//flag.slave_start = 0;
+						//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						//clock.ppqn_counter = 0;
+						//flag.next_step = 1;
+						//TCNT1 = 0; //reset master timer, doesn't seem necessary
+						//flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
+						//
+						//
+					//}	
+				//}	
 			}			
 		}
-	}	
+	//}	
 }
 
 ISR (USART0_RX_vect) { // USART receive interrupt

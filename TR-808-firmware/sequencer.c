@@ -126,6 +126,15 @@ void process_tick(void) {
 
 	}
 	
+	if (clock.source == EXTERNAL) {
+		
+		if (++clock.slave_ppqn_ticks == PPQN_SKIP_VALUE) {
+			clock.slave_ppqn_ticks = 0; //reset
+			//flag.wait_for_master_tick = 1;
+			//TIMSK1 &= ~(1<<OCIE1A); //turn off output compare interrupt
+		}
+		
+	}
 		
 }
 	
@@ -139,11 +148,13 @@ void process_start(void) {
 		//flag.new_measure = 1;
 		//clock.ppqn_counter = 0;
 		clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
+		
 		if (clock.source == EXTERNAL) { //need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
 			
-			sequencer.current_step = -1;
-			
-			clock.ppqn_counter = clock.divider - PPQN_SKIP_VALUE - 1;
+			sequencer.current_step = -1;	
+			clock.ppqn_counter = clock.divider - 1;// PPQN_SKIP_VALUE - 1;
+			flag.slave_start = 1;
+			clock.slave_ppqn_ticks = 0;
 		} else {
 			sequencer.current_step = 0;
 			clock.ppqn_counter = 0;
@@ -162,7 +173,7 @@ void process_start(void) {
 		//if (clock.source == INTERNAL) {
 		if (sequencer.clock_mode == DIN_SYNC_MASTER || sequencer.clock_mode == DIN_SYNC_SLAVE) {
 			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
-			flag.din_start = 1; 
+			flag.slave_start = 1; 
 			clock.din_ppqn_pulses = 0;
 			
 		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER

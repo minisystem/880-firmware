@@ -57,19 +57,25 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
-		clock.ppqn_counter+= PPQN_SKIP_VALUE;
-		process_tick(); //flag.tick = 1;
-		clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
+		//clock.ppqn_counter+= PPQN_SKIP_VALUE;
+		//process_tick(); //flag.tick = 1;
+		//clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
 		//BUT, what about on first pulse? there is no reference before the first pulse, so TCNT could by anywhere in its cycle? But a start event should reset TCNT1 and TCNT3 maybe?
-		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interupt
-		//update_clock_rate(clock.external_rate);
+		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
+		if (flag.slave_start) { //don't update clock if it's the first pulse
+			flag.slave_start = 0;
+			process_tick();
+		} else {
+			update_clock_rate(clock.external_rate);
+			
+			//process_tick();
+			//TIMSK1 |= (1<<OCIE1A); //turn OCR1A interrupt on
+			
+		}
+		
+		//flag.wait_for_master_tick = 0;
 		TCNT3 = 0; //reset timer3
-		//TCNT1 = 0;
-		//process_tick();
-		
-		//need a way to use this to reset internal sequencer - keep track of ppqn pulses and on every pre_scale divider (ie. if external_ppqn = clock.divider -1) then process  at tick? - problem is timer1 
-		//output compare match might occur before this or after this and if it happens before then it will throw things off - so maybe need to turn off OCR1A interrupt after (divider - 1) external ppqn pulse
-		
+		//TCNT1 = 0; //reset timer1 - RESETTING TIMER1 HERE CAUSES SLOWER TEMPO (BY 3/4 OF MASTER TEMPO) - WHAT ELSE NEEDS TO BE SET HERE?
 		
 		
 		break;
