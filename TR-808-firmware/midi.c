@@ -57,27 +57,31 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK://could set tick flag here and process it in one function used by both MIDI, DIN and INTERNAL clocks?
+		TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 		//clock.ppqn_counter+= PPQN_SKIP_VALUE;
 		//process_tick(); //flag.tick = 1;
 		//clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
 		//BUT, what about on first pulse? there is no reference before the first pulse, so TCNT could by anywhere in its cycle? But a start event should reset TCNT1 and TCNT3 maybe?
+		flag.wait_for_master_tick = 0;
+		clock.slave_ppqn_ticks = 0;
 		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
+		//OCR1A = TCNT1; //force output compare match - need to disable interrupts before doing this?
 		if (flag.slave_start) { //don't update clock if it's the first pulse
 			flag.slave_start = 0;
-			process_tick();
+			//process_tick();
 		} else {
 			update_clock_rate(clock.external_rate);
 			
-			//process_tick();
+			
 			//TIMSK1 |= (1<<OCIE1A); //turn OCR1A interrupt on
 			
 		}
 		
-		//flag.wait_for_master_tick = 0;
+		
 		TCNT3 = 0; //reset timer3
-		//TCNT1 = 0; //reset timer1 - RESETTING TIMER1 HERE CAUSES SLOWER TEMPO (BY 3/4 OF MASTER TEMPO) - WHAT ELSE NEEDS TO BE SET HERE?
-		
-		
+		//TCNT1 = 0; //reset timer1 - RESETTING TIMER1 HERE CAUSES SLOWER TEMPO (BY 3/4 OF MASTER TEMPO) - WHAT ELSE NEEDS TO BE SET HERE? - NOPE -can't do this here. setting TCTN1 disables next compare match you nitwit
+		//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+		process_tick();
 		break;
 		
 		case MIDI_START:

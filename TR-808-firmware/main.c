@@ -184,8 +184,11 @@ int main(void)
     while (1) 
     {
 		//PORTD |= (1<< PD3);
+		//TRIGGER_OUT |= 1 << TRIGGER_OUT_1;
 		midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 		refresh();
+		//TRIGGER_OUT &= ~(1 << TRIGGER_OUT_1);
+		
 		//PORTD &= ~(1<<PD3);
 
 	}

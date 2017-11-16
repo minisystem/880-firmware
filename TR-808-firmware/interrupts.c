@@ -77,7 +77,7 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	
 	TCCR0B = 0; //turn off timer
 	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
-	TRIGGER_OUT &= TRIGGER_OFF;
+	//TRIGGER_OUT &= TRIGGER_OFF;
 	flag.trig_finished = 1;
 	//eventually need to turn all triggers off here for 15 ms trigger width for trigger expander module, unless expander module just uses rising edge maybe?
 	//toggle(ACCENT_1_LED);
@@ -111,13 +111,17 @@ ISR (TIMER4_COMPA_vect) {
 
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
-	
-	//if (flag.wait_for_master_tick == 1) return;
+
+	if (flag.wait_for_master_tick == 1) return;
+	//TRIGGER_OUT ^= (1<<TRIGGER_OUT_1);
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+	//
 	//if (clock.source == INTERNAL) {
 
 		process_tick();	
 
 		if (sequencer.START && (clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
+			//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 			clock.ppqn_divider_tick = 0;
 			if (sequencer.clock_mode == MIDI_MASTER) { 
 				midi_send_clock(&midi_device); //send MIDI clock
@@ -137,7 +141,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 					//if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
 				//
 						//flag.slave_start = 0;
-						//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin
+						//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin 
 						//clock.ppqn_counter = 0;
 						//flag.next_step = 1;
 						//TCNT1 = 0; //reset master timer, doesn't seem necessary
@@ -149,6 +153,8 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}			
 		}
 	//}	
+	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	
 }
 
 ISR (USART0_RX_vect) { // USART receive interrupt

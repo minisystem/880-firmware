@@ -74,7 +74,7 @@ void show_current_measure(void) {
 }
 
 void process_tick(void) {
-	
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 		
 	if (flag.shuffle_step) { 
 		
@@ -92,10 +92,10 @@ void process_tick(void) {
 	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
 	
 	if (++clock.ppqn_counter == clock.divider) {
-		
+		//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 		if (flag.pre_scale_change) {
 			
-			clock.divider = pre_scale[sequencer.pre_scale];
+			clock.divider = pre_scale[sequencer.pre_scale];       
 		}
 		if (flag.shuffle_change) {
 			
@@ -116,7 +116,7 @@ void process_tick(void) {
 		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {	
 			flag.new_measure = 1;
 		}
-		clock.beat_counter++; //overflows every 4 beats
+		clock.beat_counter++; //overflows every 4 beats 
 		clock.ppqn_counter = 0;
 	//50% step width, sort of - use for flashing step and variation LEDs to tempo
 	} else if (((clock.ppqn_counter == clock.divider >> 1) && !even_step) || ((even_step && (clock.ppqn_counter == (clock.divider >> 1) + sequencer.shuffle_amount)))  ){
@@ -126,15 +126,17 @@ void process_tick(void) {
 
 	}
 	
-	if (clock.source == EXTERNAL) {
+	if (clock.source == EXTERNAL) { 
 		
-		if (++clock.slave_ppqn_ticks == PPQN_SKIP_VALUE) {
+		if (++clock.slave_ppqn_ticks == (PPQN_SKIP_VALUE + 1) ) {
 			clock.slave_ppqn_ticks = 0; //reset
-			//flag.wait_for_master_tick = 1;
+			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+			flag.wait_for_master_tick = 1;
 			//TIMSK1 &= ~(1<<OCIE1A); //turn off output compare interrupt
 		}
 		
 	}
+	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
 		
 }
 	
@@ -155,6 +157,7 @@ void process_start(void) {
 			clock.ppqn_counter = clock.divider - 1;// PPQN_SKIP_VALUE - 1;
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
+			flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
 			sequencer.current_step = 0;
 			clock.ppqn_counter = 0;
@@ -273,6 +276,7 @@ void update_fill(void) {
 }
 
 void process_new_measure(void) { //should break this up into switch/case statements based on mode?
+	
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
 	if (flag.pattern_edit == 1) {
@@ -339,7 +343,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		toggle_variation(); //no second part, so toggle variation
 		
 		if (flag.pattern_change) {
-		
+			
 			flag.pattern_change = 0;
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			//if (sequencer.mode == PLAY_RHYTHM) {
@@ -365,14 +369,15 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	}
 	
 
- 
+	
 				
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 		
 		//update step number
 		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
+		TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 		update_step_led_mask();
-		
+		TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
 	}			
 
 				
@@ -386,8 +391,8 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	
 }
 void process_step(void){ 
-	
 	if (flag.next_step) {
+		
 		
 		flag.next_step = 0;
 		
@@ -396,7 +401,9 @@ void process_step(void){
 			if (flag.new_measure) {
 			
 				flag.new_measure = 0;
+				TRIGGER_OUT |= (1 << TRIGGER_OUT_2);
 				process_new_measure(); //moved all the new measure housekeeping into its own function.
+				TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 				if (!sequencer.START) return; //in RHYTHM PLAY mode, process_new_measure() will stop play at end of rhythm track and first step of next pattern will play unless we get out of here. Klunky junk.
 				//sequencer.current_measure++;
 			}			
@@ -446,6 +453,7 @@ void process_step(void){
 			trigger_step();
 
 		}
+	  //update_spi();
 	} else if (flag.half_step) {
 		//uint8_t rhythm_track_led[12] = {ACCENT_1_LED, BD_2_LED, SD_3_LED, LT_4_LED, MT_5_LED, HT_6_LED, RS_7_LED, CP_8_LED, CB_9_LED, CY_10_LED, OH_11_LED, CH_12_LED};
 		flag.half_step = 0;
@@ -652,7 +660,7 @@ void process_step(void){
 		}
 				
 		//spi_data[5] |= sequencer.var_led_mask;
-				
+		//update_spi();		
 	} else if (clock.source == EXTERNAL && !sequencer.START) { //this handles variation LEDs when waiting for external clock signal
 		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		switch (sequencer.variation_mode) {

@@ -88,8 +88,8 @@ void clear_all_trigs(void) {
 	spi_data[LATCH_7] &= 0b11011111;
 	
 	//clear trigger lines
-	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
-	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);	
+	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);	
 	
 }
 
@@ -122,7 +122,7 @@ void trigger_step(void) { //trigger all drums on current step
 		
 		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
 			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
-			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
+			//if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
 			
 			if (!(drum_hit[i].muted)) {
 				if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);

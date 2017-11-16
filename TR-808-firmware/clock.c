@@ -21,7 +21,7 @@ void setup_clock(void) {
 	
 	//TCCR1B = (1<<CS12) | (1<<CS10) | (1<<WGM12);//TIMER1_DIVIDE_1024, clear on output compare match. Should probably reduce? 
 	//Setup Timer1, master internal timer
-	TCCR1B = (1<<CS12) | (1<<WGM12); //change to /256 divider
+	TCCR1B = (1<<CS12) | (1<<WGM12); //changed to /256 divider
 	TIMSK1 = (1<<OCIE1A);
 	//Setup Timer3, timer for processing external timing events
 	TCCR3B = (1<<CS32) | (1<<CS30); // /1024 divider, 4X slower than master timer1
