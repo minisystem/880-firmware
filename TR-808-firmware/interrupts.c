@@ -112,8 +112,12 @@ ISR (TIMER4_COMPA_vect) {
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	flag.slave_wait = 0;
-	if (flag.wait_for_master_tick == 1) return;
-	TRIGGER_OUT ^= (1<<TRIGGER_OUT_1);
+	//if (flag.wait_for_master_tick == 1) {
+		//turn the timer off, it should be cleared by the interrupt vector
+		//TCCR1B &= ~(1<<CS12);
+	//	return;
+	//}
+	TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 	//
 	//if (clock.source == INTERNAL) {

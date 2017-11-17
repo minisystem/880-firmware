@@ -74,7 +74,7 @@ void show_current_measure(void) {
 }
 
 void process_tick(void) {
-	TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 		
 	if (flag.shuffle_step) { 
 		
@@ -132,7 +132,7 @@ void process_tick(void) {
 			clock.slave_ppqn_ticks = 0; //reset
 			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 			flag.wait_for_master_tick = 1;
-			//TIMSK1 &= ~(1<<OCIE1A); //turn off output compare interrupt
+			TCCR1B &= ~(1<<CS12);
 		}
 		
 	}
