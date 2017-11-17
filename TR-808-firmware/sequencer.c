@@ -74,7 +74,7 @@ void show_current_measure(void) {
 }
 
 void process_tick(void) {
-	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+	TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 		
 	if (flag.shuffle_step) { 
 		
@@ -92,7 +92,7 @@ void process_tick(void) {
 	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
 	
 	if (++clock.ppqn_counter == clock.divider) {
-		//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+		//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 		if (flag.pre_scale_change) {
 			
 			clock.divider = pre_scale[sequencer.pre_scale];       
@@ -371,13 +371,13 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 
 	
 				
-	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
+	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) { //only need to update this when step number changes, right now it's being called at end of every measure!
 		
 		//update step number
 		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
-		TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
-		update_step_led_mask();
-		TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+		
+		//update_step_led_mask();
+		
 	}			
 
 				
@@ -401,9 +401,9 @@ void process_step(void){
 			if (flag.new_measure) {
 			
 				flag.new_measure = 0;
-				TRIGGER_OUT |= (1 << TRIGGER_OUT_2);
+				//TRIGGER_OUT |= (1 << TRIGGER_OUT_2);
 				process_new_measure(); //moved all the new measure housekeeping into its own function.
-				TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+				//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 				if (!sequencer.START) return; //in RHYTHM PLAY mode, process_new_measure() will stop play at end of rhythm track and first step of next pattern will play unless we get out of here. Klunky junk.
 				//sequencer.current_measure++;
 			}			
@@ -451,7 +451,7 @@ void process_step(void){
 			}
 
 			trigger_step();
-
+			//TRIGGER_OUT &= ~(1 << TRIGGER_OUT_2);
 		}
 	  //update_spi();
 	} else if (flag.half_step) {

@@ -258,7 +258,7 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	
 	
 	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17); //2*17 - use constant here that actually means something
-	TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //this loop takes 1.9 ms to execute!!!!
 		
 		for (int inst = BD; inst <= MA; inst++) {
@@ -271,7 +271,7 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 		if ((sequencer.pattern[VAR_A].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_A][AC] |= 1<<i;
 		if ((sequencer.pattern[VAR_B].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_B][AC] |= 1<<i;
 	}
-	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
 	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 	
 	
