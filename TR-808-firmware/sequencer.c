@@ -130,9 +130,10 @@ void process_tick(void) {
 		
 		if (++clock.slave_ppqn_ticks == (PPQN_SKIP_VALUE + 1) ) {
 			clock.slave_ppqn_ticks = 0; //reset
-			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+			//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 			flag.wait_for_master_tick = 1;
-			TCCR1B &= ~(1<<CS12);
+			TCCR1B &= ~(1<<CS12); //turn off timer
+			//TCNT1 = 0;
 		}
 		
 	}
@@ -204,9 +205,9 @@ void process_start(void) {
 		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
 		
 		//reset timeres:
-		//TCNT1 = 0;
-		//TCNT3 = 0;
-
+		TCNT1 = 0;
+		TCNT3 = 0;
+		TCCR1B |= (1<<CS12); //ensure timer is on
 }
 
 void process_stop(void) {
@@ -298,6 +299,9 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			sequencer.START = 0;
 			process_stop();
 			//flag.next_step
+			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
+			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
+			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 			return;
 			//maybe need to do some LED housekeeping before leaving?
 			//return;

@@ -64,7 +64,8 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		//BUT, what about on first pulse? there is no reference before the first pulse, so TCNT could by anywhere in its cycle? But a start event should reset TCNT1 and TCNT3 maybe?
 		flag.wait_for_master_tick = 0;
 		clock.slave_ppqn_ticks = 0;
-		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
+		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt  
+		
 		//OCR1A = TCNT1 - 1; //force output compare match - need to disable interrupts before doing this?
 		//flag.slave_wait = 1;
 		//while (flag.slave_wait == 1);
@@ -74,7 +75,10 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 			//process_tick();
 		} else {
 			update_clock_rate(clock.external_rate);
-			
+			//process_tick();
+			if (!flag.wait_for_master_tick) TCNT1 = 0; //on speed up, faster clock rate may mean flag.wait_for_master_trick isn't triggered, meaning timer isn't reset (on compare match) and turned off
+			//plus process_tick() will not have been called enough. Calling it here if wait_for_master_tick isn't set will help, but in extreme tempo changes, it remains possilbe that more than 1 process_tick() call will be missed
+			//what then? Actually, slave_ppqn_count will tell us how many times process_tick needs to be called. booya!
 			
 			//TIMSK1 |= (1<<OCIE1A); //turn OCR1A interrupt on 
 			
@@ -93,6 +97,7 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		case MIDI_START:
 		sequencer.START = 1;
 		process_start();
+		
 		//process_tick();
 		//TCNT3 = 0;
 		break;
@@ -100,6 +105,7 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		case MIDI_STOP:
 		sequencer.START = 0;
 		process_stop();
+		
 		break;
 		
 		

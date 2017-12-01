@@ -117,7 +117,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		//TCCR1B &= ~(1<<CS12);
 	//	return;
 	//}
-	TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 	//
 	//if (clock.source == INTERNAL) {
@@ -157,7 +157,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			}			
 		}
 	//}	
-	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 	
 }
 

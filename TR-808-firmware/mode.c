@@ -108,6 +108,7 @@ void update_fill_mode(void) {
 							
 				case MIDI_MASTER:
 					clock.source = INTERNAL;
+					TCCR1B |= (1<<CS12); //ensure timer is ON
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
 					PORTC &= ~(1<<SYNC_LED_Y);
@@ -124,6 +125,7 @@ void update_fill_mode(void) {
 							
 				case DIN_SYNC_MASTER:
 					clock.source = INTERNAL;
+					TCCR1B |= (1<<CS12);
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
 					PORTD |= (1<<SYNC_LED_R);
