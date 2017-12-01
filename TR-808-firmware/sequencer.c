@@ -130,7 +130,7 @@ void process_tick(void) {
 		
 		if (++clock.slave_ppqn_ticks == (PPQN_SKIP_VALUE + 1) ) {
 			clock.slave_ppqn_ticks = 0; //reset
-			//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 			flag.wait_for_master_tick = 1;
 			TCCR1B &= ~(1<<CS12); //turn off timer
 			//TCNT1 = 0;
@@ -158,7 +158,7 @@ void process_start(void) {
 			clock.ppqn_counter = clock.divider - 1;// PPQN_SKIP_VALUE - 1;
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
-			flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
+			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
 			sequencer.current_step = 0;
 			clock.ppqn_counter = 0;
