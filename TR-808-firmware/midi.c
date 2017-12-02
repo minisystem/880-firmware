@@ -64,7 +64,7 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		//clock.previous_external_rate = clock.external_rate; //maybe don't need previous_external_rate? Not using it here
 		//BUT, what about on first pulse? there is no reference before the first pulse, so TCNT could by anywhere in its cycle? But a start event should reset TCNT1 and TCNT3 maybe?
 		
-		clock.slave_ppqn_ticks = 0;
+		
 		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt  
 		
 		//OCR1A = TCNT1 - 1; //force output compare match - need to disable interrupts before doing this?
@@ -73,12 +73,17 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		
 		if (flag.slave_start) { //don't update clock if it's the first pulse
 			flag.slave_start = 0;
-			TCNT1 = 0; //reset
+			TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
 			//process_tick();
 		} else {
 			update_clock_rate(clock.external_rate);
 			//process_tick();
-			//if (!flag.wait_for_master_tick) TRIGGER_OUT |= (1<<TRIGGER_OUT_2);// TCNT1 = 0; //on speed up, faster clock rate may mean flag.wait_for_master_trick isn't triggered, meaning timer isn't reset (on compare match) and turned off
+			if (clock.slave_ppqn_ticks != 0) {
+				 //TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+				 clock.ppqn_counter += ((PPQN_SKIP_VALUE + 1) - clock.slave_ppqn_ticks);
+			}
+				 
+			// TCNT1 = 0; //on speed up, faster clock rate may mean flag.wait_for_master_trick isn't triggered, meaning timer isn't reset (on compare match) and turned off
 			//plus process_tick() will not have been called enough. Calling it here if wait_for_master_tick isn't set will help, but in extreme tempo changes, it remains possilbe that more than 1 process_tick() call will be missed
 			//what then? Actually, slave_ppqn_count will tell us how many times process_tick needs to be called. booya!
 			//while(!flag.wait_for_master_tick) TIMER1_COMPA_vect(); 
@@ -86,7 +91,7 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 			
 		}
 		flag.wait_for_master_tick = 0;
-		
+		clock.slave_ppqn_ticks = 0;
 		TCNT3 = 0; //reset timer3
 		//TCNT1 = 0; //reset timer1 - RESETTING TIMER1 HERE CAUSES SLOWER TEMPO (BY 3/4 OF MASTER TEMPO) - WHAT ELSE NEEDS TO BE SET HERE? - NOPE -can't do this here. setting TCTN1 disables next compare match you nitwit
 		//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
