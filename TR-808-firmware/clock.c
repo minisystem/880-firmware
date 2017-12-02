@@ -10,6 +10,7 @@
 
 #include "clock.h"
 #include "hardware.h"
+#include "sequencer.h"
 
 //struct clock midi_clock;
 //struct clock din_clock;
@@ -39,4 +40,27 @@ void update_clock_rate(uint16_t rate) {
 	if (TCNT1 > rate) TCNT1 = rate - 1; //this prevents wrapping. setting TCNT1 = rate would cause immediate interrupt. Is that OK?
 	
 	//OCR2A = OCR2B = rate >> 9; //output compare happens at 1/2 period of Timer1
+}
+
+void process_external_clock_event(void) {
+	
+			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
+			
+			if (flag.slave_start) { //don't update clock if it's the first pulse
+					flag.slave_start = 0;
+					TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
+				} else {
+					update_clock_rate(clock.external_rate);
+					if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
+						clock.ppqn_counter += ((PPQN_SKIP_VALUE + 1) - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+					}
+				
+			}
+			flag.wait_for_master_tick = 0;
+			clock.slave_ppqn_ticks = 0;
+			TCNT3 = 0; //reset timer3
+			process_tick();
+			//turn timer1 on:
+			TCCR1B |= (1<<CS12);	
+	
 }

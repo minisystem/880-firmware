@@ -81,7 +81,7 @@ struct flag {
 	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
 	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed
 	uint8_t blink:1;
-	uint8_t slave_wait:1;
+	
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern

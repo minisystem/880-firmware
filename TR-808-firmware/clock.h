@@ -50,7 +50,7 @@ volatile struct clock clock;
 
 void setup_clock(void);
 void update_clock_rate(uint16_t rate);
-
+void process_external_clock_event(void);
 
 
 
