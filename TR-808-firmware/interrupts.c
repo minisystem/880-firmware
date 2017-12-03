@@ -31,7 +31,8 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 		
 	if (flag.slave_start) {
 							//
-		if (++clock.din_ppqn_pulses == 2) { //DIN Master devices lag their first steps after DIN START by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
+		if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps after DIN START by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
+			
 			process_external_clock_event();					//
 			//flag.slave_start = 0;		
 			//clock.ppqn_counter = 0;
@@ -117,7 +118,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
 	
 	//if (clock.source == INTERNAL) {
-
+		if (flag.slave_start) return; //if there's a lag between start and incoming sync pulse we don't want to process_tick - kind of a pain to call this every time. Could be implemented somewhere else - turn compare interrupt off maybe?
 		process_tick();	
 
 		if (sequencer.START && (clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard

@@ -128,7 +128,7 @@ void process_tick(void) {
 	
 	if (clock.source == EXTERNAL) { 
 		
-		if (++clock.slave_ppqn_ticks == (PPQN_SKIP_VALUE + 1) ) {
+		if (++clock.slave_ppqn_ticks == PPQN_SKIP_VALUE ) {
 			clock.slave_ppqn_ticks = 0; //reset
 			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 			flag.wait_for_master_tick = 1;
@@ -155,7 +155,7 @@ void process_start(void) {
 		if (clock.source == EXTERNAL) { //need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
 			
 			sequencer.current_step = -1;	
-			clock.ppqn_counter = clock.divider - 1;// PPQN_SKIP_VALUE - 1;
+			clock.ppqn_counter = clock.divider - 1;
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
 			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset

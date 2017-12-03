@@ -18,7 +18,7 @@
 #define TIMER0_OUTPUT_COMPARE OCR0A
 
 #define PPQN_DIVIDER 3 //master divider for converting internal 96PPQN to 24PPQN for MIDI and DIN SYNC
-#define PPQN_SKIP_VALUE 3//master ppqn skip value for converting incoming MIDI or DIN SYNC clock to internal 96PPQN. 3 for 24 PPQN, 1 for 48 PPQN, 0 for 96PPQN
+#define PPQN_SKIP_VALUE 4//master ppqn skip value for converting incoming MIDI or DIN SYNC clock to internal 96PPQN. 3 for 24 PPQN, 1 for 48 PPQN, 0 for 96PPQN
 
 enum clock_source {
 	INTERNAL,

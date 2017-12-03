@@ -49,10 +49,11 @@ void process_external_clock_event(void) {
 			if (flag.slave_start) { //don't update clock if it's the first pulse
 					flag.slave_start = 0;
 					TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
+					
 				} else {
 					update_clock_rate(clock.external_rate);
 					if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
-						clock.ppqn_counter += ((PPQN_SKIP_VALUE + 1) - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+						clock.ppqn_counter += (PPQN_SKIP_VALUE - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
 					}
 				
 			}
