@@ -29,23 +29,23 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	//clock.ppqn_counter = 0; //reset ppqn counter
 	
 		
-	//if (flag.slave_start) {
+	if (flag.slave_start) {
 							//
-		//if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
-								//
+		if (++clock.din_ppqn_pulses == 2) { //DIN Master devices lag their first steps after DIN START by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
+			process_external_clock_event();					//
 			//flag.slave_start = 0;		
 			//clock.ppqn_counter = 0;
 			////flag.next_step = 1;		
 			////flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
 								//
 								//
-		//}
+		}
 	//
 		//
-	//} else {
+	} else {
 		
 		process_external_clock_event();
-	//}
+	}
 	
 }
 

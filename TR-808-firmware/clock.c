@@ -60,7 +60,6 @@ void process_external_clock_event(void) {
 			clock.slave_ppqn_ticks = 0;
 			TCNT3 = 0; //reset timer3
 			process_tick();
-			//turn timer1 on:
-			TCCR1B |= (1<<CS12);	
+			TCCR1B |= (1<<CS12);//turn timer1 on	
 	
 }
