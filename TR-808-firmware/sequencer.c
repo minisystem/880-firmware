@@ -39,11 +39,11 @@ void update_tempo(void) {
 	
 	clock.rate = (ADC_MAX - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
-	if (clock.rate != clock.previous_rate) { //this step is maybe not necessary? Just always update OCR1A?
+	//if (clock.rate != clock.previous_rate) { //this step is maybe not necessary? Just always update OCR1A?
 		
 		update_clock_rate(clock.rate);
 		
-	}
+	//}
 	
 	clock.previous_rate = clock.rate;
 	
@@ -130,7 +130,6 @@ void process_tick(void) {
 		
 		if (++clock.slave_ppqn_ticks == PPQN_SKIP_VALUE ) {
 			clock.slave_ppqn_ticks = 0; //reset
-			TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 			flag.wait_for_master_tick = 1;
 			TCCR1B &= ~(1<<CS12); //turn off timer
 			//TCNT1 = 0;
@@ -162,6 +161,7 @@ void process_start(void) {
 		} else {
 			sequencer.current_step = 0;
 			clock.ppqn_counter = 0;
+			flag.slave_start = 0;
 		}		
 		
 		//reset variation on start	
@@ -177,8 +177,9 @@ void process_start(void) {
 		//if (clock.source == INTERNAL) {
 		if (sequencer.clock_mode == DIN_SYNC_MASTER || sequencer.clock_mode == DIN_SYNC_SLAVE) {
 			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
-			flag.slave_start = 1; 
+			flag.din_start = 1; 
 			clock.din_ppqn_pulses = 0;
+			//if (sequencer.clock_mode == DIN_SYNC_MASTER) PORTD |= (1 << DIN_RUN_STOP); //set run/stop line high
 			
 		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER
 			
@@ -380,7 +381,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		//update step number
 		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
 		
-		//update_step_led_mask();
+		update_step_led_mask();
 		
 	}			
 

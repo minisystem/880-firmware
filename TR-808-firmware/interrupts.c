@@ -121,13 +121,13 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 		if (flag.slave_start) return; //if there's a lag between start and incoming sync pulse we don't want to process_tick - kind of a pain to call this every time. Could be implemented somewhere else - turn compare interrupt off maybe?
 		process_tick();	
 
-		if (sequencer.START && (clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
+		if ((clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
 			//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 			clock.ppqn_divider_tick = 0;
 			if (sequencer.clock_mode == MIDI_MASTER) { 
 				midi_send_clock(&midi_device); //send MIDI clock
-				PINC |= (1<<SYNC_LED_Y);
-			} else { //send DIN Sync clock pulse
+				if (sequencer.START) PINC |= (1<<SYNC_LED_Y); //only blink sync LED when sequencer is running
+			} else if (sequencer.clock_mode == DIN_SYNC_MASTER) { //send DIN Sync clock pulse
 				//this set up counter-intuitively puts DIN clock out of phase with master timer. Not sure why this is the case, but it works. Really need to dig into this. Not sure what other horrors this will reveal
 				//need to have a good long think about this and figure out what the problem is. 
 				TCCR2A &= ~(1 << COM2B0);			
@@ -136,21 +136,21 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 				TCCR2A |= (1 << COM2B1) | (1 << COM2B0); //set up OCR2B to set on compare match				
 				
 				TCNT2 = 0;	//reset timer				
-				PINC |= (1<<SYNC_LED_R); //toggle SYNC LED
-				//if (flag.slave_start) {
-					//
-					//if (++clock.din_ppqn_pulses == 3) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
-				//
-						//flag.slave_start = 0;
-						//PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin 
-						//clock.ppqn_counter = 0;
-						//flag.next_step = 1;
+				if (sequencer.START) PINC |= (1<<SYNC_LED_R); //toggle SYNC LED
+				if (flag.din_start) {
+					
+					if (++clock.din_ppqn_pulses == 1) { //send 2 DIN clock pulses before bringing RUN/STOP line high: http://www.e-rm.de/data/ERM_DinSync_Report_10_14.pdf
+						
+						flag.din_start = 0;
+						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin 
+						clock.ppqn_counter = 0;
+						flag.next_step = 1;
 						//TCNT1 = 0; //reset master timer, doesn't seem necessary
-						//flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
-						//
-						//
-					//}	
-				//}	
+						flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
+						
+						
+					}
+				}	
 			}			
 		}
 	//}	

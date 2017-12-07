@@ -127,7 +127,7 @@ void check_start_stop_tap(void) {
 		
 	}
 	
-	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should!
+	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should! - in fact, need to handle start/stop when synced to external pulse volca style
 	
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
@@ -135,6 +135,7 @@ void check_start_stop_tap(void) {
 	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
 		
 		process_start();
+			
 	}
 	
 	if ((sequencer.START == 0) && (start_state == 1)) {//when stop is first pressed need to handle lingering instrument LEDs 

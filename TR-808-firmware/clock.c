@@ -64,3 +64,17 @@ void process_external_clock_event(void) {
 			TCCR1B |= (1<<CS12);//turn timer1 on	
 	
 }
+
+void process_external_sync_pulse(void) {
+	
+	clock.external_rate = TCNT3/6; //Timer3 runs 4 times slower than Timer1, so Timer3 works for 24 ppqn pulses. Need to /6 to get 4 ppqn, which is what 1/16th note steps from a Volca will give 
+	update_clock_rate(clock.external_rate);
+	if (clock.slave_ppqn_ticks != 0) {
+		
+		clock.ppqn_counter += (24 - clock.slave_ppqn_ticks);
+	}
+	TCNT3 = 0;
+	process_tick();
+	TCCR1B |= (1<<CS12);
+}
+

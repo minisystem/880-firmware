@@ -246,6 +246,18 @@ void update_inst_leds(void) {
 //}
 	
 //}
+
+void update_inst_led_mask(void) {
+	
+	sequencer.led_mask = 0;
+	
+	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+		
+		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] >> sequencer.current_inst) & 1) sequencer.led_mask |= 1 << i;
+	}
+	
+		
+}
 	
 void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
 	
@@ -258,13 +270,15 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	
 	
 	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17); //2*17 - use constant here that actually means something
-	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+	TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 	
 	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //this loop takes 1.9 ms to execute!!!!
 		
 		for (int inst = BD; inst <= MA; inst++) {
 			//sequencer.step_led_mask[VAR_A][inst] |= (((sequencer.pattern[VAR_A].part[sequencer.part_editing][i]) & (1<<i))); //this doesn't work. not sure why not???
 			//sequencer.step_led_mask[VAR_B][inst] |= (((sequencer.pattern[VAR_B].part[sequencer.part_editing][i]) & (1<<i)));
+			//sequencer.step_led_mask[VAR_A][inst] |= (((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) <<i);
+			//sequencer.step_led_mask[VAR_B][inst] |= (((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) <<i);
 			if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_A][inst] |= 1<<i;
 			if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_B][inst] |= 1<<i;
 		}
@@ -290,11 +304,11 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 		
 		//sequencer.step_led_mask[VAR_A][inst] = sequencer.pattern[VAR_A].part[inst]
 	//}
-	//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_1);
+	TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
 	//^^^^^^This all seems very inefficient. Would it be easier to directly manipulate spi_data step bytes only for the current instrument? not sure.
 	
 	
-}	
+}	 
 
 void update_prescale_leds(void) {
 	

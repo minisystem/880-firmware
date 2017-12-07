@@ -97,6 +97,8 @@ void update_inst_leds(void);
 
 void update_step_led_mask(void);
 
+void update_inst_led_mask(void);
+
 void update_prescale_leds(void);
 
 void refresh_step_leds(void); //update step board spi bytes if step number changes
