@@ -54,7 +54,8 @@ void update_mode(void) {
 			
 			sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
 			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
-			update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
+			//update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
+			update_inst_led_mask();
 		} else if (sequencer.mode == MANUAL_PLAY) {
 			//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
 			if (sequencer.current_pattern > 11) { //make 11 a constant here

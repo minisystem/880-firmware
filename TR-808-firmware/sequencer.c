@@ -381,7 +381,8 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		//update step number
 		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
 		
-		update_step_led_mask();
+		//update_step_led_mask();
+		update_inst_led_mask();
 		
 	}			
 
@@ -1094,6 +1095,7 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	sequencer.step_num[SECOND] = next_pattern.step_num[SECOND];
 	sequencer.pre_scale = next_pattern.pre_scale;
 	clock.divider = pre_scale[sequencer.pre_scale];
+	//update_step_led_mask();
 	update_step_led_mask();
 	update_prescale_leds();
 	//sequencer.part_playing = sequencer.step_num_new = FIRST;
