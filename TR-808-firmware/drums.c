@@ -110,8 +110,9 @@ void trigger_roll(void) {
 	}
 }
 
-void trigger_step(void) { //trigger all drums on current step
+void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	//while (flag.trig_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
+	
 	PORTD |= (1<<TRIG);
 	clear_all_trigs();
 	//TRIGGER_OUT &= TRIGGER_OFF;
@@ -120,7 +121,7 @@ void trigger_step(void) { //trigger all drums on current step
 	if (sequencer.roll_mode != 0) trigger_roll();
 	for (int i = BD; i <= MA; i++) {
 		
-		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_playing][sequencer.current_step] >> i) &1) {
+		if ((sequencer.pattern[sequencer.variation].part[part_playing][sequencer.current_step] >> i) &1) {
 			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 			//if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
 			
@@ -139,13 +140,16 @@ void trigger_step(void) { //trigger all drums on current step
 
 	}
 	//handle accent
-	if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_playing] >> sequencer.current_step) &1) {
+	if ((sequencer.pattern[sequencer.variation].accent[part_playing] >> sequencer.current_step) &1) {
 		spi_data[LATCH_8] |= 1<<ACCENT;
 		if (sequencer.trigger_1 == AC) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 		if (sequencer.trigger_2 == AC) TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 		if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 	}
+	
 }
+
+
 
 void live_hits(void) { //use switch case here you twit or for loop. duh.
 	//also what about SHIFT to trigger alternative instruments?

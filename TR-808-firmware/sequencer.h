@@ -134,8 +134,8 @@ struct sequencer {
 	uint8_t roll_mode:3;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t pattern_bank:4;
-	uint16_t step_led_mask[2][17];
-	uint32_t led_mask;
+	//uint16_t step_led_mask[2][17];
+	uint16_t led_mask;
 	uint8_t variation_toggle:1;
 	uint8_t variation:1; //variation A or variation B
 	uint8_t intro_fill_var:1; //intro/fill variation

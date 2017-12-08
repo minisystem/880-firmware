@@ -251,12 +251,22 @@ void update_inst_led_mask(void) {
 	
 	sequencer.led_mask = 0;
 	
-	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+	if (sequencer.current_inst == AC) { //annoying exception for accent
 		
-		if ((sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] >> sequencer.current_inst) & 1) sequencer.led_mask |= 1 << i;
-	}
+		for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] >> i) &1) sequencer.led_mask |= 1<<i;
+		}
+		
+	} else {
+	
+		for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+		
+			if ((sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] >> sequencer.current_inst) & 1) sequencer.led_mask |= 1 << i;
+		}
 	
 		
+	}
+	
 }
 	
 void update_step_led_mask(void) { //this blanks step_led_mask and then restore it from pattern data to appropriate step number - use to adjust step led mask when step number is changed.
@@ -269,7 +279,7 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 	
 	
 	
-	memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17); //2*17 - use constant here that actually means something
+	//memset(sequencer.step_led_mask, 0, sizeof(sequencer.step_led_mask[0][0])*2*17); //2*17 - use constant here that actually means something
 	TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 	
 	for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) { //this loop takes 1.9 ms to execute!!!!
@@ -279,13 +289,13 @@ void update_step_led_mask(void) { //this blanks step_led_mask and then restore i
 			//sequencer.step_led_mask[VAR_B][inst] |= (((sequencer.pattern[VAR_B].part[sequencer.part_editing][i]) & (1<<i)));
 			//sequencer.step_led_mask[VAR_A][inst] |= (((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) <<i);
 			//sequencer.step_led_mask[VAR_B][inst] |= (((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) <<i);
-			if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_A][inst] |= 1<<i;
-			if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_B][inst] |= 1<<i;
+			//if ((sequencer.pattern[VAR_A].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_A][inst] |= 1<<i;
+			//if ((sequencer.pattern[VAR_B].part[sequencer.part_editing][i] >> inst) & 1) sequencer.step_led_mask[VAR_B][inst] |= 1<<i;
 		}
 		
 		//also need to rebuild accent led_mask here:
-		if ((sequencer.pattern[VAR_A].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_A][AC] |= 1<<i;
-		if ((sequencer.pattern[VAR_B].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_B][AC] |= 1<<i;
+		//if ((sequencer.pattern[VAR_A].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_A][AC] |= 1<<i;
+		//if ((sequencer.pattern[VAR_B].accent[sequencer.part_editing] >> i) &1) sequencer.step_led_mask[VAR_B][AC] |= 1<<i;
 	}
 	
 	/*

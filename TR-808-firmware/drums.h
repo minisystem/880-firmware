@@ -44,7 +44,8 @@ extern uint8_t current_drum_hit; //global to hold index of current drum in MIDI 
 //volatile uint8_t trigger_finished;
 
 void trigger_drum(uint8_t note, uint8_t velocity);
-void trigger_step(void);
+void trigger_step(uint8_t part_playing);
+//void trigger_substep(void);
 void clear_all_trigs(void);
 void trigger_roll(void);
 void live_hits(void);

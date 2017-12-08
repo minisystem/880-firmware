@@ -202,6 +202,7 @@ void check_inst_switches(void) {
 				turn_off_all_inst_leds();
 				turn_on(ACCENT_1_LED);
 				sequencer.current_inst = AC;
+				update_inst_led_mask();
 			} else if (sequencer.ALT) {
 			
 				turn_off_all_inst_leds();
@@ -342,7 +343,8 @@ void check_clear_switch(void) {
 				}
 										
 				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
-				memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));			
+				//memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));	
+				sequencer.led_mask = 0;		
 				sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
 				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
 				sequencer.step_num[FIRST] = 15;
@@ -565,7 +567,7 @@ void process_inst_press(uint8_t drum_index) {
 			}
 					
 		}
-
+		update_inst_led_mask();
 				
 	} else { //SHIFT pressed 
 				
@@ -591,11 +593,12 @@ void process_track_press(void) {
 void clear_pattern_bank(uint8_t bank) {
 	
 		memset(sequencer.pattern[VAR_A].part, 0, sizeof(sequencer.pattern[VAR_A].part));
-		memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
+		//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
+		sequencer.led_mask = 0;
 		sequencer.pattern[VAR_A].accent[FIRST] = 0;
 		sequencer.pattern[VAR_A].accent[SECOND] = 0;
 		memset(sequencer.pattern[VAR_B].part, 0, sizeof(sequencer.pattern[VAR_B].part));
-		memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
+		//memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
 		sequencer.pattern[VAR_B].accent[FIRST] = 0;
 		sequencer.pattern[VAR_B].accent[SECOND] = 0;
 		
@@ -613,11 +616,12 @@ void clear_pattern_bank(uint8_t bank) {
 void clear_all_patterns(void) {
 	
 	memset(sequencer.pattern[VAR_A].part, 0, sizeof(sequencer.pattern[VAR_A].part));
-	memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
+	//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
+	sequencer.led_mask = 0;
 	sequencer.pattern[VAR_A].accent[FIRST] = 0;
 	sequencer.pattern[VAR_A].accent[SECOND] = 0;
 	memset(sequencer.pattern[VAR_B].part, 0, sizeof(sequencer.pattern[VAR_B].part));
-	memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
+	//memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
 	sequencer.pattern[VAR_B].accent[FIRST] = 0;
 	sequencer.pattern[VAR_B].accent[SECOND] = 0;
 	

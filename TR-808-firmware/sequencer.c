@@ -379,6 +379,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) { //only need to update this when step number changes, right now it's being called at end of every measure!
 		
 		//update step number
+		
 		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
 		
 		//update_step_led_mask();
@@ -425,10 +426,10 @@ void process_step(void){
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 					check_tap();				
 					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
-						spi_data[LATCH_1] = (1 << sequencer.current_step) | sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
-						spi_data[LATCH_1] &= ~(sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] & (1<<sequencer.current_step));
-						spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | (sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8);
-						spi_data[LATCH_0] &= ~((sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]>>8) & ((1<<sequencer.current_step) >>8));
+						spi_data[LATCH_1] = (1 << sequencer.current_step) | sequencer.led_mask;//sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
+						spi_data[LATCH_1] &= ~(sequencer.led_mask & (1<<sequencer.current_step));
+						spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | (sequencer.led_mask >> 8);
+						spi_data[LATCH_0] &= ~((sequencer.led_mask >> 8) & ((1<<sequencer.current_step) >>8));
 						
 					}				
 				break;
@@ -456,7 +457,7 @@ void process_step(void){
 				
 			}
 
-			trigger_step();
+			trigger_step(sequencer.part_playing);
 			//TRIGGER_OUT &= ~(1 << TRIGGER_OUT_2);
 		}
 	  //update_spi();
@@ -469,8 +470,13 @@ void process_step(void){
 		if (sequencer.START) {
 			spi_data[LATCH_1] = 0;
 			spi_data[LATCH_0] = 0;
+			
 			if (sequencer.roll_mode == ROLL_32) {
 				trigger_drum(sequencer.current_inst, 0);	//default 15ms timer interrupt used in this function is going to cause problems at high tempos - consider making this 1 ms
+			}
+			if (sequencer.step_num[SECOND] == NO_STEPS) { //will not work with roll mode at the moment - need to get substep and roll mode cooperating
+				
+				trigger_step(SECOND);
 			}
 			switch (sequencer.mode) {
 				
@@ -487,8 +493,8 @@ void process_step(void){
 						}
 					} else {
 						turn_on(drum_hit[sequencer.current_inst].led_index);
-						spi_data[LATCH_1] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-						spi_data[LATCH_0] = sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] >> 8;												
+						spi_data[LATCH_1] = sequencer.led_mask; //sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+						spi_data[LATCH_0] = sequencer.led_mask >> 8;												
 					}
 				
 				break;
@@ -735,7 +741,7 @@ void update_step_board() { //should this be in switches.c ?
 				if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
 					toggle(press);
 					sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
-					sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
+					sequencer.led_mask ^= 1<<press;
 					flag.pattern_edit = 1;
 				}
 						
@@ -749,7 +755,7 @@ void update_step_board() { //should this be in switches.c ?
 			if (press <= sequencer.step_num[sequencer.part_editing]) {
 				toggle(press);
 				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
-				sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] ^= 1<<press;
+				sequencer.led_mask ^= 1<<press;
 				flag.pattern_edit = 1;
 				//toggle(IF_VAR_B_LED);
 			//}					
@@ -1023,7 +1029,7 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 			} else {
 				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
 			}
-			sequencer.step_led_mask[sequencer.variation][sequencer.current_inst] |= 1<<sequencer.current_step;
+			sequencer.led_mask |= 1<<sequencer.current_step;
 			flag.pattern_edit = 1; //set pattern edit flag
 		
 		} else if (sequencer.mode == MANUAL_PLAY){ 
@@ -1096,7 +1102,7 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	sequencer.pre_scale = next_pattern.pre_scale;
 	clock.divider = pre_scale[sequencer.pre_scale];
 	//update_step_led_mask();
-	update_step_led_mask();
+	update_inst_led_mask();
 	update_prescale_leds();
 	//sequencer.part_playing = sequencer.step_num_new = FIRST;
 	
