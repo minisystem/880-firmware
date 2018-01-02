@@ -58,7 +58,7 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK:	
-		
+			//this would be the place to implement a MIDI clock divider
 			process_external_clock_event();
 	
 		break;

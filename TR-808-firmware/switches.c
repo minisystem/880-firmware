@@ -127,7 +127,7 @@ void check_start_stop_tap(void) {
 		
 	}
 	
-	if (clock.source == EXTERNAL) return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should! - in fact, need to handle start/stop when synced to external pulse volca style
+	if ((clock.source == EXTERNAL) && (sequencer.clock_mode != PULSE_SYNC_SLAVE)) return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should! - in fact, need to handle start/stop when synced to external pulse volca style
 	
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
@@ -296,9 +296,21 @@ void check_inst_switches(void) {
 
 void check_variation_switches(void) { //at the moment, just check one switch and cycle through A, B and A/B
 	
+	
+	
 	if (button[BASIC_VAR_A_SW].state && !sequencer.SHIFT) {
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle  - this is not toggling. need to ^= 1<<0 to toggle a single bit state. hmmm.
+		
+		if (sequencer.mode == PATTERN_CLEAR && clock.source == EXTERNAL) { //NUDGE FUNCTION
+			
+			if (clock.ppqn_counter != 0) clock.ppqn_counter--;
+			//clock.previous_rate = clock.rate;
+			//clock.rate++;
+			//OCR1A++;
+			//flag.nudge_down = 1;
+			return;
+		}
 		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
 		if (sequencer.START) {
 			
@@ -430,6 +442,11 @@ uint8_t check_step_press(void) {
 
 void check_intro_fill_variation_switch(void) { 
 	
+	//if ((sequencer.ALT) && (sequencer.part_editing == FIRST)) { //if ALT and editing first part, then edit second part as 32nd note layer on first part
+		//sequencer.part_editing = SECOND;
+		//update_inst_led_mask();
+	//}
+	
 	if (button[IF_VAR_SW].state) {
 		
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
@@ -437,8 +454,9 @@ void check_intro_fill_variation_switch(void) {
 			if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure
 			flag.pattern_change = 1; //
 			//return;
+		
 			
-		} else {
+		} else if (sequencer.mode == MANUAL_PLAY) { //only toggle if in MANUAL PLAY MODE, but this will mean you can't change trigger assignments in any other mode.
 			toggle(IF_VAR_A_LED);
 			toggle(IF_VAR_B_LED);
 			sequencer.intro_fill_var ^= 1<<0;

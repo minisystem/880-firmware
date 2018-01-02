@@ -45,7 +45,7 @@ void update_tempo(void) {
 		
 	//}
 	
-	clock.previous_rate = clock.rate;
+	//clock.previous_rate = clock.rate;
 	
 }
 
@@ -128,7 +128,7 @@ void process_tick(void) {
 	
 	if (clock.source == EXTERNAL) { 
 		
-		if (++clock.slave_ppqn_ticks == PPQN_SKIP_VALUE ) {
+		if (++clock.slave_ppqn_ticks == clock.sync_count) {
 			clock.slave_ppqn_ticks = 0; //reset
 			flag.wait_for_master_tick = 1;
 			TCCR1B &= ~(1<<CS12); //turn off timer
@@ -424,7 +424,8 @@ void process_step(void){
 			switch (sequencer.mode) {
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
-					check_tap();				
+					check_tap();
+					if (sequencer.ALT) break;				
 					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
 						spi_data[LATCH_1] = (1 << sequencer.current_step) | sequencer.led_mask;//sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
 						spi_data[LATCH_1] &= ~(sequencer.led_mask & (1<<sequencer.current_step));
@@ -749,11 +750,14 @@ void update_step_board() { //should this be in switches.c ?
 
 				return; //break or return?
 			}
-
-			//press = check_step_press();
-			//if (press != EMPTY)	{
+			 
 			if (press <= sequencer.step_num[sequencer.part_editing]) {
-				toggle(press);
+				toggle(press); 
+				//use ALT here to add presses to 2nd PART
+				//uint8_t part_editing = sequencer.part_editing;
+				//if ((sequencer.ALT) && (sequencer.part_editing == FIRST)) { //if ALT and editing first part, then edit second part as 32nd note layer on first part
+					//part_editing = SECOND;
+				//}
 				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
 				sequencer.led_mask ^= 1<<press;
 				flag.pattern_edit = 1;

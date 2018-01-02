@@ -53,10 +53,12 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 ISR (INT0_vect) { //external SYNC IN. By default this is for advancing a step, Volca style
 	
 	//clock.ppqn_counter+= PPQN_SKIP_VALUE;
-	clock.ppqn_counter = clock.divider - 1; //need to finesse this and maybe get it to work with master clock? This is effectively 1 ppqn, so need to get it to work accordingly? In fact, this could be customizable - 1, 2, 4, 6, ... 24, ... 48, ppqn
-	process_tick(); 
+	//clock.ppqn_counter = clock.divider - 1; //need to finesse this and maybe get it to work with master clock? This is effectively 1 ppqn, so need to get it to work accordingly? In fact, this could be customizable - 1, 2, 4, 6, ... 24, ... 48, ppqn
+	//process_tick(); 
+	process_external_sync_pulse();
+	//process_external_clock_event();
 	PINC |= (1<<SYNC_LED_Y);
-	
+	clock.sync_led_mask++; //^= 1 << clock.sync_led_mask;
 }
 
 ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
@@ -81,7 +83,7 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	
 	TCCR0B = 0; //turn off timer
 	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
-	//TRIGGER_OUT &= TRIGGER_OFF;
+	TRIGGER_OUT &= TRIGGER_OFF;
 	flag.trig_finished = 1;
 	//eventually need to turn all triggers off here for 15 ms trigger width for trigger expander module, unless expander module just uses rising edge maybe?
 	//toggle(ACCENT_1_LED);
@@ -116,7 +118,7 @@ ISR (TIMER4_COMPA_vect) {
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 	
-	
+	//OCR1A = clock.rate; 
 	//if (clock.source == INTERNAL) {
 		if (flag.slave_start) return; //if there's a lag between start and incoming sync pulse we don't want to process_tick - kind of a pain to call this every time. Could be implemented somewhere else - turn compare interrupt off maybe?
 		process_tick();	

@@ -45,7 +45,8 @@ void update_clock_rate(uint16_t rate) {
 void process_external_clock_event(void) {
 	
 			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
-			
+			//clock.external_rate /= 12;
+			//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 			if (flag.slave_start) { //don't update clock if it's the first pulse
 					flag.slave_start = 0;
 					TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
@@ -53,7 +54,7 @@ void process_external_clock_event(void) {
 				} else {
 					update_clock_rate(clock.external_rate);
 					if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
-						clock.ppqn_counter += (PPQN_SKIP_VALUE - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+						clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
 					}
 				
 			}
@@ -67,14 +68,32 @@ void process_external_clock_event(void) {
 
 void process_external_sync_pulse(void) {
 	
-	clock.external_rate = TCNT3/6; //Timer3 runs 4 times slower than Timer1, so Timer3 works for 24 ppqn pulses. Need to /6 to get 4 ppqn, which is what 1/16th note steps from a Volca will give 
-	update_clock_rate(clock.external_rate);
-	if (clock.slave_ppqn_ticks != 0) {
-		
-		clock.ppqn_counter += (24 - clock.slave_ppqn_ticks);
-	}
-	TCNT3 = 0;
-	process_tick();
-	TCCR1B |= (1<<CS12);
+		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
+		clock.external_rate /= 12;
+		//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
+		if (flag.slave_start) { //don't update clock if it's the first pulse
+			flag.slave_start = 0;
+			TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
+				
+			} else {
+			update_clock_rate(clock.external_rate);
+			if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
+				if ((clock.sync_count - clock.slave_ppqn_ticks) < PPQN_24_TICK_COUNT) { //then only a few ppqn needed to catch up to next step
+					
+					clock.ppqn_counter += (PPQN_24_TICK_COUNT - (clock.sync_count - clock.slave_ppqn_ticks));
+					
+				} else {
+					
+					//you're fucked - you need to make up steps.
+				}
+				//clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+			}
+				
+		}
+		flag.wait_for_master_tick = 0;
+		clock.slave_ppqn_ticks = 0;
+		TCNT3 = 0; //reset timer3
+		process_tick();
+		TCCR1B |= (1<<CS12);//turn timer1 on
 }
 

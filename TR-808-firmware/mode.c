@@ -87,7 +87,7 @@ void update_mode(void) {
 	
 void update_fill_mode(void) {
 	uint8_t fill_mode[NUM_FILL_MODES] = {MANUAL, 15, 11, 7, 3, 1};
-	enum clock_mode clock_mode[4] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE};
+	enum clock_mode clock_mode[5] = {MIDI_MASTER, MIDI_SLAVE, DIN_SYNC_MASTER, DIN_SYNC_SLAVE, PULSE_SYNC_SLAVE}; //add an extra mode here for SYNC_SLAVE where SYNC IN LED flashes when SHIFT is held
 		
 	spi_data[LATCH_4] &= FILL_MODE_LATCH_4_LED_MASK; //clear FILL LED bits
 	spi_data[LATCH_2] &= FILL_MODE_LATCH_2_LED_MASK;
@@ -105,6 +105,7 @@ void update_fill_mode(void) {
 			EIMSK = 0; //turn off external interrupts
 			PCICR = 0; //turn off pin change interrupts			
 			//spi_data[2] |= (1 << fill_index);
+			clock.sync_count = PPQN_24_TICK_COUNT; //restore default, only changes for external non-DIN sync pulse
 			switch (sequencer.clock_mode) {
 							
 				case MIDI_MASTER:
@@ -114,6 +115,7 @@ void update_fill_mode(void) {
 					//sequencer.shuffle_multplier = 4;
 					PORTC &= ~(1<<SYNC_LED_Y);
 					PORTE &= ~(1<<SYNC_LED_R);
+					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							
 				case MIDI_SLAVE:
@@ -122,6 +124,7 @@ void update_fill_mode(void) {
 					TCNT3 = 0; //reset timer3
 					//sequencer.shuffle_multplier = 1;
 					PORTE |= (1<<SYNC_LED_R);
+					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							
 				case DIN_SYNC_MASTER:
@@ -135,7 +138,7 @@ void update_fill_mode(void) {
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
 					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); 
 					TCNT2 = 0;
-					
+					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							
 				case DIN_SYNC_SLAVE:
@@ -145,21 +148,36 @@ void update_fill_mode(void) {
 					//sequencer.shuffle_multplier = 1;
 					PORTE &= ~(1<<SYNC_LED_R);
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
-					EIMSK |= (1 << INT1) | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
+					EIMSK |= (1 << INT1);// | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
 					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?
 					
-					
+					//spi_data[LATCH_2] |= (clock.sync_led_mask << sync_index);
 					
 					//TCCR1B = 0; //stop master tempo timer - necessary?
 					
 					break;
-							
-							
+				
+				case PULSE_SYNC_SLAVE:
+					clock.source = EXTERNAL;
+					TCNT3 = 0;
+					PORTE &= ~(1<<SYNC_LED_R);	
+					//DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
+					EIMSK |= (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
+					//PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?		
+					PINC |= (1<<SYNC_LED_Y);
+					clock.sync_led_mask = 0;
+					clock.sync_count = PPQN_2_TICK_COUNT; //generate 48 internal clock pulses for each external clock pulse		
 			}
 			
 		}
 		
-		spi_data[LATCH_2] |= (1 << sync_index);
+		if (sequencer.clock_mode == PULSE_SYNC_SLAVE) {
+			
+			spi_data[LATCH_2] |= (clock.sync_led_mask << (sync_index - 1));// & (clock.sync_led_mask <<; //AND this with toggle bit from SYNC handler in interrupts.c
+		} else {
+			
+			spi_data[LATCH_2] |= (1 << sync_index);
+		}
 		
 	} else {
 		
