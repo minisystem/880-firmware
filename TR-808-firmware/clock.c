@@ -55,6 +55,7 @@ void process_external_clock_event(void) {
 					update_clock_rate(clock.external_rate);
 					if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
 						clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+						//hmm. should this not just be clock.pqqn_counter = clock.divider - 1 - NO because we do not need to generate a step here -
 					}
 				
 			}
@@ -78,14 +79,15 @@ void process_external_sync_pulse(void) {
 			} else {
 			update_clock_rate(clock.external_rate);
 			if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
-				if ((clock.sync_count - clock.slave_ppqn_ticks) < PPQN_24_TICK_COUNT) { //then only a few ppqn needed to catch up to next step
-					
-					clock.ppqn_counter += (PPQN_24_TICK_COUNT - (clock.sync_count - clock.slave_ppqn_ticks));
-					
-				} else {
-					
+				//if ((clock.sync_count - clock.slave_ppqn_ticks) < PPQN_24_TICK_COUNT) { //then only a few ppqn needed to catch up to next step
+					//
+					//clock.ppqn_counter += (PPQN_24_TICK_COUNT - (clock.sync_count - clock.slave_ppqn_ticks));
+					//
+				//} else {			
 					//you're fucked - you need to make up steps.
-				}
+					//if it's 24 or less, then there will be a step to make up. But if not, then what about this:
+					clock.ppqn_counter = clock.divider - 1;
+				//}
 				//clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
 			}
 				
