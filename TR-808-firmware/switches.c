@@ -397,7 +397,8 @@ void check_clear_switch(void) {
 				memset(&rhythm_track.patterns, 0, sizeof(rhythm_track.patterns));
 				rhythm_track.length = 0;
 				write_rhythm_track();
-			
+				sequencer.pattern_bank = 0; //reset pattern bank to 0
+				
 				break;			
 			
 		}

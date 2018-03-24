@@ -136,6 +136,7 @@ struct sequencer {
 	uint8_t roll_mode:3;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
 	uint8_t pattern_bank:4;
+	uint8_t previous_bank:4; //place holder for bank to return to when cycling through modes back to pattern edit mode
 	//uint16_t step_led_mask[2][17];
 	uint16_t led_mask;
 	uint8_t variation_toggle:1;
@@ -149,6 +150,7 @@ struct sequencer {
 	uint8_t part_editing:1; //part currently being edited. Determined by mode
 	uint8_t pre_scale:2;
 	uint8_t current_pattern:4;
+	uint8_t previous_pattern:4; //place holder for pattern being edited when cycling between modes
 	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
 	uint8_t current_intro_fill:4;
 	uint8_t current_measure_auto_fill:6; //counter used for counting measures for AUTO FILL INs

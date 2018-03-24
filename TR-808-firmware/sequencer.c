@@ -715,7 +715,7 @@ void update_step_board() { //should this be in switches.c ?
 				if (sequencer.ALT) {
 					if (sequencer.current_pattern != press) { //is this step necessary or is current/new pattern checked somewhere else?
 						flag.pattern_change = 1;
-						sequencer.new_pattern = press;
+						sequencer.new_pattern = sequencer.previous_pattern = press;
 						turn_off(sequencer.current_pattern);
 						turn_on(sequencer.new_pattern);
 					}
@@ -818,7 +818,7 @@ void update_step_board() { //should this be in switches.c ?
  
 			
 			} else {
-				sequencer.new_pattern = press;
+				sequencer.new_pattern = sequencer.previous_pattern = press;
 				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 			}
 			break;
@@ -850,7 +850,7 @@ void update_step_board() { //should this be in switches.c ?
 						//if current pattern has been edited need to write it to current bank before changing bank, otherwise edited pattern will be written to new bank!
 						//BUT, can't edit patterns when sequencer isn't running except for changing pre-scale.
 						if (press < NUM_BANKS) {
-							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilobits and kilobytes, you nitwit.
+							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilo*bits* and kilo*bytes*, you nitwit.
 							
 								flag.pattern_edit = 0;
 						
@@ -858,7 +858,7 @@ void update_step_board() { //should this be in switches.c ?
 							
 							}
 							turn_off(sequencer.pattern_bank);
-							sequencer.pattern_bank = press;
+							sequencer.pattern_bank = sequencer.previous_bank = press;
 							turn_on(sequencer.pattern_bank);
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						}
@@ -875,7 +875,7 @@ void update_step_board() { //should this be in switches.c ?
 						
 						read_next_pattern(press, sequencer.pattern_bank);	
 					}
-					sequencer.current_pattern = sequencer.new_pattern = press;
+					sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern = press;
 					//sequencer.variation = VAR_A;
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;
@@ -1075,10 +1075,10 @@ void toggle_variation(void) {
 		switch (sequencer.variation_mode) {
 					
 			case VAR_A: case VAR_AB:
-			sequencer.variation = VAR_A;
+				sequencer.variation = VAR_A;
 			break;
 			case VAR_B:
-			sequencer.variation = VAR_B;
+				sequencer.variation = VAR_B;
 			break;
 					
 					

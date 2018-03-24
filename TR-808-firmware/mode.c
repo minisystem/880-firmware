@@ -49,32 +49,57 @@ void update_mode(void) {
 		
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.step_num_new = sequencer.step_num[sequencer.part_editing]; //another annoying except
 		
-		//should eventually implement a switch case statement here to handle rhyth write and play modes
-		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
+		//should eventually implement a switch case statement here to handle rhythm write and play modes
+		switch (sequencer.mode) {
 			
-			sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
-			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
-			//update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
-			update_inst_led_mask();
+			case FIRST_PART: case SECOND_PART:
+				sequencer.pattern_bank = sequencer.previous_bank;
+				sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern;
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
+				sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
+				//update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure
+				update_inst_led_mask();			
+			break;
+
+			case MANUAL_PLAY:
+				//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
+				if (sequencer.current_pattern > 11) { //make 11 a constant here
+					sequencer.previous_pattern = sequencer.current_pattern; //save current pattern for return to pattern edit mode
+					sequencer.new_pattern = 11;
+					flag.pattern_change = 1;
+				}
+			break;
+			
+			case PLAY_RHYTHM:
+				//will need to update inst/track leds to current rhythm track, rather than resetting to 0
+				read_rhythm_track();
+				//flag.pattern_change = 1;
+				sequencer.track_measure = 0;
+				//store pattern and bank for switching back to pattern edit mode
+				sequencer.previous_pattern = sequencer.current_pattern;
+				sequencer.previous_bank = sequencer.pattern_bank;
+				sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+				sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+				if (sequencer.START) {
+					flag.pattern_change = 1;
+						} else {
+					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				}			
+			break;
+			
+			case COMPOSE_RHYTHM:
+			
+			break;
+
+		}
+		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
+
 		} else if (sequencer.mode == MANUAL_PLAY) {
-			//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
-			if (sequencer.current_pattern > 11) { //make 11 a constant here
-				sequencer.new_pattern = 11;
-				flag.pattern_change = 1;
-			}
+
 			
 		} else if (sequencer.mode == PLAY_RHYTHM) {
-			//will need to update inst/track leds to current rhythm track, rather than resetting to 0
-			read_rhythm_track();
-			//flag.pattern_change = 1;
-			sequencer.track_measure = 0;
-			sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-			if (sequencer.START) {
-				flag.pattern_change = 1;
-				} else {
-				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			}		
+	
 		}
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
