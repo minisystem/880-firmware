@@ -145,7 +145,7 @@ void process_tick(void) {
 void process_start(void) {
 	
 		//sequencer.current_step = 0;
-		sequencer.track_measure = 0;
+		if (sequencer.mode != COMPOSE_RHYTHM) sequencer.track_measure = 0; //ugly bodge here. need to think how Rhythm Play and Compose modes should work when started and stopped. bleh.
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		//clock.ppqn_counter = 0;
@@ -775,7 +775,7 @@ void update_step_board() { //should this be in switches.c ?
 					if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 						turn_off(sequencer.pattern_bank);
-						sequencer.pattern_bank = press;
+						sequencer.pattern_bank = sequencer.previous_bank = press;
 						turn_on(sequencer.pattern_bank);
 						//read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						flag.pattern_change = 1;
@@ -788,7 +788,7 @@ void update_step_board() { //should this be in switches.c ?
 			} else {
 
 				if (press < NUM_BANKS) { //first 12 pattern places are for main patterns 
-					sequencer.new_pattern = press;
+					sequencer.new_pattern = sequencer.previous_pattern = press;
 					if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 				
 				} else { //remaining 4 patterns places are for intro/fills
@@ -818,7 +818,7 @@ void update_step_board() { //should this be in switches.c ?
  
 			
 			} else {
-				sequencer.new_pattern = sequencer.previous_pattern = press;
+				sequencer.new_pattern = sequencer.previous_pattern = press; //want to be able to edit this pattern when cycling back to pattern edit mode
 				if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
 			}
 			break;
@@ -892,7 +892,7 @@ void update_step_board() { //should this be in switches.c ?
 						if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 							turn_off(sequencer.pattern_bank);
-							sequencer.pattern_bank = press;
+							sequencer.pattern_bank = sequencer.previous_bank = press;
 							turn_on(sequencer.pattern_bank);
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						}
@@ -901,7 +901,7 @@ void update_step_board() { //should this be in switches.c ?
 					
 				} else {
 					if (press < BASIC_RHYTHM) {
-						sequencer.current_pattern = sequencer.new_pattern = press;
+						sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern = press;
 						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						sequencer.part_playing = FIRST;
 						sequencer.current_step = 0;
@@ -923,14 +923,14 @@ void update_step_board() { //should this be in switches.c ?
 					if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 						turn_off(sequencer.pattern_bank);
-						sequencer.pattern_bank = press;
+						sequencer.pattern_bank = sequencer.previous_bank = press;
 						turn_on(sequencer.pattern_bank);
 						read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					}
 
 
 				} else {
-					sequencer.current_pattern = sequencer.new_pattern = press;
+					sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern = press;
 					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;

@@ -30,7 +30,7 @@ void update_mode(void) {
 		
 		button[MODE_SW].state ^= button[MODE_SW].state; //toggle switch state
 		
-		if (sequencer.SHIFT) {
+		if (sequencer.SHIFT && sequencer.mode != COMPOSE_RHYTHM) { //because SHIFT is also WRITE/NEXT can't use SHIFT to go back when in COMPOSE_RHYTHM MODE!
 			
 			
 			if (mode_index-- == 0) mode_index = NUM_MODES -1;
@@ -67,15 +67,19 @@ void update_mode(void) {
 				if (sequencer.current_pattern > 11) { //make 11 a constant here
 					sequencer.previous_pattern = sequencer.current_pattern; //save current pattern for return to pattern edit mode
 					sequencer.new_pattern = 11;
-					flag.pattern_change = 1;
+					flag.pattern_change = 1; //bug here where another pattern is played 
 				}
 			break;
 			
-			case PLAY_RHYTHM:
+			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
 				//will need to update inst/track leds to current rhythm track, rather than resetting to 0
 				read_rhythm_track();
 				//flag.pattern_change = 1;
-				sequencer.track_measure = 0;
+				if (sequencer.mode == COMPOSE_RHYTHM) {
+					sequencer.track_measure = rhythm_track.length; //go to end of track - blank tracks will have 0 length.
+				} else {
+					sequencer.track_measure = 0;
+				}
 				//store pattern and bank for switching back to pattern edit mode
 				sequencer.previous_pattern = sequencer.current_pattern;
 				sequencer.previous_bank = sequencer.pattern_bank;
@@ -88,19 +92,13 @@ void update_mode(void) {
 				}			
 			break;
 			
-			case COMPOSE_RHYTHM:
-			
-			break;
+			//case COMPOSE_RHYTHM: //in the case of compose rhythm need to determine if current rhythm track is empty or not. If empty, then track measure can be 0, but if not empty, then need to go to end of measure for appending?
+				//read_rhythm_track();
+				//sequencer.track_measure = 
+			//break;
 
 		}
-		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 
-		} else if (sequencer.mode == MANUAL_PLAY) {
-
-			
-		} else if (sequencer.mode == PLAY_RHYTHM) {
-	
-		}
 		
 		//update_spi(); //move this out of this function make it part of refresh after all spi output data has been updated
 		
