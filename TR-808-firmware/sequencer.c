@@ -299,7 +299,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			//stop for now
 			sequencer.START = 0;
 			process_stop();
-			//flag.next_step
+			sequencer.track_measure = 0; //reset track measure
 			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
 			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
@@ -1163,5 +1163,27 @@ void write_rhythm_track(void) {
 	track.length = rhythm_track.length;
 	
 	eeprom_write_rhythm_track(sequencer.current_rhythm_track, &track);
+	
+}
+
+void update_rhythm_track(uint8_t track_number) {
+	
+	sequencer.previous_bank = sequencer.pattern_bank; //save current bank for restoring when returning to other modes - but really only need to do this for PLAY, because banks can be changed in compose mode
+	sequencer.current_rhythm_track = track_number;
+	read_rhythm_track();
+	sequencer.track_measure = 0; //default is restart except when reading non-empty rhythm tracks in compose mode
+	if (sequencer.mode == COMPOSE_RHYTHM) {
+		if (rhythm_track.length != 0) sequencer.track_measure = rhythm_track.length + 1; //when changing rhythm tracks in COMPOSE mode, set measure to end of rhythm track so track can be appended. Will need to assert that rhythm_track.length is not at maximum				
+
+	}
+	
+	
+	sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+	sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+	if (sequencer.START) {
+		flag.pattern_change = 1;
+			} else {
+		read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+	}	
 	
 }

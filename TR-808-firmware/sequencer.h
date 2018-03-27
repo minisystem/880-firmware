@@ -70,7 +70,7 @@ struct flag {
 	//uint8_t step_num_change:1;//not currently used
 	uint8_t pattern_edit:1; //flag if pattern is edited, need to write to eeprom at end of measure
 	uint8_t pattern_change:1;
-	uint8_t track_change:1;
+	uint8_t track_edit:1;
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
@@ -193,5 +193,6 @@ void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 //void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
 void write_rhythm_track(void);
 void read_rhythm_track(void);
+void update_rhythm_track(uint8_t track_number);
 
 #endif 

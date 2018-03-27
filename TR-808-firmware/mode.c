@@ -30,15 +30,29 @@ void update_mode(void) {
 		
 		button[MODE_SW].state ^= button[MODE_SW].state; //toggle switch state
 		
-		if (sequencer.SHIFT && sequencer.mode != COMPOSE_RHYTHM) { //because SHIFT is also WRITE/NEXT can't use SHIFT to go back when in COMPOSE_RHYTHM MODE!
+		if (sequencer.SHIFT) {
 			
-			
+			if (sequencer.mode == COMPOSE_RHYTHM) { //need to unstage last rhythm track edit
+				if (sequencer.track_measure > 0) sequencer.track_measure--;
+				if (sequencer.track_measure > 0) {
+					rhythm_track.length = sequencer.track_measure - 1;
+				} else {
+					rhythm_track.length = 0;
+				}
+				
+			}
 			if (mode_index-- == 0) mode_index = NUM_MODES -1;
 			
 		} else {
 			
 			 if (++mode_index == NUM_MODES) mode_index = 0;
 			 
+		}
+		
+		if (flag.track_edit) {
+			
+			write_rhythm_track(); //write current pattern to eeprom
+			flag.track_edit = 0;
 		}
 		
 		sequencer.mode = current_mode[mode_index];
@@ -49,7 +63,6 @@ void update_mode(void) {
 		
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.step_num_new = sequencer.step_num[sequencer.part_editing]; //another annoying except
 		
-		//should eventually implement a switch case statement here to handle rhythm write and play modes
 		switch (sequencer.mode) {
 			
 			case FIRST_PART: case SECOND_PART:
@@ -64,6 +77,7 @@ void update_mode(void) {
 
 			case MANUAL_PLAY:
 				//if current pattern is 12 or greater then it needs to be set to 12 to avoid overlap with intro/fill pattern selection - this mimics original TR-808 behaviour
+				sequencer.pattern_bank = sequencer.previous_bank;
 				if (sequencer.current_pattern > 11) { //make 11 a constant here
 					sequencer.previous_pattern = sequencer.current_pattern; //save current pattern for return to pattern edit mode
 					sequencer.new_pattern = 11;
@@ -73,23 +87,25 @@ void update_mode(void) {
 			
 			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
 				//will need to update inst/track leds to current rhythm track, rather than resetting to 0
-				read_rhythm_track();
-				//flag.pattern_change = 1;
-				if (sequencer.mode == COMPOSE_RHYTHM) {
-					sequencer.track_measure = rhythm_track.length; //go to end of track - blank tracks will have 0 length.
-				} else {
-					sequencer.track_measure = 0;
-				}
-				//store pattern and bank for switching back to pattern edit mode
-				sequencer.previous_pattern = sequencer.current_pattern;
 				sequencer.previous_bank = sequencer.pattern_bank;
-				sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-				sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-				if (sequencer.START) {
-					flag.pattern_change = 1;
-						} else {
-					read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-				}			
+				update_rhythm_track(sequencer.current_rhythm_track);
+				//read_rhythm_track();
+				////flag.pattern_change = 1;
+				//if (sequencer.mode == COMPOSE_RHYTHM) {
+					//sequencer.track_measure = rhythm_track.length; //go to end of track - blank tracks will have 0 length.
+				//} else {
+					//sequencer.track_measure = 0;
+				//}
+				////store pattern and bank for switching back to pattern edit mode
+				//sequencer.previous_pattern = sequencer.current_pattern;
+				//sequencer.previous_bank = sequencer.pattern_bank;
+				//sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+				//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+				//if (sequencer.START) {
+					//flag.pattern_change = 1;
+						//} else {
+					//read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				//}			
 			break;
 			
 			//case COMPOSE_RHYTHM: //in the case of compose rhythm need to determine if current rhythm track is empty or not. If empty, then track measure can be 0, but if not empty, then need to go to end of measure for appending?
