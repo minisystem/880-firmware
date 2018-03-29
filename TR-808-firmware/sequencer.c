@@ -277,7 +277,7 @@ void update_fill(void) {
 	
 }
 
-void process_new_measure(void) { //should break this up into switch/case statements based on mode?
+void process_new_measure(void) { //should break this up into switch/case statements based on mode? Yes, you should. Why haven't you done it yet?
 	
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
@@ -291,11 +291,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	
 	if (sequencer.mode == PLAY_RHYTHM) {
 		
-		if (sequencer.track_measure++ < rhythm_track.length) {
+		if (sequencer.track_measure++ < rhythm_track.length) { //do anything in this case? 
 			
 		} else {
 			
-			//rhythym track is finished, so stop or loop
+			//rhythm track is finished, so stop or loop
 			//stop for now
 			sequencer.START = 0;
 			process_stop();
@@ -310,6 +310,15 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 		flag.pattern_change = 1;
+		
+	} else if (sequencer.mode == COMPOSE_RHYTHM) {
+		
+		if (sequencer.track_measure++ >= rhythm_track.length) sequencer.track_measure = rhythm_track.length;
+		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+		flag.pattern_change = 1;			
+			
+	
 		
 	}
 		
@@ -1172,10 +1181,10 @@ void update_rhythm_track(uint8_t track_number) {
 	sequencer.current_rhythm_track = track_number;
 	read_rhythm_track();
 	sequencer.track_measure = 0; //default is restart except when reading non-empty rhythm tracks in compose mode
-	if (sequencer.mode == COMPOSE_RHYTHM) {
-		if (rhythm_track.length != 0) sequencer.track_measure = rhythm_track.length + 1; //when changing rhythm tracks in COMPOSE mode, set measure to end of rhythm track so track can be appended. Will need to assert that rhythm_track.length is not at maximum				
-
-	}
+	//if (sequencer.mode == COMPOSE_RHYTHM) {
+		//if (rhythm_track.length != 0) sequencer.track_measure = rhythm_track.length + 1; //when changing rhythm tracks in COMPOSE mode, set measure to end of rhythm track so track can be appended. Will need to assert that rhythm_track.length is not at maximum				
+//
+	//}
 	
 	
 	sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
