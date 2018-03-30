@@ -32,7 +32,7 @@ void update_mode(void) {
 		
 		if (sequencer.SHIFT) {
 			
-			if (sequencer.mode == COMPOSE_RHYTHM) { //need to unstage last rhythm track edit
+			if ((sequencer.mode == COMPOSE_RHYTHM) && (sequencer.track_mode == CREATE)) { //need to unstage last rhythm track edit
 				if (sequencer.track_measure > 0) sequencer.track_measure--;
 				if (sequencer.track_measure > 0) {
 					rhythm_track.length = sequencer.track_measure - 1;

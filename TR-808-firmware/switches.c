@@ -92,7 +92,10 @@ void check_write_sw(void) {
 			} else {
 				
 				if (sequencer.track_mode == EDIT) { //advance to next pattern in rhythm track
+					//this is where changes to pattern/bank can be made and edited. something like if sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current pattern?
+					//would make this change before advancing to next step, yeah? and set track_edit flag
 					if ((++sequencer.track_measure) > rhythm_track.length) sequencer.track_measure = rhythm_track.length;
+					
 					sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 					sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 					flag.pattern_change = 1;
@@ -456,8 +459,10 @@ void check_intro_fill_variation_switch(void) {
 	if (button[IF_VAR_SW].state) {
 		
 		button[IF_VAR_SW].state ^= button[IF_VAR_SW].state;
-		if (sequencer.SHIFT && (sequencer.mode == COMPOSE_RHYTHM)) { //this is all OK, BUT it doesn't write to memory, it just changes the position you are editing. ie. it does not truncate a rhythm track
+		if (sequencer.SHIFT && (sequencer.mode == COMPOSE_RHYTHM) && (sequencer.track_mode == EDIT)) { 
 			if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure
+			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+			sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 			flag.pattern_change = 1; //
 			//return;
 		
