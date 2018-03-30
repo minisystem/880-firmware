@@ -234,7 +234,10 @@ void process_stop(void) {
 		spi_data[LATCH_1] = 0;
 		spi_data[LATCH_0] = 0;
 		turn_on(sequencer.current_pattern);
-		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);	
+		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
+		if (sequencer.mode == COMPOSE_RHYTHM) {
+			if (rhythm_track.length > 0) sequencer.track_mode = EDIT;
+		}	
 		if (clock.source == INTERNAL) {
 			if (sequencer.clock_mode == MIDI_MASTER) {
 				PORTC &= ~(1<<SYNC_LED_R);
@@ -313,10 +316,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		
 	} else if (sequencer.mode == COMPOSE_RHYTHM) {
 		
-		if (sequencer.track_measure++ >= rhythm_track.length) sequencer.track_measure = rhythm_track.length;
-		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-		flag.pattern_change = 1;			
+		//if (sequencer.track_measure++ >= rhythm_track.length) sequencer.track_measure = rhythm_track.length;
+		
+		//sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+		//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+		//flag.pattern_change = 1;			
 			
 	
 		

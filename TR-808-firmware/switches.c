@@ -90,15 +90,23 @@ void check_write_sw(void) {
 				//flag.pattern_change = 1; //
 			
 			} else {
+				
+				if (sequencer.track_mode == EDIT) {
+					//sequencer.pattern_bank =
+					//sequencer.new_pattern =
+					flag.pattern_change = 1;
+					
+				} else {
 			
-				rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
-				rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; //using new pattern allows WRITE/NEXT to be pressed before measure finishes. Should allow for faster rhythm track programming?
-				rhythm_track.length = sequencer.track_measure;
-				if ((++sequencer.track_measure) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS - 1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
-				flag.track_edit = 1;
+					rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
+					rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; //using new pattern allows WRITE/NEXT to be pressed before measure finishes. Should allow for faster rhythm track programming?
+					rhythm_track.length = sequencer.track_measure;
+					if ((++sequencer.track_measure) == NUM_PATTERNS) sequencer.track_measure = NUM_PATTERNS - 1; //advance measure, but only up to 63 -NOTICE PRE-INCREMENT in IF statement
+					//rhythm_track.length = sequencer.track_measure;
+					flag.track_edit = 1;
 				
 			
-			}
+				}
 		}		
 	}	
 }
@@ -391,6 +399,7 @@ void check_clear_switch(void) {
 				memset(&rhythm_track.patterns, 0, sizeof(rhythm_track.patterns));
 				rhythm_track.length = 0;
 				sequencer.track_measure = 0; //reset track measure too
+				sequencer.track_mode = CREATE;
 				write_rhythm_track();
 				sequencer.pattern_bank = 0; //reset pattern bank to 0
 				
