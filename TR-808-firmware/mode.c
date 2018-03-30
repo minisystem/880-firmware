@@ -108,9 +108,11 @@ void update_mode(void) {
 				//}			
 			break;
 			
-			//case COMPOSE_RHYTHM: //in the case of compose rhythm need to determine if current rhythm track is empty or not. If empty, then track measure can be 0, but if not empty, then need to go to end of measure for appending?
-				//read_rhythm_track();
-				//sequencer.track_measure = 
+			//case COMPOSE_RHYTHM: //in the case of compose rhythm need to determine if current rhythm track is empty or not.
+				//sequencer.previous_bank - sequencer.pattern_bank;
+				//update_rhythm_track(sequencer.current_rhythm_track);
+				//
+				//
 			//break;
 
 		}

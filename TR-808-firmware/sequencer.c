@@ -35,7 +35,7 @@ void update_tempo(void) {
 	int tempo_adc_change = 0;
 	new_tempo_adc = read_tempo_pot();
 	tempo_adc_change = new_tempo_adc - current_tempo_adc;
-	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2);
+	current_tempo_adc = current_tempo_adc + (tempo_adc_change >>2); //low pass filter
 	
 	clock.rate = (ADC_MAX - current_tempo_adc) + TIMER_OFFSET; //offset to get desirable tempo range
 
@@ -214,7 +214,7 @@ void process_start(void) {
 void process_stop(void) {
 	
 		//sequencer.current_step = 0;
-		//sequencer.track_measure = 0;
+		sequencer.track_measure = 0; //reset track measure. No continue for now
 		//clock.ppqn_counter = 0;
 		//clock.ppqn_divider_tick = 0;
 	
@@ -237,6 +237,10 @@ void process_stop(void) {
 		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
 		if (sequencer.mode == COMPOSE_RHYTHM) {
 			if (rhythm_track.length > 0) sequencer.track_mode = EDIT;
+			sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
+			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
+			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+			flag.pattern_change = 1; //need to 
 		}	
 		if (clock.source == INTERNAL) {
 			if (sequencer.clock_mode == MIDI_MASTER) {
@@ -302,11 +306,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			//stop for now
 			sequencer.START = 0;
 			process_stop();
-			sequencer.track_measure = 0; //reset track measure
+			//sequencer.track_measure = 0; //reset track measure
 			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
 			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			return;
+			return; //bah. this works but is confusing and bad form?
 			//maybe need to do some LED housekeeping before leaving?
 			//return;
 		}
@@ -1190,9 +1194,13 @@ void update_rhythm_track(uint8_t track_number) {
 //
 	//}
 	
-	
-	sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-	sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+	if (rhythm_track.length == 0) { 
+		sequencer.track_mode = CREATE; 
+	} else {
+		sequencer.track_mode = EDIT;
+	}
+	sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[0].current_pattern;
+	sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
 	if (sequencer.START) {
 		flag.pattern_change = 1;
 			} else {

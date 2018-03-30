@@ -91,9 +91,10 @@ void check_write_sw(void) {
 			
 			} else {
 				
-				if (sequencer.track_mode == EDIT) {
-					//sequencer.pattern_bank =
-					//sequencer.new_pattern =
+				if (sequencer.track_mode == EDIT) { //advance to next pattern in rhythm track
+					if ((++sequencer.track_measure) > rhythm_track.length) sequencer.track_measure = rhythm_track.length;
+					sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+					sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 					flag.pattern_change = 1;
 					
 				} else {
@@ -105,9 +106,9 @@ void check_write_sw(void) {
 					//rhythm_track.length = sequencer.track_measure;
 					flag.track_edit = 1;
 				
-			
 				}
-		}		
+			}
+		}
 	}	
 }
 
