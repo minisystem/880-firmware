@@ -1179,7 +1179,7 @@ void write_rhythm_track(void) {
 	rhythm_track_data track;
 	
 	//memcpy(&track.patterns, &rhythm_track.patterns, sizeof(track.patterns));
-	for (int i = 0; i <= sequencer.track_measure; i++) {
+	for (int i = 0; i <= rhythm_track.length; i++) {
 		
 		track.patterns[i].current_bank = rhythm_track.patterns[i].current_bank;
 		track.patterns[i].current_pattern = rhythm_track.patterns[i].current_pattern;
