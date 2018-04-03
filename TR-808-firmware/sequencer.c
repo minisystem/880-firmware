@@ -824,7 +824,6 @@ void update_step_board() { //should this be in switches.c ?
 		case COMPOSE_RHYTHM:
 			if (sequencer.ALT && (!sequencer.SHIFT)) {
 						
-	
 				if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 					turn_off(sequencer.pattern_bank);
@@ -833,7 +832,16 @@ void update_step_board() { //should this be in switches.c ?
 					flag.pattern_change = 1;
 				}	
  
-			
+			} else if (sequencer.SHIFT) { //handle insert and delete here
+				
+				if (press == DELETE) {
+					
+				} else if (press == INSERT) {
+					
+					
+				}
+				
+				
 			} else {
 				sequencer.new_pattern = sequencer.previous_pattern = press; //want to be able to edit this pattern when cycling back to pattern edit mode
 				if (sequencer.new_pattern != sequencer.current_pattern) {
@@ -1214,5 +1222,15 @@ void update_rhythm_track(uint8_t track_number) {
 			} else {
 		read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 	}	
+	
+}
+
+void delete_track_pattern(uint8_t track_num) {
+	
+	
+}
+
+void insert_track_pattern(uint8_t track_num) {
+	
 	
 }

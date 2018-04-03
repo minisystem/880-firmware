@@ -94,12 +94,18 @@ void check_write_sw(void) {
 				if (sequencer.track_mode == EDIT) { //advance to next pattern in rhythm track
 					//this is where changes to pattern/bank can be made and edited. something like if sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current pattern?
 					//would make this change before advancing to next step, yeah? and set track_edit flag
-					if ((++sequencer.track_measure) > rhythm_track.length) sequencer.track_measure = rhythm_track.length;
+					if ((sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current_pattern) || (sequencer.pattern_bank != rhythm_track.patterns[sequencer.track_measure].current_bank)) {
+						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
+						rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; 
+						flag.track_edit = 1;						
+						
+					} else {
+						if ((++sequencer.track_measure) > rhythm_track.length) sequencer.track_measure = rhythm_track.length;
 					
-					sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-					sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-					flag.pattern_change = 1;
-					
+						sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+						sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+						flag.pattern_change = 1;
+					}
 				} else {
 			
 					rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;

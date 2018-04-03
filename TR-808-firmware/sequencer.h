@@ -50,6 +50,10 @@
 //track mode
 #define CREATE 0
 #define EDIT 1
+
+//track edit
+#define INSERT 14
+#define DELETE 15
 	
 
 //extern uint8_t pre_scale[NUM_PRE_SCALES]; //does this need to be exturned? Just data. Could go in update_prescale() function?	
@@ -194,6 +198,9 @@ void show_current_measure(void);
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
+
+void delete_track_pattern(uint8_t track_num);
+void insert_track_pattern(uint8_t track_num);
 
 //void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
 void write_rhythm_track(void);
