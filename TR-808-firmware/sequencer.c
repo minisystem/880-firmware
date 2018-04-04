@@ -833,12 +833,16 @@ void update_step_board() { //should this be in switches.c ?
 				}	
  
 			} else if (sequencer.SHIFT) { //handle insert and delete here
-				
+				//there will be an issue if user holds WRITE/SHIFT long enough so that next measure is loaded. It will be unstaged, but will be confusing as sequencer will then play previous rhythm. Maybe not confusing?
 				if (press == DELETE) {
+					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
+					delete_track_pattern(sequencer.track_measure);
+					flag.pattern_change = 1;
 					
 				} else if (press == INSERT) {
-					
-					
+					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance
+					insert_track_pattern(sequencer.track_measure);
+					flag.pattern_change = 1;
 				}
 				
 				
@@ -1227,10 +1231,29 @@ void update_rhythm_track(uint8_t track_number) {
 
 void delete_track_pattern(uint8_t track_num) {
 	
+	for (int i = track_num; i < rhythm_track.length; i++) {
+		rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i + 1].current_bank;
+		rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i + 1].current_pattern;
+	}
+	
+	if (rhythm_track.length > 0) rhythm_track.length--; //decrement rhythm track length
+	
 	
 }
 
 void insert_track_pattern(uint8_t track_num) {
 	
+	if ((++rhythm_track.length) == NUM_PATTERNS) {
+		rhythm_track.length = NUM_PATTERNS - 1;
+		return;
+	}
+	
+	for (int i = rhythm_track.length; i > track_num; i--) {
+		rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i - 1].current_bank;
+		rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i - 1].current_pattern;
+	}
+	
+	rhythm_track.patterns[track_num].current_bank = sequencer.pattern_bank;
+	rhythm_track.patterns[track_num].current_pattern = sequencer.new_pattern;
 	
 }

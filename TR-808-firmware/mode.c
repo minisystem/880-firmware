@@ -41,7 +41,7 @@ void update_mode(void) {
 				}
 				
 			}
-			if (mode_index-- == 0) mode_index = NUM_MODES -1;
+			if (mode_index-- == 0) mode_index = NUM_MODES - 1;
 			
 		} else {
 			
