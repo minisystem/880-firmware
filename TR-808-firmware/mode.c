@@ -65,7 +65,8 @@ void update_mode(void) {
 		
 		switch (sequencer.mode) {
 			
-			case FIRST_PART: case SECOND_PART:
+			case FIRST_PART: case SECOND_PART: //don't need to read pattern when switching between FIRST PART and SECOND PART - this is unnecessary overhead, but does it matter?
+				//yes because you could read the next pattern before committing an edited pattern to memory... need to fix this
 				sequencer.pattern_bank = sequencer.previous_bank;
 				sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern;
 				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);

@@ -286,6 +286,10 @@ void update_fill(void) {
 
 void process_new_measure(void) { //should break this up into switch/case statements based on mode? Yes, you should. Why haven't you done it yet?
 	
+	//need to update step number changes before 
+	sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
+	
+
 	sequencer.current_step = 0;
 	//toggle(IF_VAR_B_LED);
 	if (flag.pattern_edit == 1) {
@@ -329,6 +333,8 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 	
 		
 	}
+	
+
 		
 				
 	if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
@@ -361,9 +367,14 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		}
 		
 	} else {
-					
-		toggle_variation(); //no second part, so toggle variation
 		
+		//if (sequencer.part_playing == SECOND) {
+			sequencer.part_playing = FIRST; //annoying exception in the case of second part being reset to 0 steps
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+		//}					
+		toggle_variation(); //no second part, so toggle variation
+
 		if (flag.pattern_change) {
 			
 			flag.pattern_change = 0;
@@ -390,19 +401,23 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		}
 	}
 	
-
-	
-				
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) { //only need to update this when step number changes, right now it's being called at end of every measure!
 		
 		//update step number
 		
-		sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
+		//sequencer.step_num[sequencer.part_editing] = sequencer.step_num_new; //will eventually want to be able to change step number in MANUAL PLAY mode, but leave it here for now
 		
 		//update_step_led_mask();
 		update_inst_led_mask();
 		
-	}			
+		}// else if {sequencer.mode == SECOND_PART)} {
+		
+		
+		
+		//}
+	
+				
+		
 
 				
 	//handle pre-scale change
@@ -749,7 +764,14 @@ void update_step_board() { //should this be in switches.c ?
 
 			if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
 				button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here, otherwise it gets handled elsewhere when we don't want it to
-				sequencer.step_num_new = press;
+				if ((press == 0) && (sequencer.step_num_new == 0) && (sequencer.mode == SECOND_PART)) {
+					sequencer.step_num_new = NO_STEPS; //if pressing first step again then reset 2nd PART to NO_STEPS
+					flag.pattern_edit = 1;
+				} else {
+					sequencer.step_num_new = press;
+					if (sequencer.step_num_new != (sequencer.step_num[sequencer.part_editing])) flag.pattern_edit = 1;
+				}
+				
 				break; //break or return?
 			}			
 				
