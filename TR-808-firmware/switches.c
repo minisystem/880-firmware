@@ -92,8 +92,7 @@ void check_write_sw(void) {
 			} else {
 				
 				if (sequencer.track_mode == EDIT) { //advance to next pattern in rhythm track
-					//this is where changes to pattern/bank can be made and edited. something like if sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current pattern?
-					//would make this change before advancing to next step, yeah? and set track_edit flag
+					//this is where changes to pattern/bank can be made and edited - if new pattern does not match rhythm track pattern then it's been edited - need to set track edit flag
 					if ((sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current_pattern) || (sequencer.pattern_bank != rhythm_track.patterns[sequencer.track_measure].current_bank)) {
 						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
 						rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; 
@@ -106,7 +105,7 @@ void check_write_sw(void) {
 						sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 						flag.pattern_change = 1;
 					}
-				} else {
+				} else { //track create mode
 			
 					rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
 					rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; //using new pattern allows WRITE/NEXT to be pressed before measure finishes. Should allow for faster rhythm track programming?

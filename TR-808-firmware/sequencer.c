@@ -856,15 +856,31 @@ void update_step_board() { //should this be in switches.c ?
  
 			} else if (sequencer.SHIFT) { //handle insert and delete here
 				//there will be an issue if user holds WRITE/SHIFT long enough so that next measure is loaded. It will be unstaged, but will be confusing as sequencer will then play previous rhythm. Maybe not confusing?
-				if (press == DELETE) {
-					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
+				if (press == DELETE) { //need exception here for when deleting last pattern in rhythm track
+					//if ((!flag.track_edit) && (sequencer.track_measure != rhythm_track.length)) { //confusing - if pattern has changed then track has been edited and write has NOT advanced to next measure, so only need to unstage track measure advance if track_edit flag is not set - see check_write_sw()
+						//if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
+						//sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+						//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+					//}
+					
+					if (sequencer.track_measure != rhythm_track.length) {
+						if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
+					}
 					delete_track_pattern(sequencer.track_measure);
+					//if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure
+					if (sequencer.track_measure > rhythm_track.length) { //exception to handle deleting last pattern in rhythm track
+						sequencer.track_measure = rhythm_track.length;
+					}
+					sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+					sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank; 
+					flag.track_edit = 1;
 					flag.pattern_change = 1;
 					
 				} else if (press == INSERT) {
 					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance
 					insert_track_pattern(sequencer.track_measure);
 					flag.pattern_change = 1;
+					flag.track_edit = 1;
 				}
 				
 				
@@ -1252,6 +1268,7 @@ void update_rhythm_track(uint8_t track_number) {
 }
 
 void delete_track_pattern(uint8_t track_num) {
+	
 	
 	for (int i = track_num; i < rhythm_track.length; i++) {
 		rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i + 1].current_bank;
