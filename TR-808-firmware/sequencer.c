@@ -851,6 +851,10 @@ void update_step_board() { //should this be in switches.c ?
 					turn_off(sequencer.pattern_bank);
 					sequencer.pattern_bank = press;
 					turn_on(sequencer.pattern_bank);
+					if (sequencer.track_mode == EDIT) {
+						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
+						
+					}
 					flag.pattern_change = 1;
 				}	
  
@@ -900,12 +904,13 @@ void update_step_board() { //should this be in switches.c ?
 			} else {
 				sequencer.new_pattern = sequencer.previous_pattern = press; //want to be able to edit this pattern when cycling back to pattern edit mode
 				if (sequencer.new_pattern != sequencer.current_pattern) {
-					//if (sequencer.track_mode == EDIT) {
+					if (sequencer.track_mode == EDIT) {
 						//rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank; //need to handle bank change just above, not here!
-						//rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern;
-						//flag.track_edit = 1;
-					//}
-					flag.pattern_change = 1;
+						rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern;
+						flag.track_edit = 1;
+						flag.pattern_change = 1;
+					}
+					
 					
 				}
 			}
