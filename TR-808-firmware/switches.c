@@ -93,6 +93,8 @@ void check_write_sw(void) {
 				
 				if (sequencer.track_mode == EDIT) { //advance to next pattern in rhythm track
 					//this is where changes to pattern/bank can be made and edited - if new pattern does not match rhythm track pattern then it's been edited - need to set track edit flag
+					//OK, but this then requires the WRITE switch to be pressed again, no advance of track measure, which is inconsistent. If pattern is changed, then just commit it to rhythm track?
+					//need to think about how this will affect INSERT pattern
 					if ((sequencer.new_pattern != rhythm_track.patterns[sequencer.track_measure].current_pattern) || (sequencer.pattern_bank != rhythm_track.patterns[sequencer.track_measure].current_bank)) {
 						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
 						rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern; 
@@ -102,7 +104,7 @@ void check_write_sw(void) {
 						
 						if ((++sequencer.track_measure) > rhythm_track.length) {
 							sequencer.track_measure = rhythm_track.length;
-							flag.last_pattern = 1; //beacuse WRITE switch advances pattern
+							flag.last_pattern = 1; //because WRITE switch advances track measure need to know when last measure is reached
 						} else {
 							flag.last_pattern = 0;
 						}

@@ -877,8 +877,21 @@ void update_step_board() { //should this be in switches.c ?
 					flag.pattern_change = 1;
 					
 				} else if (press == INSERT) {
-					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance
-					insert_track_pattern(sequencer.track_measure);
+					if ((++rhythm_track.length) == NUM_PATTERNS) {
+						rhythm_track.length = NUM_PATTERNS - 1;						
+					}
+					if (!flag.last_pattern) { 
+						if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance
+						sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank; //and also need to unstage setting pattern and bank, which is done in check_write_sw()
+						sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+						insert_track_pattern(sequencer.track_measure);
+					} else {
+						
+						sequencer.track_measure = rhythm_track.length; //if last pattern in rhythm track, then it's just appending, so go to last pattern
+						
+					}
+					rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;
+					rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern;
 					flag.pattern_change = 1;
 					flag.track_edit = 1;
 				}
@@ -1267,10 +1280,10 @@ void update_rhythm_track(uint8_t track_number) {
 	
 }
 
-void delete_track_pattern(uint8_t track_num) {
+void delete_track_pattern(uint8_t track_measure) {
 	
 	if (!flag.last_pattern) { //if deleting the last pattern no rearrangement necessary
-		for (int i = track_num; i < rhythm_track.length; i++) {
+		for (int i = track_measure; i < rhythm_track.length; i++) {
 			rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i + 1].current_bank;
 			rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i + 1].current_pattern;
 		}		
@@ -1282,19 +1295,15 @@ void delete_track_pattern(uint8_t track_num) {
 	
 }
 
-void insert_track_pattern(uint8_t track_num) {
+void insert_track_pattern(uint8_t track_measure) {
 	
-	if ((++rhythm_track.length) == NUM_PATTERNS) {
-		rhythm_track.length = NUM_PATTERNS - 1;
-		return;
-	}
-	
-	for (int i = rhythm_track.length; i > track_num; i--) {
-		rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i - 1].current_bank;
-		rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i - 1].current_pattern;
-	}
-	
-	rhythm_track.patterns[track_num].current_bank = sequencer.pattern_bank;
-	rhythm_track.patterns[track_num].current_pattern = sequencer.new_pattern;
+
+	//if (!flag.last_pattern) { //if last pattern then just need to append pattern to track, don't need to rearrange everything, yeah?
+		for (int i = rhythm_track.length; i > track_measure; i--) {
+			rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i - 1].current_bank;
+			rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i - 1].current_pattern;
+		}
+	//}
+
 	
 }
