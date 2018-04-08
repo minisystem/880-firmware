@@ -863,14 +863,14 @@ void update_step_board() { //should this be in switches.c ?
 						//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 					//}
 					
-					if (sequencer.track_measure != rhythm_track.length) {
-						if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
-					}
+					//if (sequencer.track_measure != rhythm_track.length) {
+					if (sequencer.track_measure > 0) sequencer.track_measure--; //unstage track measure advance 
+					//}
 					delete_track_pattern(sequencer.track_measure);
 					//if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure
-					if (sequencer.track_measure > rhythm_track.length) { //exception to handle deleting last pattern in rhythm track
-						sequencer.track_measure = rhythm_track.length;
-					}
+					//if (sequencer.track_measure > rhythm_track.length) { //exception to handle deleting last pattern in rhythm track
+					//	sequencer.track_measure = rhythm_track.length;
+					//}
 					sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 					sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank; 
 					flag.track_edit = 1;
@@ -1269,11 +1269,13 @@ void update_rhythm_track(uint8_t track_number) {
 
 void delete_track_pattern(uint8_t track_num) {
 	
-	
-	for (int i = track_num; i < rhythm_track.length; i++) {
-		rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i + 1].current_bank;
-		rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i + 1].current_pattern;
+	if (!flag.last_pattern) { //if deleting the last pattern no rearrangement necessary
+		for (int i = track_num; i < rhythm_track.length; i++) {
+			rhythm_track.patterns[i].current_bank = rhythm_track.patterns[i + 1].current_bank;
+			rhythm_track.patterns[i].current_pattern = rhythm_track.patterns[i + 1].current_pattern;
+		}		
 	}
+
 	
 	if (rhythm_track.length > 0) rhythm_track.length--; //decrement rhythm track length
 	

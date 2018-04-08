@@ -99,8 +99,13 @@ void check_write_sw(void) {
 						flag.track_edit = 1;						
 						
 					} else {
-						if ((++sequencer.track_measure) > rhythm_track.length) sequencer.track_measure = rhythm_track.length;
-					
+						
+						if ((++sequencer.track_measure) > rhythm_track.length) {
+							sequencer.track_measure = rhythm_track.length;
+							flag.last_pattern = 1; //beacuse WRITE switch advances pattern
+						} else {
+							flag.last_pattern = 0;
+						}
 						sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 						sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 						flag.pattern_change = 1;

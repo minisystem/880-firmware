@@ -171,6 +171,7 @@ int main(void)
 	//clear_pattern_bank(1);
 	//clear_pattern_bank(2);
 	//clear_pattern_bank(3);
+	flag.last_pattern = 0;
 	sequencer.previous_pattern = 0;
 	sequencer.previous_bank = 0;
 	read_next_pattern(0, 0); //load first pattern
