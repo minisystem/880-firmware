@@ -310,10 +310,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			//stop for now
 			sequencer.START = 0;
 			process_stop();
-			//sequencer.track_measure = 0; //reset track measure
+			
+			sequencer.track_measure = 0; //reset track measure
 			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
 			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
-			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+			read_next_pattern(sequencer.new_pattern, sequencer.pattern_bank);
 			return; //bah. this works but is confusing and bad form?
 			//maybe need to do some LED housekeeping before leaving?
 			//return;
@@ -904,11 +905,12 @@ void update_step_board() { //should this be in switches.c ?
 			} else {
 				sequencer.new_pattern = sequencer.previous_pattern = press; //want to be able to edit this pattern when cycling back to pattern edit mode
 				if (sequencer.new_pattern != sequencer.current_pattern) {
+					flag.pattern_change = 1;
 					if (sequencer.track_mode == EDIT) {
 						//rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank; //need to handle bank change just above, not here!
 						rhythm_track.patterns[sequencer.track_measure].current_pattern = sequencer.new_pattern;
 						flag.track_edit = 1;
-						flag.pattern_change = 1;
+						//flag.pattern_change = 1;
 					}
 					
 					

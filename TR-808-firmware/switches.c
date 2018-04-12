@@ -104,7 +104,7 @@ void check_write_sw(void) {
 						
 						if ((++sequencer.track_measure) > rhythm_track.length) {
 							sequencer.track_measure = rhythm_track.length;
-							flag.last_pattern = 1; //because WRITE switch advances track measure need to know when last measure is reached
+							flag.last_pattern = 1; //because WRITE switch press always advances track measure need to know when last measure is reached
 						} else {
 							flag.last_pattern = 0;
 						}
