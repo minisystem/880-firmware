@@ -98,11 +98,11 @@ void trigger_roll(void) {
 	
 	uint16_t roll_modes[5] = { //these currently only apply to 4/4 timing. 
 			
-		0b0000000100000001,
-		0b0001000100010001,
-		0b0101010101010101,
-		0b1111111111111111,
-		0b1111111111111111		
+		0b0000000100000001, //2
+		0b0001000100010001, //4
+		0b0101010101010101, //8
+		0b1111111111111111, //16
+		0b1111111111111111	//32 - trigger here, plus extra trigger on half step	
 		
 	};
 	
@@ -119,7 +119,9 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 	TCCR0B |= (1<<CS00) | (1<<CS02); //set Timer0 clock divide to /1024
-	if (sequencer.roll_mode != 0) trigger_roll();
+	if (sequencer.roll_mode > NO_ROLL && !flag.half_step) trigger_roll();
+	if (sequencer.roll_mode == ROLL_32 && flag.half_step && sequencer.step_num[SECOND] == NO_STEPS) trigger_roll(); //bloody awful kludge to get rolls working when substep is triggerd. bleh.
+
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((sequencer.pattern[sequencer.variation].part[part_playing][sequencer.current_step] >> i) &1) {

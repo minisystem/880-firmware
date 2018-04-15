@@ -78,7 +78,7 @@ int main(void)
 	
 	PORTE &= ~(1<<SPI_MOSI) | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH;
 	PORTC &= ~(1<<SPI_CLK);
-	PORTB &= ~(1<<SPI_EN); //active low
+	PORTB &= ~(1<<SPI_EN); //active low - yeah but have you enabled internal pullup?????
 	
 	PORTE |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
 	

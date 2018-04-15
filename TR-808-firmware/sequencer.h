@@ -45,6 +45,7 @@
 #define SHUFFLE_MAX 6
 #define ROLL_MIN	8 //ROLL_MIN/MAX refer to absolute switch positions - used as offsets for setting ROLL LEDs and reading step switches
 #define ROLL_MAX	14
+#define NO_ROLL		0 //roll mode off
 #define ROLL_32		5 //max roll mode
 
 //track mode

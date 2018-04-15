@@ -497,21 +497,38 @@ void process_step(void){
 	  //update_spi();
 	} else if (flag.half_step) {
 		//uint8_t rhythm_track_led[12] = {ACCENT_1_LED, BD_2_LED, SD_3_LED, LT_4_LED, MT_5_LED, HT_6_LED, RS_7_LED, CP_8_LED, CB_9_LED, CY_10_LED, OH_11_LED, CH_12_LED};
-		flag.half_step = 0;
+		//flag.half_step = 0;
 		turn_off_all_inst_leds();
 		//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
 			spi_data[LATCH_1] = 0;
-			spi_data[LATCH_0] = 0;
+			spi_data[LATCH_0] = 0;	
+					
+			//if (sequencer.roll_mode == ROLL_32) {
+				//trigger_drum(sequencer.current_inst, 0);	//default 15ms timer interrupt used in this function is going to cause problems at high tempos - consider making this 1 ms
+			//} else if (sequencer.step_num[SECOND] == NO_STEPS) {
+				//
+				//trigger_step(SECOND);
+			//}
 			
-			if (sequencer.roll_mode == ROLL_32) {
-				trigger_drum(sequencer.current_inst, 0);	//default 15ms timer interrupt used in this function is going to cause problems at high tempos - consider making this 1 ms
-			}
-			if (sequencer.step_num[SECOND] == NO_STEPS) { //will not work with roll mode at the moment - need to get substep and roll mode cooperating
+			if (sequencer.step_num[SECOND] == NO_STEPS) {
 				
 				trigger_step(SECOND);
+			} else if (sequencer.roll_mode == ROLL_32) {
+				trigger_drum(sequencer.current_inst, 0);
 			}
+			
+			
+			//if (sequencer.step_num[SECOND] == NO_STEPS) { //trigger second part steps on half step to create substeps when second part has no length
+				//
+				//trigger_step(SECOND);
+				//if (sequencer.roll_mode == ROLL_32) trigger_roll();
+			//} else {
+				//
+				//
+			//
+			//}			
 			switch (sequencer.mode) {
 				
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
@@ -704,7 +721,7 @@ void process_step(void){
 				if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
 			}
 		}
-				
+		flag.half_step = 0;		
 		//spi_data[5] |= sequencer.var_led_mask;
 		//update_spi();		
 	} else if (clock.source == EXTERNAL && !sequencer.START) { //this handles variation LEDs when waiting for external clock signal
