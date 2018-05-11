@@ -148,6 +148,8 @@ void update_fill_mode(void) {
 			PCICR = 0; //turn off pin change interrupts			
 			//spi_data[2] |= (1 << fill_index);
 			clock.sync_count = PPQN_24_TICK_COUNT; //restore default, only changes for external non-DIN sync pulse
+			PORTC &= ~(1<<SYNC_LED_R);
+			PORTE &= ~(1<<SYNC_LED_Y);
 			switch (sequencer.clock_mode) {
 							
 				case MIDI_MASTER:
@@ -155,8 +157,7 @@ void update_fill_mode(void) {
 					TCCR1B |= (1<<CS12); //ensure timer is ON
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
-					PORTC &= ~(1<<SYNC_LED_Y);
-					PORTE &= ~(1<<SYNC_LED_R);
+
 					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							
@@ -165,7 +166,8 @@ void update_fill_mode(void) {
 					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
 					TCNT3 = 0; //reset timer3
 					//sequencer.shuffle_multplier = 1;
-					PORTE |= (1<<SYNC_LED_R);
+					PORTC |= (1<<SYNC_LED_R);
+					PORTE |= (1<<SYNC_LED_Y);
 					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							
@@ -174,7 +176,7 @@ void update_fill_mode(void) {
 					TCCR1B |= (1<<CS12);
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
-					PORTD |= (1<<SYNC_LED_R);
+					//PORTD |= (1<<SYNC_LED_R);
 					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
@@ -188,7 +190,8 @@ void update_fill_mode(void) {
 					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
 					TCNT3 = 0; //rest timer3
 					//sequencer.shuffle_multplier = 1;
-					PORTE &= ~(1<<SYNC_LED_R);
+					PORTC |= (1<<SYNC_LED_R);
+					PORTE |= (1<<SYNC_LED_Y);					
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1 << INT1);// | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
 					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?
@@ -202,7 +205,8 @@ void update_fill_mode(void) {
 				case PULSE_SYNC_SLAVE:
 					clock.source = EXTERNAL;
 					TCNT3 = 0;
-					PORTE &= ~(1<<SYNC_LED_R);	
+					PORTC |= (1<<SYNC_LED_R);
+					PORTE |= (1<<SYNC_LED_Y);	
 					//DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
 					//PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?		

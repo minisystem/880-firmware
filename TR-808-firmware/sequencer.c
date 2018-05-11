@@ -174,9 +174,15 @@ void process_start(void) {
 			sequencer.variation = VAR_B;
 		}
 		
-		//if (clock.source == INTERNAL) {
+		if (clock.source == INTERNAL) {
+			PORTC &= ~(1<<SYNC_LED_R);
+			PORTE &= ~(1<<SYNC_LED_Y);
+			PORTC |= (1 << SYNC_LED_R); //red for internal clock running
+
+		}
 		if (sequencer.clock_mode == DIN_SYNC_MASTER || sequencer.clock_mode == DIN_SYNC_SLAVE) {
 			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
+			//PORTE |= (1<<SYNC_LED_Y);
 			flag.din_start = 1; 
 			clock.din_ppqn_pulses = 0;
 			//if (sequencer.clock_mode == DIN_SYNC_MASTER) PORTD |= (1 << DIN_RUN_STOP); //set run/stop line high
@@ -185,6 +191,7 @@ void process_start(void) {
 			
 			flag.next_step = 1;
 			if (sequencer.clock_mode == MIDI_MASTER) {
+				
 				midi_send_start(&midi_device); //should clock be sent before start?
 				midi_send_clock(&midi_device);				
 			}					
@@ -212,7 +219,8 @@ void process_start(void) {
 }
 
 void process_stop(void) {
-	
+		PORTC &= ~(1<<SYNC_LED_R);
+		PORTE &= ~(1<<SYNC_LED_Y);
 		//sequencer.current_step = 0;
 		sequencer.track_measure = 0; //reset track measure. No continue for now
 		//clock.ppqn_counter = 0;
@@ -244,8 +252,7 @@ void process_stop(void) {
 		}	
 		if (clock.source == INTERNAL) {
 			if (sequencer.clock_mode == MIDI_MASTER) {
-				PORTC &= ~(1<<SYNC_LED_R);
-				PORTE &= ~(1<<SYNC_LED_Y);
+
 				midi_send_stop(&midi_device);
 			} else {
 				
