@@ -153,7 +153,7 @@ void process_start(void) {
 		
 		if (clock.source == EXTERNAL) { //need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
 			
-			sequencer.current_step = -1;	
+			sequencer.current_step = -1;
 			clock.ppqn_counter = clock.divider - 1;
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
@@ -189,7 +189,7 @@ void process_start(void) {
 			
 		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER
 			
-			flag.next_step = 1;
+			//flag.next_step = 1;
 			if (sequencer.clock_mode == MIDI_MASTER) {
 				
 				midi_send_start(&midi_device); //should clock be sent before start?

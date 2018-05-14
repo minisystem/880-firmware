@@ -54,7 +54,7 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
 
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
-	if (clock.source == INTERNAL) return; //ignore incoming MIDI clock
+	if (sequencer.clock_mode != MIDI_SLAVE) return; //ignore incoming MIDI clock if not in MIDI slave. duh.
 	switch (real_time_byte) {
 		
 		case MIDI_CLOCK:	
