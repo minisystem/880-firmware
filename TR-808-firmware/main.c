@@ -103,6 +103,8 @@ int main(void)
 	turn_on(MODE_2_FIRST_PART_PART);
 	turn_on(FILL_MANUAL);
 	
+	spi_data[LATCH_3] |= CONGAS_OFF; //set LT, MT and HT switches to keep congas OFF when not in use - lowers background noise from howling congas
+	
 	update_spi();
 	
 	//setup Timer0 for drum triggering interrupt	

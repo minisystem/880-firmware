@@ -67,16 +67,17 @@ void process_external_clock_event(void) {
 	
 }
 
-void process_external_sync_pulse(void) {
+void process_external_sync_pulse(void) { //stupid duplicate code - just combine with process_external_clock_event() above
 	
-		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
-		clock.external_rate /= 12;
+		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt. at /1024 of 16 MHz it takes just over 4s to overflow. 
+		//timer3 is running 4x slower than timer1 for conversion from 24 ppqn MIDI or DIN sync clock to internal 96 ppqn clock. default external sync pulse is 2 ppqn, so 24 ppqn/12 = 2 ppqn
+		clock.external_rate /= 12; //how much time does this take? Better way?
 		//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 		if (flag.slave_start) { //don't update clock if it's the first pulse
 			flag.slave_start = 0;
 			TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
 				
-			} else {
+		} else {
 			update_clock_rate(clock.external_rate);
 			if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
 				//if ((clock.sync_count - clock.slave_ppqn_ticks) < PPQN_24_TICK_COUNT) { //then only a few ppqn needed to catch up to next step

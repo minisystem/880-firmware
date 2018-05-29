@@ -210,7 +210,7 @@ void update_fill_mode(void) {
 					//DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
 					//PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?		
-					PINC |= (1<<SYNC_LED_Y);
+					//PINC |= (1<<SYNC_LED_Y);
 					clock.sync_led_mask = 0;
 					clock.sync_count = PPQN_2_TICK_COUNT; //generate 48 internal clock pulses for each external clock pulse		
 			}

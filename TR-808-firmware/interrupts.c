@@ -57,7 +57,7 @@ ISR (INT0_vect) { //external SYNC IN. By default this is for advancing a step, V
 	//process_tick(); 
 	process_external_sync_pulse();
 	//process_external_clock_event();
-	PINC |= (1<<SYNC_LED_Y);
+	PINC |= (1<<SYNC_LED_R);
 	clock.sync_led_mask++; //^= 1 << clock.sync_led_mask;
 }
 

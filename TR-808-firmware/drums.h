@@ -2,6 +2,7 @@
 #define DRUMS_H
 
 #define NO_SWITCH 255 //null value for drums that don't need any switching done
+#define CONGAS_OFF 0b00000111 //mask for turning off congas
 
 enum drum { //index for drum hits
 	

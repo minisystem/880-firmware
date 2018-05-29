@@ -128,10 +128,10 @@ void process_tick(void) {
 	
 	if (clock.source == EXTERNAL) { 
 		
-		if (++clock.slave_ppqn_ticks == clock.sync_count) {
+		if (++clock.slave_ppqn_ticks == clock.sync_count) { //this works for 24 ppqn MIDI and DIN sync clock, but needs tweaking for external sync pulse that runs at 2 ppqn or 1 ppqn
 			clock.slave_ppqn_ticks = 0; //reset
 			flag.wait_for_master_tick = 1;
-			TCCR1B &= ~(1<<CS12); //turn off timer
+			TCCR1B &= ~(1<<CS12); //turn off master timer
 			//TCNT1 = 0;
 		}
 		
@@ -143,7 +143,10 @@ void process_tick(void) {
 
 
 void process_start(void) {
-	
+		PORTC &= ~(1<<SYNC_LED_R);
+		PORTE &= ~(1<<SYNC_LED_Y);
+		clock.sync_led_mask = 0;
+		
 		//sequencer.current_step = 0;
 		if (sequencer.mode != COMPOSE_RHYTHM) sequencer.track_measure = 0; //ugly bodge here. need to think how Rhythm Play and Compose modes should work when started and stopped. bleh.
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
@@ -159,9 +162,12 @@ void process_start(void) {
 			clock.slave_ppqn_ticks = 0;
 			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
-			sequencer.current_step = 0;
-			clock.ppqn_counter = 0;
+			sequencer.current_step = -1;
+			//sequencer.current_step = 0;
+			//clock.ppqn_counter = 0;
+			clock.ppqn_counter = clock.divider - 1;
 			flag.slave_start = 0;
+			PORTC |= (1 << SYNC_LED_R); //red for internal clock running
 		}		
 		
 		//reset variation on start	
@@ -175,11 +181,15 @@ void process_start(void) {
 		}
 		
 		if (clock.source == INTERNAL) {
-			PORTC &= ~(1<<SYNC_LED_R);
-			PORTE &= ~(1<<SYNC_LED_Y);
-			PORTC |= (1 << SYNC_LED_R); //red for internal clock running
 
+			
+
+		} else {
+			
+			
 		}
+		
+		//if (sequencer.clock_mode == PULSE_SYNC_SLAVE) PORTC |= (1<<SYNC_LED_R); //maintain phase of SYNC LED
 		if (sequencer.clock_mode == DIN_SYNC_MASTER || sequencer.clock_mode == DIN_SYNC_SLAVE) {
 			//don't set flag.next_step here because need to send a couple of DIN Sync clock pulses before start
 			//PORTE |= (1<<SYNC_LED_Y);
@@ -189,7 +199,7 @@ void process_start(void) {
 			
 		} else { //otherwise set flag.next_step and send MIDI if MIDI_MASTER
 			
-			//flag.next_step = 1;
+			//flag.next_step = 1; - getting rid of means first step isn't triggered - see if (clock.source == EXTERNAL) above for workround - not tested with 880 as master though....
 			if (sequencer.clock_mode == MIDI_MASTER) {
 				
 				midi_send_start(&midi_device); //should clock be sent before start?
@@ -209,6 +219,8 @@ void process_start(void) {
 			
 		}
 		
+		spi_data[LATCH_3] |= CONGAS_OFF;
+		
 		//set trigger off timer
 		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
 		
@@ -221,6 +233,7 @@ void process_start(void) {
 void process_stop(void) {
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
+		clock.sync_led_mask = 0;
 		//sequencer.current_step = 0;
 		sequencer.track_measure = 0; //reset track measure. No continue for now
 		//clock.ppqn_counter = 0;
@@ -260,6 +273,8 @@ void process_stop(void) {
 			}
 			
 		}
+		
+		spi_data[LATCH_3] |= CONGAS_OFF;
 		
 		//set trigger off timer for incoming MIDI, currently only applies to MIDI_SLAVE sync mode
 		TIMER0_OUTPUT_COMPARE = TIMER0_1_MS;

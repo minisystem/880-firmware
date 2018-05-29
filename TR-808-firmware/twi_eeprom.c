@@ -94,6 +94,8 @@ pattern_data read_pattern(uint16_t memory_address, uint8_t bank){
 	return(*p_read_pattern);
 }
 
+// TODO: this is too slow. Instead, use the callback function: after every page is written, advance in the callback function to the 
+// next page that needs writing. Do this until the whole pattern is written. This will get rid of this for loop
 void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data){ //this writes whole pattern, including step number for each part and pre scale
 	while(TWI_busy);
 	//int num_pages = sizeof(pattern_data) / PAGE_SIZE; //isn't this a constant? should it be defined as sizeof(pattern_data)/PAGE_SIZE?
