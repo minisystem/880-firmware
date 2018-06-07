@@ -50,9 +50,10 @@ typedef struct {
 
 void eeprom_init();
 pattern_data read_pattern(uint16_t memory_address, uint8_t bank);
-void write_pattern(uint16_t memory_address, uint8_t bank, pattern_data *w_data);
+void start_write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 //void write_bytes(uint16_t memory_address, (char *)w_data, int num_bytes_to_write);
-
+void write_next_pattern_page();
+void write_pattern_page(uint16_t memory_address, uint8_t bank, pattern_data *w_data, int page_number);
 struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address);
 void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
 

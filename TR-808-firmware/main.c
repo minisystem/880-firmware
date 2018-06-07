@@ -59,6 +59,9 @@ void refresh(void) {
 	update_step_board();
 	process_step();
 	update_spi();
+	
+	write_next_pattern_page();
+	
 	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	

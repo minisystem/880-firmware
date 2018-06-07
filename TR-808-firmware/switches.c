@@ -382,7 +382,7 @@ void check_clear_switch(void) {
 				sequencer.pre_scale = 1; //default PRE_SCALE_3
 				clock.divider = PRE_SCALE_3;
 				update_prescale_leds();
-				write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
+				start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
 				break;
 				
 			case FIRST_PART: case SECOND_PART:
@@ -649,7 +649,7 @@ void clear_pattern_bank(uint8_t bank) {
 		
 		for (int pattern = 0; pattern < 16; ++pattern) {
 			
-			write_current_pattern(pattern, bank);
+			start_write_current_pattern(pattern, bank);
 		}
 	
 	
@@ -674,7 +674,7 @@ void clear_all_patterns(void) {
 	for (int bank = 0; bank < NUM_BANKS; bank++) {
 		for (int pattern = 0; pattern < 16; pattern++) {
 			
-			write_current_pattern(pattern, bank);
+			start_write_current_pattern(pattern, bank);
 			
 		}
 		

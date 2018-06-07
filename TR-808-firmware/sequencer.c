@@ -318,7 +318,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 					
 		flag.pattern_edit = 0;
 		//toggle(IF_VAR_B_LED);
-		write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
+		start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
 					
 	}
 	
@@ -988,7 +988,7 @@ void update_step_board() { //should this be in switches.c ?
 							
 								flag.pattern_edit = 0;
 						
-								write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
+								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
 							
 							}
 							turn_off(sequencer.pattern_bank);
@@ -1003,7 +1003,7 @@ void update_step_board() { //should this be in switches.c ?
 					
 					if (sequencer.CLEAR) { //when the sequencer isn't running pressing clear will copy current pattern into new slot
 						
-						if (sequencer.current_pattern != press) write_current_pattern(press, sequencer.pattern_bank); //write current pattern to new pattern slot
+						if (sequencer.current_pattern != press) start_write_current_pattern(press, sequencer.pattern_bank); //write current pattern to new pattern slot
 						
 					} else {
 						
@@ -1248,20 +1248,6 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	
 	//sequencer.part_playing = sequencer.part_editing;
 	
-}
-
-void write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
-	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2); //holy jeeze, I think I left this here just to measure pattern write times. good golly
-	pattern_data current_pattern;
-	
-	current_pattern.variation_a = sequencer.pattern[VAR_A];
-	current_pattern.variation_b = sequencer.pattern[VAR_B];
-	current_pattern.step_num[FIRST] = sequencer.step_num[FIRST];
-	current_pattern.step_num[SECOND] = sequencer.step_num[SECOND];
-	current_pattern.pre_scale = sequencer.pre_scale;
-	
-	write_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank, &current_pattern);
-	//TRIGGER_OUT &= TRIGGER_OFF;
 }
 
 void read_rhythm_track(void) {
