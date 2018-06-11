@@ -351,7 +351,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 	
 	
 }	
-
+// TODO(jeff): Clear is called repeatedly when the user is holding it down. It can lead to hundreds if not thousands of page writes. Need to reduce that.
 void check_clear_switch(void) {
 	if (sequencer.SHIFT) return; 
 	if (sequencer.CLEAR) {// && sequencer.START == 0) {
