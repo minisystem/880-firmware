@@ -112,6 +112,30 @@ void toggle(uint8_t led_index) { //careful with this - state is not preserved wh
 	}
 }
 
+void blink(uint8_t led_id) {
+	//turn on timer2 interrupt for blinking clear LED
+	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
+	TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
+	TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
+	TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
+	TCCR2B |=  (1<<WGM22);
+	OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
+				
+	if (flag.blink) {
+		flag.blink = 0;
+		toggle(led_id);
+	}	
+	
+}
+
+void stop_blink(uint8_t led_id) {
+	TCCR2A = 0; //turn off timer2
+	TIMSK2 &= ~(1<<OCIE2A);
+	OCR2A = 70;
+	turn_on(led_id);	
+	
+}
+
 void turn_off_all_inst_leds(void) {
 	
 	//This is quick and dirty fast way to turn off all LEDs, but doesn't preserve their states for toggling 

@@ -146,26 +146,26 @@ void process_start(void) {
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
 		clock.sync_led_mask = 0;
-		
+		if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.part_playing = SECOND; //noodle fryer here - priming the sequencer on START forces process_new_measure to be called before first step is played, causing part playing to be toggled
+		//so ugly and clunky. how to simplify?
 		//sequencer.current_step = 0;
 		if (sequencer.mode != COMPOSE_RHYTHM) sequencer.track_measure = 0; //ugly bodge here. need to think how Rhythm Play and Compose modes should work when started and stopped. bleh.
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		//clock.ppqn_counter = 0;
 		clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
-		
-		if (clock.source == EXTERNAL) { //need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
-			
-			sequencer.current_step = -1;
-			clock.ppqn_counter = clock.divider - 1;
+		//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
+		sequencer.current_step = -1;
+		clock.ppqn_counter = clock.divider - 1;
+		if (clock.source == EXTERNAL) { 
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
 			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
-			sequencer.current_step = -1;
+			//sequencer.current_step = -1;
 			//sequencer.current_step = 0;
 			//clock.ppqn_counter = 0;
-			clock.ppqn_counter = clock.divider - 1;
+			//clock.ppqn_counter = clock.divider - 1;
 			flag.slave_start = 0;
 			PORTC |= (1 << SYNC_LED_R); //red for internal clock running
 		}		

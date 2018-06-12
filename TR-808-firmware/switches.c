@@ -355,87 +355,91 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 void check_clear_switch(void) {
 	if (sequencer.SHIFT) return; 
 	if (sequencer.CLEAR) {// && sequencer.START == 0) {
-		button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here otherwise it gets handled elsewhere when we don't want it to.
-		switch (sequencer.mode) {
+		if (sequencer.mode == PATTERN_CLEAR) { //this if fucking garbage - need to clean up blink function, which just constantly initializes the blink timer. 
+				//really just need to initialize blink timer and then check blink flag:
+				//if (flag.blink) {
+				//flag.blink = 0;
+				//toggle(MODE_1_PATTERN_CLEAR);
+				//}
+				blink(MODE_1_PATTERN_CLEAR);
+			} else if (sequencer.mode == COMPOSE_RHYTHM) { //same for clearing rhythm track in compose mode
+				//if (flag.blink) {
+				//flag.blink = 0;
+				//toggle(MODE_1_PATTERN_CLEAR);
+				//}
+				blink(MODE_6_RHYTHM_COMPOSE);
+					
+		}
+		if (button[CLEAR_SW].state) {
+			button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here otherwise it gets handled elsewhere when we don't want it to.
+			switch (sequencer.mode) {
 			
-			case PATTERN_CLEAR:
-				//turn on timer2 interrupt for blinking clear LED
-				TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
-				TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
-				TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
-				TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
-				TCCR2B |=  (1<<WGM22);
-				OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
-				
-				if (flag.blink) {
-					flag.blink = 0;
-					toggle(MODE_1_PATTERN_CLEAR);
-				}
+				case PATTERN_CLEAR:
+
+
+
 										
-				memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
-				//memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));	
-				sequencer.led_mask = 0;		
-				sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
-				sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
-				sequencer.step_num[FIRST] = 15;
-				sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
-				sequencer.pre_scale = 1; //default PRE_SCALE_3
-				clock.divider = PRE_SCALE_3;
-				update_prescale_leds();
-				start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
-				break;
+					memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
+					//memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));	
+					sequencer.led_mask = 0;		
+					sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
+					sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
+					sequencer.step_num[FIRST] = 15;
+					sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
+					sequencer.pre_scale = 1; //default PRE_SCALE_3
+					clock.divider = PRE_SCALE_3;
+					update_prescale_leds();
+					start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //clear it from eeprom too		
+					break;
 				
-			case FIRST_PART: case SECOND_PART:
+				case FIRST_PART: case SECOND_PART:
 			
-				break;	
+					break;	
 
 				
-			case MANUAL_PLAY:
+				case MANUAL_PLAY:
 			
-				break;
+					break;
 				
-			case PLAY_RHYTHM:
+				case PLAY_RHYTHM:
 			
-				break;
+					break;
 				
-			case COMPOSE_RHYTHM: //clear selected rhythm track here
-				//turn on timer2 interrupt for blinking clear LED
-				TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
-				TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
-				TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
-				TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
-				TCCR2B |=  (1<<WGM22);
-				OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
-								
-				if (flag.blink) {
-					flag.blink = 0;
-					toggle(MODE_6_RHYTHM_COMPOSE);
-				}
+				case COMPOSE_RHYTHM: //clear selected rhythm track here
+					////turn on timer2 interrupt for blinking clear LED
+					//TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
+					//TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
+					//TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
+					//TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
+					//TCCR2B |=  (1<<WGM22);
+					//OCR2A = 140; //alright, what the hell is this? Make it a constant so it actually means something you twit.
+									//
+					//if (flag.blink) {
+						//flag.blink = 0;
+						//toggle(MODE_6_RHYTHM_COMPOSE);
+					//}
+					//blink(MODE_6_RHYTHM_COMPOSE);
 				
-				memset(&rhythm_track.patterns, 0, sizeof(rhythm_track.patterns));
-				rhythm_track.length = 0;
-				sequencer.track_measure = 0; //reset track measure too
-				sequencer.track_mode = CREATE;
-				write_rhythm_track();
-				sequencer.pattern_bank = 0; //reset pattern bank to 0
+					memset(&rhythm_track.patterns, 0, sizeof(rhythm_track.patterns));
+					rhythm_track.length = 0;
+					sequencer.track_measure = 0; //reset track measure too
+					sequencer.track_mode = CREATE;
+					write_rhythm_track();
+					sequencer.pattern_bank = 0; //reset pattern bank to 0
 				
-				break;			
+					break;			
 			
-		}
+			}
+	}
 		
 	} else {
 		
 		if (sequencer.mode == PATTERN_CLEAR) { //need to ensure LED is on after toggling while CLEAR button is held
-			//turn off timer2 interrupt
-			TCCR2A = 0; //turn off timer2
-			TIMSK2 &= ~(1<<OCIE2A);
-			OCR2A = 70;
-			turn_on(MODE_1_PATTERN_CLEAR);
+
+			stop_blink(MODE_1_PATTERN_CLEAR);
 		} else if (sequencer.mode == COMPOSE_RHYTHM) { //same for clearing rhythm track in compose mode
-			TCCR2A = 0; //turn off timer2
-			TIMSK2 &= ~(1<<OCIE2A);
-			OCR2A = 70;
-			turn_on(MODE_6_RHYTHM_COMPOSE);
+
+			stop_blink(MODE_6_RHYTHM_COMPOSE);
 			
 		}
 		
