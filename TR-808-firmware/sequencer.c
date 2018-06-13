@@ -565,11 +565,15 @@ void process_step(void){
 							turn_on(sequencer.roll_mode + ROLL_MIN);
 						}
 					} else {
-						turn_on(drum_hit[sequencer.current_inst].led_index);
-						spi_data[LATCH_1] = sequencer.led_mask; //sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
-						spi_data[LATCH_0] = sequencer.led_mask >> 8;												
+						if (sequencer.ALT) {
+							turn_on(sequencer.pattern_bank);
+						} else {
+							turn_on(drum_hit[sequencer.current_inst].led_index);
+							spi_data[LATCH_1] = sequencer.led_mask; //sequencer.step_led_mask[sequencer.variation][sequencer.current_inst]; //this keeps inst lights on while blinking step light
+							spi_data[LATCH_0] = sequencer.led_mask >> 8;
+																		
+						}
 					}
-				
 				break;
 				
 				case MANUAL_PLAY:
@@ -714,10 +718,15 @@ void process_step(void){
 						
 					} else {
 						
-						turn_on(sequencer.pattern_bank);
+						//turn_on(sequencer.pattern_bank);
 						
 					}
 					
+				} else {
+					
+					if (sequencer.ALT) {
+						turn_on(sequencer.pattern_bank);
+					}
 				}
 				break;
 			case PLAY_RHYTHM: case COMPOSE_RHYTHM:
@@ -800,6 +809,20 @@ void update_step_board() { //should this be in switches.c ?
 				}
 
 				break;			
+			} else if (sequencer.ALT) { //handle bank presses
+				
+				if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
+
+					turn_off(sequencer.pattern_bank);
+					sequencer.pattern_bank = press;
+					turn_on(sequencer.pattern_bank);
+					if (sequencer.track_mode == EDIT) {
+						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;						
+					}
+					flag.pattern_change = 1;
+				}
+				
+				break;
 			}
 
 			if (sequencer.CLEAR) { //clear button is pressed, check if step buttons are pressed and change step number accordingly
@@ -979,26 +1002,28 @@ void update_step_board() { //should this be in switches.c ?
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
 					
-					} else { //change pattern bank
+					} else { 
 						
+
+					
+					}
+				
+				} else if (sequencer.ALT) { //change pattern bank
+					
 						//if current pattern has been edited need to write it to current bank before changing bank, otherwise edited pattern will be written to new bank!
 						//BUT, can't edit patterns when sequencer isn't running except for changing pre-scale.
 						if (press < NUM_BANKS) {
-							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilo*bits* and kilo*bytes*, you nitwit.
-							
-								flag.pattern_edit = 0;
-						
-								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
-							
+							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilo*bits* and kilo*bytes*, you nitwit.							
+								flag.pattern_edit = 0;						
+								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure							
 							}
 							turn_off(sequencer.pattern_bank);
 							sequencer.pattern_bank = sequencer.previous_bank = press;
 							turn_on(sequencer.pattern_bank);
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-						}
-					
-					}
-				
+						}					
+
+			
 				} else {
 					
 					if (sequencer.CLEAR) { //when the sequencer isn't running pressing clear will copy current pattern into new slot
@@ -1014,8 +1039,8 @@ void update_step_board() { //should this be in switches.c ?
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;
 					clock.ppqn_counter = 0; //need to reset ppqn_counter here. there's a glitch when switching to new patterns that can somehow cause overflow and next_step and half_step flags aren't set
-					clock.beat_counter = 0;
-			
+					clock.beat_counter = 0;					
+					
 				}
 				break;
 		

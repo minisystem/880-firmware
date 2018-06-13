@@ -125,6 +125,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 
 		if ((clock.ppqn_divider_tick++ == PPQN_DIVIDER)) { //PPQN_DIVIDER used to convert 96 PPQN internal clock to 24 PPQN MIDI standard
 			//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
+			
 			clock.ppqn_divider_tick = 0;
 			if (sequencer.clock_mode == MIDI_MASTER) { 
 				midi_send_clock(&midi_device); //send MIDI clock
