@@ -2,5 +2,6 @@
 
 .vs/
 TR-808-firmware/Debug/
+TR-808-firmware/Release/
 TR-808-firmware/i2c_eeprom.h
 TR-808-firmware/i2c_eeprom.c

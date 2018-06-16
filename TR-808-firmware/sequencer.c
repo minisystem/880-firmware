@@ -113,8 +113,13 @@ void process_tick(void) {
 		
 		if (!flag.shuffle_step) flag.next_step = 1;
 			
-		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {	
-			flag.new_measure = 1;
+		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
+			if (sequencer.primed) {
+				sequencer.primed = 0;
+			} else {
+				flag.new_measure = 1;
+			}
+			//PORTC &= ~(1<<SYNC_LED_R);
 		}
 		clock.beat_counter++; //overflows every 4 beats 
 		clock.ppqn_counter = 0;
@@ -146,7 +151,7 @@ void process_start(void) {
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
 		clock.sync_led_mask = 0;
-		if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.part_playing = SECOND; //noodle fryer here - priming the sequencer on START forces process_new_measure to be called before first step is played, causing part playing to be toggled
+		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.part_playing = SECOND; //noodle fryer here - priming the sequencer on START forces process_new_measure to be called before first step is played, causing part playing to be toggled
 		//so ugly and clunky. how to simplify?
 		//sequencer.current_step = 0;
 		if (sequencer.mode != COMPOSE_RHYTHM) sequencer.track_measure = 0; //ugly bodge here. need to think how Rhythm Play and Compose modes should work when started and stopped. bleh.
@@ -157,6 +162,7 @@ void process_start(void) {
 		//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
 		sequencer.current_step = -1;
 		clock.ppqn_counter = clock.divider - 1;
+		sequencer.primed = 1;
 		if (clock.source == EXTERNAL) { 
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
@@ -224,7 +230,7 @@ void process_start(void) {
 		//set trigger off timer
 		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
 		
-		//reset timeres:
+		//reset timers:
 		TCNT1 = 0;
 		TCNT3 = 0;
 		TCCR1B |= (1<<CS12); //ensure timer is on
@@ -381,6 +387,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 					
 			} else if (sequencer.mode == MANUAL_PLAY) {
 				update_fill();
+				//if (flag.intro) { //handle intro 			;
+					//flag.intro = 0;
+					//sequencer.variation = sequencer.intro_fill_var;
+					//flag.pattern_change = 1;
+				//}
 			}
 			
 		} else {
@@ -420,6 +431,11 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		} else if (sequencer.mode == MANUAL_PLAY) {
 			
 			update_fill();
+			//if (flag.intro) { //handle intro					;
+				//flag.intro = 0;
+				//sequencer.variation = sequencer.intro_fill_var;
+				//flag.pattern_change = 1;					
+			//}
 				
 		}
 	}

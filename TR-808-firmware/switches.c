@@ -483,7 +483,7 @@ void check_intro_fill_variation_switch(void) {
 			//return;
 		
 			
-		} else if (sequencer.mode == MANUAL_PLAY) { //only toggle if in MANUAL PLAY MODE, but this will mean you can't change trigger assignments in any other mode. What about only changing trigger assignments in CLEAR mode?
+		} else if ((sequencer.mode == MANUAL_PLAY) && (!sequencer.SHIFT)) { //only toggle if in MANUAL PLAY MODE, but this will mean you can't change trigger assignments in any other mode. What about only changing trigger assignments in CLEAR mode?
 			toggle(IF_VAR_A_LED);
 			toggle(IF_VAR_B_LED);
 			sequencer.intro_fill_var ^= 1<<0;
