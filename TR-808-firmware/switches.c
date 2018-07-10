@@ -316,36 +316,136 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 	
 	
 	
-	if (button[BASIC_VAR_A_SW].state && !sequencer.SHIFT) {
+	if (button[BASIC_VAR_A_SW].state) {// && !sequencer.SHIFT) {
 		
 		button[BASIC_VAR_A_SW].state ^= button[BASIC_VAR_A_SW].state; //toggle  - this is not toggling. need to ^= 1<<0 to toggle a single bit state. hmmm.
 		
-		if (sequencer.mode == PATTERN_CLEAR && clock.source == EXTERNAL) { //NUDGE FUNCTION
+		//if (sequencer.mode == PATTERN_CLEAR && clock.source == EXTERNAL) { //NUDGE FUNCTION
+			//
+			//if (clock.ppqn_counter != 0) clock.ppqn_counter--;
+			////clock.previous_rate = clock.rate;
+			////clock.rate++;
+			////OCR1A++;
+			////flag.nudge_down = 1;
+			//return;
+		//}
+		//if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
+		
+		switch (sequencer.variation_mode) {
 			
-			if (clock.ppqn_counter != 0) clock.ppqn_counter--;
-			//clock.previous_rate = clock.rate;
-			//clock.rate++;
-			//OCR1A++;
-			//flag.nudge_down = 1;
-			return;
+			case VAR_A:
+			
+				if (sequencer.SHIFT) {
+					
+					sequencer.variation_mode = VAR_AB;
+					if (sequencer.START) flag.variation_change;
+					
+				} else {
+					
+					sequencer.variation_mode = VAR_B;
+					if (sequencer.START) {
+						flag.variation_change = 1;
+					} else {
+						
+						sequencer.variation = VAR_B;
+					}
+				}
+			
+			break;
+			
+			case VAR_B:
+				if (sequencer.SHIFT) {
+					
+					sequencer.variation_mode = VAR_AB;
+					if (sequencer.START) 
+						flag.variation_change = 1;
+					
+					} else {
+					
+					sequencer.variation_mode = VAR_A;
+					if (sequencer.START) {
+						flag.variation_change = 1;
+						} else {
+						
+						sequencer.variation = VAR_A;
+					}
+				}			
+			break;
+			
+			case VAR_AB:
+			
+				if (sequencer.SHIFT) { //exit VAR_AB mode and go to var B
+					sequencer.variation_mode = VAR_B;
+					if (sequencer.START) {
+						flag.variation_change = 1;
+						} else {
+											
+						sequencer.variation = VAR_B;
+					}
+					
+				} else { //exit VAR_AB mode and go to B
+					sequencer.variation_mode = VAR_A;
+					if (sequencer.START) {
+						flag.variation_change = 1;
+						} else {
+						
+						sequencer.variation = VAR_A;
+					}					
+					
+				}
+			
+			break;
+			
 		}
-		if (++sequencer.variation_mode == 3) sequencer.variation_mode = 0; //cycle through the 3 modes
-		if (sequencer.START) {
-			
-			 flag.variation_change = 1; //set change flag to be handled when new measure starts
-		} else { //otherwise change immediately
-			
-			if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-				
-				sequencer.variation = VAR_A;
-				
-			} else {
-				
-				sequencer.variation = VAR_B;
-				
-			}
-			
-		}
+		
+		//if (sequencer.SHIFT) { //maybe switch case would be better here?
+			//
+			//if (sequencer.variation_mode != VAR_AB) { //SHIFT + BASIC_VARIATION press turns on alternating VAR_AB mode
+							//
+				//sequencer.variation_mode = VAR_AB;
+				//
+				//if (sequencer.START) {
+					//
+					//flag.variation_change = 1;
+					//
+				//} else {
+					//
+					//sequencer.variation = VAR_A;
+				//}
+				//
+			//} else { //turn off alternating A/B mode, reset to VAR A
+				//
+				//sequencer.variation_mode = VAR_A;
+				//if (sequencer.START) {
+					//flag.variation_change = 1;
+				//} else {
+					//sequencer.variation = VAR_A;
+				//}
+				//
+				//
+			//}
+			//
+		//} else { //no SHIFT means toggle between VAR A and VAR B
+			//
+//
+			//
+		//}
+		//if (sequencer.START) {
+			//
+			 //flag.variation_change = 1; //set change flag to be handled when new measure starts
+		//} else { //otherwise change immediately
+			//
+			//if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
+				//
+				//sequencer.variation = VAR_A;
+				//
+			//} else {
+				//
+				//sequencer.variation = VAR_B;
+				//
+			//}
+			//
+		//}
 		
 	}
 	
