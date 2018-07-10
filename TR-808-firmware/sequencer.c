@@ -1203,12 +1203,31 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 		flag.tap = 0;
 		if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) {
 			//flag.tap = 0;
-			if (sequencer.current_inst == AC) {
-				sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
-			} else {
-				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+			if (sequencer.SHIFT) { //fill current instrument in pattern
+				if (sequencer.current_inst == AC) { //not valid for AC
+					//sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] = 0xFFFF;
+					
+					
+				} else {
+					
+					for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] |= 1<<sequencer.current_inst;
+						sequencer.led_mask |= 1 << i;
+					}
+					
+				}
+				
+				//sequencer.led_mask = 0xFFFF;
+				
+			} else { //add current instrument trigger to pattern
+				if (sequencer.current_inst == AC) {
+					sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
+				} else {
+					sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+				}
+				sequencer.led_mask |= 1<<sequencer.current_step;
 			}
-			sequencer.led_mask |= 1<<sequencer.current_step;
+			
 			flag.pattern_edit = 1; //set pattern edit flag
 		
 		} else if (sequencer.mode == MANUAL_PLAY){ 
