@@ -293,6 +293,9 @@ void check_inst_switches(void) {
 				}
 			
 			case MANUAL_PLAY:
+				if (sequencer.SHIFT) {
+					assign_mutes(drum_index);
+				}
 			
 			break;	
 			

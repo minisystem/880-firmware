@@ -174,31 +174,52 @@ void live_hits(void) { //use switch case here you twit or for loop. duh.
 	if (button[INST_LT_4_SW].state) {
 		
 		button[INST_LT_4_SW].state ^= button[INST_LT_4_SW].state;
-		trigger_drum(LT, 0);
+		if (sequencer.intro_fill_var) {
+			trigger_drum(LC, 0);
+		} else {	
+			trigger_drum(LT, 0);
+		}
 	}
 	
 	if (button[INST_MT_5_SW].state) {
 		
 		button[INST_MT_5_SW].state ^= button[INST_MT_5_SW].state;
-		trigger_drum(MT,0);
+		if (sequencer.intro_fill_var) {
+			trigger_drum(MC, 0);
+		} else {				
+			trigger_drum(MT, 0);
+		}
 	}
 	
 	if (button[INST_HT_6_SW].state) {
 		
 		button[INST_HT_6_SW].state ^= button[INST_HT_6_SW].state;
-		trigger_drum(HT, 0);
+		if (sequencer.intro_fill_var) {
+			trigger_drum(HC, 0);
+		} else {
+			trigger_drum(HT, 0);
+		}
 	}
 	
 	if (button[INST_RS_7_SW].state) {
 		
 		button[INST_RS_7_SW].state ^= button[INST_RS_7_SW].state;
-		trigger_drum(RS,0);
+		if (sequencer.intro_fill_var) {
+			trigger_drum(CL, 0);
+			} else {
+			trigger_drum(RS, 0);
+		}		
 	}
 	
 	if (button[INST_CP_8_SW].state) {
 		
 		button[INST_CP_8_SW].state ^= button[INST_CP_8_SW].state;
-		trigger_drum(CP, 0);
+		if (sequencer.intro_fill_var) {
+			trigger_drum(MA, 0);
+			} else {
+			trigger_drum(CP, 0);
+		}		
+		
 	}
 	
 	if (button[INST_CB_9_SW].state) {
