@@ -30,8 +30,7 @@ typedef struct {
 	struct pattern variation_b;
 	uint8_t pre_scale;
 	uint8_t step_num[NUM_PARTS];
-
-	//uint8_t shuffle:3;
+	uint8_t shuffle:3;
 	
 } pattern_data;
 

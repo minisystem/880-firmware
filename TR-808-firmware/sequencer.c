@@ -158,11 +158,15 @@ void process_start(void) {
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		//clock.ppqn_counter = 0;
-		clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
-		//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
-		sequencer.current_step = -1;
-		clock.ppqn_counter = clock.divider - 1;
-		sequencer.primed = 1;
+		if (sequencer.clock_mode == DIN_SYNC_MASTER) {
+			clock.ppqn_counter = 0;
+		} else {
+			clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
+			//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
+			sequencer.current_step = -1;
+			clock.ppqn_counter = clock.divider - 1;
+			sequencer.primed = 1;
+		}
 		if (clock.source == EXTERNAL) { 
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
@@ -1127,6 +1131,7 @@ void update_shuffle(uint8_t shuffle_amount) {
 			sequencer.new_shuffle_amount = shuffle_amount; //shuffle ranges from 0-5
 			//turn_on(shuffle_amount);
 			flag.shuffle_change = 1;
+			if (sequencer.mode ==  FIRST_PART || sequencer.mode == SECOND_PART) flag.pattern_edit = 1; //only save shuffle changes when in pattern edit mode
 		} else if (shuffle_amount >= ROLL_MIN && shuffle_amount < ROLL_MAX) {
 		
 			sequencer.roll_mode = shuffle_amount - ROLL_MIN;
@@ -1299,6 +1304,9 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	sequencer.step_num[SECOND] = next_pattern.step_num[SECOND];
 	sequencer.pre_scale = next_pattern.pre_scale;
 	clock.divider = pre_scale[sequencer.pre_scale];
+	if (next_pattern.shuffle > SHUFFLE_MAX) next_pattern.shuffle = 0; //just leave this in here for beta testers so that pre-shuffle storage patterns aren't screwed up
+	sequencer.new_shuffle_amount = next_pattern.shuffle;
+	flag.shuffle_change = 1;
 	//update_step_led_mask();
 	update_inst_led_mask();
 	update_prescale_leds();

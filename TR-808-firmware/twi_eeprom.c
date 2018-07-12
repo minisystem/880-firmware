@@ -121,6 +121,7 @@ void start_write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	pattern_to_write.step_num[FIRST] = sequencer.step_num[FIRST];
 	pattern_to_write.step_num[SECOND] = sequencer.step_num[SECOND];
 	pattern_to_write.pre_scale = sequencer.pre_scale;
+	pattern_to_write.shuffle = sequencer.shuffle_amount;
 	
 	current_pattern_page = 0;
 	current_writing_page = -1;

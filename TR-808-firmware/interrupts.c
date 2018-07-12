@@ -146,11 +146,15 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 						
 						flag.din_start = 0;
 						PORTD |= (1 << DIN_RUN_STOP); //set DIN RUN/STOP pin 
-						clock.ppqn_counter = 0;
-						flag.next_step = 1;
+						//clock.ppqn_counter = 0;
+						//flag.next_step = 1;
 						//TCNT1 = 0; //reset master timer, doesn't seem necessary
-						flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
-						
+						//flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
+						clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
+						//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider
+						sequencer.current_step = -1;
+						clock.ppqn_counter = clock.divider - 1;
+						sequencer.primed = 1;
 						
 					}
 				}	
