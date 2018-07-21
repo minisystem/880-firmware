@@ -278,14 +278,14 @@ void update_inst_led_mask(void) {
 	if (sequencer.current_inst == AC) { //annoying exception for accent
 		
 		for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
-			if ((sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] >> i) &1) sequencer.led_mask |= 1<<i;
+			if ((sequencer.pattern[sequencer.current_variation].accent[sequencer.part_editing] >> i) &1) sequencer.led_mask |= 1<<i;
 		}
 		
 	} else {
 	
 		for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
 		
-			if ((sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] >> sequencer.current_inst) & 1) sequencer.led_mask |= 1 << i;
+			if ((sequencer.pattern[sequencer.current_variation].part[sequencer.part_editing][i] >> sequencer.current_inst) & 1) sequencer.led_mask |= 1 << i;
 		}
 	
 		

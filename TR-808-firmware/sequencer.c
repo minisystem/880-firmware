@@ -184,10 +184,10 @@ void process_start(void) {
 		flag.variation_change = 0;
 		if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
 				
-			sequencer.variation = VAR_A; //start on variation A
+			sequencer.current_variation = VAR_A; //start on variation A
 		} else {
 				
-			sequencer.variation = VAR_B;
+			sequencer.current_variation = VAR_B;
 		}
 		
 		if (clock.source == INTERNAL) {
@@ -223,7 +223,7 @@ void process_start(void) {
 			//sequencer.new_pattern = sequencer.current_pattern;
 			//sequencer.current_pattern = sequencer.current_intro_fill;
 			flag.intro = 0;
-			sequencer.variation = sequencer.intro_fill_var;
+			sequencer.current_variation = sequencer.intro_fill_var;
 			//flag.variation_change = 1;
 			flag.pattern_change = 1;
 			
@@ -309,9 +309,13 @@ void update_fill(void) {
 		sequencer.new_pattern = sequencer.current_pattern;
 		sequencer.current_pattern = sequencer.current_intro_fill;
 		//flag.intro = 0;
-		sequencer.variation = sequencer.intro_fill_var;
+		sequencer.basic_variation = sequencer.current_variation; //store current variation
+		sequencer.current_variation = sequencer.intro_fill_var;
 		//flag.variation_change = 1;
 		flag.pattern_change = 1;
+	} else {
+		
+		//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = !sequencer.basic_variation;
 	}
 	
 }
@@ -383,13 +387,15 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 				flag.pre_scale_change = 1; //need to handle any change in pre-scale
 				sequencer.current_pattern = sequencer.new_pattern;
 				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-				sequencer.variation = VAR_A;
-				if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+				sequencer.current_variation = VAR_A;
+				if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
+				if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
 				sequencer.part_playing = FIRST;
 				turn_off(SECOND_PART_LED);
 				turn_on(FIRST_PART_LED);
 					
 			} else if (sequencer.mode == MANUAL_PLAY) {
+				//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = sequencer.basic_variation;
 				update_fill();
 				//if (flag.intro) { //handle intro 			;
 					//flag.intro = 0;
@@ -424,8 +430,9 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			//}
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			sequencer.variation = VAR_A;
-			if (sequencer.variation_mode == VAR_B) sequencer.variation = VAR_B;
+			sequencer.current_variation = VAR_A;
+			if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
+			if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
@@ -433,7 +440,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 
 				
 		} else if (sequencer.mode == MANUAL_PLAY) {
-			
+			//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = sequencer.basic_variation;
 			update_fill();
 			//if (flag.intro) { //handle intro					;
 				//flag.intro = 0;
@@ -634,14 +641,14 @@ void process_step(void){
 			}
 
 			sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-			if (sequencer.variation == sequencer.variation_mode) {
+			if (sequencer.current_variation == sequencer.variation_mode) {
 				
 				//sequencer.var_led_mask = led[BASIC_VAR_A_LED].spi_bit;
-				if (sequencer.variation == VAR_B && !flag.variation_change) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				if (sequencer.current_variation == VAR_B && !flag.variation_change) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
 			} else {
 				
 				//sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
-				if (sequencer.variation == VAR_B) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
+				if (sequencer.current_variation == VAR_B) sequencer.var_led_mask = led[BASIC_VAR_B_LED].spi_bit;
 				
 			}
 			
@@ -677,14 +684,14 @@ void process_step(void){
 				}
 
 				
-				if (sequencer.variation != sequencer.variation_mode) {
-					if (sequencer.variation == VAR_A) {
+				if (sequencer.current_variation != sequencer.variation_mode) {
+					if (sequencer.current_variation == VAR_A) {
 						sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 					} else {
 						sequencer.var_led_mask |= led[BASIC_VAR_A_LED].spi_bit;
 					}
 					
-				} else if (sequencer.variation == VAR_A && flag.variation_change) {
+				} else if (sequencer.current_variation == VAR_A && flag.variation_change) {
 					
 					sequencer.var_led_mask |= led[BASIC_VAR_B_LED].spi_bit;
 				}
@@ -863,7 +870,7 @@ void update_step_board() { //should this be in switches.c ?
 				//if (press != EMPTY)	{
 				if (press <= sequencer.step_num[sequencer.part_editing]) { //need handle all button presses, but only use presses that are below current step number
 					toggle(press);
-					sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] ^= 1<<press;
+					sequencer.pattern[sequencer.current_variation].accent[sequencer.part_editing] ^= 1<<press;
 					sequencer.led_mask ^= 1<<press;
 					flag.pattern_edit = 1;
 				}
@@ -880,7 +887,7 @@ void update_step_board() { //should this be in switches.c ?
 				//if ((sequencer.ALT) && (sequencer.part_editing == FIRST)) { //if ALT and editing first part, then edit second part as 32nd note layer on first part
 					//part_editing = SECOND;
 				//}
-				sequencer.pattern[sequencer.variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
+				sequencer.pattern[sequencer.current_variation].part[sequencer.part_editing][press] ^= 1<<sequencer.current_inst;
 				sequencer.led_mask ^= 1<<press;
 				flag.pattern_edit = 1;
 				//toggle(IF_VAR_B_LED);
@@ -1159,17 +1166,17 @@ void update_variation(void) { //not currently used
 			switch (sequencer.variation_mode) {
 							
 				case VAR_A: case VAR_AB:
-				sequencer.variation = VAR_A;
+				sequencer.current_variation = VAR_A;
 				break;
 				case VAR_B:
-				sequencer.variation = VAR_B;
+				sequencer.current_variation = VAR_B;
 				break;
 												
 			}
 						
 			} else if (sequencer.variation_mode == VAR_AB) {
 						
-			sequencer.variation ^= 1<<0; //toggle state
+			sequencer.current_variation ^= 1<<0; //toggle state
 		}
 		
 	}
@@ -1216,7 +1223,7 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 				} else {
 					
 					for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
-						sequencer.pattern[sequencer.variation].part[sequencer.part_editing][i] |= 1<<sequencer.current_inst;
+						sequencer.pattern[sequencer.current_variation].part[sequencer.part_editing][i] |= 1<<sequencer.current_inst;
 						sequencer.led_mask |= 1 << i;
 					}
 					
@@ -1226,9 +1233,9 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 				
 			} else { //add current instrument trigger to pattern
 				if (sequencer.current_inst == AC) {
-					sequencer.pattern[sequencer.variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
+					sequencer.pattern[sequencer.current_variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	
 				} else {
-					sequencer.pattern[sequencer.variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
+					sequencer.pattern[sequencer.current_variation].part[sequencer.part_editing][sequencer.current_step] |= 1<<sequencer.current_inst;
 				}
 				sequencer.led_mask |= 1<<sequencer.current_step;
 			}
@@ -1274,10 +1281,10 @@ void toggle_variation(void) {
 		switch (sequencer.variation_mode) {
 					
 			case VAR_A: case VAR_AB:
-				sequencer.variation = VAR_A;
+				sequencer.current_variation = VAR_A;
 			break;
 			case VAR_B:
-				sequencer.variation = VAR_B;
+				sequencer.current_variation = VAR_B;
 			break;
 					
 					
@@ -1285,7 +1292,7 @@ void toggle_variation(void) {
 				
 	} else if (sequencer.variation_mode == VAR_AB) {
 				
-		sequencer.variation ^= 1<<0; //toggle state
+		sequencer.current_variation ^= 1<<0; //toggle state
 	}	
 	
 	

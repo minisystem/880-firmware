@@ -350,7 +350,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 						flag.variation_change = 1;
 					} else {
 						
-						sequencer.variation = VAR_B;
+						sequencer.current_variation = VAR_B;
 					}
 				}
 			
@@ -370,7 +370,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 						flag.variation_change = 1;
 						} else {
 						
-						sequencer.variation = VAR_A;
+						sequencer.current_variation = VAR_A;
 					}
 				}			
 			break;
@@ -383,7 +383,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 						flag.variation_change = 1;
 						} else {
 											
-						sequencer.variation = VAR_B;
+						sequencer.current_variation = VAR_B;
 					}
 					
 				} else { //exit VAR_AB mode and go to B
@@ -392,7 +392,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 						flag.variation_change = 1;
 						} else {
 						
-						sequencer.variation = VAR_A;
+						sequencer.current_variation = VAR_A;
 					}					
 					
 				}
@@ -482,11 +482,11 @@ void check_clear_switch(void) {
 
 
 										
-					memset(sequencer.pattern[sequencer.variation].part, 0, sizeof(sequencer.pattern[sequencer.variation].part));	
+					memset(sequencer.pattern[sequencer.current_variation].part, 0, sizeof(sequencer.pattern[sequencer.current_variation].part));	
 					//memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));	
 					sequencer.led_mask = 0;		
-					sequencer.pattern[sequencer.variation].accent[FIRST] = 0;
-					sequencer.pattern[sequencer.variation].accent[SECOND] = 0;
+					sequencer.pattern[sequencer.current_variation].accent[FIRST] = 0;
+					sequencer.pattern[sequencer.current_variation].accent[SECOND] = 0;
 					sequencer.step_num[FIRST] = 15;
 					sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
 					sequencer.pre_scale = 1; //default PRE_SCALE_3

@@ -152,8 +152,8 @@ struct sequencer {
 	uint8_t previous_bank:4; //place holder for bank to return to when cycling through modes back to pattern edit mode
 	//uint16_t step_led_mask[2][17];
 	uint16_t led_mask;
-	uint8_t variation_toggle:1;
-	uint8_t variation:1; //variation A or variation B
+	uint8_t basic_variation:1; //variation A or variation B
+	uint8_t current_variation:1; //variation currently playing
 	uint8_t intro_fill_var:1; //intro/fill variation
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
 	uint8_t step_num[NUM_PARTS];
