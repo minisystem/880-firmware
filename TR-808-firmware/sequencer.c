@@ -834,6 +834,11 @@ void update_step_board() { //should this be in switches.c ?
 				button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here, otherwise it gets handled elsewhere when we don't want it to
 				if ((press == 0) && (sequencer.step_num_new == 0) && (sequencer.mode == SECOND_PART)) {
 					sequencer.step_num_new = NO_STEPS; //if pressing first step again then reset 2nd PART to NO_STEPS
+					//now need to clear second part trigger data:
+					sequencer.pattern[VAR_A].accent[SECOND] = 0;
+					sequencer.pattern[VAR_B].accent[SECOND] = 0;
+					memset(sequencer.pattern[VAR_A].part[SECOND], 0, sizeof(sequencer.pattern[VAR_A].part[SECOND]));
+					memset(sequencer.pattern[VAR_B].part[SECOND], 0, sizeof(sequencer.pattern[VAR_B].part[SECOND]));
 					flag.pattern_edit = 1;
 				} else {
 					sequencer.step_num_new = press;
