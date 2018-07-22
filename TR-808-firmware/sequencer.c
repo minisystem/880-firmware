@@ -190,6 +190,8 @@ void process_start(void) {
 			sequencer.current_variation = VAR_B;
 		}
 		
+		sequencer.basic_variation = sequencer.current_variation;
+		
 		if (clock.source == INTERNAL) {
 
 			
@@ -217,17 +219,22 @@ void process_start(void) {
 			}					
 		}
 
-		if (sequencer.mode == MANUAL_PLAY && flag.intro) { //works, but need to handle intro/fill variation here (or if not here, where?)
+		if (sequencer.mode == MANUAL_PLAY) { //works, but need to handle intro/fill variation here (or if not here, where?)
 			
-			//read_next_pattern(sequencer.current_intro_fill);
-			//sequencer.new_pattern = sequencer.current_pattern;
-			//sequencer.current_pattern = sequencer.current_intro_fill;
-			flag.intro = 0;
-			sequencer.current_variation = sequencer.intro_fill_var;
-			//flag.variation_change = 1;
-			flag.pattern_change = 1;
+			if (flag.intro) {
 			
+				flag.intro = 0;
+				sequencer.current_variation = sequencer.intro_fill_var;
+				flag.pattern_change = 1;
+			} 
+			if (sequencer.fill_mode != MANUAL) { //need to prime fill count on first measure
+				if (++sequencer.current_measure_auto_fill == sequencer.fill_mode) {
+					flag.fill = 1;
+				}					
+			}			
 		}
+		
+		
 		
 		spi_data[LATCH_3] |= CONGAS_OFF;
 		
@@ -265,7 +272,12 @@ void process_stop(void) {
 		spi_data[LATCH_1] = 0;
 		spi_data[LATCH_0] = 0;
 		turn_on(sequencer.current_pattern);
-		if (sequencer.mode == MANUAL_PLAY) turn_on(sequencer.current_intro_fill);
+		if (sequencer.mode == MANUAL_PLAY) { //need to restore original basic pattern in case sequencer is stopped while playing fill
+			//sequencer.current_measure_auto_fill = 1;
+			turn_on(sequencer.current_intro_fill);
+			sequencer.current_pattern = sequencer.new_pattern;
+			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+		}
 		if (sequencer.mode == COMPOSE_RHYTHM) {
 			if (rhythm_track.length > 0) sequencer.track_mode = EDIT;
 			sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
@@ -292,12 +304,7 @@ void process_stop(void) {
 
 void update_fill(void) {
 	
-	if (sequencer.fill_mode != MANUAL) {
-		if (++sequencer.current_measure_auto_fill == sequencer.fill_mode) {
-			flag.fill = 1;
-		}
-						
-	}
+
 	if (flag.fill) { //problem with current_measure overfow here - only need to increment measure if fill_mode != 0
 		sequencer.current_measure_auto_fill = 0;
 		flag.fill = 0;
@@ -313,10 +320,37 @@ void update_fill(void) {
 		sequencer.current_variation = sequencer.intro_fill_var;
 		//flag.variation_change = 1;
 		flag.pattern_change = 1;
-	} else {
-		
-		//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = !sequencer.basic_variation;
-	}
+	} else {		
+		if (sequencer.fill_mode != MANUAL) {
+			if (++sequencer.current_measure_auto_fill == sequencer.fill_mode) {
+				flag.fill = 1;
+			}		
+		}		
+	}	
+}
+
+void update_pattern() {
+		turn_off(SECOND_PART_LED);
+		turn_on(FIRST_PART_LED);
+		toggle_variation(); //only toggle variation at the end of the 2nd part
+		if (flag.pattern_change) {
+					
+			flag.pattern_change = 0;
+			flag.pre_scale_change = 1; //need to handle any change in pre-scale
+			sequencer.current_pattern = sequencer.new_pattern;
+			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+			sequencer.current_variation = VAR_A;
+			if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
+			if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
+			sequencer.part_playing = FIRST;
+			turn_off(SECOND_PART_LED);
+			turn_on(FIRST_PART_LED);
+					
+		}
+				
+		if (sequencer.mode == MANUAL_PLAY) {
+			update_fill();
+		}
 	
 }
 
@@ -378,31 +412,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 					
 		if (sequencer.part_playing == SECOND) {
 			sequencer.part_playing ^= 1 << 0; //toggle part playing
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-			toggle_variation(); //only toggle variation at the end of the 2nd part
-			if (flag.pattern_change) {
-					
-				flag.pattern_change = 0;
-				flag.pre_scale_change = 1; //need to handle any change in pre-scale
-				sequencer.current_pattern = sequencer.new_pattern;
-				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-				sequencer.current_variation = VAR_A;
-				if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
-				if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
-				sequencer.part_playing = FIRST;
-				turn_off(SECOND_PART_LED);
-				turn_on(FIRST_PART_LED);
-					
-			} else if (sequencer.mode == MANUAL_PLAY) {
-				//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = sequencer.basic_variation;
-				update_fill();
-				//if (flag.intro) { //handle intro 			;
-					//flag.intro = 0;
-					//sequencer.variation = sequencer.intro_fill_var;
-					//flag.pattern_change = 1;
-				//}
-			}
+			update_pattern();
 			
 		} else {
 			turn_off(FIRST_PART_LED);
@@ -410,45 +420,13 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			sequencer.part_playing ^= 1 << 0; //toggle part playing
 		}
 		
-	} else {
+	} else {//annoying exception in the case of second part being reset to 0 steps
 		
-		//if (sequencer.part_playing == SECOND) {
-			sequencer.part_playing = FIRST; //annoying exception in the case of second part being reset to 0 steps
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-		//}					
-		toggle_variation(); //no second part, so toggle variation
+	
+		sequencer.part_playing = FIRST; 
+		update_pattern();
 
-		if (flag.pattern_change) {
-			
-			flag.pattern_change = 0;
-			flag.pre_scale_change = 1; //need to handle any change in pre-scale
-			//if (sequencer.mode == PLAY_RHYTHM) {
-				//sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-				//sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-				//sequencer.track_measure++; //advance current measure	
-			//}
-			sequencer.current_pattern = sequencer.new_pattern;
-			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			sequencer.current_variation = VAR_A;
-			if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
-			if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
-			sequencer.part_playing = FIRST;
-			turn_off(SECOND_PART_LED);
-			turn_on(FIRST_PART_LED);
-			
 
-				
-		} else if (sequencer.mode == MANUAL_PLAY) {
-			//if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = sequencer.basic_variation;
-			update_fill();
-			//if (flag.intro) { //handle intro					;
-				//flag.intro = 0;
-				//sequencer.variation = sequencer.intro_fill_var;
-				//flag.pattern_change = 1;					
-			//}
-				
-		}
 	}
 	
 	if (sequencer.mode == FIRST_PART || sequencer.mode == SECOND_PART) { //only need to update this when step number changes, right now it's being called at end of every measure!

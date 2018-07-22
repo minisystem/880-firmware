@@ -199,6 +199,8 @@ void toggle_variation(void);
 
 void show_current_measure(void);
 
+void update_pattern(void);
+
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 
 void delete_track_pattern(uint8_t track_num);
