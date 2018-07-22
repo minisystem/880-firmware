@@ -181,15 +181,15 @@ void update_inst_leds(void) {
  
 		 if (sequencer.SHIFT) {
    
-			if (sequencer.ALT) { //show trigger assignment
+		//	if (sequencer.ALT) { //show trigger assignment
      
-				 turn_off_all_inst_leds();
-				 (sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
+				 //turn_off_all_inst_leds();
+				 //(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
      
-			} else { //show muted instruments
+			//} else { //show muted instruments
 				show_mutes();
 		
-		  }
+		 // }
     
 		} else {
      
@@ -200,12 +200,19 @@ void update_inst_leds(void) {
  
 	 case MANUAL_PLAY:
 		if (sequencer.SHIFT) {
+			
+			if (sequencer.ALT) {
+				turn_off_all_inst_leds();
+				(sequencer.intro_fill_var == 0) ? turn_on(drum_hit[sequencer.trigger_1].led_index) : turn_on(drum_hit[sequencer.trigger_2].led_index);
+					
+			} else {	
 		
-			show_mutes();
+				show_mutes();
+			}
 		
 		} else {
 			
-			turn_on(drum_hit[sequencer.current_inst].led_index);
+			//turn_on(drum_hit[sequencer.current_inst].led_index);
 		}
  
 	 break;
@@ -222,13 +229,13 @@ void update_inst_leds(void) {
 		
 	 break;
  
-	 case COMPOSE_RHYTHM:
+	 case COMPOSE_RHYTHM: //same as above - combine!
 		if (sequencer.SHIFT) {
 		
 			show_mutes();
 		} else {
 			
-		turn_on(track_led[sequencer.current_rhythm_track]);
+			turn_on(track_led[sequencer.current_rhythm_track]);
 		}
 		
 	 break;

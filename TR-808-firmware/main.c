@@ -187,8 +187,8 @@ int main(void)
 	sequencer.shuffle_multplier = 2;
 	
 	//set default trigger assignments:
-	sequencer.trigger_1 = RS;
-	sequencer.trigger_2 = MA;
+	sequencer.trigger_1 = AC;
+	sequencer.trigger_2 = CB;
 	
     while (1) 
     {

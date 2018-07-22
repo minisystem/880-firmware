@@ -229,9 +229,9 @@ void check_inst_switches(void) {
 				update_inst_led_mask();
 			} else if (sequencer.ALT) {
 			
-				turn_off_all_inst_leds();
-				turn_on(ACCENT_1_LED);
-				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
+				//turn_off_all_inst_leds();
+				//turn_on(ACCENT_1_LED);
+				//(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set 
 			}
 		break;
 		
@@ -250,7 +250,12 @@ void check_inst_switches(void) {
 		break;	
 		
 		case MANUAL_PLAY:
-		
+			if (sequencer.SHIFT && sequencer.ALT) {
+				turn_off_all_inst_leds();
+				turn_on(ACCENT_1_LED);
+				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set				
+				
+			}
 			
 		
 		break;		
@@ -294,7 +299,12 @@ void check_inst_switches(void) {
 			
 			case MANUAL_PLAY:
 				if (sequencer.SHIFT) {
-					assign_mutes(drum_index);
+					if (sequencer.ALT) {
+						turn_off_all_inst_leds();
+						assign_triggers(drum_index);						
+					} else {
+						assign_mutes(drum_index);
+					}
 				}
 			
 			break;	
@@ -620,7 +630,7 @@ void assign_triggers(uint8_t drum_index) {
 						sequencer.trigger_1 = drum_index; //inst index starts with BD = 0
 					}
 				}
-				} else { //edit trigger 2. annoying duplication of code here, but use of bitfields prevent assigning pointer to whichever trigger is currently being edited.
+			} else { //edit trigger 2. annoying duplication of code here, but use of bitfields prevent assigning pointer to whichever trigger is currently being edited.
 				
 				if (drum_hit[drum_index].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
 					
@@ -719,10 +729,10 @@ void process_inst_press(uint8_t drum_index) {
 				
 	} else { //SHIFT pressed 
 				
-		if (sequencer.ALT) { //ALT mode - change trigger - not sure how this is handled - LEDs won't be properly updated
+		if (sequencer.ALT) { //ALT mode - change trigger - LEDs updated in update_inst_leds()
 					
-			turn_off_all_inst_leds();
-			assign_triggers(drum_index);		
+			//turn_off_all_inst_leds();
+			//assign_triggers(drum_index);		
 
 					
 		} else { //SHIFT, no ALT - handle mutes
