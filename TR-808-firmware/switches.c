@@ -788,7 +788,7 @@ void clear_all_patterns(void) {
 	sequencer.pre_scale = 1; //default PRE_SCALE_3
 	clock.divider = PRE_SCALE_3;
 	
-	for (int bank = 0; bank < NUM_BANKS; bank++) {
+	for (int bank = 0; bank < NUM_BANKS; bank++) { //this won't work now - need to make it compatible with start_write_current_pattern()
 		for (int pattern = 0; pattern < 16; pattern++) {
 			
 			start_write_current_pattern(pattern, bank);

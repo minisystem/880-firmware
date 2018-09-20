@@ -166,7 +166,7 @@ void update_fill_mode(void) {
 					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
 					TCNT3 = 0; //reset timer3
 					//sequencer.shuffle_multplier = 1;
-					PORTC |= (1<<SYNC_LED_R);
+					//PORTC |= (1<<SYNC_LED_R);
 					PORTE |= (1<<SYNC_LED_Y);
 					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
@@ -190,7 +190,7 @@ void update_fill_mode(void) {
 					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
 					TCNT3 = 0; //rest timer3
 					//sequencer.shuffle_multplier = 1;
-					PORTC |= (1<<SYNC_LED_R);
+					//PORTC |= (1<<SYNC_LED_R);
 					PORTE |= (1<<SYNC_LED_Y);					
 					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1 << INT1);// | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack

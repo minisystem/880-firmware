@@ -50,7 +50,7 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	
 }
 
-ISR (INT0_vect) { //external SYNC IN. By default this is for advancing a step, Volca style
+ISR (INT0_vect) { //external SYNC IN. By default this is for 2 ppqn, Volca style
 	
 	//clock.ppqn_counter+= PPQN_SKIP_VALUE;
 	//clock.ppqn_counter = clock.divider - 1; //need to finesse this and maybe get it to work with master clock? This is effectively 1 ppqn, so need to get it to work accordingly? In fact, this could be customizable - 1, 2, 4, 6, ... 24, ... 48, ppqn

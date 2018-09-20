@@ -170,6 +170,8 @@ void process_start(void) {
 		if (clock.source == EXTERNAL) { 
 			flag.slave_start = 1;
 			clock.slave_ppqn_ticks = 0;
+			PORTE |= (1 << SYNC_LED_Y); //orange sync light when slaved
+			PORTC |= (1 << SYNC_LED_R);
 			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
 			//sequencer.current_step = -1;
@@ -177,6 +179,7 @@ void process_start(void) {
 			//clock.ppqn_counter = 0;
 			//clock.ppqn_counter = clock.divider - 1;
 			flag.slave_start = 0;
+			PORTE &= ~(1 << SYNC_LED_Y);
 			PORTC |= (1 << SYNC_LED_R); //red for internal clock running
 		}		
 		

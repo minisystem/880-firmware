@@ -43,7 +43,7 @@ void update_clock_rate(uint16_t rate) {
 }
 
 void process_external_clock_event(void) {
-	
+			//PORTC |= (1 << SYNC_LED_R); //sync LED is orange when receiving clock data
 			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
 			//clock.external_rate /= 12;
 			//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
