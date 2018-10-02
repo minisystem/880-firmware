@@ -464,7 +464,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 	
 	
 }	
-// TODO(jeff): Clear is called repeatedly when the user is holding it down. It can lead to hundreds if not thousands of page writes. Need to reduce that.
+// TODO(jeff): Clear is called repeatedly when the user is holding it down. It can lead to hundreds if not thousands of page writes. Need to reduce that. - done.
 void check_clear_switch(void) {
 	if (sequencer.SHIFT) return; 
 	if (sequencer.CLEAR) {// && sequencer.START == 0) {
@@ -490,7 +490,12 @@ void check_clear_switch(void) {
 				case PATTERN_CLEAR:
 
 
-
+					if (sequencer.ALT && sequencer.TAP_HELD && sequencer.fill_mode == 1) { //clear all patterns  - fill_mode = 1 to make it extra hard to do by accident
+						
+						clear_all_patterns();
+						break;
+						
+					}
 										
 					memset(sequencer.pattern[sequencer.current_variation].part, 0, sizeof(sequencer.pattern[sequencer.current_variation].part));	
 					//memset(sequencer.step_led_mask[sequencer.variation], 0, sizeof(sequencer.step_led_mask[sequencer.variation]));	
@@ -748,31 +753,10 @@ void process_track_press(void) {
 	
 	
 }
-void clear_pattern_bank(uint8_t bank) {
-	
-		memset(sequencer.pattern[VAR_A].part, 0, sizeof(sequencer.pattern[VAR_A].part));
-		//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
-		sequencer.led_mask = 0;
-		sequencer.pattern[VAR_A].accent[FIRST] = 0;
-		sequencer.pattern[VAR_A].accent[SECOND] = 0;
-		memset(sequencer.pattern[VAR_B].part, 0, sizeof(sequencer.pattern[VAR_B].part));
-		//memset(sequencer.step_led_mask[VAR_B], 0, sizeof(sequencer.step_led_mask[VAR_B]));
-		sequencer.pattern[VAR_B].accent[FIRST] = 0;
-		sequencer.pattern[VAR_B].accent[SECOND] = 0;
-		
-		sequencer.step_num[FIRST] = 15;
-		sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
-		sequencer.pre_scale = 1; //default PRE_SCALE_3
-		
-		for (int pattern = 0; pattern < 16; ++pattern) {
-			
-			start_write_current_pattern(pattern, bank);
-		}
-	
-	
-}
+
+// This function will clear every pattern by blocking while it writes to each page. This will take a short amount of time. It should 
+// only be run in special situations (like resetting the system). 
 void clear_all_patterns(void) {
-	
 	memset(sequencer.pattern[VAR_A].part, 0, sizeof(sequencer.pattern[VAR_A].part));
 	//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
 	sequencer.led_mask = 0;
@@ -786,15 +770,22 @@ void clear_all_patterns(void) {
 	sequencer.step_num[FIRST] = 15;
 	sequencer.step_num[SECOND]	= NO_STEPS;	//reset second part to no steps
 	sequencer.pre_scale = 1; //default PRE_SCALE_3
-	clock.divider = PRE_SCALE_3;
+	//clock.divider = PRE_SCALE_3;
 	
-	for (int bank = 0; bank < NUM_BANKS; bank++) { //this won't work now - need to make it compatible with start_write_current_pattern()
+	pattern_data pattern_to_write;
+	pattern_to_write.variation_a = sequencer.pattern[VAR_A];
+	pattern_to_write.variation_b = sequencer.pattern[VAR_B];
+	pattern_to_write.step_num[FIRST] = sequencer.step_num[FIRST];
+	pattern_to_write.step_num[SECOND] = sequencer.step_num[SECOND];
+	pattern_to_write.pre_scale = sequencer.pre_scale;
+	pattern_to_write.shuffle = sequencer.shuffle_amount;
+	
+	for (int bank = 0; bank < NUM_BANKS; bank++) { 
 		for (int pattern = 0; pattern < 16; pattern++) {
-			
-			start_write_current_pattern(pattern, bank);
-			
+			for (int page_num = 0; page_num <= NUM_PAGES_PATTERN; ++page_num) {
+				write_pattern_page(pattern*PAGES_PER_PATTERN*PAGE_SIZE, bank, &pattern_to_write, page_num);		
+			}
 		}
 		
 	}
-	
 }

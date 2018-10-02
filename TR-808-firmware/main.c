@@ -190,6 +190,9 @@ int main(void)
 	sequencer.trigger_1 = AC;
 	sequencer.trigger_2 = CB;
 	
+	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
+	//clear_all_patterns();
+	
     while (1) 
     {
 		//PORTD |= (1<< PD3);
