@@ -822,7 +822,7 @@ void update_step_board() { //should this be in switches.c ?
 				if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 					turn_off(sequencer.pattern_bank);
-					sequencer.pattern_bank = press;
+					sequencer.pattern_bank = sequencer.previous_bank = press;
 					turn_on(sequencer.pattern_bank);
 					if (sequencer.track_mode == EDIT) {
 						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;						
