@@ -10,7 +10,7 @@
 #define F_CPU 16000000UL
 
 #include <avr/interrupt.h>
-//#include <util/delay.h>
+#include <util/delay.h>
 #include "mode.h"
 #include "sequencer.h"
 #include "hardware.h"
@@ -38,7 +38,7 @@ void refresh(void) {
 		update_tempo(); 	
 	}
 	check_start_stop_tap();
-	read_switches();
+	//read_switches();
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	update_mode();
@@ -58,13 +58,13 @@ void refresh(void) {
 	check_write_sw();
 	update_step_board();
 	process_step();
-	update_spi();
-	
+	//update_spi();
+	spi_read_write();
 	write_next_pattern_page();
 	
 	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
 	//TRIGGER_OUT &= TRIGGER_OFF;
-	
+	//_delay_ms(1);
 }
 
 
@@ -108,7 +108,8 @@ int main(void)
 	
 	spi_data[LATCH_3] |= CONGAS_OFF; //set LT, MT and HT switches to keep congas OFF when not in use - lowers background noise from howling congas
 	
-	update_spi();
+	//update_spi();
+	spi_read_write();
 	
 	//setup Timer0 for drum triggering interrupt	
 	TCCR0A |= (1<<WGM01); //clear on compare match A

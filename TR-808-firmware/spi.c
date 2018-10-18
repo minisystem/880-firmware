@@ -26,6 +26,55 @@ uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simult
 	
 }	
 
+void spi_read_write(void) {
+	
+	PORTE |= (1 << SPI_SW_LATCH); //latch switch data
+	
+	spi_current_switch_data[0] = spi_shift_byte(spi_data[LATCH_0]);
+	spi_current_switch_data[1] = spi_shift_byte(spi_data[LATCH_1]);
+	spi_current_switch_data[2] = spi_shift_byte(spi_data[LATCH_2]);
+	spi_current_switch_data[3] = spi_shift_byte(spi_data[LATCH_3]);
+	spi_current_switch_data[4] = spi_shift_byte(spi_data[LATCH_4]);
+		
+	PORTE &= ~(1<<SPI_SW_LATCH); //latch switch data
+
+	spi_shift_byte(spi_data[LATCH_5]); //send out rest of spi data
+	spi_shift_byte(spi_data[LATCH_6]);
+	spi_shift_byte(spi_data[LATCH_7]);
+	spi_shift_byte(spi_data[LATCH_8]);
+		
+	PORTE &= ~(1<<SPI_LED_LATCH); //latch data to output registers
+	PORTE |= (1<<SPI_LED_LATCH);	
+	
+	//now process switch data, but this may be happening too fast for effective debouncing - maybe handle this in another function that runs less frequently?
+	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
+	sequencer.ALT = ((spi_current_switch_data[0] >> ALT_BIT) & 1);
+	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
+		
+	//debounce
+	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
+	spi_previous_switch_data[0] ^= spi_current_switch_data[0];
+	spi_current_switch_data[0] &= spi_previous_switch_data[0];
+		
+	spi_current_switch_data[1] ^= spi_previous_switch_data[1];
+	spi_previous_switch_data[1] ^= spi_current_switch_data[1];
+	spi_current_switch_data[1] &= spi_previous_switch_data[1];
+		
+	spi_current_switch_data[2] ^= spi_previous_switch_data[2];
+	spi_previous_switch_data[2] ^= spi_current_switch_data[2];
+	spi_current_switch_data[2] &= spi_previous_switch_data[2];
+		
+	spi_current_switch_data[3] ^= spi_previous_switch_data[3];
+	spi_previous_switch_data[3] ^= spi_current_switch_data[3];
+	spi_current_switch_data[3] &= spi_previous_switch_data[3];
+		
+	spi_current_switch_data[4] ^= spi_previous_switch_data[4];
+	spi_previous_switch_data[4] ^= spi_current_switch_data[4];
+	spi_current_switch_data[4] &= spi_previous_switch_data[4];
+	
+	
+}
+
 void update_spi(void) { //updates LEDs and triggers, doesn't read data back
 	    spi_shift_byte(spi_data[LATCH_0]);
 		spi_shift_byte(spi_data[LATCH_1]);

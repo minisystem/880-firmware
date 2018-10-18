@@ -117,7 +117,8 @@ ISR (TIMER4_COMPA_vect) {
 
 
 ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
-	
+		//spi_read_write();
+		//update_spi();
 	//OCR1A = clock.rate; 
 	//if (clock.source == INTERNAL) {
 		if (flag.slave_start) return; //if there's a lag between start and incoming sync pulse we don't want to process_tick - kind of a pain to call this every time. Could be implemented somewhere else - turn compare interrupt off maybe?
