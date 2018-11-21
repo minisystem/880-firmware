@@ -212,7 +212,7 @@ void update_inst_leds(void) {
 		
 		} else {
 			
-			turn_on(drum_hit[sequencer.current_inst].led_index);
+			if (!sequencer.live_hits) turn_on(drum_hit[sequencer.current_inst].led_index);
 		}
  
 	 break;

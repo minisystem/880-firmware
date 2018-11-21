@@ -150,6 +150,7 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 		if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 	}
 	
+	//PORTD &= ~(1<<TRIG);
 }
 
 

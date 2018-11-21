@@ -33,7 +33,6 @@
 //define pre-scale ppqn dividers
 #define NUM_PRE_SCALES 4
 
-
 //pulses per qarter note for different pre-scales
 //8/4/6/3 for 24 ppqn, 32/16/24/12 for 96 ppqn
 #define PRE_SCALE_1 32
@@ -47,6 +46,9 @@
 #define ROLL_MAX	14
 #define NO_ROLL		0 //roll mode off
 #define ROLL_32		5 //max roll mode
+
+//live hits (step 7)
+#define LIVE_HITS 6
 
 //track mode
 #define CREATE 0
@@ -139,8 +141,9 @@ struct sequencer {
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	uint8_t TAP_HELD:1; //is the TAP button beign held?
+	uint8_t TAP_HELD:1; //is the TAP button being held?
 	uint8_t ALT:1; //alternative function mode
+	uint8_t live_hits:1; //live hits enabled in manual mode?
 	uint8_t primed:1;
 	uint8_t shuffle_amount:3;
 	uint8_t shuffle_multplier:3; //1 for MIDI and DIN SYNC slave modes, 4 for master modes @ 96 ppqn

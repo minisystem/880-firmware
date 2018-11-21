@@ -40,7 +40,7 @@ void refresh(void) {
 	check_start_stop_tap();
 	//read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
+	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -63,6 +63,7 @@ void refresh(void) {
 	write_next_pattern_page();
 	
 	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
+	//PORTD |= (1<<TRIG);
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	//_delay_ms(1);
 }
@@ -72,7 +73,7 @@ int main(void)
 {
 		
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
-	
+	//DDRD &= ~(1<<TRIG); //set PD5, TRIG to input for testing trigger expander
 	//setup SPI
 	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI)
 	DDRC |= (1<<SPI_CLK);
@@ -82,6 +83,7 @@ int main(void)
 	PORTE &= ~(1<<SPI_MOSI) | 1<<SPI_LED_LATCH | 1<<SPI_SW_LATCH;
 	PORTC &= ~(1<<SPI_CLK);
 	PORTB &= ~(1<<SPI_EN); //active low - yeah but have you enabled internal pullup?????
+	
 	
 	PORTE |= (1<<SPI_LED_LATCH); //toggle LED LATCH HIGH (disabled)
 	
@@ -191,8 +193,11 @@ int main(void)
 	sequencer.trigger_1 = AC;
 	sequencer.trigger_2 = CB;
 	
+	sequencer.live_hits = 0; //live hits disable on startup
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
+	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
+	
 	
     while (1) 
     {

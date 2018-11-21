@@ -65,7 +65,7 @@ ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 	
 	//toggle(IF_VAR_B_LED);
 	
-	if ((PIND >> DIN_RUN_STOP) & 1) {
+	if ((PIND >> DIN_RUN_STOP) & 1) { 
 		
 		sequencer.START = 1;
 		process_start();

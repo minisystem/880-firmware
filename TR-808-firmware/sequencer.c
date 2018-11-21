@@ -592,10 +592,11 @@ void process_step(void){
 							
 						} else {
 							turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
-							turn_on(sequencer.roll_mode + ROLL_MIN);	
+							turn_on(sequencer.roll_mode + ROLL_MIN);
+							if (sequencer.live_hits) turn_on(LIVE_HITS);	
 						}
 					} else {
-						//turn_on(drum_hit[sequencer.current_rhythm_track].led_index);
+						if (!sequencer.live_hits) turn_on(drum_hit[sequencer.current_inst].led_index); //display current instrument if not in live_hits mode
 						spi_data[LATCH_1] = (1<<sequencer.new_pattern);
 						spi_data[LATCH_0] = (1<<sequencer.new_pattern) >> 8 | ((1<<sequencer.current_intro_fill) >> 8);
 					}
@@ -638,7 +639,7 @@ void process_step(void){
 				
 				switch(sequencer.mode) {
 					
-					case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
+					case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR: //what about manual play?
 						if (sequencer.SHIFT) {
 							if (sequencer.ALT) {
 								turn_on(sequencer.new_pattern);
@@ -705,6 +706,9 @@ void process_step(void){
 					if (sequencer.ALT) {
 						
 						turn_on(sequencer.pattern_bank);
+					} else {
+						
+						//need to display shuffle/roll/live hits status here
 					}
 
 				} else {
@@ -726,7 +730,7 @@ void process_step(void){
 						
 					} else {
 						
-						//turn_on(sequencer.pattern_bank);
+						//need to display shuffle/roll/live hits status here
 						
 					}
 					
@@ -805,7 +809,7 @@ void update_step_board() { //should this be in switches.c ?
 					if (sequencer.current_pattern != press) { //is this step necessary or is current/new pattern checked somewhere else?
 						flag.pattern_change = 1;
 						sequencer.new_pattern = sequencer.previous_pattern = press;
-						turn_off(sequencer.current_pattern);
+						turn_off(sequencer.current_pattern); 
 						turn_on(sequencer.new_pattern);
 					}
 					
@@ -1015,7 +1019,7 @@ void update_step_board() { //should this be in switches.c ?
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
 					
-					} else { 
+					} else { //update shuffle here?
 						
 
 					
@@ -1068,6 +1072,9 @@ void update_step_board() { //should this be in switches.c ?
 							turn_on(sequencer.pattern_bank);
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						}
+					} else {
+						
+						if (press == LIVE_HITS) update_shuffle(press); //just update live hits for now
 					}
 					
 					
@@ -1129,7 +1136,15 @@ void update_shuffle(uint8_t shuffle_amount) {
 		
 			sequencer.roll_mode = shuffle_amount - ROLL_MIN;
 		
+		} else if (shuffle_amount == LIVE_HITS) {
+			//toggle live hits
+			sequencer.live_hits ^= 1;
+			
+			
 		}
+
+	//need to turn off LEDs first for immediate response, otherwise response is step time dependent
+	if (sequencer.live_hits) turn_on(LIVE_HITS);
 		
 	turn_on(sequencer.new_shuffle_amount); //immediately update LEDs
 	turn_on(sequencer.roll_mode + ROLL_MIN);

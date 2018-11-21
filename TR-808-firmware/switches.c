@@ -250,7 +250,7 @@ void check_inst_switches(void) {
 		break;	
 		
 		case MANUAL_PLAY:
-			if (sequencer.SHIFT && sequencer.ALT) {
+			if (sequencer.SHIFT && sequencer.ALT) { 
 				turn_off_all_inst_leds();
 				turn_on(ACCENT_1_LED);
 				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set				
@@ -305,6 +305,9 @@ void check_inst_switches(void) {
 					} else {
 						assign_mutes(drum_index);
 					}
+				} else {
+					
+					if (!sequencer.live_hits) process_inst_press(drum_index); //this is ugly with some redundant SHIFT handling code in process_inst_press
 				}
 			
 			break;	
