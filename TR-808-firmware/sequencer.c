@@ -709,6 +709,7 @@ void process_step(void){
 					} else {
 						
 						//need to display shuffle/roll/live hits status here
+						if (sequencer.live_hits) turn_on(LIVE_HITS);
 					}
 
 				} else {
@@ -901,6 +902,10 @@ void update_step_board() { //should this be in switches.c ?
 					}
 				} else {
 					update_shuffle(press);
+					if (press == LIVE_HITS) { //bit of kludge to make live hit toggling only work in MANUAL PLAY mode
+						sequencer.live_hits ^= 1;
+						if (sequencer.live_hits) turn_on(LIVE_HITS);
+					}
 				}
 				
 				
@@ -1074,7 +1079,10 @@ void update_step_board() { //should this be in switches.c ?
 						}
 					} else {
 						
-						if (press == LIVE_HITS) update_shuffle(press); //just update live hits for now
+						if (press == LIVE_HITS) {
+							sequencer.live_hits ^= 1;
+							if (sequencer.live_hits) turn_on(LIVE_HITS);
+						}//update_shuffle(press); //just update live hits for now - need to update LEDs elswhere
 					}
 					
 					
@@ -1136,15 +1144,15 @@ void update_shuffle(uint8_t shuffle_amount) {
 		
 			sequencer.roll_mode = shuffle_amount - ROLL_MIN;
 		
-		} else if (shuffle_amount == LIVE_HITS) {
+		} /*else if (shuffle_amount == LIVE_HITS) {
 			//toggle live hits
 			sequencer.live_hits ^= 1;
 			
 			
-		}
+		}*/
 
 	//need to turn off LEDs first for immediate response, otherwise response is step time dependent
-	if (sequencer.live_hits) turn_on(LIVE_HITS);
+	//if (sequencer.live_hits) turn_on(LIVE_HITS);
 		
 	turn_on(sequencer.new_shuffle_amount); //immediately update LEDs
 	turn_on(sequencer.roll_mode + ROLL_MIN);

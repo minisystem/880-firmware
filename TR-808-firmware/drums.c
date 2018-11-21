@@ -108,6 +108,10 @@ void trigger_roll(void) {
 	
 	if (((roll_modes[sequencer.roll_mode - 1]) & (1 << sequencer.current_step)) != 0) {
 		spi_data[drum_hit[sequencer.current_inst].spi_byte_num]  |= drum_hit[sequencer.current_inst].trig_bit;
+		if (drum_hit[sequencer.current_inst].switch_bit != NO_SWITCH) { //set instrument switch
+			
+			spi_data[LATCH_3] ^= (-(drum_hit[sequencer.current_inst].switch_value) ^ spi_data[LATCH_3]) & drum_hit[sequencer.current_inst].switch_bit;
+		}
 	}
 }
 
@@ -120,7 +124,7 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 	TCCR0B |= (1<<CS00) | (1<<CS02); //set Timer0 clock divide to /1024
 	if (sequencer.roll_mode > NO_ROLL && !flag.half_step) trigger_roll();
-	if (sequencer.roll_mode == ROLL_32 && flag.half_step && sequencer.step_num[SECOND] == NO_STEPS) trigger_roll(); //bloody awful kludge to get rolls working when substep is triggerd. bleh.
+	if (sequencer.roll_mode == ROLL_32 && flag.half_step && sequencer.step_num[SECOND] == NO_STEPS) trigger_roll(); //bloody awful kludge to get rolls working when substep is triggered. bleh.
 
 	for (int i = BD; i <= MA; i++) {
 		
