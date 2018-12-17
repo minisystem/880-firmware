@@ -258,7 +258,11 @@ void check_inst_switches(void) {
 			}
 			
 		
-		break;		
+		break;	
+		
+		default:
+		
+		break;	
 		}
 
 		return; //no multiple presses currently supported - if it's the accent button, then get the heck out of here?
@@ -357,7 +361,12 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 					if (sequencer.START) flag.variation_change;
 					
 				} else {
-					
+					if (sequencer.CLEAR) {
+						//copy var A to var B
+						sequencer.pattern[VAR_B] = sequencer.pattern[VAR_A];
+						//flag.pattern_change = 1; //probably need to write immediately otherwise won't be written until end of measure which doens't happen if sequencer isn't running.
+						start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+					}
 					sequencer.variation_mode = VAR_B;
 					if (sequencer.START) {
 						flag.variation_change = 1;

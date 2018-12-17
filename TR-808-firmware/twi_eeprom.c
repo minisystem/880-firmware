@@ -36,6 +36,13 @@ typedef struct {
 	uint8_t				low_byte;
 	rhythm_track_data	rhythm_track_data;
 	} WRITE_TRACK;
+	
+typedef struct {
+	uint8_t				high_byte;
+	uint8_t				low_byte;
+	struct recall		recall_data;
+	
+	} WRITE_RECALL;	
 
 typedef struct {
 	uint8_t     high_byte;
@@ -46,9 +53,11 @@ typedef struct {
 // Create structure pointers for the TWI/I2C buffer
 WRITE_PATTERN            *p_write_pattern;
 WRITE_TRACK				*p_write_track;
+WRITE_RECALL			*p_write_recall;
 SET_EEPROM_ADDRESS      *p_set_eeprom_address;
 pattern_data             *p_read_pattern;
 rhythm_track_data		 *p_read_rhythm_track_data;
+struct recall			*p_read_recall_data;
 
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
@@ -73,6 +82,9 @@ void eeprom_init(){
 	
 	p_write_track = (WRITE_TRACK *)TWI_buffer;
 	p_read_rhythm_track_data = (rhythm_track_data *)TWI_buffer;
+	
+	//p_write_recall = (WRITE_RECALL *)TWI_buffer;
+	//p_read_recall_data = (recall *)TWI_buffer;
 	
 }
 
@@ -208,6 +220,15 @@ void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_dat
 	
 }
 
+struct recall eeprom_read_recall_data() {
+	
+	
+}
+
+void eeprom_write_recall_data(struct recall *w_data) {
+	
+	
+}
 
 // optional callback function for TWI/I2C driver
 void handle_TWI_result(uint8_t return_code){

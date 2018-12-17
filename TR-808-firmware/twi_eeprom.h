@@ -24,6 +24,8 @@
 
 #define RHYTHM_TRACK_ADDR_OFFSET ((NUM_BANKS*16) + 1)*PAGE_SIZE*PAGES_PER_PATTERN //base EEPROM address for rhythm tracks 
 
+#define RECALL_ADDR_OFFSET (RHYTHM_TRACK_ADDR_OFFSET*NUM_TRACKS + 1) //base EEPROM address for recall settings: MIDI channel, last pattern/bank edited, etc.
+
 //Define format of eeprom pattern data block:
 typedef struct {
 	struct pattern variation_a;
@@ -42,7 +44,14 @@ typedef struct {
 	
 } rhythm_track_data;
 
+//define format of recall data block
+/*typedef struct {
+	
+	struct recall;
+	
+	} recall_data;
 
+*/
 //extern struct pattern_data eeprom_pattern;
 
 //typedef struct pattern_data pattern_data;
@@ -55,7 +64,8 @@ void write_next_pattern_page();
 void write_pattern_page(uint16_t memory_address, uint8_t bank, pattern_data *w_data, int page_number);
 struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address);
 void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
-
+struct recall eeprom_read_recall_data();
+void eeprom_write_recall_data(struct recall *w_data);
 void handle_TWI_result(uint8_t return_code);
 
 

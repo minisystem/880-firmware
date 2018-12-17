@@ -24,6 +24,7 @@
 
 struct sequencer sequencer;
 struct rhythm_track rhythm_track;//[NUM_PATTERNS];
+struct recall recall;
 volatile struct flag flag;
 //pattern_data next_pattern;
 //uint8_t pre_scale_index = 1; //default is 4/4, so PRE_SCALE_3
@@ -155,6 +156,12 @@ void process_start(void) {
 		//so ugly and clunky. how to simplify?
 		//sequencer.current_step = 0;
 		if (sequencer.mode != COMPOSE_RHYTHM) sequencer.track_measure = 0; //ugly bodge here. need to think how Rhythm Play and Compose modes should work when started and stopped. bleh.
+		if (sequencer.mode == PLAY_RHYTHM) { //handle rhythm track looping
+			
+			if (sequencer.SHIFT) {
+				sequencer.track_loop = 1;
+			}
+		}
 		//if (sequencer.clock_mode != DIN_SYNC_MASTER) flag.next_step = 1; //change this to make it more generalized. Maybe need a switch:case statement to handle different sync modes?
 		//flag.new_measure = 1;
 		//clock.ppqn_counter = 0;
@@ -256,6 +263,7 @@ void process_stop(void) {
 		clock.sync_led_mask = 0;
 		//sequencer.current_step = 0;
 		sequencer.track_measure = 0; //reset track measure. No continue for now
+		sequencer.track_loop = 0; //reset track loop to no looping
 		//clock.ppqn_counter = 0;
 		//clock.ppqn_divider_tick = 0;
 	
@@ -274,7 +282,34 @@ void process_stop(void) {
 		//blank all step leds and turn on current pattern LED
 		spi_data[LATCH_1] = 0;
 		spi_data[LATCH_0] = 0;
-		turn_on(sequencer.current_pattern);
+		turn_on(sequencer.current_pattern); //turn this on after next section which potentially changes current pattern?
+		switch (sequencer.mode) {
+			
+			case MANUAL_PLAY:
+				turn_on(sequencer.current_intro_fill);
+				sequencer.current_pattern = sequencer.new_pattern;
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);		
+			break;
+			
+			case COMPOSE_RHYTHM: 
+				if (rhythm_track.length > 0) sequencer.track_mode = EDIT;
+				sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
+				sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				flag.pattern_change = 1;	
+			break;
+			
+			case PLAY_RHYTHM: //this is all reused from above - consolidate somehow?
+				sequencer.current_pattern = sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
+				sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+				flag.pattern_change = 1;		
+			
+			default:
+			
+			break;
+		}
+		/*
 		if (sequencer.mode == MANUAL_PLAY) { //need to restore original basic pattern in case sequencer is stopped while playing fill
 			//sequencer.current_measure_auto_fill = 1;
 			turn_on(sequencer.current_intro_fill);
@@ -288,6 +323,7 @@ void process_stop(void) {
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 			flag.pattern_change = 1; //need to 
 		}	
+		*/
 		if (clock.source == INTERNAL) {
 			if (sequencer.clock_mode == MIDI_MASTER) {
 
@@ -381,9 +417,10 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 			
 			//rhythm track is finished, so stop or loop
 			//stop for now
-			sequencer.START = 0;
-			process_stop();
-			
+			if (!sequencer.track_loop) {
+				sequencer.START = 0;
+				process_stop();
+			}
 			sequencer.track_measure = 0; //reset track measure
 			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
 			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;

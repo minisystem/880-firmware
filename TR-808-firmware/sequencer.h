@@ -124,7 +124,16 @@ struct rhythm_track {
 	};	
 
 extern struct rhythm_track rhythm_track;	
+
+struct recall {
 	
+	uint8_t bank:4;
+	uint8_t pattern:4;
+	uint8_t midi_channel:4;
+	
+	};	
+
+extern struct recall recall;	
 //struct rhythm_track {
 //
 	//rhythm_pattern pattern[NUM_PATTERNS];	
@@ -172,6 +181,7 @@ struct sequencer {
 	uint8_t current_measure_auto_fill:6; //counter used for counting measures for AUTO FILL INs
 	uint8_t track_measure:7; //counter used to count measures during rhythm track play/compose
 	uint8_t track_mode:1;
+	uint8_t track_loop:1; 
 	uint8_t current_rhythm_track:4;
 	//struct rhythm_track rhythm_track;
 	enum drum current_inst; //this is index of drum_hit struct
