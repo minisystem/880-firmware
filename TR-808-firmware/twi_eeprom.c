@@ -236,17 +236,20 @@ void eeprom_read_recall_data() {
 	
 	struct recall* d = (struct recall*)p_read_pattern;
 
-	sequencer.pattern_bank = d->bank;
+	sequencer.pattern_bank =sequencer.previous_bank = d->bank;
 	sequencer.midi_channel = d->midi_channel;
-	sequencer.current_pattern = d->pattern;
+	sequencer.current_pattern = sequencer.previous_pattern = sequencer.new_pattern = d->pattern;
+	sequencer.trigger_1 = d->trigger_1;
+	sequencer.trigger_2 = d->trigger_2;
 }
 
 void eeprom_write_recall_data() {
 	struct recall recall_data = {0};
 	recall_data.bank = sequencer.pattern_bank; 
 	recall_data.midi_channel = sequencer.midi_channel;
-	recall_data.pattern = sequencer.current_pattern;
-	
+	recall_data.pattern = sequencer.current_pattern;	
+	recall_data.trigger_1 = sequencer.trigger_1;
+	recall_data.trigger_2 = sequencer.trigger_2;
 	// if you want to store more data, put it here
 	
 	while(TWI_busy);

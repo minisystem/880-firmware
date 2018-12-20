@@ -115,7 +115,9 @@ void update_mode(void) {
 				//
 				//
 			//break;
-
+			default:
+			
+			break;
 		}
 
 		

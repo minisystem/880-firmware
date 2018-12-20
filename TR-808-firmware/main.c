@@ -103,8 +103,7 @@ int main(void)
 	EICRA |= (1 << ISC11) | (1 << ISC10) | (1 << ISC01); //set up DIN sync to trigger on rising edge of DIN clock, falling edge for INT0, external SYNC in jack
 	PCMSK2 |= (1 << PCINT20); //set up DIN Run/Stop pin change interrupt
 	
-	sequencer.current_pattern = sequencer.new_pattern = 0;
-	turn_on(sequencer.current_pattern);
+
 	turn_on(MODE_2_FIRST_PART_PART);
 	turn_on(FILL_MANUAL);
 	
@@ -129,7 +128,7 @@ int main(void)
 	//setup MIDI USART
 	setup_midi_usart();
 	
-	sequencer.midi_channel = 0;
+	
 	
 	setup_clock();
 	//sequencer.pre_scale = PRE_SCALE_3;
@@ -173,16 +172,25 @@ int main(void)
 	//DDRE |= (1<<PE0); //set PE0, pin 3 as output for diagnostic purposes (currently used for TWI timing measurement)
 	//DDRD |= 1 << PD3; //set up PD3 as output 
 	sei(); //enable global interrupts	
-	//sequencer.pattern[0] = read_pattern(0);
-	//clear_all_patterns(); //run just to clean out eeprom
-	//clear_pattern_bank(0);
-	//clear_pattern_bank(1);
-	//clear_pattern_bank(2);
-	//clear_pattern_bank(3);
+
 	flag.last_pattern = 0;
-	sequencer.previous_pattern = 0;
-	sequencer.previous_bank = 0;
-	read_next_pattern(0, 0); //load first pattern
+	
+	eeprom_read_recall_data();
+	if (sequencer.pattern_bank == 0b00001111) { //eeprom data not initialized, reset recall data
+		sequencer.current_pattern = sequencer.previous_pattern = 0;
+		sequencer.pattern_bank = sequencer.previous_bank  = 0;
+		sequencer.midi_channel = 0;
+		//set default trigger assignments:
+		sequencer.trigger_1 = AC;
+		sequencer.trigger_2 = CB;
+		eeprom_write_recall_data();
+	}
+
+	//sequencer.previous_pattern = 0;
+	//sequencer.previous_bank = 0;
+	read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank); //load first pattern
+		//sequencer.current_pattern = sequencer.new_pattern = 0;
+	turn_on(sequencer.current_pattern);
 	//update_step_led_mask();
 	
 	//sequencer.SHUFFLE = 1;
@@ -190,8 +198,8 @@ int main(void)
 	sequencer.shuffle_multplier = 2;
 	
 	//set default trigger assignments:
-	sequencer.trigger_1 = AC;
-	sequencer.trigger_2 = CB;
+	//sequencer.trigger_1 = AC;
+	//sequencer.trigger_2 = CB;
 	
 	sequencer.live_hits = 0; //live hits disable on startup
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.

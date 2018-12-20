@@ -130,7 +130,8 @@ struct recall {
 	uint8_t bank:4;
 	uint8_t pattern:4;
 	uint8_t midi_channel:4;
-	
+	uint8_t trigger_1;
+	uint8_t trigger_2;
 	// when we need to store more things, they should go AFTER this point
 	
 	};	

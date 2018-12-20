@@ -849,6 +849,7 @@ void update_step_board() { //should this be in switches.c ?
 						sequencer.new_pattern = sequencer.previous_pattern = press;
 						turn_off(sequencer.current_pattern); 
 						turn_on(sequencer.new_pattern);
+						eeprom_write_recall_data(); //write pattern change to eeprom
 					}
 					
 					
@@ -870,6 +871,7 @@ void update_step_board() { //should this be in switches.c ?
 						rhythm_track.patterns[sequencer.track_measure].current_bank = sequencer.pattern_bank;						
 					}
 					flag.pattern_change = 1;
+					eeprom_write_recall_data(); //write pattern change to eeprom
 				}
 				
 				break;
@@ -1060,7 +1062,7 @@ void update_step_board() { //should this be in switches.c ?
 						turn_off(sequencer.midi_channel);
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
-					
+						eeprom_write_recall_data(); //write midi channel change
 					} else { //update shuffle here?
 						
 
@@ -1074,11 +1076,13 @@ void update_step_board() { //should this be in switches.c ?
 						if (press < NUM_BANKS) {
 							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilo*bits* and kilo*bytes*, you nitwit.							
 								flag.pattern_edit = 0;						
-								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure							
+								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure	
+													
 							}
 							turn_off(sequencer.pattern_bank);
 							sequencer.pattern_bank = sequencer.previous_bank = press;
 							turn_on(sequencer.pattern_bank);
+							eeprom_write_recall_data(); //write pattern change to eeprom	
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						}					
 
@@ -1094,6 +1098,7 @@ void update_step_board() { //should this be in switches.c ?
 						read_next_pattern(press, sequencer.pattern_bank);	
 					}
 					sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern = press;
+					eeprom_write_recall_data(); //write pattern change to eeprom	
 					//sequencer.variation = VAR_A;
 					sequencer.part_playing = FIRST;
 					sequencer.current_step = 0;

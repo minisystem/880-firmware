@@ -253,7 +253,8 @@ void check_inst_switches(void) {
 			if (sequencer.SHIFT && sequencer.ALT) { 
 				turn_off_all_inst_leds();
 				turn_on(ACCENT_1_LED);
-				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set				
+				(sequencer.intro_fill_var == 0) ? (sequencer.trigger_1 = AC) : (sequencer.trigger_2 = AC); //use intro_fill state to determine which trigger is being set
+				eeprom_write_recall_data();				
 				
 			}
 			
@@ -305,7 +306,8 @@ void check_inst_switches(void) {
 				if (sequencer.SHIFT) {
 					if (sequencer.ALT) {
 						turn_off_all_inst_leds();
-						assign_triggers(drum_index);						
+						assign_triggers(drum_index);
+						eeprom_write_recall_data(); //write pattern change to eeprom							
 					} else {
 						assign_mutes(drum_index);
 					}
@@ -800,4 +802,9 @@ void clear_all_patterns(void) {
 		}
 		
 	}
+	
+	sequencer.midi_channel = sequencer.current_pattern = sequencer.pattern_bank = 0; 
+	eeprom_write_recall_data(); //initialize recall data in eeprom
+	
+	
 }
