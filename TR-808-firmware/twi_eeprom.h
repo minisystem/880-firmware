@@ -64,8 +64,8 @@ void write_next_pattern_page();
 void write_pattern_page(uint16_t memory_address, uint8_t bank, pattern_data *w_data, int page_number);
 struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address);
 void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_data);
-struct recall eeprom_read_recall_data();
-void eeprom_write_recall_data(struct recall *w_data);
+void eeprom_read_recall_data();
+void eeprom_write_recall_data();
 void handle_TWI_result(uint8_t return_code);
 
 

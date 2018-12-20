@@ -220,13 +220,46 @@ void eeprom_write_rhythm_track(uint16_t memory_address, rhythm_track_data *w_dat
 	
 }
 
-struct recall eeprom_read_recall_data() {
+void eeprom_read_recall_data() {
+	// send 'set memory address' command to eeprom and then read data
+	while(TWI_busy);
+	int memory_address = RECALL_ADDR_OFFSET;
+	p_set_eeprom_address->high_byte = (memory_address >> 8);
+	p_set_eeprom_address->low_byte = memory_address;
+	TWI_master_start_write_then_read(   EEPROM_DEVICE_ID,               // device address of eeprom chip
+	sizeof(SET_EEPROM_ADDRESS),     // number of bytes to write
+	sizeof(recall)             // number of bytes to read
+	);
 	
+	// nothing else to do - wait for the data
+	while(TWI_busy);
 	
+	struct recall* d = (struct recall*)p_read_pattern;
+
+	sequencer.pattern_bank = d->bank;
+	sequencer.midi_channel = d->midi_channel;
+	sequencer.current_pattern = d->pattern;
 }
 
-void eeprom_write_recall_data(struct recall *w_data) {
+void eeprom_write_recall_data() {
+	struct recall recall_data = {0};
+	recall_data.bank = sequencer.pattern_bank; 
+	recall_data.midi_channel = sequencer.midi_channel;
+	recall_data.pattern = sequencer.current_pattern;
 	
+	// if you want to store more data, put it here
+	
+	while(TWI_busy);
+	// assert(sizeof(rhythm_track_data) <= PAGE_SIZE);
+	int memory_address = RECALL_ADDR_OFFSET;
+	//write 128 byte pages of data
+	p_write_pattern->high_byte = (memory_address >> 8);
+	p_write_pattern->low_byte = memory_address;
+	
+	memcpy(TWI_buffer+2, (char *)&recall_data, sizeof(recall_data));
+	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
+	2 + sizeof(recall_data)
+	);
 	
 }
 

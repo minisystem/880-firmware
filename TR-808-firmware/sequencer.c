@@ -1220,7 +1220,7 @@ void update_variation(void) { //not currently used
 												
 			}
 						
-			} else if (sequencer.variation_mode == VAR_AB) {
+		} else if (sequencer.variation_mode == VAR_AB) {
 						
 			sequencer.current_variation ^= 1<<0; //toggle state
 		}

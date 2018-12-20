@@ -422,7 +422,7 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 			break;
 			
 		}
-		
+		update_inst_led_mask(); //need to update mask here, otherwise variation changes to pattern LEDs aren't updated immediately when sequencer is stopped. 
 		//if (sequencer.SHIFT) { //maybe switch case would be better here?
 			//
 			//if (sequencer.variation_mode != VAR_AB) { //SHIFT + BASIC_VARIATION press turns on alternating VAR_AB mode
