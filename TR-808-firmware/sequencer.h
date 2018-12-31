@@ -192,6 +192,7 @@ struct sequencer {
 	uint8_t trigger_1:5; //trigger assignments from AC, BD-CH - 17
 	uint8_t trigger_2:5;
 	uint8_t midi_channel:4;
+	uint8_t version; //firmware version
 	};
 		
 
@@ -214,6 +215,7 @@ void check_tap(void);
 void toggle_variation(void);
 
 void show_current_measure(void);
+void show_version_steps(void);
 
 void update_pattern(void);
 

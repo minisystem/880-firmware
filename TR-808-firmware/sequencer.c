@@ -74,6 +74,11 @@ void show_current_measure(void) {
 	
 }
 
+void show_version_steps(void) {
+	uint8_t version_step = (sequencer.version/10)%10;
+	if (version_step > 0) turn_on(version_step - 1);
+}
+
 void process_tick(void) {
 	//TRIGGER_OUT |= (1<<TRIGGER_OUT_2);
 		
@@ -605,6 +610,9 @@ void process_step(void){
 						if (sequencer.ALT) { //show current current bank
 							//turn_on(sequencer.pattern_bank);
 							
+						} else if (sequencer.TAP_HELD && sequencer.mode == PATTERN_CLEAR) {
+							show_version_steps();
+							
 						} else {
 							turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
 							turn_on(sequencer.roll_mode + ROLL_MIN);
@@ -766,6 +774,9 @@ void process_step(void){
 					if (sequencer.ALT) {
 						turn_on(sequencer.midi_channel);
 						
+					
+					} else if (sequencer.TAP_HELD && sequencer.mode == PATTERN_CLEAR) {
+						show_version_steps();
 					} else {
 						
 						//need to display shuffle/roll/live hits status here

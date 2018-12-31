@@ -94,7 +94,7 @@ void turn_off_all_inst_leds(void);
 
 void show_mutes(void);
 
-
+void show_version_inst(void);
 
 void update_inst_leds(void);
 
