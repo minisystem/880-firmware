@@ -413,31 +413,34 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure
 					
 	}
-	
+/* 	
 	if (sequencer.mode == PLAY_RHYTHM) {
-		
-		if (sequencer.track_measure++ < rhythm_track.length) { //do anything in this case? 
+		//only advance track_measure when in VAR_A or VAR_B mode. If in VAR_AB mode, only advance measure when VAR_B has finished playing, yeah?
+		if (sequencer.variation_mode == VAR_AB && sequencer.current_variation == VAR_A) { //don't advance track measure
 			
 		} else {
+			if (sequencer.track_measure++ < rhythm_track.length) { //do anything in this case? 
 			
-			//rhythm track is finished, so stop or loop
-			//stop for now
-			if (!sequencer.track_loop) {
-				sequencer.START = 0;
-				process_stop();
+			} else {
+			
+				//rhythm track is finished, so stop or loop
+				//stop for now
+				if (!sequencer.track_loop) {
+					sequencer.START = 0;
+					process_stop();
+				}
+				sequencer.track_measure = 0; //reset track measure
+				sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
+				sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
+				//read_next_pattern(sequencer.new_pattern, sequencer.pattern_bank); 
+				//return; //bah. this works but is confusing and bad form? - YES IT IS! returning here prevents A/B toggling.
+				//maybe need to do some LED housekeeping before leaving?
+				//return;
 			}
-			sequencer.track_measure = 0; //reset track measure
-			sequencer.new_pattern = rhythm_track.patterns[0].current_pattern; //return to first pattern of rhythm track
-			sequencer.pattern_bank = rhythm_track.patterns[0].current_bank;
-			read_next_pattern(sequencer.new_pattern, sequencer.pattern_bank);
-			return; //bah. this works but is confusing and bad form?
-			//maybe need to do some LED housekeeping before leaving?
-			//return;
+			sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+			flag.pattern_change = 1;
 		}
-		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
-		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
-		flag.pattern_change = 1;
-		
 	} else if (sequencer.mode == COMPOSE_RHYTHM) {
 		
 		//if (sequencer.track_measure++ >= rhythm_track.length) sequencer.track_measure = rhythm_track.length;
@@ -447,6 +450,49 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		//flag.pattern_change = 1;			
 			
 	
+		
+	}
+*/	
+	if (sequencer.mode == PLAY_RHYTHM) {
+		sequencer.track_measure++; //advance track measure
+		
+		if ((sequencer.variation_mode == VAR_AB) && (sequencer.current_variation == VAR_A)) { //kludge to get alternating A/B to play A then B before moving on to next track
+			sequencer.track_measure--;
+			//toggle_variation();
+			sequencer.current_variation = sequencer.basic_variation = VAR_B;
+			return;
+		}
+			
+		if (sequencer.track_measure > rhythm_track.length) { //you done 
+				
+				sequencer.track_measure = 0;
+				//flag.pattern_change = 1;
+							
+				if (sequencer.track_loop) {
+
+					
+				} else {
+					
+					sequencer.START = 0;
+					process_stop();						
+				
+			}
+		
+			
+		} else {
+			//flag.pattern_change = 1;	
+				
+		}
+		//this needs to be conditional is VAR_AB and B still needs to play, but wait - decrementing track measure will do the trick, no?
+		sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+		sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+		flag.pattern_change = 1;	
+			
+			
+	
+		
+	} else if (sequencer.mode == COMPOSE_RHYTHM) {
+		
 		
 	}
 	
