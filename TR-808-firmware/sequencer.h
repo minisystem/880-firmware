@@ -218,6 +218,7 @@ void show_current_measure(void);
 void show_version_steps(void);
 
 void update_pattern(void);
+void update_track_play(void);
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
 

@@ -159,7 +159,7 @@ void update_fill_mode(void) {
 					TCCR1B |= (1<<CS12); //ensure timer is ON
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
-
+					//if (sequencer.START) PORTD |= (1<<SYNC_LED_R);
 					//spi_data[LATCH_2] |= (1 << sync_index);
 					break;
 							

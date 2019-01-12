@@ -22,7 +22,9 @@
 #define TRACK_SIZE PAGES_PER_TRACK*PAGE_SIZE
 
 
-#define RHYTHM_TRACK_ADDR_OFFSET ((NUM_BANKS*16) + 1)*PAGE_SIZE*PAGES_PER_PATTERN //base EEPROM address for rhythm tracks 
+//#define RHYTHM_TRACK_ADDR_OFFSET ((NUM_BANKS*16) + 1)*PAGE_SIZE*PAGES_PER_PATTERN //base EEPROM address for rhythm tracks 
+
+#define RHYTHM_TRACK_ADDR_OFFSET NUM_BANKS*BANK_SIZE + 1
 
 #define RECALL_ADDR_OFFSET (RHYTHM_TRACK_ADDR_OFFSET*NUM_TRACKS + 1) //base EEPROM address for recall settings: MIDI channel, last pattern/bank edited, etc.
 

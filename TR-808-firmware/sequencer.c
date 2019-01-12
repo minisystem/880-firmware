@@ -373,9 +373,37 @@ void update_fill(void) {
 	}	
 }
 
+void update_track_play() {
+	
+	
+}
+
 void update_pattern() {
 		turn_off(SECOND_PART_LED);
 		turn_on(FIRST_PART_LED);
+		
+		if (sequencer.mode == PLAY_RHYTHM) {
+			//sequencer.track_measure++;
+			if ((sequencer.variation_mode == VAR_AB) && (sequencer.current_variation == VAR_A)) { //kludge to get alternating A/B to play A then B before moving on to next track
+				//if (sequencer.track_measure == 0) sequencer.track_measure++;//sequencer.track_measure--; 
+			} else if (sequencer.track_measure++ == rhythm_track.length) { //you done
+						
+				sequencer.track_measure = 0;
+						
+				if (sequencer.track_loop) {
+							
+				} else {				
+					sequencer.START = 0;
+					process_stop();						
+				}
+				flag.pattern_change = 1;		
+						
+			} else {
+				flag.pattern_change = 1;
+			}
+			sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
+			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
+		}
 		toggle_variation(); //only toggle variation at the end of the 2nd part
 		if (flag.pattern_change) {
 					
@@ -383,9 +411,10 @@ void update_pattern() {
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			sequencer.current_variation = VAR_A;
-			if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
-			if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
+			//sequencer.current_variation = VAR_A;
+			//if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
+			//not sure about A/B variation in the case of a pattern change - should A/B variation be reset to A when a pattern changes?
+			//if (sequencer.variation_mode == VAR_AB && sequencer.mode != PLAY_RHYTHM) sequencer.current_variation = ~sequencer.basic_variation;
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
@@ -395,6 +424,8 @@ void update_pattern() {
 		if (sequencer.mode == MANUAL_PLAY) {
 			update_fill();
 		}
+		
+
 	
 }
 
@@ -453,14 +484,14 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		
 	}
 */	
-	if (sequencer.mode == PLAY_RHYTHM) {
+/*	if (sequencer.mode == PLAY_RHYTHM) {
 		sequencer.track_measure++; //advance track measure
 		
 		if ((sequencer.variation_mode == VAR_AB) && (sequencer.current_variation == VAR_A)) { //kludge to get alternating A/B to play A then B before moving on to next track
 			sequencer.track_measure--;
 			//toggle_variation();
 			sequencer.current_variation = sequencer.basic_variation = VAR_B;
-			return;
+			return; //nope can't return here because first part/second part isn't handled later in this function, you dunce.
 		}
 			
 		if (sequencer.track_measure > rhythm_track.length) { //you done 
@@ -496,7 +527,7 @@ void process_new_measure(void) { //should break this up into switch/case stateme
 		
 	}
 	
-
+*/
 		
 				
 	if (sequencer.step_num[SECOND] != NO_STEPS) { //no toggling if second part has 0 steps - annoying exception handler
