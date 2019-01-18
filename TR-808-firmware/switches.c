@@ -82,6 +82,7 @@ void check_write_sw(void) {
 	
 	if (button[WRITE_SW].state) {
 		button[WRITE_SW].state ^= button[WRITE_SW].state; //need to toggle in every mode, but only do something in COMPOSE_RHYTHM mode
+		
 		if (sequencer.mode == COMPOSE_RHYTHM) {
 			
 			if (sequencer.ALT) {

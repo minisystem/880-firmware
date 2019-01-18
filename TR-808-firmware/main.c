@@ -10,6 +10,7 @@
 #define F_CPU 16000000UL
 
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <util/delay.h>
 #include "mode.h"
 #include "sequencer.h"
@@ -33,6 +34,8 @@ MidiDevice midi_device;
 
 
 void refresh(void) {
+	//reset watchdog timer
+	wdt_reset();
 	//if (sequencer.SHIFT) update_tempo(); //this analog reading is noisy - need to do it less often, like maybe only when shift is pressed? //meh, doesn't seem to make a huge difference.	
 	if (clock.source == INTERNAL) {
 		update_tempo(); 	
@@ -193,6 +196,9 @@ int main(void)
 	turn_on(sequencer.current_pattern);
 	//update_step_led_mask();
 	
+	//setup watchdog timer
+	wdt_enable(WDTO_2S);
+	
 	//sequencer.SHUFFLE = 1;
 	sequencer.shuffle_amount = 0;
 	sequencer.shuffle_multplier = 2;
@@ -205,7 +211,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 96; //0.9.6
+	sequencer.version = 97; //0.9.7
 	
     while (1) 
     {

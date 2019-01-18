@@ -103,7 +103,7 @@ void process_tick(void) {
 			
 			clock.divider = pre_scale[sequencer.pre_scale];       
 		}
-		if (flag.shuffle_change) {
+		if (flag.shuffle_change) {TCCR1B |= (1<<CS12);
 			
 			sequencer.shuffle_amount = sequencer.new_shuffle_amount;
 			flag.shuffle_change = 0;
@@ -118,10 +118,16 @@ void process_tick(void) {
 		}
 		
 		if (!flag.shuffle_step) flag.next_step = 1;
-			
+		//if (sequencer.primed == 1) {
+			//sequencer.current_measure_auto_fill = -1;
+			//sequencer.track_measure = -1;
+			//sequencer.primed = 0;
+		//}	
+		
 		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
-			if (sequencer.primed) {
+			if (sequencer.primed) { //this causes problems when first part has less than 16 steps. why?
 				sequencer.primed = 0;
+				//flag.new_measure = 1;
 			} else {
 				flag.new_measure = 1;
 			}
@@ -157,6 +163,7 @@ void process_start(void) {
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
 		clock.sync_led_mask = 0;
+		sequencer.part_playing = FIRST;
 		//if (sequencer.step_num[SECOND] != NO_STEPS) sequencer.part_playing = SECOND; //noodle fryer here - priming the sequencer on START forces process_new_measure to be called before first step is played, causing part playing to be toggled
 		//so ugly and clunky. how to simplify?
 		//sequencer.current_step = 0;
@@ -252,6 +259,9 @@ void process_start(void) {
 		
 		
 		spi_data[LATCH_3] |= CONGAS_OFF;
+		
+		//sequencer.step_num_new = sequencer.step_num[FIRST];
+		
 		
 		//set trigger off timer
 		TIMER0_OUTPUT_COMPARE = TIMER0_15_MS;
@@ -411,10 +421,12 @@ void update_pattern() {
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			//sequencer.current_variation = VAR_A;
-			//if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
+			if (sequencer.mode  == MANUAL_PLAY) {
+				sequencer.current_variation = VAR_A;
+				if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
 			//not sure about A/B variation in the case of a pattern change - should A/B variation be reset to A when a pattern changes?
-			//if (sequencer.variation_mode == VAR_AB && sequencer.mode != PLAY_RHYTHM) sequencer.current_variation = ~sequencer.basic_variation;
+				if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
+			}
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
