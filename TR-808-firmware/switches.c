@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <string.h>
+#include <avr/wdt.h>
 #include "hardware.h"
 #include "leds.h"
 #include "switches.h"
@@ -772,6 +773,7 @@ void process_track_press(void) {
 // This function will clear every pattern by blocking while it writes to each page. This will take a short amount of time. It should 
 // only be run in special situations (like resetting the system). 
 void clear_all_patterns(void) {
+	wdt_disable(); //disable watchdog timer when clearing all patters as it takes longer than 1 second
 	memset(sequencer.pattern[VAR_A].part, 0, sizeof(sequencer.pattern[VAR_A].part));
 	//memset(sequencer.step_led_mask[VAR_A], 0, sizeof(sequencer.step_led_mask[VAR_A]));
 	sequencer.led_mask = 0;
@@ -806,6 +808,6 @@ void clear_all_patterns(void) {
 	
 	sequencer.midi_channel = sequencer.current_pattern = sequencer.pattern_bank = 0; 
 	eeprom_write_recall_data(); //initialize recall data in eeprom
-	
+	wdt_enable(WDTO_1S);
 	
 }

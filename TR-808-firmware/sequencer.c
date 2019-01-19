@@ -123,11 +123,13 @@ void process_tick(void) {
 			//sequencer.track_measure = -1;
 			//sequencer.primed = 0;
 		//}	
-		
+		//sequencer.primed = 0;
 		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
 			if (sequencer.primed) { //this causes problems when first part has less than 16 steps. why?
 				sequencer.primed = 0;
-				//flag.new_measure = 1;
+				//turn_on(IF_VAR_B_LED);
+				sequencer.current_step = 0;
+				//need to do something here to handle first part with less than 16 steps.
 			} else {
 				flag.new_measure = 1;
 			}
@@ -160,6 +162,7 @@ void process_tick(void) {
 
 
 void process_start(void) {
+		
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
 		clock.sync_led_mask = 0;
@@ -182,7 +185,8 @@ void process_start(void) {
 		} else {
 			clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
 			//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
-			sequencer.current_step = -1;
+			//sequencer.current_step = -1;
+			sequencer.current_step = sequencer.step_num[FIRST];
 			clock.ppqn_counter = clock.divider - 1;
 			sequencer.primed = 1;
 		}
@@ -273,6 +277,7 @@ void process_start(void) {
 }
 
 void process_stop(void) {
+		//turn_off(IF_VAR_B_LED);
 		PORTC &= ~(1<<SYNC_LED_R);
 		PORTE &= ~(1<<SYNC_LED_Y);
 		clock.sync_led_mask = 0;
