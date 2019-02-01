@@ -95,7 +95,7 @@ void clear_all_trigs(void) {
 }
 
 void trigger_roll(void) {
-	
+	PORTD |= (1<<TRIG);
 	uint16_t roll_modes[5] = { //these currently only apply to 4/4 timing. 
 			
 		0b0000000100000001, //2
@@ -117,8 +117,8 @@ void trigger_roll(void) {
 
 void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	//while (flag.trig_finished == 0); //wait to ensure no drums are in the midst of being triggered by external MIDI - FOR NOW SEQUENCER AND INCOMING MIDI NOTES ARE INCOMPATABLE
-	
-	PORTD |= (1<<TRIG);
+	//uint8_t empty_step = 1;
+	//PORTD |= (1<<TRIG);
 	clear_all_trigs();
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	TIMSK0 |= (1<<OCIE0A); //enable output compare match A
@@ -129,6 +129,7 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	for (int i = BD; i <= MA; i++) {
 		
 		if ((sequencer.pattern[sequencer.current_variation].part[part_playing][sequencer.current_step] >> i) &1) {
+			PORTD |= (1<<TRIG);
 			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
 			

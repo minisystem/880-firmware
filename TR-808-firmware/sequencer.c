@@ -186,7 +186,7 @@ void process_start(void) {
 			clock.ppqn_divider_tick = 0; //need to think about what's happening here - does it need to be processed ad ppqn_divider_tick = ppqn_divider -1 when starting as slave?
 			//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
 			//sequencer.current_step = -1;
-			sequencer.current_step = sequencer.step_num[FIRST];
+			sequencer.current_step = sequencer.step_num[FIRST]; //oh boy. this was a pernicious bug.  the first part priming assumes 16 steps but you need to catch first down beat on fi
 			clock.ppqn_counter = clock.divider - 1;
 			sequencer.primed = 1;
 		}
