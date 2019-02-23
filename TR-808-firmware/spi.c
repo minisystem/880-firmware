@@ -18,6 +18,11 @@ uint8_t spi_current_switch_data[5] = {0};
 uint8_t spi_previous_switch_data[5] = {0};
 uint8_t switch_states[5] = {0};
 	
+uint8_t spi0_current_trigger_byte0 = 0;
+uint8_t spi0_current_trigger_byte1 = 0;
+uint8_t spi0_previous_trigger_byte0 = 0;
+uint8_t spi0_previous_trigger_byte1 = 0;	
+	
 uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simultaneously reads switch data
 	
 	SPDR1 = byte;
@@ -28,9 +33,41 @@ uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simult
 
 uint8_t spi0_shift_byte(void) {
 	
-	SPDR0 = 0; //MOSI is output for trigger SPI latch active LOW, so make sure it is LOW?
+	SPDR0 = 0xFF; //MOSI is output for trigger SPI latch active LOW, so make sure it is LOW or HIGH? keep high then 
 	while (!(SPSR0 & (1<<SPIF0)));
 	return SPDR0;
+}
+
+void spi0_read_triggers() {
+	
+	//setup SPI0
+	DDRB |= (1<<SPI0_SS) | (1<<SPI0_SCK) | (1<<SPI0_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
+	PORTB |= (1<<SPI0_SS) | (1<<SPI0_LATCH);
+	SPCR0 = (1<<SPE0) | (1<<MSTR0); //Start SPI as MASTER
+	SPSR0 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
+	
+	//read triggers
+	
+	PORTB |= (1 << SPI0_LATCH); //latch trigger data
+	spi0_current_trigger_byte0 = spi0_shift_byte();
+	spi0_current_trigger_byte1 = spi0_shift_byte();
+	
+	//disable SPI0
+	SPCR0 &= (1<<SPE0);
+	
+	//debounce trigger data
+	spi0_current_trigger_byte0 ^= spi0_previous_trigger_byte0;
+	spi0_current_trigger_byte1 ^= spi0_previous_trigger_byte1;
+	
+	spi0_previous_trigger_byte0 ^= spi0_current_trigger_byte0;
+	spi0_previous_trigger_byte1 ^= spi0_current_trigger_byte1;
+	
+	spi0_current_trigger_byte0 &= spi0_previous_trigger_byte0;
+	spi0_current_trigger_byte1 &= spi0_previous_trigger_byte1;	
+	
+	//parse trigger data
+	
+	 
 }
 
 void spi_read_write(void) {
