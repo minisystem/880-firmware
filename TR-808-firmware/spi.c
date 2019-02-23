@@ -26,6 +26,13 @@ uint8_t spi_shift_byte(uint8_t byte) { //shifts out byte for LED data and simult
 	
 }	
 
+uint8_t spi0_shift_byte(void) {
+	
+	SPDR0 = 0; //MOSI is output for trigger SPI latch active LOW, so make sure it is LOW?
+	while (!(SPSR0 & (1<<SPIF0)));
+	return SPDR0;
+}
+
 void spi_read_write(void) {
 	
 	PORTE |= (1 << SPI_SW_LATCH); //latch switch data
