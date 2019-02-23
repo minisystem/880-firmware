@@ -43,7 +43,7 @@ void refresh(void) {
 	check_start_stop_tap();
 	//read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
+	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) spi0_read_triggers(); //live_hits(); //live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -197,7 +197,7 @@ int main(void)
 	//update_step_led_mask();
 	
 	//setup watchdog timer
-	wdt_enable(WDTO_1S);
+	//wdt_enable(WDTO_1S);
 	
 	//sequencer.SHUFFLE = 1;
 	sequencer.shuffle_amount = 0;

@@ -74,7 +74,7 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		//PORTD &= ~(1<<TRIG);
 		
 		
-		//now need to set up interrupt for roughly 1 ms. 
+		//now need to set up interrupt for roughly 1 ms.  - is this necessary? common trig is not cleared in this compare match interrupt routine
 		//start timer
 		TIMSK0 |= (1<<OCIE0A); //enable output compare match A
 		TCCR0B |= (1<<CS00) | (1<<CS02); //set to /1024 of system clock start timer
@@ -158,10 +158,22 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 	//PORTD &= ~(1<<TRIG);
 }
 
+void process_external_triggers(void) {
+	
+	clear_all_trigs();
+	
+	for (int i = BD; i <= CP; i++) {
+		if ((spi0_current_trigger_byte0 >> i) & 1) {	
+			if (!drum_hit[i].muted) {
+				if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
+			
+			}
+		}
+	}
+}
 
-
-void live_hits(void) { //use switch case here you twit or for loop. duh.
-	//also what about SHIFT to trigger alternative instruments?
+void live_hits(void) { //use switch case here you twit or for loop. duh. fix this festering piece of shit.
+	
 	//also, how to avoid double triggering?
 	
 	

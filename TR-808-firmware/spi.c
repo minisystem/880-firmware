@@ -43,17 +43,18 @@ void spi0_read_triggers() {
 	//setup SPI0
 	DDRB |= (1<<SPI0_SS) | (1<<SPI0_SCK) | (1<<SPI0_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
 	PORTB |= (1<<SPI0_SS) | (1<<SPI0_LATCH);
-	SPCR0 = (1<<SPE0) | (1<<MSTR0); //Start SPI as MASTER
+	SPCR0 |= (1<<SPE0) | (1<<MSTR0); //Start SPI as MASTER
 	SPSR0 |= (1<<SPI2X); //set clock rate to XTAL/2 (8 MHz)
 	
 	//read triggers
 	
 	PORTB |= (1 << SPI0_LATCH); //latch trigger data
-	spi0_current_trigger_byte0 = spi0_shift_byte();
-	spi0_current_trigger_byte1 = spi0_shift_byte();
-	
+	spi0_current_trigger_byte1 = ~(spi0_shift_byte()); //last byte in chain is first byte read, yeah? so byte1 is CB, CY, OH, CH
+	spi0_current_trigger_byte0 = ~(spi0_shift_byte()); //first byte in chain is last byte read, so byte0 is BD, SD, LT, MT, HT, RS, CP, MA
+	PORTB &= ~(1<<SPI0_LATCH); //latch next set of bits. this is kind of funny, first line ensures line is high, data is read and then this line latches for the next read, right?
 	//disable SPI0
-	SPCR0 &= (1<<SPE0);
+	SPCR0 &= ~(1<<SPE0);
+	DDRB &= ~(1<<SPI0_SS); //need to set PB2 back to input for TAP input
 	
 	//debounce trigger data
 	spi0_current_trigger_byte0 ^= spi0_previous_trigger_byte0;
@@ -66,7 +67,13 @@ void spi0_read_triggers() {
 	spi0_current_trigger_byte1 &= spi0_previous_trigger_byte1;	
 	
 	//parse trigger data
-	
+	//ok, so try using something like trigger_step here. this way simultaneously arriving triggers will be processed and sound at the same time.
+	process_external_triggers();
+	//if ((spi0_current_trigger_byte0 >> BD) & 1) {
+		////need to XOR individual bits
+		//spi0_current_trigger_byte0 ^= (1<< BD);
+		//trigger_drum(BD, 0);	
+	//}
 	 
 }
 

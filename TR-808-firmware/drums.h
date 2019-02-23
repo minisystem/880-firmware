@@ -51,4 +51,6 @@ void clear_all_trigs(void);
 void trigger_roll(void);
 void live_hits(void);
 
+void process_external_triggers(void);
+
 #endif
