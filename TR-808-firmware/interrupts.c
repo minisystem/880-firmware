@@ -73,8 +73,9 @@ ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 		
 	} else {
 		
-		sequencer.START = 0;
-		process_stop();
+		flag.din_stop = 1;
+		//process_stop(); //does calling stop function from within interrupt cause a problem? memory read could screw something up 
+		//maybe need to set a flag here instead?
 	}
 	
 }

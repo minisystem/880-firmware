@@ -138,9 +138,9 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 				spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit; //maybe AND with a drum mute table here instead of checking the .muted variable of the drum struct?
 
 				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
-						
+					//set n bit to x	
 					spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-						
+
 				}		
 			}
 				
@@ -171,7 +171,12 @@ void process_external_triggers(void) {
 				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 									
 					spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-									
+					//but this needs to be something like:
+					//if (assign_2) then
+					//spi_data[LATCH_3] |= 1<<drum_hit[i].switch_bit
+					//else//
+					//spi_data[LATCH_3] &= ~ 1<<drum_hit[i].switch_bit
+					//yeah?									
 				}
 				
 			}

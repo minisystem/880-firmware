@@ -197,7 +197,7 @@ int main(void)
 	//update_step_led_mask();
 	
 	//setup watchdog timer
-	//wdt_enable(WDTO_1S);
+	wdt_enable(WDTO_1S);
 	
 	//sequencer.SHUFFLE = 1;
 	sequencer.shuffle_amount = 0;

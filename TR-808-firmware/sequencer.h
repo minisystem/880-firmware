@@ -94,6 +94,7 @@ struct flag {
 	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed
 	uint8_t blink:1;
 	uint8_t din_start:1;
+	uint8_t din_stop:1;
 	uint8_t nudge_down:1;
 	uint8_t nudge_up:1;
 	

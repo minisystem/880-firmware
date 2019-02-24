@@ -308,7 +308,7 @@ void process_stop(void) {
 			case MANUAL_PLAY:
 				turn_on(sequencer.current_intro_fill);
 				sequencer.current_pattern = sequencer.new_pattern;
-				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);		
+				read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank); //calling read_next_pattern here causes a crash when slaved to DIN SYNC. why?
 			break;
 			
 			case COMPOSE_RHYTHM: 
