@@ -163,13 +163,25 @@ void process_external_triggers(void) {
 	clear_all_trigs();
 	
 	for (int i = BD; i <= CP; i++) {
-		if ((spi0_current_trigger_byte0 >> i) & 1) {	
+		if ((spi0_current_trigger_byte0 >> i) & 1) {
+			PORTD |= (1<<TRIG);	
 			if (!drum_hit[i].muted) {
 				if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
-			
+				spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
+				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
+									
+					spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+									
+				}
+				
 			}
 		}
 	}
+	
+	//handle MA, CB, CY, OH, CH
+	
+	
+	//handle accent
 }
 
 void live_hits(void) { //use switch case here you twit or for loop. duh. fix this festering piece of shit.
