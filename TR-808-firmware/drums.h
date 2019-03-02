@@ -44,6 +44,9 @@ extern enum drum midi_note_queue[16]; //queue to hold incoming MIDI notes
 extern uint8_t current_drum_hit; //global to hold index of current drum in MIDI note queue
 //volatile uint8_t trigger_finished;
 
+extern uint8_t previous_assign_port;
+extern uint8_t current_assign_port;
+
 void trigger_drum(uint8_t note, uint8_t velocity);
 void trigger_step(uint8_t part_playing);
 //void trigger_substep(void);

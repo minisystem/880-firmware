@@ -23,6 +23,8 @@
 #define DIN_RUN_STOP	PD4
 #define DIN_RESET		PD6
 #define DIN_FILL		PD7
+#define ASSIGN_1		PD6
+#define ASSIGN_2		PD7
 
 #define SYNC_IN			PD2
 

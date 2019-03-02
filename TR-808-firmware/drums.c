@@ -13,6 +13,8 @@
 #include "switches.h"
 
 uint8_t current_drum_hit = 0;
+uint8_t previous_assign_port = 0;
+uint8_t current_assign_port = 0;
 enum drum midi_note_queue[16] = {255};
 //volatile uint8_t trigger_finished = 1;
 
@@ -160,6 +162,11 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 
 void process_external_triggers(void) {
 	
+	current_assign_port = PIND;
+	current_assign_port ^= previous_assign_port;
+	previous_assign_port ^= current_assign_port;
+	current_assign_port &= previous_assign_port;
+	
 	clear_all_trigs();
 	
 	for (int i = BD; i <= CP; i++) {
@@ -170,23 +177,46 @@ void process_external_triggers(void) {
 				spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
 				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 									
-					spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
+					//spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 					//but this needs to be something like:
-					//if (assign_2) then
-					//spi_data[LATCH_3] |= 1<<drum_hit[i].switch_bit
-					//else//
-					//spi_data[LATCH_3] &= ~ 1<<drum_hit[i].switch_bit
-					//yeah?									
+					if ((current_assign_port >> ASSIGN_2) &1) {
+						current_assign_port ^= (1 << ASSIGN_2);
+						spi_data[LATCH_3] |= (drum_hit[i].switch_bit);
+					} else {
+						spi_data[LATCH_3] &= ~(drum_hit[i].switch_bit);
+					}
 				}
 				
 			}
 		}
 	}
+	//bleh, exception to handle MA, 7th bit of byte0
+	if ((spi0_current_trigger_byte0 >> 7) & 1) {
+		
+		PORTD |= (1<<TRIG);
+		if (!drum_hit[MA].muted) {
+			if (!sequencer.SHIFT) turn_on(drum_hit[MA].led_index);
+			spi_data[drum_hit[MA].spi_byte_num] |= drum_hit[MA].trig_bit;
+		}
+	}
 	
-	//handle MA, CB, CY, OH, CH
+	//handle CB, CY, OH, CH
+	for (int i = CB; i <= CH; i++) {
+		if (spi0_current_trigger_byte1 >> (i - 7) & 1) {
+			PORTD |= (1<<TRIG);
+			if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
+			spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
+		}
 	
+		
+	}
 	
 	//handle accent
+	if ((current_assign_port >> ASSIGN_1) & 1) {
+		current_assign_port ^= (1<<ASSIGN_1);
+		spi_data[LATCH_8] |= 1<<ACCENT;
+		if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
+	}
 }
 
 void live_hits(void) { //use switch case here you twit or for loop. duh. fix this festering piece of shit.
