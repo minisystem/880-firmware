@@ -43,7 +43,7 @@ void refresh(void) {
 	check_start_stop_tap();
 	//read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) spi0_read_triggers();//live_hits() needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
+	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits();// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -211,7 +211,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 99; //0.9.8
+	sequencer.version = 89; //0.9.8
 	
     while (1) 
     {

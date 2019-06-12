@@ -130,7 +130,7 @@ ISR (TIMER1_COMPA_vect) { //output compare match for internal clock
 			
 			clock.ppqn_divider_tick = 0;
 			if (sequencer.clock_mode == MIDI_MASTER) { 
-				midi_send_clock(&midi_device); //send MIDI clock
+				midi_send_clock(&midi_device); //send MIDI clock - will need to add option to turn this off as user may not always want to be sending MIDI clock data
 				//if (sequencer.START) PINC |= (1<<SYNC_LED_Y); //only blink sync LED when sequencer is running
 			} else if (sequencer.clock_mode == DIN_SYNC_MASTER) { //send DIN Sync clock pulse
 				//this set up counter-intuitively puts DIN clock out of phase with master timer. Not sure why this is the case, but it works. Really need to dig into this. Not sure what other horrors this will reveal

@@ -162,10 +162,10 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 
 void process_external_triggers(void) {
 	
-	current_assign_port = PIND;
-	current_assign_port ^= previous_assign_port;
-	previous_assign_port ^= current_assign_port;
-	current_assign_port &= previous_assign_port;
+	//current_assign_port = PIND;
+	//current_assign_port ^= previous_assign_port;
+	//previous_assign_port ^= current_assign_port;
+	//current_assign_port &= previous_assign_port;
 	
 	clear_all_trigs();
 	
@@ -173,18 +173,24 @@ void process_external_triggers(void) {
 		if ((spi0_current_trigger_byte0 >> i) & 1) {
 			PORTD |= (1<<TRIG);	
 			if (!drum_hit[i].muted) {
-				if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
+				
 				spi_data[drum_hit[i].spi_byte_num] |= drum_hit[i].trig_bit;
 				if (drum_hit[i].switch_bit != NO_SWITCH) {//need to set instrument switch
 									
 					//spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
 					//but this needs to be something like:
-					if ((current_assign_port >> ASSIGN_2) &1) {
-						current_assign_port ^= (1 << ASSIGN_2);
+					//if ((current_assign_port >> ASSIGN_2) &1) {
+					if (PIND & (1<<ASSIGN_2)) {	
+						//current_assign_port ^= (1 << ASSIGN_2);
 						spi_data[LATCH_3] |= (drum_hit[i].switch_bit);
+						if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
 					} else {
 						spi_data[LATCH_3] &= ~(drum_hit[i].switch_bit);
+						if (!sequencer.SHIFT) turn_on(drum_hit[i + SW_DRUM_OFFSET].led_index);
 					}
+				} else {
+					if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
+					
 				}
 				
 			}
@@ -212,8 +218,9 @@ void process_external_triggers(void) {
 	}
 	
 	//handle accent
-	if ((current_assign_port >> ASSIGN_1) & 1) {
-		current_assign_port ^= (1<<ASSIGN_1);
+	//if ((current_assign_port >> ASSIGN_1) & 1) {
+		//current_assign_port ^= (1<<ASSIGN_1);
+	if (PIND & (1<<ASSIGN_1)) {	
 		spi_data[LATCH_8] |= 1<<ACCENT;
 		if (!sequencer.SHIFT) turn_on(ACCENT_1_LED);
 	}

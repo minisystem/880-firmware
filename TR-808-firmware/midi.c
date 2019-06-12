@@ -40,7 +40,9 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 	//filter MIDI channel
 	if (sequencer.midi_channel != (channel & MIDI_CHANMASK)) return;
 	
-	if ((sequencer.clock_mode != MIDI_SLAVE) || sequencer.START) return; //at the moment, only allow MIDI triggering of notes in MIDI SLAVE mode. Might be possible to get MIDI to work with sequencer, but at the moment the sequencer and incoming MIDI notes are incompatibily
+	//if ((sequencer.clock_mode != MIDI_SLAVE) || sequencer.START) return; //at the moment, only allow MIDI triggering of notes in MIDI SLAVE mode. Might be possible to get MIDI to work with sequencer, but at the moment the sequencer and incoming MIDI notes are incompatibily
+	
+	if ((sequencer.clock_mode != MIDI_MASTER) || sequencer.START) return;
 	
 	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits, or maybe just have an offset that allows first note of 16 to be set
 		
