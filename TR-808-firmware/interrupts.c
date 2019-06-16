@@ -27,7 +27,10 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 	//TCNT3 = 0; //reset timer3
 	//update_clock_rate(clock.external_rate);
 	//clock.ppqn_counter = 0; //reset ppqn counter
-	
+	if (++clock.tick_counter == clock.divider) {
+		clock.tick_counter = 0;
+		PINC |= (1<<SYNC_LED_R);
+	}
 		
 	if (flag.slave_start) {
 							//

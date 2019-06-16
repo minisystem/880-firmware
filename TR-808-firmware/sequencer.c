@@ -97,8 +97,8 @@ void process_tick(void) {
 	
 	uint8_t even_step = sequencer.current_step & 1;	//is current step even or odd?
 	
-	if (++clock.ppqn_counter == clock.divider) {
-		//TRIGGER_OUT &= ~(1<<TRIGGER_OUT_2);
+	if (++clock.ppqn_counter == clock.divider) { //trigger next step
+		//clock.tick_counter = 0;
 		if (flag.pre_scale_change) {
 			
 			clock.divider = pre_scale[sequencer.pre_scale];       
@@ -125,7 +125,7 @@ void process_tick(void) {
 		//}	
 		//sequencer.primed = 0;
 		if (sequencer.current_step++ == sequencer.step_num[sequencer.part_playing] && sequencer.START) {
-			if (sequencer.primed) { //this causes problems when first part has less than 16 steps. why?
+			if (sequencer.primed) { //this causes problems when first part has less than 16 steps. why? - FIXED!
 				sequencer.primed = 0;
 				//turn_on(IF_VAR_B_LED);
 				sequencer.current_step = 0;
@@ -149,7 +149,7 @@ void process_tick(void) {
 		
 		if (++clock.slave_ppqn_ticks == clock.sync_count) { //this works for 24 ppqn MIDI and DIN sync clock, but needs tweaking for external sync pulse that runs at 2 ppqn or 1 ppqn
 			clock.slave_ppqn_ticks = 0; //reset
-			flag.wait_for_master_tick = 1;
+			flag.wait_for_master_tick = 1; //not currently used
 			TCCR1B &= ~(1<<CS12); //turn off master timer
 			//TCNT1 = 0;
 		}
@@ -187,7 +187,7 @@ void process_start(void) {
 			//need to prime sequencer so that first step (downbeat) occurs on first incoming clock pulse, hence -1 for current_step and divider	
 			//sequencer.current_step = -1;
 			sequencer.current_step = sequencer.step_num[FIRST]; //oh boy. this was a pernicious bug.  the first part priming assumes 16 steps but you need to catch first down beat on fi
-			clock.ppqn_counter = clock.divider - 1;
+			clock.ppqn_counter = clock.divider - 1; //need to change this priming if we want to implement independent MIDI/DIN transport control while synced to a master
 			sequencer.primed = 1;
 		}
 		if (clock.source == EXTERNAL) { 
@@ -195,6 +195,21 @@ void process_start(void) {
 			clock.slave_ppqn_ticks = 0;
 			PORTE |= (1 << SYNC_LED_Y); //orange sync light when slaved
 			PORTC |= (1 << SYNC_LED_R);
+			//if (flag.slave_stop) {
+
+				
+			//	while (clock.tick_counter != 0);
+				//sequencer.current_step = 0;
+				//OK, so when starting not on a quarter note the 880 starts out of phase with the master, BUT it shouldn't. So the step is advancing when it shouldn't. Really should just implement a 
+				//flag and poll when it's the next 1/4 note according to the tick counter? 
+			//	flag.slave_start = 0;
+			//	clock.slave_ppqn_ticks = 0;
+			//} //else {
+				////flag.slave_start = 1;
+			//}
+			//clock.pqqn_counter = clock.
+			clock.tick_counter = 0;//clock.tick_value; //this line is required to get 1/16th note sync up to 24 ppqn master, but it seems weird to reset it as it should be 0 as soon as the while loop above is released?
+			//flag.slave_stop = 0;
 			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
 		} else {
 			//sequencer.current_step = -1;

@@ -45,18 +45,21 @@ void update_clock_rate(uint16_t rate) {
 void process_external_clock_event(void) {
 			//PORTC |= (1 << SYNC_LED_R); //sync LED is orange when receiving clock data
 			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
-			//clock.external_rate /= 12;
+			//some division here for making up counts with different clock divide rates?
 			//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 			if (flag.slave_start) { //don't update clock if it's the first pulse
-					flag.slave_start = 0;
-					TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
+				flag.slave_start = 0;
+				TCNT1 = 0; //reset timer1 - it should be zeroed after called process_start() but if there's a delay between the MIDI start byte and the first clock pulse ,it could advance by an internal pulse or two.
 					
-				} else {
-					update_clock_rate(clock.external_rate);
-					if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
-						clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
-						//hmm. should this not just be clock.pqqn_counter = clock.divider - 1 - NO because we do not need to generate a step here -
-					}
+			} else {
+				update_clock_rate(clock.external_rate);
+				
+				if (clock.slave_ppqn_ticks != 0) {  //in cases of large tempo speed ups internal clock may not have counted enough internal clock ticks, which means slave_ppqn_ticks will not be reset to 0
+					//clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
+					clock.ppqn_counter += clock.sync_count - clock.slave_ppqn_ticks;
+					//need to check that this actually works. it was tested once before with a LED flag and must have worked, but test again.	
+
+				}
 				
 			}
 			flag.wait_for_master_tick = 0;
@@ -72,6 +75,7 @@ void process_external_sync_pulse(void) { //stupid duplicate code - just combine 
 		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt. at /1024 of 16 MHz it takes just over 4s to overflow. 
 		//timer3 is running 4x slower than timer1 for conversion from 24 ppqn MIDI or DIN sync clock to internal 96 ppqn clock. default external sync pulse is 2 ppqn, so 24 ppqn/12 = 2 ppqn
 		clock.external_rate /= 12; //how much time does this take? Better way?
+		//clock.external_rate /= 6;
 		//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 		if (flag.slave_start) { //don't update clock if it's the first pulse
 			flag.slave_start = 0;
@@ -88,6 +92,8 @@ void process_external_sync_pulse(void) { //stupid duplicate code - just combine 
 					//you're fucked - you need to make up steps.
 					//if it's 24 or less, then there will be a step to make up. But if not, then what about this:
 					clock.ppqn_counter = clock.divider - 1;
+					//clock.ppqn_counter += (PPQN_2_TICK_COUNT - clock.slave_ppqn_ticks)/12; //this is not right, because clock.ppqn_counter never exceeds clock.divider, yeah?
+					//the problem is the pulses to make up need to be scaled to the clock divider, which is determined by PRE SCALE setting.
 				//}
 				//clock.ppqn_counter += (PPQN_24_TICK_COUNT - clock.slave_ppqn_ticks); //need to make up for these ticks by incrementing master ppqn counter the appropriate number of missed slave ticks
 			}

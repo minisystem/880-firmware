@@ -19,6 +19,10 @@
 
 #define PPQN_DIVIDER 3 //master divider for converting internal 96PPQN to 24PPQN for MIDI and DIN SYNC
 #define PPQN_24_TICK_COUNT 4//master ppqn skip value for converting incoming MIDI or DIN SYNC clock to internal 96PPQN. 3 for 24 PPQN, 1 for 48 PPQN, 0 for 96PPQN
+#define PPQN_12_TICK_COUNT 8
+#define PPQN_8_TICK_COUNT 12
+#define PPQN_6_TICK_COUNT 16
+#define PPQN_4_TICK_COUNT 24
 #define PPQN_2_TICK_COUNT 48 //master ppqn skip value for converting incoming 2 ppqn (1/8 note pulse) from Korg/Volca clock
 
 
@@ -41,6 +45,7 @@ struct clock {
 	uint16_t external_rate;
 	//uint16_t previous_external_rate;
 	uint8_t tick_counter; //counter for blinking LEDs independent of sequencer clock rate
+	uint8_t tick_value; //store tick value when slave is stopped
 	uint8_t sync_led_mask:1;
 	enum clock_source source;
 	
