@@ -195,27 +195,10 @@ void process_start(void) {
 			clock.slave_ppqn_ticks = 0;
 			PORTE |= (1 << SYNC_LED_Y); //orange sync light when slaved
 			PORTC |= (1 << SYNC_LED_R);
-			//if (flag.slave_stop) {
-
-				
-			//	while (clock.tick_counter != 0);
-				//sequencer.current_step = 0;
-				//OK, so when starting not on a quarter note the 880 starts out of phase with the master, BUT it shouldn't. So the step is advancing when it shouldn't. Really should just implement a 
-				//flag and poll when it's the next 1/4 note according to the tick counter? 
-			//	flag.slave_start = 0;
-			//	clock.slave_ppqn_ticks = 0;
-			//} //else {
-				////flag.slave_start = 1;
-			//}
-			//clock.pqqn_counter = clock.
 			clock.tick_counter = 0;//clock.tick_value; //this line is required to get 1/16th note sync up to 24 ppqn master, but it seems weird to reset it as it should be 0 as soon as the while loop above is released?
-			//flag.slave_stop = 0;
-			//flag.wait_for_master_tick = 1; //may need to set this to 1 here to sync start with next external clock pulse, but have to coordinate with how flag.slave_start is set and reset
+
 		} else {
-			//sequencer.current_step = -1;
-			//sequencer.current_step = 0;
-			//clock.ppqn_counter = 0;
-			//clock.ppqn_counter = clock.divider - 1;
+			
 			flag.slave_start = 0;
 			PORTE &= ~(1 << SYNC_LED_Y);
 			PORTC |= (1 << SYNC_LED_R); //red for internal clock running

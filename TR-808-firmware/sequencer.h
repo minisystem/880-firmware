@@ -90,6 +90,7 @@ struct flag {
 	uint8_t fill:1;
 	uint8_t slave_start:1;
 	uint8_t slave_stop:1;
+	uint8_t delay_slave_start:1; //flag for independent restart while clock slave
 	uint8_t wait_for_master_tick:1;	
 	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
 	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed

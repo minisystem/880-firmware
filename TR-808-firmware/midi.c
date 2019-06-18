@@ -61,6 +61,10 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 		
 		case MIDI_CLOCK:	
 			//this would be the place to implement a MIDI clock divider
+			//if (++clock.tick_counter == clock.divider) {
+				//clock.tick_counter = 0;
+				//PINC |= (1<<SYNC_LED_R);
+			//} BAH, force an interrupt here to increment clock.tick_counter?
 			process_external_clock_event();
 	
 		break;

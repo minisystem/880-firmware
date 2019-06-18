@@ -45,7 +45,7 @@ struct clock {
 	uint16_t external_rate;
 	//uint16_t previous_external_rate;
 	uint8_t tick_counter; //counter for blinking LEDs independent of sequencer clock rate
-	uint8_t tick_value; //store tick value when slave is stopped
+	//uint8_t tick_value; //store tick value when slave is stopped
 	uint8_t sync_led_mask:1;
 	enum clock_source source;
 	

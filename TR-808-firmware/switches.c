@@ -162,7 +162,7 @@ void check_start_stop_tap(void) {
 		 if (sequencer.SHIFT) {
 			 //a shift + START/STOP should allow start/stopping in MIDI and DIN sync slave modes
 			 flag.slave_stop = 1;
-			 clock.tick_value = clock.tick_counter;
+			 
 			 //while (clock.tick_counter != 0);
 			 //OK, so knowing clock.ppqn counter value here and maybe clock.tick_counter might be helpful when starting as slave?
 		 }	else {
@@ -176,11 +176,16 @@ void check_start_stop_tap(void) {
 	
 	if (sequencer.START && (start_state == 0)) { //initialize sequencer when start is detected
 		if (flag.slave_stop) {
-			while (clock.tick_counter != 0); //need to wait to start on quarter note. This works, BUT need to be very careful that flag.slave stop is reset else where otherwise timeout and reset will occur
-			//clock.tick_counter = 0;
+			//while (clock.tick_counter != 0); //need to wait to start on quarter note. This works, BUT need to be very careful that flag.slave stop is reset else where otherwise timeout and reset will occur
+			// oh, GOTCHA! this busy/wait will be interrupted by hardware clocks, which results in very tight, repeatedably slave re-starts, BUT BUT BUT, MIDI clock does not generate an interrupt. So
+			//can MIDI clock force an interrupt?
+			//get rid of while busy/wiat here and instead set flag to call process_start in the from within process_external_clock event
+			flag.delay_slave_start = 1;
 			flag.slave_stop = 0;
+		} else {
+			process_start();
 		}
-		process_start();
+		
 			
 	}
 	

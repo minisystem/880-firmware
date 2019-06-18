@@ -43,6 +43,14 @@ void update_clock_rate(uint16_t rate) {
 }
 
 void process_external_clock_event(void) {
+			if ((flag.delay_slave_start) && (clock.tick_counter == 0))  {
+				flag.delay_slave_start = 0;
+				process_start();
+			}
+			if (++clock.tick_counter == clock.divider) {
+				clock.tick_counter = 0;
+				PINC |= (1<<SYNC_LED_R);
+			}
 			//PORTC |= (1 << SYNC_LED_R); //sync LED is orange when receiving clock data
 			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
 			//some division here for making up counts with different clock divide rates?
