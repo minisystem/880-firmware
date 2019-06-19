@@ -22,7 +22,7 @@ uint8_t midi_output_queue_data[MIDI_OUTPUT_QUEUE_LENGTH];
 
 void setup_midi_usart(void)
 {
-	uint16_t ubbr_value = 31; //16MHz/(16*31250 BAUD) - 1
+	uint16_t ubbr_value = 31; //16MHz/(16*31250 BAUD) - 1 - should be a constant you nitwit!
 	//write ubbr_value to H and L UBBR1 registers:
 	UBRR0L = (unsigned char) ubbr_value;
 	UBRR0H = (unsigned char) (ubbr_value >> 8);
@@ -42,7 +42,9 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 	
 	//if ((sequencer.clock_mode != MIDI_SLAVE) || sequencer.START) return; //at the moment, only allow MIDI triggering of notes in MIDI SLAVE mode. Might be possible to get MIDI to work with sequencer, but at the moment the sequencer and incoming MIDI notes are incompatibily
 	
-	if ((sequencer.clock_mode != MIDI_MASTER) || sequencer.START) return;
+	//if ((sequencer.clock_mode != MIDI_MASTER) || sequencer.START) return;
+	
+	if (sequencer.START) return; 
 	
 	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits, or maybe just have an offset that allows first note of 16 to be set
 		

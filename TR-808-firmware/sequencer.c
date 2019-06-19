@@ -1166,7 +1166,7 @@ void update_step_board() { //should this be in switches.c ?
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
 						eeprom_write_recall_data(); //write midi channel change
-					} else { //update shuffle here?
+					} else if (sequencer.TAP_HELD) { //update clock.sync_count?
 						
 
 					

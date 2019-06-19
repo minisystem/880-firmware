@@ -213,7 +213,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 89; //0.9.8
+	sequencer.version = 200; //  BETA //0.9.8
 	
     while (1) 
     {
