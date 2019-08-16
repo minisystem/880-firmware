@@ -19,37 +19,15 @@
 #include "midi.h"
 
 ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
-	
-	//clock.ppqn_counter+= PPQN_SKIP_VALUE; //add skip value to ppqn counter for 24 ppqn 
-	//process_tick();
-	//clock.previous_external_rate = clock.external_rate;
-	//clock.external_rate = TCNT3;
-	//TCNT3 = 0; //reset timer3
-	//update_clock_rate(clock.external_rate);
-	//clock.ppqn_counter = 0; //reset ppqn counter
-	//if ((flag.delay_slave_start) && (clock.tick_counter == 0))  {
-		//flag.delay_slave_start = 0;
-		//process_start();
-	//}
-	//if (++clock.tick_counter == clock.divider) {
-		//clock.tick_counter = 0;
-		//PINC |= (1<<SYNC_LED_R);	
-	//}
 		
 	if (flag.slave_start) {
 							//
 		if (++clock.din_ppqn_pulses == 1) { //DIN Master devices lag their first steps after DIN START by a clock pulse or two. This adds a start delay when in DIN_SYNC_SLAVE mode
 			
-			process_external_clock_event();					//
-			//flag.slave_start = 0;		
-			//clock.ppqn_counter = 0;
-			////flag.next_step = 1;		
-			////flag.half_step = 0; //delayed start requires clearing half_step flag because after start delay it is set, which causes first step LED and first step triggered instrument LEDs to get prematurely cleared
-								//
-								//
+			process_external_clock_event();
+
 		}
-	//
-		//
+
 	} else {
 		
 		process_external_clock_event();
@@ -59,13 +37,11 @@ ISR (INT1_vect) { //handler for DIN Sync clock pulse in slave mode
 
 ISR (INT0_vect) { //external SYNC IN. By default this is for 2 ppqn, Volca style
 	
-	//clock.ppqn_counter+= PPQN_SKIP_VALUE;
-	//clock.ppqn_counter = clock.divider - 1; //need to finesse this and maybe get it to work with master clock? This is effectively 1 ppqn, so need to get it to work accordingly? In fact, this could be customizable - 1, 2, 4, 6, ... 24, ... 48, ppqn
-	//process_tick(); 
+
 	process_external_sync_pulse();
-	//process_external_clock_event();
+
 	PINC |= (1<<SYNC_LED_R);
-	clock.sync_led_mask++; //^= 1 << clock.sync_led_mask;
+	clock.sync_led_mask++;
 }
 
 ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode

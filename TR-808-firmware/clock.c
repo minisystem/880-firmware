@@ -54,6 +54,15 @@ void process_external_clock_event(void) {
 			//PORTC |= (1 << SYNC_LED_R); //sync LED is orange when receiving clock data
 			clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt
 			//some division here for making up counts with different clock divide rates?
+			//uint8_t divider[6] = {
+				//1,//PPQN_24_TICK_COUNT,
+				//2,//PPQN_12_TICK_COUNT,
+				//3,//PPQN_8_TICK_COUNT,
+				//4,//PPQN_6_TICK_COUNT,
+				//6,//PPQN_4_TICK_COUNT,
+				//12,//PPQN_2_TICK_COUNT
+			//};
+			//clock.external_rate /= divider[clock.sync_count_index];
 			//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 			if (flag.slave_start) { //don't update clock if it's the first pulse
 				flag.slave_start = 0;
@@ -82,7 +91,7 @@ void process_external_sync_pulse(void) { //stupid duplicate code - just combine 
 	
 		clock.external_rate = TCNT3; //need to handle overflow, probably in Timer3 overflow interrupt. at /1024 of 16 MHz it takes just over 4s to overflow. 
 		//timer3 is running 4x slower than timer1 for conversion from 24 ppqn MIDI or DIN sync clock to internal 96 ppqn clock. default external sync pulse is 2 ppqn, so 24 ppqn/12 = 2 ppqn
-		clock.external_rate /= 12; //how much time does this take? Better way?
+		clock.external_rate /= 12;//12; //how much time does this take? Better way?
 		//clock.external_rate /= 6;
 		//Divide by 12: (((uint32_t)A * (uint32_t)0xAAAB) >> 16) >> 3
 		if (flag.slave_start) { //don't update clock if it's the first pulse

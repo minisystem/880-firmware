@@ -68,7 +68,7 @@ void spi0_read_triggers() {
 	
 	//parse trigger data
 	//ok, so try using something like trigger_step here. this way simultaneously arriving triggers will be processed and sound at the same time.
-	process_external_triggers();
+	if ((spi0_current_trigger_byte0) || (spi0_current_trigger_byte1)) process_external_triggers();
 	//if ((spi0_current_trigger_byte0 >> BD) & 1) {
 		////need to XOR individual bits
 		//spi0_current_trigger_byte0 ^= (1<< BD);

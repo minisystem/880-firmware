@@ -149,7 +149,7 @@ void update_fill_mode(void) {
 			EIMSK = 0; //turn off external interrupts
 			PCICR = 0; //turn off pin change interrupts			
 			//spi_data[2] |= (1 << fill_index);
-			clock.sync_count = PPQN_24_TICK_COUNT; //restore default, only changes for external non-DIN sync pulse - this is how external clock rate is set - can be 24, 12, 8, 4 or 2 PPQN - need to implement interface to change clock response
+			//clock.sync_count = PPQN_24_TICK_COUNT; //restore default, only changes for external non-DIN sync pulse - this is how external clock rate is set - can be 24, 12, 8, 4 or 2 PPQN - need to implement interface to change clock response
 			PORTC &= ~(1<<SYNC_LED_R);
 			PORTE &= ~(1<<SYNC_LED_Y);
 			switch (sequencer.clock_mode) {
@@ -167,6 +167,7 @@ void update_fill_mode(void) {
 					clock.source = EXTERNAL;
 					//TIMSK3 |= (1<<OCIE3A); //turn on timer3 output compare interrupt
 					TCNT3 = 0; //reset timer3
+					clock.sync_count = PPQN_24_TICK_COUNT;
 					//sequencer.shuffle_multplier = 1;
 					//PORTC |= (1<<SYNC_LED_R);
 					PORTE |= (1<<SYNC_LED_Y);
@@ -199,7 +200,7 @@ void update_fill_mode(void) {
 					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?
 					
 					//spi_data[LATCH_2] |= (clock.sync_led_mask << sync_index);
-					//clock.sync_count = PPQN_12_TICK_COUNT;
+					//clock.sync_count = PPQN_2_TICK_COUNT;
 					//TCCR1B = 0; //stop master tempo timer - necessary?
 					
 					break;

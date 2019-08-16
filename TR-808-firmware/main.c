@@ -44,6 +44,7 @@ void refresh(void) {
 	//read_switches();
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits();// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
+	if (!sequencer.START) spi0_read_triggers();
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -141,6 +142,7 @@ int main(void)
 	clock.ppqn_counter = 1;
 	clock.source = INTERNAL;
 	clock.sync_count = PPQN_24_TICK_COUNT; //24 PPQN external sync is default
+	clock.sync_count_index = 0;
 	//clock.rate = 400; //use fixed rate to get clock working
 	//update_clock_rate(clock.rate);
 	setup_adc();
@@ -213,7 +215,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 200; //  BETA //0.9.8
+	sequencer.version = 101; //  BETA //0.9.8
 	
     while (1) 
     {

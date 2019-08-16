@@ -870,7 +870,7 @@ void process_step(void){
 					} else if (sequencer.TAP_HELD && sequencer.mode == PATTERN_CLEAR) {
 						show_version_steps();
 					} else {
-						
+						turn_on(clock.sync_count_index);
 						//need to display shuffle/roll/live hits status here
 						
 					}
@@ -1166,8 +1166,22 @@ void update_step_board() { //should this be in switches.c ?
 						sequencer.midi_channel = press;
 						turn_on(sequencer.midi_channel);					
 						eeprom_write_recall_data(); //write midi channel change
-					} else if (sequencer.TAP_HELD) { //update clock.sync_count?
-						
+					} else if (sequencer.clock_mode == DIN_SYNC_SLAVE) {// if (sequencer.TAP_HELD) { //update clock.sync_count?
+						if (press < NUM_SYNC_COUNTS) {
+							turn_off(clock.sync_count_index);
+							clock.sync_count_index = press;
+							turn_on(clock.sync_count_index);
+							//uint8_t sync_count[6] = {
+								//PPQN_24_TICK_COUNT,
+								//PPQN_12_TICK_COUNT,
+								//PPQN_8_TICK_COUNT,
+								//PPQN_6_TICK_COUNT,
+								//PPQN_4_TICK_COUNT,
+								//PPQN_2_TICK_COUNT
+							//};
+							//clock.sync_count = sync_count[press];
+							
+						}
 
 					
 					}

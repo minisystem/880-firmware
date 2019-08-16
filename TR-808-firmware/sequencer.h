@@ -33,6 +33,7 @@
 //define pre-scale ppqn dividers
 #define NUM_PRE_SCALES 4
 
+
 //pulses per qarter note for different pre-scales
 //8/4/6/3 for 24 ppqn, 32/16/24/12 for 96 ppqn
 #define PRE_SCALE_1 32

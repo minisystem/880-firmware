@@ -18,6 +18,8 @@
 #define TIMER0_OUTPUT_COMPARE OCR0A
 
 #define PPQN_DIVIDER 3 //master divider for converting internal 96PPQN to 24PPQN for MIDI and DIN SYNC
+
+#define NUM_SYNC_COUNTS 6
 #define PPQN_24_TICK_COUNT 4//master ppqn skip value for converting incoming MIDI or DIN SYNC clock to internal 96PPQN. 3 for 24 PPQN, 1 for 48 PPQN, 0 for 96PPQN
 #define PPQN_12_TICK_COUNT 8
 #define PPQN_8_TICK_COUNT 12
@@ -35,6 +37,7 @@ struct clock {
 	
 	uint8_t divider;
 	uint8_t sync_count;
+	uint8_t sync_count_index:3;
 	uint8_t ppqn_counter;
 	uint8_t ppqn_divider_tick:3; //counter for ppqn divider 
 	uint8_t din_ppqn_pulses:3; //counter for din sync clock pulses sent before DIN master start event
