@@ -133,8 +133,9 @@ void process_tick(void) {
 			} else {
 				flag.new_measure = 1;
 			}
-			//PORTC &= ~(1<<SYNC_LED_R);
+			
 		}
+		
 		clock.beat_counter++; //overflows every 4 beats 
 		clock.ppqn_counter = 0;
 	//50% step width, sort of - use for flashing step and variation LEDs to tempo
@@ -601,6 +602,8 @@ void process_step(void){
 		flag.next_step = 0;
 		
 		if (sequencer.START) {
+		//check for reset
+		//if (reset) flag.new_measure = 1;	
 		//*************************TAKEN FROM INTERRUPT*****************************//
 			if (flag.new_measure) {
 			
