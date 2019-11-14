@@ -43,7 +43,8 @@ void refresh(void) {
 	check_start_stop_tap();
 	//read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits();// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
+	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits(); 
+	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	if (!sequencer.START) spi0_read_triggers();
 	update_mode();
 	update_fill_mode();
@@ -216,6 +217,8 @@ int main(void)
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
 	sequencer.version = 101; //  BETA //0.9.8
+	
+	//flush spi0 buffer
 	
     while (1) 
     {

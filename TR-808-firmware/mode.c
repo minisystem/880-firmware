@@ -180,7 +180,7 @@ void update_fill_mode(void) {
 					//TIMSK3 &= ~(1<<OCIE3A); //disable timer3 interrupts
 					//sequencer.shuffle_multplier = 4;
 					//PORTD |= (1<<SYNC_LED_R);
-					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
+					DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP);// | 1 << DIN_FILL | 1 << DIN_RESET); //set up DIN pins as outputs
 					//TCCR2A |= (1 << COM2B0); //toggle OC2B/PD3 on compare match
 					TCCR2A |= (1 << WGM21); //clear timer on OCRA compare match where OCRA = OCRB
 					TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); 
@@ -195,10 +195,9 @@ void update_fill_mode(void) {
 					//sequencer.shuffle_multplier = 1;
 					//PORTC |= (1<<SYNC_LED_R);
 					PORTE |= (1<<SYNC_LED_Y);					
-					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
+					DDRD &= ~((1 << DIN_CLOCK | 1 << DIN_RUN_STOP));// | 1 << DIN_FILL | 1 << DIN_RESET)); //set up DIN pins as inputs
 					EIMSK |= (1 << INT1);// | (1<< INT0); //turn on INT1 interrupt for DIN Sync clock and INT0 for external SYNC input jack
-					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?
-					
+					PCICR |= (1 << PCIE2); //turn on pin change interrupt for what?			
 					//spi_data[LATCH_2] |= (clock.sync_led_mask << sync_index);
 					//clock.sync_count = PPQN_2_TICK_COUNT;
 					//TCCR1B = 0; //stop master tempo timer - necessary?
