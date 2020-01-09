@@ -45,7 +45,7 @@ void refresh(void) {
 	parse_switch_data();
 	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits(); 
 	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
-	if (!sequencer.START) spi0_read_triggers();
+	if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
@@ -79,6 +79,7 @@ int main(void)
 		
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
 	//DDRD &= ~(1<<TRIG); //set PD5, TRIG to input for testing trigger expander
+	//DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP);  //need to set up clock and run as outputs at boot, right? Otherwise they float
 	//setup SPI
 	DDRE |= (1<<SPI_MOSI) | (1<<SPI_SS) | (1<<SPI_LED_LATCH) | (1<<SPI_SW_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI)
 	DDRC |= (1<<SPI_CLK);

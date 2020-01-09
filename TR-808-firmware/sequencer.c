@@ -241,7 +241,7 @@ void process_start(void) {
 				
 				midi_send_start(&midi_device); //should clock be sent before start?
 				midi_send_clock(&midi_device);	
-				PORTD |= (1 << DIN_RUN_STOP); //set RUN_STOP high for enclosure but also to disable enclosure's spi0 MISO line			
+				//PORTD |= (1 << DIN_RUN_STOP); //set RUN_STOP high for enclosure but also to disable enclosure's spi0 MISO line			
 			}					
 		}
 
@@ -345,7 +345,7 @@ void process_stop(void) {
 		}	
 		*/
 		if (clock.source == INTERNAL) {
-			PORTD &= ~(1 << DIN_RUN_STOP);
+			//PORTD &= ~(1 << DIN_RUN_STOP);
 			if (sequencer.clock_mode == MIDI_MASTER) {
 
 				midi_send_stop(&midi_device);

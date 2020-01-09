@@ -152,6 +152,9 @@ void update_fill_mode(void) {
 			//clock.sync_count = PPQN_24_TICK_COUNT; //restore default, only changes for external non-DIN sync pulse - this is how external clock rate is set - can be 24, 12, 8, 4 or 2 PPQN - need to implement interface to change clock response
 			PORTC &= ~(1<<SYNC_LED_R);
 			PORTE &= ~(1<<SYNC_LED_Y);
+			
+			//should DIN_CLOCK and DIN_RUN_STOP be set default as outputs here?
+			//DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP);
 			switch (sequencer.clock_mode) {
 							
 				case MIDI_MASTER:
