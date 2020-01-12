@@ -345,7 +345,7 @@ void process_stop(void) {
 		}	
 		*/
 		if (clock.source == INTERNAL) {
-			//PORTD &= ~(1 << DIN_RUN_STOP);
+			PORTD &= ~(1 << DIN_RUN_STOP);
 			if (sequencer.clock_mode == MIDI_MASTER) {
 
 				midi_send_stop(&midi_device);

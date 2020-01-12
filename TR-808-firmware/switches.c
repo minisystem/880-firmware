@@ -152,24 +152,25 @@ void check_start_stop_tap(void) {
 		flag.tap = 1;
 		
 	}
-	
-	if ((clock.source == EXTERNAL) && (sequencer.clock_mode != PULSE_SYNC_SLAVE)) { //what about stopping when MIDI slave? this would be the place to do it, yeah?
-		 if (flag.din_stop == 1) {
-			 flag.din_stop = 0;
-			 sequencer.START = 0;
-			 process_stop(); //need to process stop outside of DIN SYNC slave ISR, yeah?
-		 }
-		 if (sequencer.SHIFT) {
-			 //a shift + START/STOP should allow start/stopping in MIDI and DIN sync slave modes
-			 flag.slave_stop = 1;
+	if (current_start_stop_tap_state >> START_STOP) {
+		if ((clock.source == EXTERNAL) && (sequencer.clock_mode != PULSE_SYNC_SLAVE)) { //what about stopping when MIDI slave? this would be the place to do it, yeah?
+			 if (flag.din_stop == 1) {
+				 flag.din_stop = 0;
+				 sequencer.START = 0;
+				 process_stop(); //need to process stop outside of DIN SYNC slave ISR, yeah?
+			 }
+			 if (sequencer.SHIFT) {
+				 //a shift + START/STOP should allow start/stopping in MIDI and DIN sync slave modes
+				 flag.slave_stop = 1;
 			 
-			 //while (clock.tick_counter != 0);
-			 //OK, so knowing clock.ppqn counter value here and maybe clock.tick_counter might be helpful when starting as slave?
-		 }	else {
-			 flag.slave_stop = 0;
-			 return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should! - in fact, need to handle start/stop when synced to external pulse volca style
+				 //while (clock.tick_counter != 0);
+				 //OK, so knowing clock.ppqn counter value here and maybe clock.tick_counter might be helpful when starting as slave?
+			 }	else {
+				 flag.slave_stop = 0;
+				 return; //get out of here because when using external clock you don't need to process start/stop button activity - ACTUALLY, you really should! - in fact, need to handle start/stop when synced to external pulse volca style
 			 
-		 }
+			 }
+		}
 	}
 	uint8_t start_state = sequencer.START;
 	sequencer.START ^= current_start_stop_tap_state >> START_STOP;
