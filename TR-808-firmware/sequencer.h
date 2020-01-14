@@ -51,6 +51,9 @@
 //live hits (step 7)
 #define LIVE_HITS 6
 
+//trigger enable (step 8)
+#define TRIGGER_ENABLE 7
+
 //track mode
 #define CREATE 0
 #define EDIT 1
@@ -98,8 +101,8 @@ struct flag {
 	uint8_t blink:1;
 	uint8_t din_start:1;
 	uint8_t din_stop:1;
-	uint8_t nudge_down:1;
-	uint8_t nudge_up:1;
+	//uint8_t nudge_down:1;
+	//uint8_t nudge_up:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -160,6 +163,7 @@ struct sequencer {
 	uint8_t TAP_HELD:1; //is the TAP button being held?
 	uint8_t ALT:1; //alternative function mode
 	uint8_t live_hits:1; //live hits enabled in manual mode?
+	uint8_t trigger_enable:1;
 	uint8_t primed:1;
 	uint8_t shuffle_amount:3;
 	uint8_t shuffle_multplier:3; //1 for MIDI and DIN SYNC slave modes, 4 for master modes @ 96 ppqn

@@ -736,7 +736,8 @@ void process_step(void){
 						} else {
 							turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
 							turn_on(sequencer.roll_mode + ROLL_MIN);
-							if (sequencer.live_hits) turn_on(LIVE_HITS);	
+							if (sequencer.live_hits) turn_on(LIVE_HITS);
+							if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);	
 						}
 					} else {
 						if (!sequencer.live_hits) turn_on(drum_hit[sequencer.current_inst].led_index); //display current instrument if not in live_hits mode
@@ -853,6 +854,7 @@ void process_step(void){
 						
 						//need to display shuffle/roll/live hits status here
 						if (sequencer.live_hits) turn_on(LIVE_HITS);
+						if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
 					}
 
 				} else {
@@ -1053,6 +1055,9 @@ void update_step_board() { //should this be in switches.c ?
 					if (press == LIVE_HITS) { //bit of kludge to make live hit toggling only work in MANUAL PLAY mode
 						sequencer.live_hits ^= 1;
 						if (sequencer.live_hits) turn_on(LIVE_HITS);
+					} else if (press == TRIGGER_ENABLE) {
+						sequencer.trigger_enable ^= 1;
+						if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
 					}
 				}
 				
@@ -1247,7 +1252,11 @@ void update_step_board() { //should this be in switches.c ?
 						if (press == LIVE_HITS) {
 							sequencer.live_hits ^= 1;
 							if (sequencer.live_hits) turn_on(LIVE_HITS);
-						}//update_shuffle(press); //just update live hits for now - need to update LEDs elswhere
+						} else if (press == TRIGGER_ENABLE) {
+							sequencer.trigger_enable ^= 1;
+							if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+						}
+						//update_shuffle(press); //just update live hits for now - need to update LEDs elswhere
 					}
 					
 					
