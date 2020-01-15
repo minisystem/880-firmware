@@ -43,9 +43,14 @@ void refresh(void) {
 	check_start_stop_tap();
 	//read_switches();
 	parse_switch_data();
-	if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits(); 
+	//if (sequencer.mode == MANUAL_PLAY && !sequencer.SHIFT && sequencer.live_hits) /*spi0_read_triggers();*/live_hits(); 
+	
+	if (sequencer.mode == MANUAL_PLAY) {
+		if (!sequencer.SHIFT && sequencer.live_hits) live_hits();
+		if (!sequencer.START && sequencer.trigger_enable) spi0_read_triggers();
+	}
 	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
-	if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
+	//if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
 	update_mode();
 	update_fill_mode();
 	check_clear_switch();
