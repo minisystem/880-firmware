@@ -132,7 +132,7 @@ void trigger_step(uint8_t part_playing) { //trigger all drums on current step
 		
 		if ((sequencer.pattern[sequencer.current_variation].part[part_playing][sequencer.current_step] >> i) &1) {
 			PORTD |= (1<<TRIG);
-			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
+			if (sequencer.trigger_1 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_1); //if trigger ins enabled then need to map trigger 1 and 2 to assign 1 and assign 2 on expander
 			if (sequencer.trigger_2 == i) TRIGGER_OUT |= (1<<TRIGGER_OUT_2); 			
 			
 			if (!(drum_hit[i].muted)) {
