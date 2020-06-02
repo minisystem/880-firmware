@@ -1413,7 +1413,20 @@ void check_tap(void) { //this is kind of inefficient - not generalized enough. m
 				}
 				
 				//sequencer.led_mask = 0xFFFF;
-				
+			//else -HERE IS WHERE TO PUT CLEAR + CURRENT_INST TO CLEAR ALL TRIGGERS FOR SELECTED INSTRUMENT
+			} else if (sequencer.CLEAR) { //clear triggers for current instrument in pattern
+				if (sequencer.current_inst == AC) { //not valid for AC
+									
+									
+					} else {
+									
+					for (int i = 0; i <= sequencer.step_num[sequencer.part_editing]; i++) {
+						sequencer.pattern[sequencer.current_variation].part[sequencer.part_editing][i] &= ~(1<<sequencer.current_inst);
+						sequencer.led_mask &= ~(1 << i);
+					}
+									
+				}
+			
 			} else { //add current instrument trigger to pattern
 				if (sequencer.current_inst == AC) {
 					sequencer.pattern[sequencer.current_variation].accent[sequencer.part_editing] |= 1<<sequencer.current_step;	

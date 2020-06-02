@@ -248,6 +248,11 @@ void check_inst_switches(void) {
 	if (button[INST_AC_1_SW].state) { //annoying exception for AC switch
 		button[INST_AC_1_SW].state ^= button[INST_AC_1_SW].state; //toggle state
 		
+		if (sequencer.CLEAR) {
+			
+			clear_mutes();
+			return;
+		}
 		switch(sequencer.mode) {
 		
 		case FIRST_PART: case SECOND_PART:	
@@ -742,6 +747,16 @@ void assign_mutes(uint8_t drum_index) {
 		drum_hit[drum_index].muted ^= 1<<0; //toggle drum mute
 				
 	}	
+}
+
+void clear_mutes(void) {
+	
+	for (int i = BD; i <= MA; i++) {
+		
+		drum_hit[i].muted = 0;
+		
+	}
+	
 }
 
 void process_inst_press(uint8_t drum_index) {

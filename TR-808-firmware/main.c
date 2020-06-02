@@ -135,6 +135,7 @@ int main(void)
 	midi_register_noteon_callback(&midi_device, note_on_event);
 	midi_register_noteoff_callback(&midi_device, note_off_event);
 	midi_register_realtime_callback(&midi_device, real_time_event);
+	midi_register_progchange_callback(&midi_device, program_change_event);
 	//midi_register_songposition_callback(&midi_device, song_position_event);
 	//setup MIDI USART
 	setup_midi_usart();

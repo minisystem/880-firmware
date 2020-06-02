@@ -58,6 +58,11 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 }
 
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
+	
+void program_change_event(MidiDevice * device, uint8_t channel, uint8_t program_num) {
+	
+}
+	
 
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 	if (sequencer.clock_mode != MIDI_SLAVE) return; //ignore incoming MIDI clock if not in MIDI slave. duh.

@@ -92,6 +92,8 @@ void assign_triggers(uint8_t drum_index);
 
 void assign_mutes(uint8_t drum_index);
 
+void clear_mutes(void);
+
 void process_inst_press(uint8_t drum_index);
 
 void process_track_press(void);
