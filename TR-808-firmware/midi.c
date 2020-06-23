@@ -60,7 +60,30 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
 	
 void program_change_event(MidiDevice * device, uint8_t channel, uint8_t program_num) {
+	//filter MIDI channel
+	if (sequencer.midi_channel != (channel & MIDI_CHANMASK)) return;
 	
+	uint8_t pattern_num = (program_num+16)%16;
+	uint8_t bank_num = program_num/16; //16 patterns per bank
+	if (bank_num != sequencer.pattern_bank) {
+		sequencer.pattern_bank = sequencer.previous_bank = bank_num;
+		flag.pattern_change = 1;
+	}
+	if (sequencer.mode == MANUAL_PLAY) {
+		if (pattern_num < NUM_BANKS) { //first 12 pattern places are for main patterns
+			sequencer.new_pattern = sequencer.previous_pattern = pattern_num;
+			if (sequencer.new_pattern != sequencer.current_pattern) flag.pattern_change = 1;
+						
+			} else { //remaining 4 patterns places are for intro/fills
+						
+			sequencer.current_intro_fill = pattern_num;
+						
+		}
+	
+	} else {
+		sequencer.new_pattern = sequencer.previous_pattern = pattern_num;
+		
+	}
 }
 	
 

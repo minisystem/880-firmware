@@ -61,6 +61,9 @@
 //track edit
 #define INSERT 14
 #define DELETE 15
+
+//shift lock
+#define SHIFT_LOCK 15
 	
 
 //extern uint8_t pre_scale[NUM_PRE_SCALES]; //does this need to be exturned? Just data. Could go in update_prescale() function?	
@@ -101,6 +104,7 @@ struct flag {
 	uint8_t blink:1;
 	uint8_t din_start:1;
 	uint8_t din_stop:1;
+	uint8_t shift_lock:1; //flag to indicate shift lock (set with SHIFT + STEP 16/DEL
 	//uint8_t nudge_down:1;
 	//uint8_t nudge_up:1;
 	

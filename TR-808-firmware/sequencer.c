@@ -1058,6 +1058,10 @@ void update_step_board() { //should this be in switches.c ?
 					} else if (press == TRIGGER_ENABLE) {
 						sequencer.trigger_enable ^= 1;
 						if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+					} else if (press == SHIFT_LOCK) {
+						
+						flag.shift_lock = 1;
+						
 					}
 				}
 				

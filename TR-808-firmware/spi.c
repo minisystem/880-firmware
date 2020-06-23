@@ -99,6 +99,10 @@ void spi_read_write(void) {
 	
 	//now process switch data, but this may be happening too fast for effective debouncing - maybe handle this in another function that runs less frequently?
 	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
+	if (flag.shift_lock) {
+		sequencer.SHIFT = 1; //SHIFT always set when shift lock is on		
+		//there are exceptions where shift lock maybe doesn't make sense. for instance, when using CLEAR + ACCENT to clear mutes. When shift lock is on it changes the pre-scale everytime CLEAR is presssed. Other examples?
+	}
 	sequencer.ALT = ((spi_current_switch_data[0] >> ALT_BIT) & 1);
 	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
 		

@@ -82,7 +82,7 @@ void update_mode(void) {
 				if (sequencer.current_pattern > 11) { //make 11 a constant here
 					sequencer.previous_pattern = sequencer.current_pattern; //save current pattern for return to pattern edit mode
 					sequencer.new_pattern = 11;
-					flag.pattern_change = 1; //bug here where another pattern is played 
+					flag.pattern_change = 1; //bug here where another pattern is played?
 				}
 			break;
 			
