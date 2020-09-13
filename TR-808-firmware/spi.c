@@ -102,7 +102,7 @@ void spi_read_write(void) {
 	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
 	if (flag.perf_lock) {
 		//blink(MODE_4_MANUAL_PLAY, BLINK_SLOW);
-		sequencer.SHIFT = 1; //SHIFT always set when shift lock is on		
+		//sequencer.SHIFT = 1; //SHIFT always set when shift lock is on		
 		//there are exceptions where shift lock maybe doesn't make sense. for instance, when using CLEAR + ACCENT to clear mutes. When shift lock is on it changes the pre-scale everytime CLEAR is presssed. Other examples?
 		
 	} else {

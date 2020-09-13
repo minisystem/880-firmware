@@ -182,11 +182,13 @@ void process_external_triggers(void) {
 					//if ((current_assign_port >> ASSIGN_2) &1) {
 					if (PIND & (1<<ASSIGN_2)) {	
 						//current_assign_port ^= (1 << ASSIGN_2);
-						spi_data[LATCH_3] |= (drum_hit[i].switch_bit);
-						if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
-					} else {
-						spi_data[LATCH_3] &= ~(drum_hit[i].switch_bit);
+						//spi_data[LATCH_3] |= (drum_hit[i].switch_bit);
+						spi_data[LATCH_3] ^= (-(drum_hit[i+SW_DRUM_OFFSET].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i+SW_DRUM_OFFSET].switch_bit;
 						if (!sequencer.SHIFT) turn_on(drum_hit[i + SW_DRUM_OFFSET].led_index);
+					} else {
+						//spi_data[LATCH_3] &= ~(drum_hit[i].switch_bit);
+						spi_data[LATCH_3] ^= (-(drum_hit[i].switch_value) ^ spi_data[LATCH_3]) & drum_hit[i].switch_bit;
+						if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);
 					}
 				} else {
 					if (!sequencer.SHIFT) turn_on(drum_hit[i].led_index);

@@ -1062,7 +1062,7 @@ void update_step_board() { //should this be in switches.c ?
 					} else if (press == PERF_LOCK) {
 						
 						flag.perf_lock = 1;
-						led[MODE_4_MANUAL_PLAY].blink = 1;
+						//led[MODE_4_MANUAL_PLAY].blink = 1;
 						
 					}
 				}
