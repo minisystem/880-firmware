@@ -420,19 +420,19 @@ void update_pattern() {
 			sequencer.new_pattern = rhythm_track.patterns[sequencer.track_measure].current_pattern;
 			sequencer.pattern_bank = rhythm_track.patterns[sequencer.track_measure].current_bank;
 		}
-		toggle_variation(); //only toggle variation at the end of the 2nd part
+		toggle_variation(); //only toggle variation at the end of the 2nd part - don't need to call this if pattern changes, yeah? so maybe put this as an else after if (flag.pattern_change)?
 		if (flag.pattern_change) {
 					
 			flag.pattern_change = 0;
 			flag.pre_scale_change = 1; //need to handle any change in pre-scale
 			sequencer.current_pattern = sequencer.new_pattern;
 			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
-			if (sequencer.mode  == MANUAL_PLAY) {
+			//if (sequencer.mode  == MANUAL_PLAY) {
 				sequencer.current_variation = VAR_A;
 				if (sequencer.variation_mode == VAR_B) sequencer.current_variation = VAR_B;
-			//not sure about A/B variation in the case of a pattern change - should A/B variation be reset to A when a pattern changes?
-				if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = ~sequencer.basic_variation;
-			}
+			//not sure about A/B variation in the case of a pattern change - should A/B variation be reset to A when a pattern changes? YES - David Lush pointed this out
+				if (sequencer.variation_mode == VAR_AB) sequencer.current_variation = VAR_A;// ~sequencer.basic_variation;
+			//}
 			sequencer.part_playing = FIRST;
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
