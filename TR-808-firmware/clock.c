@@ -26,6 +26,9 @@ void setup_clock(void) {
 	TIMSK1 = (1<<OCIE1A);
 	//Setup Timer3, timer for processing external timing events
 	TCCR3B = (1<<CS32) | (1<<CS30); // /1024 divider, 4X slower than master timer1
+	//setup Timer 4, timer for blinking LEDs
+	TCCR4B |= (1<<3); //clear on compare match WGM42 [3] not defined?
+	TCCR4B |= (1<<CS42) | (1<<CS40); // /1024 divide
 	
 	//set up DIN Sync timer output compare registers: maybe make this a variable for nudging and shifting DIN sync timing?
 	OCR2A = OCR2B = 70;//TIMER_OFFSET - 25; //need minimum 5 ms DIN sync clock pulse width	

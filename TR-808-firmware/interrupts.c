@@ -88,16 +88,17 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 
 ISR (TIMER2_COMPA_vect) {
 	
-	flag.blink = 1;
+	//flag.blink = 1;
 }
 
 ISR (TIMER3_COMPA_vect) {
   
-  
+  //flag.blink = 1;
 }
 
 ISR (TIMER4_COMPA_vect) {
   
+  flag.blink = 1;
   
 }
 

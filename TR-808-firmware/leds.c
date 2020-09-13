@@ -112,21 +112,22 @@ void toggle(uint8_t led_index) { //careful with this - state is not preserved wh
 	}
 }
 
-void blink(uint8_t led_id, uint8_t speed) {
+void blink(uint8_t led_id, uint16_t speed) {
 	//turn on timer2 interrupt for blinking clear LED
-	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
-	TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
-	TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
-	TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
-	TCCR2B |=  (1<<WGM22);
-	OCR2A = speed; //alright, what the hell is this? Make it a constant so it actually means something you twit.
+	//TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20); //turn on Timer2 /1024 divide
+	//TCCR2A &= ~(1<<COM2A1) | ~(1<<COM2A0); //disconnect OC0A
+	//TIMSK2 |= (1<<OCIE2A); //enable Timer2 output compare A interrupt
+	//TCCR2A |= (1 << WGM20);// | (1<<WGM20); //clear timer on OCRA compare match where OCRA = OCRB
+	//TCCR2B |=  (1<<WGM22);
+	//OCR2A = speed; //alright, what the hell is this? Make it a constant so it actually means something you twit.
 	
-	////try using timer4
-	//TCCR4A |= (1<<WGM42); //clear on compare match
+	//try using timer4
+	//TCCR4B |= (1<<3); //clear on compare match WGM42 [3] not defined?
 	//TCCR4B |= (1<<CS42) | (1<<CS40); // /1024 divide
-	//TIMSK4 |= (OCIE4A)
+	TIMSK4 |= (1<<OCIE4A); //enable Timer4 output compare B interrupt
+	OCR4A = speed;
 	
-	TCCR4A |= 
+	//TCCR4A |= 
 				
 	if (flag.blink) {
 		flag.blink = 0;
@@ -136,10 +137,15 @@ void blink(uint8_t led_id, uint8_t speed) {
 }
 
 void stop_blink(uint8_t led_id) {
-	TCCR2A = 0; //turn off timer2 - you know? don't stop timer here. it messes with DIN SYNC clock pulse.
-	TIMSK2 &= ~(1<<OCIE2A);
-	OCR2A = 70;
-	turn_on(led_id);	
+	//TCCR2A = 0; //turn off timer2 - you know? don't stop timer here. it messes with DIN SYNC clock pulse.
+	//TIMSK2 &= ~(1<<OCIE2A);
+	//OCR2A = 70;
+	//turn_on(led_id);	
+	
+	//TCCR4B = 0;
+	TIMSK4 &= ~(1<<OCIE4A);
+	turn_on(led_id);
+	
 	
 }
 

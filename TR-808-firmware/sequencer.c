@@ -628,7 +628,7 @@ void process_step(void){
 				case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR:
 					check_tap();
 					if (sequencer.ALT) break;				
-					if (!sequencer.SHIFT && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
+					if ((!sequencer.SHIFT) && sequencer.part_editing == sequencer.part_playing) {//only blink if the part playing is the same as the part being edited and SHIFT is not being held
 						spi_data[LATCH_1] = (1 << sequencer.current_step) | sequencer.led_mask;//sequencer.step_led_mask[sequencer.variation][sequencer.current_inst];
 						spi_data[LATCH_1] &= ~(sequencer.led_mask & (1<<sequencer.current_step));
 						spi_data[LATCH_0] = ((1 << sequencer.current_step) >> 8) | (sequencer.led_mask >> 8);
@@ -783,8 +783,9 @@ void process_step(void){
 				
 				switch(sequencer.mode) {
 					
-					case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR: //what about manual play?
-						if (sequencer.SHIFT) {
+					case FIRST_PART: case SECOND_PART: case PATTERN_CLEAR: //what about manual play? this allows immediate LED updating when patterns or shuffle/roll modes are changed - extend to other modes
+					//so no switch case required?
+						if (sequencer.SHIFT) { 
 							if (sequencer.ALT) {
 								turn_on(sequencer.new_pattern);
 							} else {					
@@ -1058,9 +1059,10 @@ void update_step_board() { //should this be in switches.c ?
 					} else if (press == TRIGGER_ENABLE) {
 						sequencer.trigger_enable ^= 1;
 						if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
-					} else if (press == SHIFT_LOCK) {
+					} else if (press == PERF_LOCK) {
 						
-						flag.shift_lock = 1;
+						flag.perf_lock = 1;
+						led[MODE_4_MANUAL_PLAY].blink = 1;
 						
 					}
 				}

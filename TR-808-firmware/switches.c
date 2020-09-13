@@ -85,7 +85,7 @@ void check_write_sw(void) {
 		button[WRITE_SW].state ^= button[WRITE_SW].state; //need to toggle in every mode, but only do something in COMPOSE_RHYTHM mode
 		
 		if (sequencer.mode == COMPOSE_RHYTHM) {
-			flag.shift_lock = 0; //clear shift lock flag	
+			flag.perf_lock = 0; //clear shift lock flag	
 			if (sequencer.ALT) {
 				//return;
 				//if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure 
@@ -125,10 +125,10 @@ void check_write_sw(void) {
 				
 				}
 			}// else {
-				//flag.shift_lock = 0;		
+				//flag.perf_lock = 0;		
 		} else {
 			
-			if (flag.shift_lock) flag.shift_lock = 0; //turn off shift lock
+			if (flag.perf_lock) flag.perf_lock = 0; //turn off shift lock
 		}
 	}	
 }
@@ -527,7 +527,7 @@ void check_clear_switch(void) {
 				//flag.blink = 0;
 				//toggle(MODE_1_PATTERN_CLEAR);
 				//}
-				blink(MODE_1_PATTERN_CLEAR, BLINK_SLOW);
+				blink(MODE_1_PATTERN_CLEAR, BLINK_FAST);
 			} else if (sequencer.mode == COMPOSE_RHYTHM) { //same for clearing rhythm track in compose mode
 				//if (flag.blink) {
 				//flag.blink = 0;
@@ -538,6 +538,7 @@ void check_clear_switch(void) {
 		}
 		if (button[CLEAR_SW].state) {
 			button[CLEAR_SW].state ^= button[CLEAR_SW].state; //need to reset CLEAR SW state here otherwise it gets handled elsewhere when we don't want it to.
+			TCNT4 = 0; //reset Timer4 for LED blinking function
 			switch (sequencer.mode) {
 			
 				case PATTERN_CLEAR:

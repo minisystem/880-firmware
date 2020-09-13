@@ -67,14 +67,15 @@
 #define PRE_SCALE_LED_MASK	0b11000011
 #define NUM_LEDS 55
 
-#define BLINK_FAST 140
-#define BLINK_SLOW 255
+#define BLINK_FAST ((uint16_t)600)
+#define BLINK_SLOW ((uint16_t)2400)
 
 struct led{
 	
 	uint8_t spi_bit;
 	uint8_t spi_byte:4;
 	uint8_t state:1;
+	uint8_t previous_state:1;
 	uint8_t blink:1;
 	
 	
@@ -90,7 +91,7 @@ void flash_once(uint8_t led_index);
 
 void toggle(uint8_t led_index);
 
-void blink(uint8_t led_id, uint8_t speed);
+void blink(uint8_t led_id, uint16_t speed);
 void stop_blink(uint8_t led_id);
 
 void turn_off_all_inst_leds(void);
