@@ -437,7 +437,9 @@ void update_pattern() {
 			turn_off(SECOND_PART_LED);
 			turn_on(FIRST_PART_LED);
 					
-		}
+		} //else { test this - toggle variation up there is redundant if there is a pattern change. faster or no?
+			//toggle_variation();
+		//}
 				
 		if (sequencer.mode == MANUAL_PLAY) {
 			update_fill();
@@ -1258,9 +1260,17 @@ void update_step_board() { //should this be in switches.c ?
 						if (press == LIVE_HITS) {
 							sequencer.live_hits ^= 1;
 							if (sequencer.live_hits) turn_on(LIVE_HITS);
-						} else if (press == TRIGGER_ENABLE) {
-							sequencer.trigger_enable ^= 1;
-							if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+						} else if (press == TRIGGER_ENABLE) { //need to change so that trigger enable onl allowed when in SYNC OUT mode (to stop all drums from sounding when RUN/STOP is floating in other modes)
+							//this allows trigger enable to turned on only when clock mode is set to DIN SYNC MASTER but turned off in any oher sync mode
+							if (sequencer.clock_mode == DIN_SYNC_MASTER) {
+								sequencer.trigger_enable ^= 1;
+								if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+							} else {
+								sequencer.trigger_enable = 0;
+								turn_off(TRIGGER_ENABLE);
+							}
+							
+							
 						}
 						//update_shuffle(press); //just update live hits for now - need to update LEDs elswhere
 					}
