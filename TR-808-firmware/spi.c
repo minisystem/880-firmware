@@ -56,6 +56,7 @@ void spi0_read_triggers() {
 	//disable SPI0
 	SPCR0 &= ~(1<<SPE0);
 	DDRB &= ~(1<<SPI0_SS); //need to set PB2 back to input for TAP input
+	//DDRB &= ~(1<<SPI0_SCK); //float SPI0 SCK for TII LED
 	
 	//debounce trigger data
 	spi0_current_trigger_byte0 ^= spi0_previous_trigger_byte0;

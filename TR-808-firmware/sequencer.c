@@ -1264,10 +1264,17 @@ void update_step_board() { //should this be in switches.c ?
 							//this allows trigger enable to turned on only when clock mode is set to DIN SYNC MASTER but turned off in any oher sync mode
 							if (sequencer.clock_mode == DIN_SYNC_MASTER) {
 								sequencer.trigger_enable ^= 1;
-								if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+								if (sequencer.trigger_enable) {
+									turn_on(TRIGGER_ENABLE);
+									DDRB |= (1<<SPI0_SCK); //set SCK as output to turn on TII LED
+								} else {
+									turn_off(TRIGGER_ENABLE);
+									DDRB &= ~(1<<SPI0_SCK); //float SCK to turn off TII LED
+								}
 							} else {
 								sequencer.trigger_enable = 0;
 								turn_off(TRIGGER_ENABLE);
+								DDRB &= ~(1<<SPI0_SCK); //float SCK to turn off TII LED
 							}
 							
 							
