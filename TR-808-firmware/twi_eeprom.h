@@ -57,6 +57,7 @@ typedef struct {
 //extern struct pattern_data eeprom_pattern;
 
 //typedef struct pattern_data pattern_data;
+void blocking_copy_active_pattern(uint8_t dest_pattern);
 
 void eeprom_init();
 pattern_data read_pattern(uint16_t memory_address, uint8_t bank);

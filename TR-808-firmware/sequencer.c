@@ -1004,6 +1004,8 @@ void update_step_board() { //should this be in switches.c ?
 				} else {
 					sequencer.step_num_new = press;
 					if (sequencer.step_num_new != (sequencer.step_num[sequencer.part_editing])) flag.pattern_edit = 1;
+					
+					
 				}
 				
 				break; //break or return?
@@ -1211,7 +1213,7 @@ void update_step_board() { //should this be in switches.c ?
 						//BUT, can't edit patterns when sequencer isn't running except for changing pre-scale.
 						if (press < NUM_BANKS) {
 							if (flag.pattern_edit == 1) { //there is a bug where clearing a pattern in one bank messes with patterns in another bank. Perhaps the problem originates here. NOPE - bug is you not being able to tell the difference between 64 kilo*bits* and kilo*bytes*, you nitwit.							
-								flag.pattern_edit = 0;						
+								flag.pattern_edit= 0;						
 								start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank); //save changed pattern at end of measure	
 													
 							}
@@ -1225,9 +1227,16 @@ void update_step_board() { //should this be in switches.c ?
 			
 				} else {
 					
-					if (sequencer.CLEAR) { //when the sequencer isn't running pressing clear will copy current pattern into new slot
+					if (sequencer.CLEAR) { //when the sequencer isn't running pressing clear will copy current pattern into new slot- copy/paste
+										
+						if (sequencer.current_pattern != press) {
+							blocking_copy_active_pattern(press);
+							
+							// NOTE: this call below did not work because we suspect that it tried to read the pattern data from the pressed location before the write had completed
+							// start_write_current_pattern(press, sequencer.pattern_bank); //write current pattern to new pattern slot
+							
+						}
 						
-						if (sequencer.current_pattern != press) start_write_current_pattern(press, sequencer.pattern_bank); //write current pattern to new pattern slot
 						
 					} else {
 						
@@ -1520,7 +1529,8 @@ void toggle_variation(void) {
 
 
 void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
-	
+	//turn_on(ACCENT_1_LED);
+	//TRIGGER_OUT |= (1<<TRIGGER_OUT_1);
 	pattern_data next_pattern;
 	
 	next_pattern = read_pattern(pattern_num*PAGES_PER_PATTERN*PAGE_SIZE, pattern_bank);
@@ -1541,7 +1551,7 @@ void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
 	
 	//sequencer.part_playing = sequencer.part_editing;
-	
+	//turn_off(ACCENT_1_LED);
 }
 
 void read_rhythm_track(void) {

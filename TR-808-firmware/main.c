@@ -49,6 +49,7 @@ void refresh(void) {
 		if ((!sequencer.SHIFT) && sequencer.live_hits) live_hits();
 		if (!sequencer.START && sequencer.trigger_enable) spi0_read_triggers();
 	}
+	//DDRB &= ~(1<<SPI0_SCK); //float SPI0 to turn off TII LED
 	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	//if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
 	update_mode();

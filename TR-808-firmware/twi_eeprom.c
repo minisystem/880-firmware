@@ -62,6 +62,8 @@ struct recall			*p_read_recall_data;
 // Create TWI/I2C buffer, size to largest command
 char    TWI_buffer[sizeof(WRITE_PATTERN)];
 
+void copy_active_pattern_data(pattern_data *out);
+
 void eeprom_init(){
 	// Specify startup parameters for the TWI/I2C driver
 	TWI_init(   F_CPU,           // clock frequency
@@ -114,6 +116,24 @@ volatile int current_pattern_page = PATTERN_PAGE_STOP_WRITING;
 int current_writing_page = -1;
 uint8_t current_pattern_num;
 uint8_t current_pattern_bank;
+
+void blocking_copy_active_pattern(uint8_t dest_pattern) {
+	pattern_data pattern_to_write;
+	copy_active_pattern_data(&pattern_to_write);
+	for (int page_num = 0; page_num <= NUM_PAGES_PATTERN; ++page_num) {
+		write_pattern_page(dest_pattern*PAGES_PER_PATTERN*PAGE_SIZE, sequencer.pattern_bank, &pattern_to_write, page_num);
+	}
+}
+
+void copy_active_pattern_data(pattern_data *out) {
+	out->variation_a = sequencer.pattern[VAR_A];
+	out->variation_b = sequencer.pattern[VAR_B];
+	out->step_num[FIRST] = sequencer.step_num[FIRST];
+	out->step_num[SECOND] = sequencer.step_num[SECOND];
+	out->pre_scale = sequencer.pre_scale;
+	out->shuffle = sequencer.shuffle_amount;
+}
+
 void start_write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	// This is the check how many times writing is getting called. 
 	/*static int called_times = 0;
@@ -128,12 +148,7 @@ void start_write_current_pattern(uint8_t pattern_num, uint8_t pattern_bank) {
 	current_pattern_bank = pattern_bank;
 	current_pattern_num = pattern_num;
 	
-	pattern_to_write.variation_a = sequencer.pattern[VAR_A];
-	pattern_to_write.variation_b = sequencer.pattern[VAR_B];
-	pattern_to_write.step_num[FIRST] = sequencer.step_num[FIRST];
-	pattern_to_write.step_num[SECOND] = sequencer.step_num[SECOND];
-	pattern_to_write.pre_scale = sequencer.pre_scale;
-	pattern_to_write.shuffle = sequencer.shuffle_amount;
+	copy_active_pattern_data(&pattern_to_write);
 	
 	current_pattern_page = 0;
 	current_writing_page = -1;
@@ -161,9 +176,10 @@ void write_pattern_page(uint16_t memory_address, uint8_t bank, pattern_data *w_d
 	p_write_pattern->low_byte = memory_address;
 	// this is directly putting bytes_to_write bytes of the input PATTERN w_data into the TWI_buffer *after* the address bytes (hence the +2)
 	memcpy(TWI_buffer+2, (char *)w_data + page_number*PAGE_SIZE, bytes_to_write);
-	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
+	TWI_master_start_write_pattern(     EEPROM_DEVICE_ID,       // device address of eeprom chip
 	2 + bytes_to_write
 	);
+	while(TWI_busy); //added by omar to protect twi buffer
 }
 
 struct rhythm_track eeprom_read_rhythm_track(uint16_t memory_address) {
@@ -263,21 +279,25 @@ void eeprom_write_recall_data() {
 	TWI_master_start_write(     EEPROM_DEVICE_ID,       // device address of eeprom chip
 	2 + sizeof(recall_data)
 	);
+	while(TWI_busy);//added by omar to protect twi buffer
 	
 }
 
 // optional callback function for TWI/I2C driver
+// We only have special handling for pattern writing
 void handle_TWI_result(uint8_t return_code){
 	//flag.twi_init_error = 0;
-	if(return_code==TWI_success){
-		if (TWI_operation == TWI_OP_WRITE_ONLY && current_pattern_page == current_writing_page) {
-			current_pattern_page++;
+	if (TWI_operation == TWI_OP_WRITE_PATTERN) {
+		if(return_code==TWI_success){
+			if (current_pattern_page == current_writing_page) {
+				current_pattern_page++;
+			}
+			//flag.twi_init_error = 1;
+			//turn_on(IF_VAR_B_LED);
+		} else {
+			// stop writing if there is some error
+			current_pattern_page = PATTERN_PAGE_STOP_WRITING;
 		}
-		//flag.twi_init_error = 1;
-		//turn_on(IF_VAR_B_LED);
-	} else {
-		// stop writing if there is some error
-		current_pattern_page = PATTERN_PAGE_STOP_WRITING;
-	} 
+	}
 }
 

@@ -9,6 +9,8 @@
 #include "twi.h"
 #include <avr/io.h>
 
+void TWI_master_start_write_private(uint8_t slave_addr, uint16_t write_bytes, uint8_t write_mode);
+
 // initialize the component
 void TWI_init(long cpu_freq, long bit_rate, char* buffer, uint16_t max, void (*callback)(volatile uint8_t TWI_return_code)){
 	TWI_return_result = callback;
@@ -21,17 +23,28 @@ void TWI_init(long cpu_freq, long bit_rate, char* buffer, uint16_t max, void (*c
 
 // master write to slave
 void TWI_master_start_write(uint8_t slave_addr, uint16_t write_bytes){
+	TWI_master_start_write_private(slave_addr, write_bytes, TWI_OP_WRITE_ONLY);
+}
+
+void TWI_master_start_write_pattern(uint8_t slave_addr, uint16_t write_bytes){
+	TWI_master_start_write_private(slave_addr, write_bytes, TWI_OP_WRITE_PATTERN);
+}
+
+
+void TWI_master_start_write_private(uint8_t slave_addr, uint16_t write_bytes, uint8_t write_mode){
 	TWI_busy=1;
 	if(write_bytes>TWI_buffer_max){
 		TWI_write_bytes=TWI_buffer_max;
 		}else{
 		TWI_write_bytes=write_bytes;
 	}
-	TWI_operation=TWI_OP_WRITE_ONLY;
+	TWI_operation=write_mode;
 	TWI_master_state = TWI_WRITE_STATE;
 	TWI_target_slave_addr = slave_addr;
 	TWCR = TWI_START; // start TWI master mode
 }
+
+
 
 // master read from slave
 void TWI_master_start_read(uint8_t slave_addr, uint16_t read_bytes){
