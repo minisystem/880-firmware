@@ -49,7 +49,7 @@ void refresh(void) {
 		if ((!sequencer.SHIFT) && sequencer.live_hits) live_hits();
 		if (!sequencer.START && sequencer.trigger_enable) spi0_read_triggers();
 	}
-	//DDRB &= ~(1<<SPI0_SCK); //float SPI0 to turn off TII LED
+	
 	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	//if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
 	update_mode();
@@ -72,7 +72,7 @@ void refresh(void) {
 	//update_spi();
 	spi_read_write();
 	write_next_pattern_page();
-	
+	//DDRB &= ~(1<<SPI0_SCK); //float SPI0 to turn off TII LED
 	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
 	//PORTD |= (1<<TRIG);
 	//TRIGGER_OUT &= TRIGGER_OFF;
@@ -225,7 +225,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 112; //  BETA //0.9.8
+	sequencer.version = 113; //  BETA //0.9.8
 	
 	//flush spi0 buffer
 	
