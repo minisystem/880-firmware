@@ -1,8 +1,8 @@
 /*
  * mode.h
- * JR-808 firmware ATMEGA328PB
+ * Open808 firmware ATMEGA328PB
  * minisystem
- * system79.com
+ * system80.net
  */
 #ifndef MODE_H
 #define MODE_H
@@ -12,7 +12,7 @@
 #define FILL_MODE_LATCH_4_LED_MASK 0b00111111
 #define FILL_MODE_LATCH_2_LED_MASK 0b11110000
 #define NUM_FILL_MODES 6
-#define NUM_SYNC_MODES 4
+#define NUM_CLOCK_MODES 5
 #define MANUAL 0
 enum global_mode {
 	
@@ -25,15 +25,24 @@ enum global_mode {
 		
 	};
 	
-enum sync_mode {
+enum clock_mode {
 	
 	MIDI_SLAVE,
 	MIDI_MASTER,
 	DIN_SYNC_SLAVE,
-	DIN_SYNC_MASTER
+	DIN_SYNC_MASTER,
+	PULSE_SYNC_SLAVE
 	
 	};	
 	
+enum shift_mode { //not yet implemented, but should be useful for set up
+	
+	TRIGGER_ASSIGN,
+	MIDI_ASSIGN,
+	SYNC_NUDGE, //nudge ppq for DIN sync tweaking
+	SYNC_DIVIDE //divide incoming MIDI clock
+	
+	};	
 
 
 extern uint8_t mode_index;

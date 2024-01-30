@@ -1,8 +1,8 @@
 /*
  * sequencer.h
- * JR-808 firmware ATMEGA328PB
+ * Open808 firmware ATMEGA328PB
  * minisystem
- * system79.com
+ * system80.net
  */
 
 
@@ -22,16 +22,48 @@
 #define NUM_STEPS 16
 #define NO_STEPS 16 //null state of part 2 step number
 
+#define NUM_BANKS 12 //12 banks of patterns
+
+#define BASIC_RHYTHM 12 //number of basic rhythms
+
 #define NUM_PATTERNS 64 //number of patterns per rhythm track
+
+#define NUM_TRACKS 12 //12 rhythm tracks
 
 //define pre-scale ppqn dividers
 #define NUM_PRE_SCALES 4
-#define PRE_SCALE_LED_MASK 0b11000011
 
-#define PRE_SCALE_1 8
-#define PRE_SCALE_2 4
-#define	PRE_SCALE_3 6
-#define	PRE_SCALE_4 3
+
+//pulses per qarter note for different pre-scales
+//8/4/6/3 for 24 ppqn, 32/16/24/12 for 96 ppqn
+#define PRE_SCALE_1 32
+#define PRE_SCALE_2 16
+#define	PRE_SCALE_3 24
+#define	PRE_SCALE_4 12
+
+#define SHUFFLE_MIN 0
+#define SHUFFLE_MAX 6
+#define ROLL_MIN	8 //ROLL_MIN/MAX refer to absolute switch positions - used as offsets for setting ROLL LEDs and reading step switches
+#define ROLL_MAX	14
+#define NO_ROLL		0 //roll mode off
+#define ROLL_32		5 //max roll mode
+
+//live hits (step 7)
+#define LIVE_HITS 6
+
+//trigger enable (step 8)
+#define TRIGGER_ENABLE 7
+
+//track mode
+#define CREATE 0
+#define EDIT 1
+
+//track edit
+#define INSERT 14
+#define DELETE 15
+
+//performance lock
+#define PERF_LOCK 15
 	
 
 //extern uint8_t pre_scale[NUM_PRE_SCALES]; //does this need to be exturned? Just data. Could go in update_prescale() function?	
@@ -56,14 +88,25 @@ struct flag {
 	//uint8_t step_num_change:1;//not currently used
 	uint8_t pattern_edit:1; //flag if pattern is edited, need to write to eeprom at end of measure
 	uint8_t pattern_change:1;
+	uint8_t last_pattern:1;
+	uint8_t track_edit:1;
 	uint8_t new_measure:1;
 	uint8_t pre_scale_change:1;
 	uint8_t tap:1;
 	uint8_t intro:1; //flag for starting with selected intro pattern in manual play mode
 	uint8_t fill:1;
-	uint8_t din_start:1;
+	uint8_t slave_start:1;
+	uint8_t slave_stop:1;
+	uint8_t delay_slave_start:1; //flag for independent restart while clock slave
+	uint8_t wait_for_master_tick:1;	
 	uint8_t shuffle_step:1; //flag to delay step when shuffle is active
 	uint8_t shuffle_change:1; //flag to indicate shuffle amount has changed
+	uint8_t blink:1;
+	uint8_t din_start:1;
+	uint8_t din_stop:1;
+	uint8_t perf_lock:1; //flag to indicate performance lock (set with SHIFT + STEP 16/DEL, clear by pressing just SHIFT)
+	//uint8_t nudge_down:1;
+	//uint8_t nudge_up:1;
 	
 }; 
 struct pattern { //current pattern will be loaded into ram from eeprom. changing pattern will write to eeprom and load next pattern
@@ -72,37 +115,74 @@ struct pattern { //current pattern will be loaded into ram from eeprom. changing
 	//uint16_t step_led_mask[17];
 };
 
-struct rhythm_pattern {
+struct track_pattern { //maybe don't need 64 patterns in RAM, just current pattern and address of next pattern? Just have pattern_position to tell it where to get the next pattern in memory: pattern_position + 1 up to NUM_PATTERNS
 	
-	uint8_t pattern_num:5; //currently only 16 patterns available, but could have 32 patterns by implementing feature to access patterns 17-32: TODO
-	uint8_t variation:1; //store variation with rhythm pattern - distinct from original 808 rhythm play
+	uint8_t current_pattern:4;
+	uint8_t current_bank:4;
+	//what about variation? Can store variation here
+	//uint8_t current_variation:1;
+	//uint8_t length:7; //need to know when we've hit last measure of rhythm track
+	
 	
 	};
 	
+struct rhythm_track {
+	
+	struct track_pattern patterns[NUM_PATTERNS];
+	uint8_t	length;
+	//uint8_t current_measure;
+	
+	};	
+
+extern struct rhythm_track rhythm_track;	
+
+struct recall {
+	
+	uint8_t bank:4;
+	uint8_t pattern:4;
+	uint8_t midi_channel:4;
+	uint8_t trigger_1;
+	uint8_t trigger_2;
+	// when we need to store more things, they should go AFTER this point
+	//uint8_t TII_active:1;
+	//uint8_t sync_mode:3;
+	
+	};	
+
+extern struct recall recall;	
 //struct rhythm_track {
 //
 	//rhythm_pattern pattern[NUM_PATTERNS];	
 	//
 //}
 	
-extern struct rhythm_pattern rhythm_track[NUM_PATTERNS];
+//extern struct rhythm_track rhythm_track;//[NUM_PATTERNS];
 
 struct sequencer {
 	
 	enum global_mode mode;
-	enum sync_mode sync_mode;
+	enum clock_mode clock_mode;
 	uint8_t fill_mode:4;
 	uint8_t SHIFT:1; //is SHIFT key being held?
 	uint8_t START:1; //is sequencer running or not?
 	uint8_t CLEAR:1; //is the clear button being held?
-	//uint8_t SHUFFLE:1;
+	uint8_t TAP_HELD:1; //is the TAP button being held?
+	uint8_t ALT:1; //alternative function mode
+	uint8_t live_hits:1; //live hits enabled in manual mode?
+	uint8_t trigger_enable:1;
+	uint8_t primed:1;
 	uint8_t shuffle_amount:3;
+	uint8_t shuffle_multplier:3; //1 for MIDI and DIN SYNC slave modes, 4 for master modes @ 96 ppqn
 	uint8_t new_shuffle_amount:3;
-	uint8_t shuffle_ppqn_count:4;
+	uint8_t shuffle_ppqn_count:4;//may need to up bit depth for 96ppqn
+	uint8_t roll_mode:3;
 	struct pattern pattern[2]; //Variation A:0, Variation B: 1
-	uint16_t step_led_mask[2][17];
-	uint8_t variation_toggle:1;
-	uint8_t variation:1; //variation A or variation B
+	uint8_t pattern_bank:4;
+	uint8_t previous_bank:4; //place holder for bank to return to when cycling through modes back to pattern edit mode
+	//uint16_t step_led_mask[2][17];
+	uint16_t led_mask;
+	uint8_t basic_variation:1; //variation A or variation B
+	uint8_t current_variation:1; //variation currently playing
 	uint8_t intro_fill_var:1; //intro/fill variation
 	enum variation_mode variation_mode; //0 = A, 1 = B, 2 = toggle AB
 	uint8_t step_num[NUM_PARTS];
@@ -112,12 +192,21 @@ struct sequencer {
 	uint8_t part_editing:1; //part currently being edited. Determined by mode
 	uint8_t pre_scale:2;
 	uint8_t current_pattern:4;
+	uint8_t previous_pattern:4; //place holder for pattern being edited when cycling between modes
 	uint8_t new_pattern:4;//will need to use this when in manual play and rhythm compose modes
 	uint8_t current_intro_fill:4;
-	uint8_t current_measure;
+	uint8_t current_measure_auto_fill:6; //counter used for counting measures for AUTO FILL INs
+	uint8_t track_measure:7; //counter used to count measures during rhythm track play/compose
+	uint8_t track_mode:1;
+	uint8_t track_loop:1; 
+	uint8_t current_rhythm_track:4;
+	//struct rhythm_track rhythm_track;
 	enum drum current_inst; //this is index of drum_hit struct
 	uint8_t var_led_mask;
-	
+	uint8_t trigger_1:5; //trigger assignments from AC, BD-CH - 17
+	uint8_t trigger_2:5;
+	uint8_t midi_channel:4;
+	uint8_t version; //firmware version
 	};
 		
 
@@ -139,7 +228,20 @@ void update_shuffle(uint8_t shuffle_amount);
 void check_tap(void);
 void toggle_variation(void);
 
-void read_next_pattern(uint8_t pattern_num);
-void write_current_pattern(uint8_t pattern_num);
+void show_current_measure(void);
+void show_version_steps(void);
+
+void update_pattern(void);
+void update_track_play(void);
+
+void read_next_pattern(uint8_t pattern_num, uint8_t pattern_bank);
+
+void delete_track_pattern(uint8_t track_num);
+void insert_track_pattern(uint8_t track_num);
+
+//void read_next_track_pattern(uint8_t rhythm_track_num, uint8_t pattern_num);
+void write_rhythm_track(void);
+void read_rhythm_track(void);
+void update_rhythm_track(uint8_t track_number);
 
 #endif 

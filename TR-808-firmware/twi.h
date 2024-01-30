@@ -86,6 +86,7 @@ volatile uint8_t TWI_master_state;
 #define TWI_OP_WRITE_ONLY 0x01
 #define TWI_OP_READ_ONLY 0x02
 #define TWI_OP_WRITE_THEN_READ 0x03
+#define TWI_OP_WRITE_PATTERN 0x04
 
 // control variables
 volatile uint8_t TWI_operation;
@@ -106,6 +107,7 @@ void (*TWI_return_result)(volatile uint8_t TWI_return_code);
 // define supported funcitons
 void TWI_init(long cpu_freq, long bit_rate, char* buffer, uint16_t max, void (*callback)(volatile uint8_t TWI_return_code));
 void TWI_master_start_write(uint8_t slave_addr, uint16_t write_bytes);
+void TWI_master_start_write_pattern(uint8_t slave_addr, uint16_t write_bytes);
 void TWI_master_start_read(uint8_t slave_addr, uint16_t read_bytes);
 void TWI_master_start_write_then_read(uint8_t slave_addr, uint16_t write_bytes, uint16_t read_bytes);
 //void TWI_enable_slave_mode(uint8_t my_slave_addr, uint8_t enable_general_call, void (*TWI_return_fn)(uint8_t TWI_return_value));

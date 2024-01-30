@@ -2,6 +2,7 @@
 #define LEDS_H
 
 #include "hardware.h"
+#include "sequencer.h"
 //define LED indices
 #define	STEP_9_LED	8
 #define	STEP_10_LED	9
@@ -59,20 +60,29 @@
 #define	CB_9_LED	53
 #define	CY_10_LED	54
 
+#define PRE_SCALE_BIT_1		(1<<5) //facilites direct manipulation of spi latch 5 for setting pre-scale LEDs
+#define PRE_SCALE_BIT_2		(1<<4)
+#define PRE_SCALE_BIT_3		(1<<3)
+#define PRE_SCALE_BIT_4		(1<<2)
+#define PRE_SCALE_LED_MASK	0b11000011
 #define NUM_LEDS 55
 
+#define BLINK_FAST ((uint16_t)600)
+#define BLINK_SLOW ((uint16_t)2400)
 
 struct led{
 	
 	uint8_t spi_bit;
 	uint8_t spi_byte:4;
 	uint8_t state:1;
+	uint8_t previous_state:1;
 	uint8_t blink:1;
 	
 	
 	};
 
 extern struct led led[NUM_LEDS];
+extern uint8_t track_led[NUM_TRACKS];
 	
 void turn_on(uint8_t led_index);
 void turn_off(uint8_t led_index);
@@ -81,11 +91,20 @@ void flash_once(uint8_t led_index);
 
 void toggle(uint8_t led_index);
 
+void blink(uint8_t led_id, uint16_t speed);
+void stop_blink(uint8_t led_id);
+
 void turn_off_all_inst_leds(void);
+
+void show_mutes(void);
+
+void show_version_inst(void);
 
 void update_inst_leds(void);
 
 void update_step_led_mask(void);
+
+void update_inst_led_mask(void);
 
 void update_prescale_leds(void);
 
