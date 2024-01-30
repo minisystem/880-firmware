@@ -35,6 +35,7 @@ struct drum_hit {
 	uint8_t switch_value:1; //is the switch one or 0?
 	uint8_t led_index; //index for instrument LED
 	uint8_t muted:1;
+	uint8_t solo:1;
 };
 
 extern struct drum_hit drum_hit[17];

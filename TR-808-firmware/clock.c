@@ -126,3 +126,14 @@ void process_external_sync_pulse(void) { //stupid duplicate code - just combine 
 		TCCR1B |= (1<<CS12);//turn timer1 on
 }
 
+void poll_din_reset(void) {
+	
+	flag.din_reset = (PIND >> DIN_RESET) & 1;
+	//debounce
+	flag.din_reset ^= flag.din_reset_previous;	
+	flag.din_reset_previous ^= flag.din_reset;
+	flag.din_reset &= flag.din_reset_previous;
+	
+	if (flag.din_reset) sequencer.current_step = -1;
+	
+}

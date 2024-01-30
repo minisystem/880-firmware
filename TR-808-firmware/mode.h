@@ -27,10 +27,10 @@ enum global_mode {
 	
 enum clock_mode {
 	
-	MIDI_SLAVE,
 	MIDI_MASTER,
-	DIN_SYNC_SLAVE,
+	MIDI_SLAVE,
 	DIN_SYNC_MASTER,
+	DIN_SYNC_SLAVE,
 	PULSE_SYNC_SLAVE
 	
 	};	
@@ -48,7 +48,11 @@ enum shift_mode { //not yet implemented, but should be useful for set up
 extern uint8_t mode_index;
 extern uint8_t fill_index; 
 
-void update_mode(void);
-void update_fill_mode(void);
+void check_mode_switch(void);
+void set_mode(uint8_t mode_index);
+void check_fill_switch(void);
+void update_fill_leds(uint8_t fill_index);
+void set_clock_mode (uint8_t sync_index);
+void update_clock_mode_leds(uint8_t sync_index);
 
 #endif

@@ -158,6 +158,18 @@ void turn_off_all_inst_leds(void) {
 	spi_data[LATCH_3] &= spi_data[LATCH_3] & 0b00001111; // turn off LC, MC, HC, CL
 	spi_data[LATCH_6] &= spi_data[LATCH_6] & 0b11001111; //turn off OH, CH	
 	
+	//if (flag.mute_lock) { //preserve ACCENT state for blinking
+		//
+	  //if (led[ACCENT_1_LED].state) {
+		  //
+		  //turn_on(ACCENT_1_LED);
+		  //
+	  //} else {
+		  //
+		  //turn_off(ACCENT_1_LED);
+	  //}
+	//
+	//}
 	//for (int i = BD; i <= MA; i++) {
 		//
 		//if (!drum_hit[i].muted) turn_off(drum_hit[i].led_index);
@@ -204,8 +216,6 @@ void show_version_inst(void) {
 
 void update_inst_leds(void) {
 	
-	
-  
 	switch (sequencer.mode) {
  
 	 case PATTERN_CLEAR: case FIRST_PART: case SECOND_PART:

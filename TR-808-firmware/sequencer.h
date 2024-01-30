@@ -104,7 +104,11 @@ struct flag {
 	uint8_t blink:1;
 	uint8_t din_start:1;
 	uint8_t din_stop:1;
-	uint8_t perf_lock:1; //flag to indicate performance lock (set with SHIFT + STEP 16/DEL, clear by pressing just SHIFT)
+	uint8_t shift_lock:1; //flag to indicate mute lock (set with SHIFT + ACCENT, clear by pressing just SHIFT)
+	uint8_t din_reset:1;
+	uint8_t din_reset_previous:1;
+	//uint8_t din_reset_enable:1;
+	//uint8_t purge_trigger_buffer:1;
 	//uint8_t nudge_down:1;
 	//uint8_t nudge_up:1;
 	
@@ -144,8 +148,9 @@ struct recall {
 	uint8_t trigger_1;
 	uint8_t trigger_2;
 	// when we need to store more things, they should go AFTER this point
-	//uint8_t TII_active:1;
-	//uint8_t sync_mode:3;
+	uint8_t trigger_enable:1;
+	uint8_t clock_mode:3;
+	uint8_t din_reset_enable:1;
 	
 	};	
 
@@ -207,6 +212,7 @@ struct sequencer {
 	uint8_t trigger_2:5;
 	uint8_t midi_channel:4;
 	uint8_t version; //firmware version
+	uint8_t din_reset_enable:1;
 	};
 		
 

@@ -670,7 +670,7 @@ void process_step(void){
 	} else if (flag.half_step) {
 		//uint8_t rhythm_track_led[12] = {ACCENT_1_LED, BD_2_LED, SD_3_LED, LT_4_LED, MT_5_LED, HT_6_LED, RS_7_LED, CP_8_LED, CB_9_LED, CY_10_LED, OH_11_LED, CH_12_LED};
 		//flag.half_step = 0;
-		turn_off_all_inst_leds();
+		if (!sequencer.SHIFT) turn_off_all_inst_leds();
 		//if (!sequencer.SHIFT) turn_on(drum_hit[sequencer.current_inst].led_index);
 		spi_data[LATCH_5] &= ~(led[BASIC_VAR_A_LED].spi_bit | led[BASIC_VAR_B_LED].spi_bit); //this clears basic variation LEDs
 		if (sequencer.START) {
@@ -732,9 +732,13 @@ void process_step(void){
 				case MANUAL_PLAY:
 					if (sequencer.SHIFT) { 
 						if (sequencer.ALT) {
-							
+														
 							turn_on(sequencer.pattern_bank);
 							
+						} else if (sequencer.TAP_HELD) {
+							
+							if (sequencer.din_reset_enable) turn_on(TRIGGER_ENABLE);
+						
 						} else {
 							turn_on(sequencer.new_shuffle_amount); //turn on shuffle amount LED
 							turn_on(sequencer.roll_mode + ROLL_MIN);
@@ -853,6 +857,8 @@ void process_step(void){
 					if (sequencer.ALT) {
 						
 						turn_on(sequencer.pattern_bank);
+					} else if (sequencer.TAP_HELD) {	
+						if (sequencer.din_reset_enable) turn_on(TRIGGER_ENABLE);
 					} else {
 						
 						//need to display shuffle/roll/live hits status here
@@ -1060,15 +1066,15 @@ void update_step_board() { //should this be in switches.c ?
 					if (press == LIVE_HITS) { //bit of kludge to make live hit toggling only work in MANUAL PLAY mode
 						sequencer.live_hits ^= 1;
 						if (sequencer.live_hits) turn_on(LIVE_HITS);
-					} else if (press == TRIGGER_ENABLE) {
-						sequencer.trigger_enable ^= 1;
-						if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
-					} else if (press == PERF_LOCK) {
-						
-						flag.perf_lock = 1;
-						//led[MODE_4_MANUAL_PLAY].blink = 1;
-						
-					}
+					} else if (press == TRIGGER_ENABLE) { //turning on trigger enable here maybe doesn't make sense as it doesn't work when sequencer is running?
+						//sequencer.trigger_enable ^= 1;
+						//if (sequencer.trigger_enable) turn_on(TRIGGER_ENABLE);
+					}// else if (press == PERF_LOCK) {
+						//
+						//flag.mute_lock = 1;
+						////led[MODE_4_MANUAL_PLAY].blink = 1;
+						//
+					//}
 				}
 				
 				
@@ -1256,7 +1262,7 @@ void update_step_board() { //should this be in switches.c ?
 			case MANUAL_PLAY: //change pattern bank here too? Probably
 				if (sequencer.SHIFT) {
 					
-					if (sequencer.ALT) { //change pattenr bank
+					if (sequencer.ALT) { //change pattern bank
 						if ((press < NUM_BANKS) && (press != sequencer.pattern_bank)) {
 
 							turn_off(sequencer.pattern_bank);
@@ -1264,31 +1270,38 @@ void update_step_board() { //should this be in switches.c ?
 							turn_on(sequencer.pattern_bank);
 							read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
 						}
+					} else if (sequencer.TAP_HELD) {
+						if (press == TRIGGER_ENABLE) {//enable/disable din_reset
+							sequencer.din_reset_enable ^= 1;
+							if (sequencer.din_reset_enable) {
+								turn_on(TRIGGER_ENABLE);
+							} else {
+								turn_off(TRIGGER_ENABLE);
+							}
+							eeprom_write_recall_data();	
+						}
+						
 					} else {
 						
 						if (press == LIVE_HITS) {
 							sequencer.live_hits ^= 1;
 							if (sequencer.live_hits) turn_on(LIVE_HITS);
 						} else if (press == TRIGGER_ENABLE) { //need to change so that trigger enable onl allowed when in SYNC OUT mode (to stop all drums from sounding when RUN/STOP is floating in other modes)
-							//this allows trigger enable to turned on only when clock mode is set to DIN SYNC MASTER but turned off in any oher sync mode
-							if (sequencer.clock_mode == DIN_SYNC_MASTER) {
-								sequencer.trigger_enable ^= 1;
-								if (sequencer.trigger_enable) {
-									turn_on(TRIGGER_ENABLE);
-									DDRB |= (1<<SPI0_SCK); //set SCK as output to turn on TII LED
-								} else {
-									turn_off(TRIGGER_ENABLE);
-									DDRB &= ~(1<<SPI0_SCK); //float SCK to turn off TII LED
-								}
+							sequencer.trigger_enable ^= 1;
+							if (sequencer.trigger_enable) {
+								turn_on(TRIGGER_ENABLE);
+								DDRB |= (1<<SPI0_SCK); //set SCK as output to turn on TII LED
+								//purge spi buffer here
+								//sync_index = 2;
+								//flag.purge_trigger_buffer = 1;
+								set_clock_mode(DIN_SYNC_MASTER);
+								//process_stop();
 							} else {
-								sequencer.trigger_enable = 0;
 								turn_off(TRIGGER_ENABLE);
 								DDRB &= ~(1<<SPI0_SCK); //float SCK to turn off TII LED
 							}
-							
-							
 						}
-						//update_shuffle(press); //just update live hits for now - need to update LEDs elswhere
+
 					}
 					
 					

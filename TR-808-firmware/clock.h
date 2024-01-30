@@ -64,6 +64,7 @@ void setup_clock(void);
 void update_clock_rate(uint16_t rate);
 void process_external_clock_event(void);
 void process_external_sync_pulse(void);
+void poll_din_reset(void);
 
 
 

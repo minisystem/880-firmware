@@ -40,7 +40,7 @@ uint8_t spi0_shift_byte(void) {
 }
 
 void spi0_read_triggers() {
-	
+
 	//setup SPI0
 	DDRB |= (1<<SPI0_SS) | (1<<SPI0_SCK) | (1<<SPI0_LATCH); //set MOSI and SS as outs (SS needs to be set as output or it breaks SPI
 	PORTB |= (1<<SPI0_SS) | (1<<SPI0_LATCH);
@@ -57,7 +57,13 @@ void spi0_read_triggers() {
 	SPCR0 &= ~(1<<SPE0);
 	DDRB &= ~(1<<SPI0_SS); //need to set PB2 back to input for TAP input
 	DDRB &= ~(1<<SPI0_SCK); //float SPI0 SCK to turn off TII LED
-	
+	//if (flag.purge_trigger_buffer == 1) {
+		//spi0_current_trigger_byte0 = 0;
+		//spi0_current_trigger_byte1 = 0;
+		//flag.purge_trigger_buffer = 0;
+		//return;
+			//
+	//}
 	//debounce trigger data
 	spi0_current_trigger_byte0 ^= spi0_previous_trigger_byte0;
 	spi0_current_trigger_byte1 ^= spi0_previous_trigger_byte1;
@@ -99,19 +105,21 @@ void spi_read_write(void) {
 	PORTE &= ~(1<<SPI_LED_LATCH); //latch data to output registers
 	PORTE |= (1<<SPI_LED_LATCH);	
 	
-	//now process switch data, but this may be happening too fast for effective debouncing - maybe handle this in another function that runs less frequently?
+	//check for press + hold
 	sequencer.SHIFT = ((spi_current_switch_data[0] >> SHIFT_BIT) & 1); //this detects press and hold rather than a toggle, like most other switch handling
-	if (flag.perf_lock) {
-		//blink(MODE_4_MANUAL_PLAY, BLINK_SLOW);
-		//sequencer.SHIFT = 1; //SHIFT always set when shift lock is on		
-		//there are exceptions where shift lock maybe doesn't make sense. for instance, when using CLEAR + ACCENT to clear mutes. When shift lock is on it changes the pre-scale everytime CLEAR is presssed. Other examples?
-		
-	} else {
-		//stop_blink(MODE_4_MANUAL_PLAY);
-	}
 	sequencer.ALT = ((spi_current_switch_data[0] >> ALT_BIT) & 1);
 	sequencer.CLEAR = ((spi_current_switch_data[2] >> CLEAR_BIT) & 1);
+	
+	if (flag.shift_lock) {
+		blink(ACCENT_1_LED, BLINK_SLOW);
+		sequencer.SHIFT = 1; //SHIFT always set when shift lock is on		
 		
+		
+	} else {
+		//stop_blink(ACCENT_1_LED);
+	}
+
+	//now process switch data, but this may be happening too fast for effective debouncing - maybe handle this in another function that runs less frequently?	
 	//debounce
 	spi_current_switch_data[0] ^= spi_previous_switch_data[0];
 	spi_previous_switch_data[0] ^= spi_current_switch_data[0];

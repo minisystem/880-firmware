@@ -52,8 +52,8 @@ void refresh(void) {
 	
 	// needs to be updated to work with synchronized spi updating. to prevent double triggering maybe update less frequently?
 	//if ((sequencer.mode == PATTERN_CLEAR) && (!sequencer.START)) spi0_read_triggers();
-	update_mode();
-	update_fill_mode();
+	check_mode_switch();
+	check_fill_switch();
 	check_clear_switch();
 	check_intro_fill_variation_switch();
 	check_variation_switches();
@@ -71,18 +71,20 @@ void refresh(void) {
 	process_step();
 	//update_spi();
 	spi_read_write();
+	if (sequencer.din_reset_enable) poll_din_reset();
 	write_next_pattern_page();
 	//DDRB &= ~(1<<SPI0_SCK); //float SPI0 to turn off TII LED
 	PORTD &= ~(1<<TRIG); //is trigger pulse width long enough? Could be affecting accent - need to test.
 	//PORTD |= (1<<TRIG);
 	//TRIGGER_OUT &= TRIGGER_OFF;
 	//_delay_ms(1);
+	
 }
 
 
 int main(void)
 {
-		
+	
     DDRD |= (1<<TRIG); //set PD5, TRIG to output
 	//DDRD &= ~(1<<TRIG); //set PD5, TRIG to input for testing trigger expander
 	//DDRD |= (1 << DIN_CLOCK | 1 << DIN_RUN_STOP);  //need to set up clock and run as outputs at boot, right? Otherwise they float
@@ -113,7 +115,7 @@ int main(void)
 	
 	//setup external interrupts
 	EICRA |= (1 << ISC11) | (1 << ISC10) | (1 << ISC01); //set up DIN sync to trigger on rising edge of DIN clock, falling edge for INT0, external SYNC in jack
-	PCMSK2 |= (1 << PCINT20); //set up DIN Run/Stop pin change interrupt
+	PCMSK2 |= (1 << PCINT20);// | (1 << PCINT22); //set up DIN Run/Stop pin change interrupt
 	
 
 	turn_on(MODE_2_FIRST_PART_PART);
@@ -192,6 +194,7 @@ int main(void)
 	flag.last_pattern = 0;
 	
 	eeprom_read_recall_data();
+	//only checks for un-initialized pattern data, but does not check for un-initialized recall data, which you will get as  you add new data to recall (unitalicized as 0xFF)
 	if (sequencer.pattern_bank == 0b00001111) { //eeprom data not initialized, reset recall data
 		sequencer.current_pattern = sequencer.previous_pattern = 0;
 		sequencer.pattern_bank = sequencer.previous_bank  = 0;
@@ -199,6 +202,13 @@ int main(void)
 		//set default trigger assignments:
 		sequencer.trigger_1 = AC;
 		sequencer.trigger_2 = CB;
+		sequencer.trigger_enable = 0;
+		sequencer.clock_mode = MIDI_MASTER;
+		sequencer.din_reset_enable = 0;
+		eeprom_write_recall_data();
+	} else if (sequencer.clock_mode == 0x7) { //clock mode not initialized, reset -this is for updating from 1.1.3 and earlier, which don't have sync mode recall
+		
+		sequencer.clock_mode = MIDI_MASTER;
 		eeprom_write_recall_data();
 	}
 
@@ -209,6 +219,8 @@ int main(void)
 	turn_on(sequencer.current_pattern);
 	//update_step_led_mask();
 	
+	//recall clock mode
+	set_clock_mode(sequencer.clock_mode);
 	//setup watchdog timer
 	wdt_enable(WDTO_1S);
 	
@@ -225,7 +237,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 113; //  BETA //0.9.8
+	sequencer.version = 114; //  BETA //0.9.8
 	
 	//flush spi0 buffer
 	

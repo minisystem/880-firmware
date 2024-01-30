@@ -46,10 +46,10 @@ ISR (INT0_vect) { //external SYNC IN. By default this is for 2 ppqn, Volca style
 
 ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 	
-	//toggle(IF_VAR_B_LED);
+	//if ((PIND >> DIN_RESET) & 1) sequencer.current_step = -1;
 	
 	if ((PIND >> DIN_RUN_STOP) & 1) { 
-		
+		//toggle(IF_VAR_B_LED);
 		sequencer.START = 1;
 		process_start();
 

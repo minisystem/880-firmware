@@ -17,10 +17,12 @@
 #include "drums.h"
 #include "clock.h"
 #include "midi.h"
+#include "select_instrument_with_soloing.h"
 #include "twi_eeprom.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 #include "xnormidi-develop/bytequeue/bytequeue.h"
+
 
 struct button button[NUM_BUTTONS] = {
 	
@@ -85,7 +87,7 @@ void check_write_sw(void) {
 		button[WRITE_SW].state ^= button[WRITE_SW].state; //need to toggle in every mode, but only do something in COMPOSE_RHYTHM mode
 		
 		if (sequencer.mode == COMPOSE_RHYTHM) {
-			flag.perf_lock = 0; //clear shift lock flag	
+			//flag.shift_lock = 0; //clear shift lock flag	
 			if (sequencer.ALT) {
 				//return;
 				//if (sequencer.track_measure > 0) sequencer.track_measure--; //decrement current measure 
@@ -128,7 +130,11 @@ void check_write_sw(void) {
 				//flag.perf_lock = 0;		
 		} else {
 			
-			if (flag.perf_lock) flag.perf_lock = 0; //turn off shift lock
+			//if (flag.shift_lock) {
+				//flag.shift_lock = 0; //turn off shift lock
+				//stop_blink(ACCENT_1_LED);
+			//}
+
 		}
 	}	
 }
@@ -159,6 +165,7 @@ void check_start_stop_tap(void) {
 	
 		if ((clock.source == EXTERNAL) && (sequencer.clock_mode != PULSE_SYNC_SLAVE)) { //what about stopping when MIDI slave? this would be the place to do it, yeah?
 			 if (flag.din_stop == 1) {
+				 
 				 flag.din_stop = 0;
 				 sequencer.START = 0;
 				 process_stop(); //need to process stop outside of DIN SYNC slave ISR, yeah?
@@ -257,6 +264,18 @@ void check_inst_switches(void) {
 			clear_mutes();
 			return;
 		}
+		
+		if (flag.shift_lock) { //turn off shift lock
+			
+			flag.shift_lock = 0;
+			stop_blink(ACCENT_1_LED);
+			return;
+		}
+		if (sequencer.SHIFT  && sequencer.START) {
+			
+			flag.shift_lock = 1;
+			
+		}
 		switch(sequencer.mode) {
 		
 		case FIRST_PART: case SECOND_PART:	
@@ -318,7 +337,18 @@ void check_inst_switches(void) {
 				
 			case FIRST_PART: case SECOND_PART:
 			
-				process_inst_press(drum_index);
+				if (sequencer.SHIFT) {
+					
+					assign_mutes(drum_index);
+					
+				} else if (sequencer.ALT) {
+					
+					
+				} else {					
+					
+					select_instrument(drum_index);
+					
+				}
 			
 			break;
 			
@@ -352,7 +382,7 @@ void check_inst_switches(void) {
 					}
 				} else {
 					
-					if (!sequencer.live_hits) process_inst_press(drum_index); //this is ugly with some redundant SHIFT handling code in process_inst_press
+					if (!sequencer.live_hits) select_instrument(drum_index); //this is ugly with some redundant SHIFT handling code in process_inst_press
 				}
 			
 			break;	
@@ -463,59 +493,10 @@ void check_variation_switches(void) { //at the moment, just check one switch and
 			break;
 			
 		}
-		update_inst_led_mask(); //need to update mask here, otherwise variation changes to pattern LEDs aren't updated immediately when sequencer is stopped. 
-		//if (sequencer.SHIFT) { //maybe switch case would be better here?
-			//
-			//if (sequencer.variation_mode != VAR_AB) { //SHIFT + BASIC_VARIATION press turns on alternating VAR_AB mode
-							//
-				//sequencer.variation_mode = VAR_AB;
-				//
-				//if (sequencer.START) {
-					//
-					//flag.variation_change = 1;
-					//
-				//} else {
-					//
-					//sequencer.variation = VAR_A;
-				//}
-				//
-			//} else { //turn off alternating A/B mode, reset to VAR A
-				//
-				//sequencer.variation_mode = VAR_A;
-				//if (sequencer.START) {
-					//flag.variation_change = 1;
-				//} else {
-					//sequencer.variation = VAR_A;
-				//}
-				//
-				//
-			//}
-			//
-		//} else { //no SHIFT means toggle between VAR A and VAR B
-			//
-//
-			//
-		//}
-		//if (sequencer.START) {
-			//
-			 //flag.variation_change = 1; //set change flag to be handled when new measure starts
-		//} else { //otherwise change immediately
-			//
-			//if (sequencer.variation_mode == VAR_A || sequencer.variation_mode == VAR_AB) {
-				//
-				//sequencer.variation = VAR_A;
-				//
-			//} else {
-				//
-				//sequencer.variation = VAR_B;
-				//
-			//}
-			//
-		//}
-		
-	}
 	
+	update_inst_led_mask(); //need to update mask here, otherwise variation changes to pattern LEDs aren't updated immediately when sequencer is stopped. 
 	
+	}	
 }	
 // TODO(jeff): Clear is called repeatedly when the user is holding it down. It can lead to hundreds if not thousands of page writes. Need to reduce that. - done.
 void check_clear_switch(void) {
@@ -565,7 +546,7 @@ void check_clear_switch(void) {
 					break;
 				
 				case FIRST_PART: case SECOND_PART:
-			
+					//sequencer.current_step = -1; /test of step reset function
 					break;	
 
 				
@@ -764,54 +745,114 @@ void clear_mutes(void) {
 	
 }
 
-void process_inst_press(uint8_t drum_index) {
-	if (!sequencer.SHIFT) { //no SHIFT, so just toggle between different instruments
-				
-		turn_off_all_inst_leds();
-				
-				
-		if(drum_hit[drum_index].switch_bit != NO_SWITCH) { // need to handle instrument toggle here
-					
-					
-			if (sequencer.current_inst == drum_index) {
-				//toggle between switched instruments
-				sequencer.current_inst = drum_index + SW_DRUM_OFFSET;
-						
-			} else {
-				sequencer.current_inst = drum_index;
-			}
-					
-					
-		} else {
-					
-			if ((sequencer.current_inst == CP) && (drum_index == CP)) { //exception to handle CP/MA as they don't use a switch bit
+void assign_solo(uint8_t drum_index) {
 
-				sequencer.current_inst = MA;
-						
-			} else {
-						
-				sequencer.current_inst = drum_index; //inst index starts with BD = 0
-			}
-					
-		}
-		update_inst_led_mask();
-				
-	} else { //SHIFT pressed 
-				
-		if (sequencer.ALT) { //ALT mode - change trigger - LEDs updated in update_inst_leds()
-					
-			//turn_off_all_inst_leds();
-			//assign_triggers(drum_index);		
-
-					
-		} else { //SHIFT, no ALT - handle mutes
-					
-			assign_mutes(drum_index);
-		}
-				
+	for (int i = BD; i <= MA; i++) {
+		
+		drum_hit[i].muted = 1;
+		
+		// TODO(omar): I think we need this too, as only 1 solo at a time
+		drum_hit[i].solo = 0;
 	}	
 	
+	drum_hit[drum_index].solo = 1;
+	drum_hit[drum_index].muted = 0;
+	
 }
+
+void select_instrument(uint8_t drum_index) {
+	struct SoloState state;
+						
+	state.currentInstrument = sequencer.current_inst;
+	state.isSolo = false;
+	state.secondaryInstrument = EMPTY;
+						
+	for (int j = 0; j < NUM_INST; ++j) {
+		if (drum_hit[j].solo) {
+			state.currentInstrument = j;
+			state.isSolo = true;
+			state.secondaryInstrument = sequencer.current_inst;
+			break;
+		}
+	}
+						
+	struct SoloState new_state;
+	new_state = handleInstrumentTransition(state, drum_index, sequencer.CLEAR);
+	turn_off_all_inst_leds();
+	if (new_state.isSolo) {
+		assign_solo(new_state.currentInstrument);
+		sequencer.current_inst = new_state.secondaryInstrument != EMPTY ? new_state.secondaryInstrument : new_state.currentInstrument;
+		} else {
+		sequencer.current_inst = new_state.currentInstrument;
+		clear_mutes();
+		for (int k = 0; k < NUM_INST; ++k) {drum_hit[k].solo = false;}
+	}
+	update_inst_led_mask();
+}
+	////if (sequencer.CLEAR && (sequencer.current_inst > CH)) return;
+	//turn_off_all_inst_leds();			
+	//
+				//
+	//if ((drum_hit[drum_index].switch_bit != NO_SWITCH)) { // need to handle instrument toggle here
+								//
+		////if (sequencer.current_inst == drum_index) {
+			////uint8_t switch = ~(drum_hit[drum_index].solo ^ sequencer.CLEAR);
+			////if ((!drum_hit[drum_index].solo)  || (sequencer.CLEAR)) { //don't toggle if first switched instrument is soloed
+			////
+				//////toggle between switched instruments
+				////sequencer.current_inst = drum_index + SW_DRUM_OFFSET;
+			////}
+						////
+		////} else {
+			////
+			////if ((!drum_hit[drum_index + SW_DRUM_OFFSET].solo) || (sequencer.CLEAR )) { //don't toggle if second switched instrument is soloed
+				////sequencer.current_inst = drum_index;
+			////}
+		////}
+		//
+		////if (sequencer.current_inst == drum_index && (!drum_hit[drum_index].solo || sequencer.CLEAR)) {
+			////// Toggle between switched instruments
+			////sequencer.current_inst = drum_index + SW_DRUM_OFFSET;
+		////} else if (!drum_hit[drum_index + SW_DRUM_OFFSET].solo || sequencer.CLEAR) {
+			////sequencer.current_inst = drum_index;
+		////}	
+		//
+		//if (sequencer.current_inst == drum_index) { 
+			//bool switch_instrument = ~(drum_hit[drum_index].solo ^ sequencer.CLEAR);
+			//if (switch_instrument) { //don't toggle if first switched instrument is soloed
+		//
+			////toggle between switched instruments
+				//sequencer.current_inst = drum_index + SW_DRUM_OFFSET;
+			//}
+		//
+		//} else {
+			//bool switch_instrument = ~(drum_hit[drum_index + SW_DRUM_OFFSET].solo ^ sequencer.CLEAR);
+			//if (switch_instrument) { //don't toggle if second switched instrument is soloed
+				//sequencer.current_inst = drum_index;
+			//}
+		//}		
+						//
+					//
+	//} else {
+					//
+		//if ((sequencer.current_inst == CP) && (drum_index == CP)) { //exception to handle CP/MA as they don't use a switch bit
+//
+			//sequencer.current_inst = MA;
+						//
+		//} else {
+						//
+			//sequencer.current_inst = drum_index; //inst index starts with BD = 0
+//
+		//}
+					//
+	//}
+	//if (drum_hit[sequencer.current_inst].solo) {
+		//clear_mutes();
+		//drum_hit[sequencer.current_inst].solo = 0;
+	//}	
+	//update_inst_led_mask();				
+	//
+//}
 
 void process_track_press(void) {
 	
@@ -855,6 +896,8 @@ void clear_all_patterns(void) {
 	}
 	
 	sequencer.midi_channel = sequencer.current_pattern = sequencer.pattern_bank = 0; 
+	sequencer.clock_mode = MIDI_MASTER;
+	sequencer.trigger_enable = 0;
 	eeprom_write_recall_data(); //initialize recall data in eeprom
 	wdt_enable(WDTO_1S);
 	

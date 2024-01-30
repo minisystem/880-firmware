@@ -257,6 +257,9 @@ void eeprom_read_recall_data() {
 	sequencer.current_pattern = sequencer.previous_pattern = sequencer.new_pattern = d->pattern;
 	sequencer.trigger_1 = d->trigger_1;
 	sequencer.trigger_2 = d->trigger_2;
+	sequencer.trigger_enable = d->trigger_enable;
+	sequencer.clock_mode = d->clock_mode;
+	sequencer.din_reset_enable = d->din_reset_enable;
 }
 
 void eeprom_write_recall_data() {
@@ -266,6 +269,9 @@ void eeprom_write_recall_data() {
 	recall_data.pattern = sequencer.current_pattern;	
 	recall_data.trigger_1 = sequencer.trigger_1;
 	recall_data.trigger_2 = sequencer.trigger_2;
+	recall_data.trigger_enable = sequencer.trigger_enable;
+	recall_data.clock_mode = sequencer.clock_mode;
+	recall_data.din_reset_enable = sequencer.din_reset_enable;
 	// if you want to store more data, put it here
 	
 	while(TWI_busy);

@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>TR-808-firmware</AssemblyName>
-    <Name>TR-808-firmware</Name>
+    <Name>880-firmware</Name>
     <RootNamespace>TR-808-firmware</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -34,7 +34,7 @@
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.39.0" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.42.0" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
@@ -149,6 +149,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="drums.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="select_instrument_with_soloing.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="select_instrument_with_soloing.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="twi_eeprom.c">
