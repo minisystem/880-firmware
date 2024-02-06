@@ -250,4 +250,6 @@ void write_rhythm_track(void);
 void read_rhythm_track(void);
 void update_rhythm_track(uint8_t track_number);
 
+void copy_part(uint8_t part);
+
 #endif 

@@ -65,11 +65,13 @@ void check_mode_switch(void) { //rename to check_mode_switch
 					rhythm_track.length = 0;
 				}
 				
+			} else if (sequencer.mode == SECOND_PART && sequencer.ALT) {
+				copy_part(SECOND);
 			}
 			if (mode_index-- == 0) mode_index = NUM_MODES - 1;
 			
 		} else {
-			
+			 if (sequencer.mode == FIRST_PART && sequencer.ALT) copy_part(FIRST);
 			 if (++mode_index == NUM_MODES) mode_index = 0;
 			 
 		}
@@ -144,7 +146,8 @@ void set_mode(uint8_t mode_index) {
 			//yes because you could read the next pattern before committing an edited pattern to memory... need to fix this
 			sequencer.pattern_bank = sequencer.previous_bank;
 			sequencer.current_pattern = sequencer.new_pattern = sequencer.previous_pattern;
-			read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+
+			if (!flag.pattern_edit) read_next_pattern(sequencer.current_pattern, sequencer.pattern_bank); //not sure if this is good - new copy_part() function only sets flag.pattern_edit, so set_mode() reads pattern from rom before copy is written
 			sequencer.part_editing = sequencer.mode == FIRST_PART? FIRST : SECOND;
 			sequencer.step_num_new = sequencer.step_num[sequencer.part_editing];
 			//update_step_led_mask(); //want to update led mask immediately, otherwise it only gets updated at end of measure

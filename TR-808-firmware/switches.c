@@ -902,3 +902,27 @@ void clear_all_patterns(void) {
 	wdt_enable(WDTO_1S);
 	
 }
+
+void copy_part(uint8_t part) {
+	
+	uint8_t source = FIRST;
+	uint8_t destination = SECOND;
+	if (part == SECOND) {
+		source = SECOND;
+		destination = FIRST;
+	}
+		
+	for (int i = 0; i <= sequencer.step_num[source]; i++) {
+			
+		sequencer.pattern[VAR_A].accent[destination] = sequencer.pattern[VAR_A].accent[source];
+		sequencer.pattern[VAR_B].accent[destination] = sequencer.pattern[VAR_B].accent[source];
+			
+		sequencer.pattern[VAR_A].part[destination][i] = sequencer.pattern[VAR_A].part[source][i];
+		sequencer.pattern[VAR_B].part[destination][i] = sequencer.pattern[VAR_B].part[source][i];
+	}
+		
+	sequencer.step_num[destination] = sequencer.step_num[source];
+	flag.pattern_edit = 1;	
+	
+	//start_write_current_pattern(sequencer.current_pattern, sequencer.pattern_bank);
+}
