@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "select_instrument_with_soloing.h"
 #include "switches.h"
 #include "drums.h"
