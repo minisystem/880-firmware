@@ -25,7 +25,7 @@ struct SoloState handleInstrumentTransition(struct SoloState state, uint8_t butt
 				state.isSolo = true;
 				state.secondaryInstrument = EMPTY;
 				} else {
-				if (buttonPressed == state.currentInstrument || (buttonPressed + SW_DRUM_OFFSET) == state.currentInstrument) {
+				if (buttonPressed == state.currentInstrument) {
 					state.isSolo = false;
 					state.secondaryInstrument = EMPTY;
 					state.currentInstrument = state.currentInstrument;
@@ -48,7 +48,7 @@ struct SoloState handleInstrumentTransition(struct SoloState state, uint8_t butt
 				}
 				} else {
 				//
-				if (buttonPressed == state.currentInstrument || (buttonPressed + SW_DRUM_OFFSET) == state.currentInstrument) {
+				if (buttonPressed == state.currentInstrument) {
 					state.isSolo = false;
 					state.secondaryInstrument = EMPTY;
 					state.currentInstrument = state.currentInstrument;
@@ -106,7 +106,9 @@ struct SoloState handleInstrumentTransition(struct SoloState state, uint8_t butt
 				} else {
 				if (buttonPressed == state.currentInstrument || (buttonPressed + SW_DRUM_OFFSET) == state.currentInstrument) {
 					if (!isClearPressed) {
-						state.secondaryInstrument = (state.currentInstrument + SW_DRUM_OFFSET) % (SW_DRUM_OFFSET*2);
+						//state.secondaryInstrument = (state.currentInstrument + SW_DRUM_OFFSET) % (SW_DRUM_OFFSET*2);
+state.isSolo = false;
+state.secondaryInstrument = EMPTY;
 						} else {
 						state.currentInstrument = (state.currentInstrument + SW_DRUM_OFFSET) % (SW_DRUM_OFFSET*2);
 					}

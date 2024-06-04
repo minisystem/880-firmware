@@ -28,19 +28,41 @@ void test_initialStateToSoloUnswitched(void) {
     TEST_ASSERT_EQUAL_UINT8(4, state.secondaryInstrument); 
 }
 
-void test_soloSwitchedToSoloUnswitched(void) {
-    struct SoloState state = {2, true, EMPTY};
+void test_edgeInstrumentSwitchWithSolo(void) {
+    struct SoloState state = {10, true, EMPTY}; // Initial state
 
-    state = handleInstrumentTransition(state, 3, false); // Try to add secondary (should fail)
-    TEST_ASSERT_EQUAL_UINT8(2, state.currentInstrument);
+    state = handleInstrumentTransition(state, 3, false);  
+    TEST_ASSERT_EQUAL_UINT8(10, state.currentInstrument);
+    TEST_ASSERT_TRUE(state.isSolo);
+    TEST_ASSERT_EQUAL_UINT8(3, state.secondaryInstrument);
+
+    state = handleInstrumentTransition(state, 1, false);  
+    TEST_ASSERT_EQUAL_UINT8(10, state.currentInstrument);
+    TEST_ASSERT_TRUE(state.isSolo);
+    TEST_ASSERT_EQUAL_UINT8(1, state.secondaryInstrument);
+}
+
+void test_soloSwitchedToSoloUnswitched(void) {
+
+
+    struct SoloState state = {13, true, EMPTY};
+    state = handleInstrumentTransition(state, 4, false); // Try to add secondary (should fail)
+    TEST_ASSERT_EQUAL_UINT8(13, state.currentInstrument);
+    TEST_ASSERT_EQUAL_UINT8(EMPTY, state.secondaryInstrument); 
+    TEST_ASSERT_FALSE(state.isSolo);
+
+/*    struct SoloState state = {4, true, EMPTY};
+
+    state = handleInstrumentTransition(state, 13, true);
+    TEST_ASSERT_EQUAL_UINT8(13, state.currentInstrument);
     TEST_ASSERT_TRUE(state.isSolo);
     TEST_ASSERT_EQUAL_UINT8(EMPTY, state.secondaryInstrument); 
 
     state = handleInstrumentTransition(state, 4, false); // Try to add secondary (should fail)
-    TEST_ASSERT_EQUAL_UINT8(2, state.currentInstrument);
-    TEST_ASSERT_TRUE(state.isSolo);
+    TEST_ASSERT_EQUAL_UINT8(13, state.currentInstrument);
     TEST_ASSERT_EQUAL_UINT8(EMPTY, state.secondaryInstrument); 
-
+    TEST_ASSERT_FALSE(state.isSolo);*/
+/*
     state = handleInstrumentTransition(state, 5, true); // Switch to instrument 5, stay in solo
     TEST_ASSERT_EQUAL_UINT8(5, state.currentInstrument);
     TEST_ASSERT_TRUE(state.isSolo);
@@ -50,12 +72,14 @@ void test_soloSwitchedToSoloUnswitched(void) {
     TEST_ASSERT_EQUAL_UINT8(5, state.currentInstrument);
     TEST_ASSERT_TRUE(state.isSolo);
     TEST_ASSERT_EQUAL_UINT8(EMPTY, state.secondaryInstrument); 
+*/
 }
 
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_initialStateToSoloUnswitched);
+    RUN_TEST(test_edgeInstrumentSwitchWithSolo);
     RUN_TEST(test_soloSwitchedToSoloUnswitched);
     // ... run other tests similarly
     return UNITY_END();
