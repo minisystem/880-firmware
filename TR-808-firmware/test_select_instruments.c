@@ -75,12 +75,24 @@ void test_soloSwitchedToSoloUnswitched(void) {
 */
 }
 
+void test_soloSwitchedToggle(void) {
+
+    struct SoloState state = {11, true, 11}; // currentInstrument, isSolo, secondaryInstrument
+    state = handleInstrumentTransition(state, 2, false); // state, drum_index, clearState
+    TEST_ASSERT_EQUAL_UINT8(11, state.currentInstrument);
+    TEST_ASSERT_EQUAL_UINT8(EMPTY, state.secondaryInstrument); 
+    TEST_ASSERT_FALSE(state.isSolo);
+
+
+}
+
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_initialStateToSoloUnswitched);
     RUN_TEST(test_edgeInstrumentSwitchWithSolo);
     RUN_TEST(test_soloSwitchedToSoloUnswitched);
+    RUN_TEST(test_soloSwitchedToggle);
     // ... run other tests similarly
     return UNITY_END();
 }
