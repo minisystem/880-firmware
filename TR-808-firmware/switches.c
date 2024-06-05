@@ -782,10 +782,12 @@ void select_instrument(uint8_t drum_index) {
 	if (new_state.isSolo) {
 		assign_solo(new_state.currentInstrument);
 		sequencer.current_inst = new_state.secondaryInstrument != EMPTY ? new_state.secondaryInstrument : new_state.currentInstrument;
-		} else {
+	} else {
 		sequencer.current_inst = new_state.currentInstrument;
-		clear_mutes();
-		for (int k = 0; k < NUM_INST; ++k) {drum_hit[k].solo = false;}
+		if (drum_hit[sequencer.current_inst].solo) {
+			clear_mutes();
+			for (int k = 0; k < NUM_INST; ++k) {drum_hit[k].solo = false;}
+		}
 	}
 	update_inst_led_mask();
 }
