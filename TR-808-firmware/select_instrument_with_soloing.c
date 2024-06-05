@@ -15,7 +15,10 @@ bool isUnswitchedInstrument(uint8_t instrument) {
 
 
 struct SoloState handleInstrumentTransition(struct SoloState state, uint8_t buttonPressed, bool isClearPressed) {
-	//printf("Button press %d. Shift is %d\n", buttonPressed,isClearPressed);
+  if (state.currentInstrument == state.secondaryInstrument) {
+    state.secondaryInstrument = EMPTY;
+  }
+  //printf("Button press %d. Shift is %d\n", buttonPressed,isClearPressed);
 	// first, handle the situation where we are in a solo mode and there's a secondary instrument
 	// TODO: ONLY PROBLEM IS WHEN IN SWITCHED SOLO GOING TO OTHER PART OF SWITCH -- Jeff thinks this is ok
 	if (state.secondaryInstrument != EMPTY) {
