@@ -21,7 +21,12 @@ uint8_t sync_index = 0;
 
 
 void update_clock_mode_leds(uint8_t sync_index) {
-	if (sequencer.clock_mode == PULSE_SYNC_SLAVE) {
+	
+//MK1 panel graphics need the last 4 LEDs of AUTO FILL IN for indication
+//MK2 panel graphics need the last 5 LEDs of AUTO FILL IN for indication
+	
+//******************************MK1************************************************//	
+/*	if (sequencer.clock_mode == PULSE_SYNC_SLAVE) {
 				
 		spi_data[LATCH_2] |= (clock.sync_led_mask << (sync_index - 1));// & (clock.sync_led_mask <<; //AND this with toggle bit from SYNC handler in interrupts.c
 				
@@ -29,6 +34,25 @@ void update_clock_mode_leds(uint8_t sync_index) {
 				
 		spi_data[LATCH_2] |= (1 << sync_index);
 	}
+	*/
+//*********************************************************************************//
+
+//******************************MK2************************************************//
+	if (sync_index < 1) {
+		
+		spi_data[LATCH_4] |= 1 << (sync_index + 7);
+		
+		
+		} else {
+		
+		spi_data[LATCH_2] |= 1 << (sync_index -1);
+		
+	}
+
+//*********************************************************************************//
+
+
+	
 	
 	
 }
