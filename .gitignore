@@ -5,3 +5,9 @@ TR-808-firmware/Debug/
 TR-808-firmware/Release/
 TR-808-firmware/i2c_eeprom.h
 TR-808-firmware/i2c_eeprom.c
+
+# Local AVR-GCC toolchain installed for Ubuntu development.
+.toolchain/
+
+# Local checkout used for bootloader reference/source inspection.
+TR-808-firmware/.bootloader-source/

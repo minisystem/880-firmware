@@ -12,6 +12,8 @@
 #include "xnormidi-develop/midi_device.h"
 
 #define MIDI_OUTPUT_QUEUE_LENGTH 192 //does this need to be so large?
+
+#define MIDI_ACCENT_NOTE 16
  
 
 extern uint8_t midi_note_number;
@@ -24,6 +26,11 @@ void real_time_event(MidiDevice * device, uint8_t real_time_byte);
 void program_change_event(MidiDevice * device, uint8_t channel, uint8_t program_num);
 
 void setup_midi_usart(void);
+
+void process_midi_buffer(void);
+void midi_buffer_timer_tick(void);
+uint8_t midi_buffer_timer_is_active(void);
+void midi_buffer_cancel(void);
 
 void midi_send(MidiDevice * device, uint16_t cnt, uint8_t inByte0, uint8_t inByte1, uint8_t inByte2);
 

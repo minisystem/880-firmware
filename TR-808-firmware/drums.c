@@ -13,6 +13,7 @@
 #include "switches.h"
 
 uint8_t current_drum_hit = 0;
+volatile uint16_t current_midi_drum_mask = 0;
 uint8_t previous_assign_port = 0;
 uint8_t current_assign_port = 0;
 enum drum midi_note_queue[16] = {255};
@@ -43,6 +44,12 @@ struct drum_hit drum_hit[17] = { //progmem?
 };
 
 void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be compatible with synchronized spi updating
+	trigger_drum_batch((uint16_t)1 << note, velocity > 64);
+}
+
+void trigger_drum_batch(uint16_t drum_mask, uint8_t accent) {
+		if (sequencer.START || drum_mask == 0) return;
+
 		clear_all_trigs();
 		while(flag.trig_finished == 0);	//need to wait until trigger interrupt is complete before triggering new drum sound, otherwise new hits come and and 'overwrite' old hits, preventing their triggers from finishing
 		//could implement a trigger queue instead of waiting but this is really more of a concern from simultaneous drum hits coming from MIDI or live play. Sequencer triggers won't have this problem unless 
@@ -51,20 +58,22 @@ void trigger_drum(uint8_t note, uint8_t velocity) { //this needs rework to be co
 		//midi_note_queue[note_queue_index] = note;
 		//note_queue_index++;
 		
-		current_drum_hit = note;
+		current_midi_drum_mask = drum_mask;
+		for (uint8_t note = BD; note <= MA; note++) {
+			if ((drum_mask & ((uint16_t)1 << note)) == 0) continue;
 
-		spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
-		turn_on(drum_hit[note].led_index); 
-		//spi_data[drum_hit[note].spi_led_byte_num] |= drum_hit[note].led_bit;
-			
-		if (drum_hit[note].switch_bit != NO_SWITCH) {//need to set instrument switch
-				
-			//toggle(ACCENT_1_LED); //TODO: make this optional. It's a bit of a distracting light show, so need to be able to let user turn it off	
-			spi_data[LATCH_3] ^= (-(drum_hit[note].switch_value) ^ spi_data[LATCH_3]) & drum_hit[note].switch_bit; //this sets switch_value in spi_data byte to switch_value (0 or 1)
-					
+			current_drum_hit = note;
+			spi_data[drum_hit[note].spi_byte_num] |= drum_hit[note].trig_bit;
+			turn_on(drum_hit[note].led_index);
+
+			if (drum_hit[note].switch_bit != NO_SWITCH) {
+				// Shared-output pairs retain the existing ascending-note behavior:
+				// the higher numbered variant wins if both are requested together.
+				spi_data[LATCH_3] ^= (-(drum_hit[note].switch_value) ^ spi_data[LATCH_3]) & drum_hit[note].switch_bit;
+			}
 		}
 			
-		if (velocity > 64) {
+		if (accent) {
 			spi_data[LATCH_8] |= (1<<ACCENT);
 			turn_on(ACCENT_1_LED);
 			

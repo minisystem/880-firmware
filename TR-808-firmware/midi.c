@@ -20,6 +20,20 @@
 byteQueue_t midi_byte_queue;
 uint8_t midi_output_queue_data[MIDI_OUTPUT_QUEUE_LENGTH];
 
+#define MIDI_BUFFER_MS 10
+
+static volatile uint16_t midi_pending_drums = 0;
+static volatile uint8_t midi_pending_accent = 0;
+static volatile uint8_t midi_buffer_active = 0;
+static volatile uint8_t midi_buffer_ready = 0;
+static volatile uint8_t midi_buffer_elapsed_ms = 0;
+
+static void start_midi_buffer_timer(void)
+{
+	TIMSK0 |= (1 << OCIE0A);
+	TCCR0B |= (1 << CS00) | (1 << CS02);
+}
+
 void setup_midi_usart(void)
 {
 	uint16_t ubbr_value = 31; //16MHz/(16*31250 BAUD) - 1 - should be a constant you nitwit!
@@ -46,18 +60,78 @@ void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t v
 	
 	//if ((sequencer.clock_mode != MIDI_MASTER) || sequencer.START) return;
 	
-	if (sequencer.START) return; //you don't be receiving no midi notes when you sequencing, yo. don't interrupt me, I'm busy.
-	
-	if (note < 16) { //TODO: implement MIDI learn function to dynamically map notes to drum hits, or maybe just have an offset that allows first note of 16 to be set
-		
-		trigger_drum(note, velocity);
-		
+	if (sequencer.START) return; //never let external MIDI interfere with the internal sequencer
+
+	if ((note == MIDI_ACCENT_NOTE) || (note < 16)) {
+		if (!midi_buffer_active) {
+			midi_pending_drums = 0;
+			midi_pending_accent = 0;
+			midi_buffer_elapsed_ms = 0;
+			midi_buffer_active = 1;
+			start_midi_buffer_timer();
+		}
+
+		if (note == MIDI_ACCENT_NOTE) {
+			midi_pending_accent = 1;
+		} else {
+			midi_pending_drums |= (uint16_t)1 << note;
+		}
 	}
 
 	
 }
 
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {}
+
+void midi_buffer_timer_tick(void)
+{
+	if (midi_buffer_active && (++midi_buffer_elapsed_ms >= MIDI_BUFFER_MS)) {
+		midi_buffer_active = 0;
+		midi_buffer_ready = 1;
+	}
+}
+
+uint8_t midi_buffer_timer_is_active(void)
+{
+	return midi_buffer_active;
+}
+
+void midi_buffer_cancel(void)
+{
+	midi_pending_drums = 0;
+	midi_pending_accent = 0;
+	midi_buffer_active = 0;
+	midi_buffer_ready = 0;
+	midi_buffer_elapsed_ms = 0;
+}
+
+void process_midi_buffer(void)
+{
+	uint16_t drums;
+	uint8_t accent;
+	uint8_t saved_sreg;
+
+	if (sequencer.START) {
+		midi_buffer_cancel();
+		return;
+	}
+
+	if (!midi_buffer_ready) return;
+
+	saved_sreg = SREG;
+	cli();
+	drums = midi_pending_drums;
+	accent = midi_pending_accent;
+	midi_pending_drums = 0;
+	midi_pending_accent = 0;
+	midi_buffer_ready = 0;
+	midi_buffer_elapsed_ms = 0;
+	SREG = saved_sreg;
+
+	if (!sequencer.START && drums != 0) {
+		trigger_drum_batch(drums, accent);
+	}
+}
 	
 void program_change_event(MidiDevice * device, uint8_t channel, uint8_t program_num) {
 	//filter MIDI channel

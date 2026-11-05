@@ -237,7 +237,7 @@ int main(void)
 	// THIS WAS FOR TESTING PATTERN CLEARNING. IT SEEMS TO WORK.
 	//clear_all_patterns();
 	//PORTB |= (1<<SPI_EN); //disable SPI for trigger in testing
-	sequencer.version = 114; //  BETA //0.9.8
+	sequencer.version = 98; //  BETA //0.9.8
 	
 	//flush spi0 buffer
 	
@@ -246,6 +246,7 @@ int main(void)
 		//PORTD |= (1<< PD3);
 		//TRIGGER_OUT |= 1 << TRIGGER_OUT_1;
 		midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
+		process_midi_buffer();
 		refresh();
 		//TRIGGER_OUT &= ~(1 << TRIGGER_OUT_1);
 		

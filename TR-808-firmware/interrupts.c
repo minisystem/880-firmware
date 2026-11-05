@@ -66,9 +66,14 @@ ISR (PCINT2_vect) { //handler for DIN Sync run/stop in slave mode
 }
 
 ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS trigger off for incoming MIDI note drum hits and also 15MS trigger off for triggers 1 and 2 while sequencer is running. At the moment, they are incompatible functions
-	
-	TCCR0B = 0; //turn off timer
-	TIMSK0 &= ~(1<<OCIE0A); //turn off output compare 
+	uint8_t keep_midi_buffer_timer;
+
+	midi_buffer_timer_tick();
+	keep_midi_buffer_timer = midi_buffer_timer_is_active();
+	if (!keep_midi_buffer_timer) {
+		TCCR0B = 0; //turn off timer
+		TIMSK0 &= ~(1<<OCIE0A); //turn off output compare
+	}
 	TRIGGER_OUT &= TRIGGER_OFF;
 	flag.trig_finished = 1;
 	//eventually need to turn all triggers off here for 15 ms trigger width for trigger expander module, unless expander module just uses rising edge maybe?
@@ -76,10 +81,15 @@ ISR (TIMER0_COMPA_vect) { //at the moment this timer is doing double duty as 1MS
 	//if (sequencer.mode == MANUAL_PLAY && !sequencer.START) turn_off()
 	
 	if (sequencer.clock_mode == MIDI_SLAVE) { //probably need to come up with a MIDI note off flag that is checked here 
-		spi_data[drum_hit[current_drum_hit].spi_byte_num] &= ~(drum_hit[current_drum_hit].trig_bit);
+		for (uint8_t note = BD; note <= MA; note++) {
+			if (current_midi_drum_mask & ((uint16_t)1 << note)) {
+				spi_data[drum_hit[note].spi_byte_num] &= ~(drum_hit[note].trig_bit);
+				turn_off(drum_hit[note].led_index);
+			}
+		}
+		current_midi_drum_mask = 0;
 		turn_off(ACCENT_1_LED);
 		spi_data[LATCH_8] &= ~(1<<ACCENT);
-		turn_off(drum_hit[current_drum_hit].led_index);
 
 		//flag.trig_finished = 1;
 	}
